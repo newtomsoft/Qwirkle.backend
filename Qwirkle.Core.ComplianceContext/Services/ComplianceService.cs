@@ -16,140 +16,202 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         public bool PlayTiles(Board board, List<Tile> tiles)
         {
-            if (!CanTilesBePlayed(board, tiles)) return false;
+            int points;
+            if ((points = CanTilesBePlayed(board, tiles)) == 0) return false;
+
+            // todo
+            //Player points
+            // et persistance.Player poins
 
             board.Tiles.AddRange(tiles);
             Persistance.UpdateBoard(board.Id, tiles);
+
+
 
             //Persistance.RemovePlayerTiles(tiles);
             return true;
         }
 
-        public bool CanTilesBePlayed(Board board, List<Tile> tiles)
+
+        public int CanTilesBePlayed(Board board, List<Tile> tiles)
         {
-            if (!AreTilesMakeValideRow(board, tiles)) return false;
-            if (!CanEachTileBePlayed(board, tiles)) return false;
-            return true;
-        }
-        public bool CanTileBePlayed(Board board, Tile tile)
-        {
-            if (IsBoardEmpty(board)) return true;
-            if (AreCoordinateOnBoardTaken(board, tile.Coordinates)) return false;
-            if (!AreTilesAroundCoordinates(board, tile.Coordinates)) return false;
-            if (AreColumnAndLineByTileRespectsRules(board, tile)) return true;
-            return false;
+            if (board.Tiles.Count == 0) return tiles.Count;
+            //TODO !!!!! tester si tiles pas isolés !
+
+            bool AreAllTilesIsolated = true;
+            foreach (var tile in tiles)
+                if (AreTileIsolated(board, tile))
+                    AreAllTilesIsolated = false;
+            if (AreAllTilesIsolated) return 0;
+
+            int totalPoints;
+            if ((totalPoints = CountTilesMakedValidRow(board, tiles)) == 0) return 0;
+            return totalPoints;
+            //todo : tester si qwarkle et +6 points
         }
 
-        private bool AreTilesMakeValideRow(Board board, List<Tile> tiles)
+        private bool AreTilesMakeValidRow(Board board, List<Tile> tiles)
         {
             if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
                 return false;
 
             if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) == tiles.Count)
             {
-                var allTilesAlongReferenceTiles = tiles.ToList();
-                var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
-                var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
-                allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
+                if (!AreTilesMakeValidLine(board, tiles)) return false;
 
-                var tilesRight = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
-                var tilesRightConsecutive = tilesRight.FirstConsecutives(Direction.Right, max);
-                allTilesAlongReferenceTiles.AddRange(tilesRightConsecutive);
-
-                var tilesLeft = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
-                var tilesLeftConsecutive = tilesLeft.FirstConsecutives(Direction.Left, min);
-                allTilesAlongReferenceTiles.AddRange(tilesLeftConsecutive);
-                if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()))
-                    return false;
-                if (!allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
-                    return false;
+                if (tiles.Count > 1)
+                {
+                    foreach (var tile in tiles)
+                    {
+                        if (!AreTilesMakeValidColumn(board, new List<Tile> { tile })) return false;
+                    }
+                }
             }
             if (tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) == tiles.Count)
             {
-                var allTilesAlongReferenceTiles = tiles.ToList();
-                var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
-                var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
-                allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
+                if (!AreTilesMakeValidColumn(board, tiles)) return false;
 
-                var tilesUp = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
-                var tilesUpConsecutive = tilesUp.FirstConsecutives(Direction.Top, max);
-                allTilesAlongReferenceTiles.AddRange(tilesUpConsecutive);
-
-                var tilesBottom = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
-                var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
-                allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
-                if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()))
-                    return false;
-                if (!allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
-                    return false;
+                if (tiles.Count > 1)
+                {
+                    foreach (var tile in tiles)
+                    {
+                        if (!AreTilesMakeValidLine(board, new List<Tile> { tile })) return false;
+                    }
+                }
             }
             return true;
+        }
+
+        public int CountTilesMakedValidRow(Board board, List<Tile> tiles)
+        {
+            if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
+                return 0;
+            
+            int tatalPoints = 0;
+            int points = 0;
+            if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) == tiles.Count)
+            {
+                if ((points = CountTilesMakedValidLine(board, tiles)) == 0) return 0;
+                if (points != 1) tatalPoints += points;
+                if (tiles.Count > 1)
+                {
+                    foreach (var tile in tiles)
+                    {
+                        if ((points = CountTilesMakedValidColumn(board, new List<Tile> { tile })) == 0) return 0;
+                        if (points != 1) tatalPoints += points ;
+                    }
+                }
+            }
+            if (tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) == tiles.Count)
+            {
+                if ((points = CountTilesMakedValidColumn(board, tiles)) == 0) return 0;
+                if (points != 1) tatalPoints += points;
+
+                if (tiles.Count > 1)
+                {
+                    foreach (var tile in tiles)
+                    {
+                        if ((points = CountTilesMakedValidLine(board, new List<Tile> { tile })) == 0) return 0;
+                        if (points != 1) tatalPoints += points;
+                    }
+                }
+            }
+            return tatalPoints;
+        }
+
+        private bool AreTilesMakeValidLine(Board board, List<Tile> tiles)
+        {
+            var allTilesAlongReferenceTiles = tiles.ToList();
+            var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
+            var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
+            allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
+
+            var tilesRight = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
+            var tilesRightConsecutive = tilesRight.FirstConsecutives(Direction.Right, max);
+            allTilesAlongReferenceTiles.AddRange(tilesRightConsecutive);
+
+            var tilesLeft = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
+            var tilesLeftConsecutive = tilesLeft.FirstConsecutives(Direction.Left, min);
+            allTilesAlongReferenceTiles.AddRange(tilesLeftConsecutive);
+
+            if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
+                return false;
+
+            return true;
+        }
+
+        private bool AreTilesMakeValidColumn(Board board, List<Tile> tiles)
+        {
+            var allTilesAlongReferenceTiles = tiles.ToList();
+            var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
+            var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
+            allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
+
+            var tilesUp = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
+            var tilesUpConsecutive = tilesUp.FirstConsecutives(Direction.Top, max);
+            allTilesAlongReferenceTiles.AddRange(tilesUpConsecutive);
+
+            var tilesBottom = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
+            var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
+            allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
+
+            if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
+                return false;
+
+            return true;
+        }
+
+        public int CountTilesMakedValidLine(Board board, List<Tile> tiles)
+        {
+            var allTilesAlongReferenceTiles = tiles.ToList();
+            var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
+            var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
+            allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
+
+            var tilesRight = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
+            var tilesRightConsecutive = tilesRight.FirstConsecutives(Direction.Right, max);
+            allTilesAlongReferenceTiles.AddRange(tilesRightConsecutive);
+
+            var tilesLeft = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
+            var tilesLeftConsecutive = tilesLeft.FirstConsecutives(Direction.Left, min);
+            allTilesAlongReferenceTiles.AddRange(tilesLeftConsecutive);
+
+            if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
+                return 0;
+
+            return allTilesAlongReferenceTiles.Count;
+        }
+
+        public int CountTilesMakedValidColumn(Board board, List<Tile> tiles)
+        {
+            var allTilesAlongReferenceTiles = tiles.ToList();
+            var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
+            var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
+            allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
+
+            var tilesUp = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
+            var tilesUpConsecutive = tilesUp.FirstConsecutives(Direction.Top, max);
+            allTilesAlongReferenceTiles.AddRange(tilesUpConsecutive);
+
+            var tilesBottom = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
+            var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
+            allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
+
+            if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
+                return 0;
+
+            return allTilesAlongReferenceTiles.Count;
         }
 
         private static bool AreNumbersConsecutive(List<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
 
-        private bool CanEachTileBePlayed(Board board, List<Tile> tiles)
+        private bool AreTileIsolated(Board board, Tile tile)
         {
-            Board boardCopy = new Board(board);
-            var tileToTest = tiles;
-            while (tileToTest.Count > 0)
-            {
-                var tilesNotTested = new List<Tile>();
-                foreach (var tile in tileToTest)
-                {
-                    if (CanTileBePlayed(boardCopy, tile))
-                        boardCopy.Tiles.Add(tile);
-                    else
-                        tilesNotTested.Add(tile);
-                }
-                if (tilesNotTested.Count == tileToTest.Count)
-                    return false;
-                if (tilesNotTested.Count == 0)
-                    return true;
-                tileToTest = tilesNotTested;
-            }
-            return false;
-        }
-
-        private bool IsBoardEmpty(Board board)
-        {
-            return board.Tiles.Count == 0;
-        }
-
-        private bool AreCoordinateOnBoardTaken(Board board, CoordinatesInBoard coordinates)
-        {
-            var tile = board.Tiles.FirstOrDefault(t => t.Coordinates == coordinates);
-            return tile != null;
-        }
-
-        private bool AreTilesAroundCoordinates(Board board, CoordinatesInBoard coordinates)
-        {
-            var tileRight = board.Tiles.FirstOrDefault(t => t.Coordinates == coordinates.Right());
-            var tileLeft = board.Tiles.FirstOrDefault(t => t.Coordinates == coordinates.Left());
-            var tileTop = board.Tiles.FirstOrDefault(t => t.Coordinates == coordinates.Top());
-            var tileBottom = board.Tiles.FirstOrDefault(t => t.Coordinates == coordinates.Bottom());
+            var tileRight = board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Right());
+            var tileLeft = board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Left());
+            var tileTop = board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Top());
+            var tileBottom = board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Bottom());
             return tileRight != null || tileLeft != null || tileTop != null || tileBottom != null;
-        }
-        private bool AreColumnAndLineByTileRespectsRules(Board board, Tile tile)
-        {
-            foreach (Direction direction in (Direction[])Enum.GetValues(typeof(Direction)))
-            {
-                CoordinatesInBoard currentCoordinates = tile.Coordinates;
-                while (true)
-                {
-                    if (direction == Direction.Right) currentCoordinates = currentCoordinates.Right();
-                    else if (direction == Direction.Bottom) currentCoordinates = currentCoordinates.Bottom();
-                    else if (direction == Direction.Left) currentCoordinates = currentCoordinates.Left();
-                    else if (direction == Direction.Top) currentCoordinates = currentCoordinates.Top();
-
-                    var currentTile = board.Tiles.FirstOrDefault(t => t.Coordinates == currentCoordinates);
-                    if (currentTile == null)
-                        break;
-                    if (currentTile.Color == tile.Color && currentTile.Form == tile.Form || currentTile.Color != tile.Color && currentTile.Form != tile.Form)
-                        return false;
-                }
-            }
-            return true;
         }
 
         public bool IsPlayerTurn(int gameId, int playerId) //todo private
