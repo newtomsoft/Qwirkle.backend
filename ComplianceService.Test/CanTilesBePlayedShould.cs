@@ -200,11 +200,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInBoard(7, -1)),
             });
             var tilesTested = new List<Tile> {
-                new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInBoard(0, 3)),
-                new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInBoard(0, -1)),
-
-                new Tile(TileColor.Green, TileForm.Square, new CoordinatesInBoard(7, -6)),
-                new Tile(TileColor.Green, TileForm.Square, new CoordinatesInBoard(7, -2)),
+                new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInBoard(7, 0)),
             };
             Assert.False(_complianceService.CanTilesBePlayed(board, tilesTested));
         }
