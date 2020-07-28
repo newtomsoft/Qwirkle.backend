@@ -42,7 +42,6 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         private bool AreTilesMakeValideRow(Board board, List<Tile> tiles)
         {
-            
             if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
                 return false;
 
@@ -50,7 +49,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             {
                 var allTilesAlongReferenceTiles = tiles.ToList();
                 var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
-                var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min < t.Coordinates.X && t.Coordinates.X < max);
+                var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
                 allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
                 var tilesRight = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
@@ -69,14 +68,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
             {
                 var allTilesAlongReferenceTiles = tiles.ToList();
                 var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
-                var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min < t.Coordinates.Y && t.Coordinates.Y < max);
+                var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
                 allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
-                var tilesUp = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
+                var tilesUp = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
                 var tilesUpConsecutive = tilesUp.FirstConsecutives(Direction.Top, max);
                 allTilesAlongReferenceTiles.AddRange(tilesUpConsecutive);
 
-                var tilesBottom = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
+                var tilesBottom = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
                 var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
                 allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
                 if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()))
@@ -84,12 +83,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
                 if (!allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
                     return false;
             }
-
             return true;
-
-
-            return AreNumbersConsecutive(GetAllTilesCoordinatesBetweenReferenceTiles(board.Tiles, tiles));
-
         }
 
         private static List<sbyte> GetAllTilesCoordinatesBetweenReferenceTiles(List<Tile> tiles, List<Tile> referenceTiles)
