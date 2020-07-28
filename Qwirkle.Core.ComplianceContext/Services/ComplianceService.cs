@@ -32,61 +32,26 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return true;
         }
 
-
         public int CanTilesBePlayed(Board board, List<Tile> tiles)
         {
-            if (board.Tiles.Count == 0) return tiles.Count;
-            //TODO !!!!! tester si tiles pas isolés !
+            if (board.Tiles.Count == 0 && tiles.Count == 1) return 1;
 
             bool AreAllTilesIsolated = true;
             foreach (var tile in tiles)
-                if (AreTileIsolated(board, tile))
+                if (IsTileIsolated(board, tile))
                     AreAllTilesIsolated = false;
-            if (AreAllTilesIsolated) return 0;
+            if (board.Tiles.Count > 0 && AreAllTilesIsolated) return 0;
 
             int totalPoints;
             if ((totalPoints = CountTilesMakedValidRow(board, tiles)) == 0) return 0;
             return totalPoints;
-            //todo : tester si qwarkle et +6 points
-        }
-
-        private bool AreTilesMakeValidRow(Board board, List<Tile> tiles)
-        {
-            if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
-                return false;
-
-            if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) == tiles.Count)
-            {
-                if (!AreTilesMakeValidLine(board, tiles)) return false;
-
-                if (tiles.Count > 1)
-                {
-                    foreach (var tile in tiles)
-                    {
-                        if (!AreTilesMakeValidColumn(board, new List<Tile> { tile })) return false;
-                    }
-                }
-            }
-            if (tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) == tiles.Count)
-            {
-                if (!AreTilesMakeValidColumn(board, tiles)) return false;
-
-                if (tiles.Count > 1)
-                {
-                    foreach (var tile in tiles)
-                    {
-                        if (!AreTilesMakeValidLine(board, new List<Tile> { tile })) return false;
-                    }
-                }
-            }
-            return true;
         }
 
         public int CountTilesMakedValidRow(Board board, List<Tile> tiles)
         {
             if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
                 return 0;
-            
+
             int tatalPoints = 0;
             int points = 0;
             if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) == tiles.Count)
@@ -98,7 +63,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
                     foreach (var tile in tiles)
                     {
                         if ((points = CountTilesMakedValidColumn(board, new List<Tile> { tile })) == 0) return 0;
-                        if (points != 1) tatalPoints += points ;
+                        if (points != 1) tatalPoints += points;
                     }
                 }
             }
@@ -119,48 +84,6 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tatalPoints;
         }
 
-        private bool AreTilesMakeValidLine(Board board, List<Tile> tiles)
-        {
-            var allTilesAlongReferenceTiles = tiles.ToList();
-            var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
-            var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
-            allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
-
-            var tilesRight = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
-            var tilesRightConsecutive = tilesRight.FirstConsecutives(Direction.Right, max);
-            allTilesAlongReferenceTiles.AddRange(tilesRightConsecutive);
-
-            var tilesLeft = board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
-            var tilesLeftConsecutive = tilesLeft.FirstConsecutives(Direction.Left, min);
-            allTilesAlongReferenceTiles.AddRange(tilesLeftConsecutive);
-
-            if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
-                return false;
-
-            return true;
-        }
-
-        private bool AreTilesMakeValidColumn(Board board, List<Tile> tiles)
-        {
-            var allTilesAlongReferenceTiles = tiles.ToList();
-            var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
-            var tilesBetweenReference = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
-            allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
-
-            var tilesUp = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
-            var tilesUpConsecutive = tilesUp.FirstConsecutives(Direction.Top, max);
-            allTilesAlongReferenceTiles.AddRange(tilesUpConsecutive);
-
-            var tilesBottom = board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
-            var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
-            allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
-
-            if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
-                return false;
-
-            return true;
-        }
-
         public int CountTilesMakedValidLine(Board board, List<Tile> tiles)
         {
             var allTilesAlongReferenceTiles = tiles.ToList();
@@ -179,7 +102,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
                 return 0;
 
-            return allTilesAlongReferenceTiles.Count;
+            return allTilesAlongReferenceTiles.Count != 6 ? allTilesAlongReferenceTiles.Count : 12;
         }
 
         public int CountTilesMakedValidColumn(Board board, List<Tile> tiles)
@@ -200,12 +123,12 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
                 return 0;
 
-            return allTilesAlongReferenceTiles.Count;
+            return allTilesAlongReferenceTiles.Count != 6 ? allTilesAlongReferenceTiles.Count : 12;
         }
 
         private static bool AreNumbersConsecutive(List<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
 
-        private bool AreTileIsolated(Board board, Tile tile)
+        private bool IsTileIsolated(Board board, Tile tile)
         {
             var tileRight = board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Right());
             var tileLeft = board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Left());
