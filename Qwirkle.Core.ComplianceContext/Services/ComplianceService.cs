@@ -86,28 +86,6 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return true;
         }
 
-        private static List<sbyte> GetAllTilesCoordinatesBetweenReferenceTiles(List<Tile> tiles, List<Tile> referenceTiles)
-        {
-            if (referenceTiles.Count(t => t.Coordinates.Y == referenceTiles[0].Coordinates.Y) == referenceTiles.Count)
-            {
-                var min = referenceTiles.Min(t => t.Coordinates.X); var max = referenceTiles.Max(t => t.Coordinates.X);
-                var tilesBetweenReference = tiles.Where(t => t.Coordinates.Y == referenceTiles[0].Coordinates.Y && min < t.Coordinates.X && t.Coordinates.X < max);
-                var referenceTilesX = referenceTiles.Select(t => t.Coordinates.X).ToList();
-                referenceTilesX.AddRange(tilesBetweenReference.Select(t => t.Coordinates.X));
-                return referenceTilesX;
-            }
-            else if (referenceTiles.Count(t => t.Coordinates.X == referenceTiles[0].Coordinates.X) == referenceTiles.Count)
-            {
-                var min = referenceTiles.Min(t => t.Coordinates.Y); var max = referenceTiles.Max(t => t.Coordinates.Y);
-                var tilesBetweenReference = tiles.Where(t => t.Coordinates.X == referenceTiles[0].Coordinates.X && min < t.Coordinates.Y && t.Coordinates.Y < max);
-                var referenceTilesY = referenceTiles.Select(t => t.Coordinates.Y).ToList();
-                referenceTilesY.AddRange(tilesBetweenReference.Select(t => t.Coordinates.Y));
-                return referenceTilesY;
-            }
-            else
-                return new List<sbyte>();
-        }
-
         private static bool AreNumbersConsecutive(List<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
 
         private bool CanEachTileBePlayed(Board board, List<Tile> tiles)

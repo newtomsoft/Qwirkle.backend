@@ -192,7 +192,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         }
 
         [Fact]
-        public void FalseWhenTilesMakeBadColumn()
+        public void FalseWhenTilesMakeColumnJoinedBy2ColumnsWithDifferentsTiles()
         {
             var board = new Board(1, new List<Tile> {
                 new Tile(TileColor.Blue, TileForm.Star4, new CoordinatesInBoard(7, 2)),
@@ -201,6 +201,20 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             });
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInBoard(7, 0)),
+            };
+            Assert.False(_complianceService.CanTilesBePlayed(board, tilesTested));
+        }
+
+        [Fact]
+        public void FalseWhenTilesMakeLineJoinedBy2LinesWithDifferentsTiles()
+        {
+            var board = new Board(1, new List<Tile> {
+                new Tile(TileColor.Blue, TileForm.Star4, new CoordinatesInBoard(2, 7)),
+                new Tile(TileColor.Blue, TileForm.Shape, new CoordinatesInBoard(1, 7)),
+                new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInBoard(-1, 7)),
+            });
+            var tilesTested = new List<Tile> {
+                new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInBoard(0, 7)),
             };
             Assert.False(_complianceService.CanTilesBePlayed(board, tilesTested));
         }
