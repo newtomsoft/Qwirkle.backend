@@ -76,7 +76,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         }
 
         [Fact]
-        public void FalseWhenTileMakeBadColumn()
+        public void ReturnFalseWhenTileMakeBadColumn()
         {
             var board = new Board(1, new List<Tile> {
                 new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInBoard(0, 0)),
@@ -97,7 +97,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         }
 
         [Fact]
-        public void TrueWhenTileMakeGoodColumn()
+        public void ReturnTrueWhenTileMakeGoodColumn()
         {
             var board = new Board(1, new List<Tile> {
                 new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInBoard(0, 0)),
@@ -116,7 +116,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         }
 
         [Fact]
-        public void FalseWhenTileMakeBadLine()
+        public void ReturnFalseWhenTileMakeBadLine()
         {
             var board = new Board(1, new List<Tile> {
                 new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInBoard(0, 0)),
@@ -137,7 +137,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         }
 
         [Fact]
-        public void TrueWhenTileMakeGoodLine()
+        public void ReturnTrueWhenTileMakeGoodLine()
         {
             var board = new Board(1, new List<Tile> {
                 new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInBoard(-1, 0)),
