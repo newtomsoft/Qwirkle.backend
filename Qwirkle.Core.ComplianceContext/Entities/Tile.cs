@@ -25,5 +25,12 @@ namespace Qwirkle.Core.ComplianceContext.Entities
         {
             Id = id;
         }
+
+        public bool HaveFormOrColorOnlyEqual(Tile tile)
+        {
+            if (Color == tile.Color && Form != tile.Form || Color != tile.Color && Form == tile.Form)
+                return true;
+            return false;
+        }
     }
 }

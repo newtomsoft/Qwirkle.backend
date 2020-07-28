@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace Qwirkle.Web.Api.Controllers
 {
-    //todo : l'appel au service "métier bag" nécessite un id de bag. le mettre dans chaque appel (sauf pour la création d'un bag)
     [ApiController]
     [Route("[controller]")]
     public class BagController : ControllerBase
@@ -23,7 +22,7 @@ namespace Qwirkle.Web.Api.Controllers
         [HttpGet("{gameId}/tiles/random")]
         public Tile GetRandomTile(int gameId)
         {
-            _iRequestBagService.GetAllTilesOfBag(gameId);
+            //_iRequestBagService.GetAllTilesOfBag(gameId);
             return _iRequestBagService.GetRandomTileOfBag(gameId);
         }
 

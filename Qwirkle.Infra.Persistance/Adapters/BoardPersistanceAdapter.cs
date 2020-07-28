@@ -27,7 +27,7 @@ namespace Qwirkle.Infra.Persistance.Adapters
         public Core.BoardContext.Entities.Board BoardCreate()
         {
             var board = new Models.Game();
-            DefaultDbContext.Boards.Add(board);
+            DefaultDbContext.Games.Add(board);
             DefaultDbContext.SaveChanges();
             return GameModelToBoardEntity(board);
         }

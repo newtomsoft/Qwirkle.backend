@@ -1,18 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Qwirkle.Core.BagContext.Entities;
-using Qwirkle.Core.BagContext.Ports;
-using Qwirkle.Core.ComplianceContext.Ports;
+﻿using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Infra.Persistance.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Tile = Qwirkle.Core.ComplianceContext.Entities.Tile;
 
 namespace Qwirkle.Infra.Persistance.Adapters
 {
     public class CompliancePersistanceAdapter : ICompliancePersistance
     {
-        private DefaultDbContext _dbContext { get; }
-
+        private readonly DefaultDbContext _dbContext;
 
         public CompliancePersistanceAdapter(DefaultDbContext defaultDbContext)
         {
@@ -27,6 +24,26 @@ namespace Qwirkle.Infra.Persistance.Adapters
         public void SetPlayerTurn(int gameId, int playerId)
         {
             throw new NotImplementedException();
+        }
+
+        public void UpdateBoard(int gameId, List<Tile> tiles)
+        {
+            _dbContext.Games.Update(new Game { Id = gameId, LastPlayedDate = DateTime.Now });
+
+            var tilesOnBoard = _dbContext.TilesOnBoard.Where(t => t.GameId == gameId).ToList();
+            tilesOnBoard.AddRange(TileEntitiesToTilesOnBoard(gameId, tiles));
+
+            _dbContext.SaveChanges();
+        }
+
+        private IEnumerable<TileOnBoard> TileEntitiesToTilesOnBoard(int gameId, List<Tile> tiles)
+        {
+            var tilesOnBoard = new List<TileOnBoard>();
+            foreach (var tile in tiles)
+            {
+                tilesOnBoard.Add(new TileOnBoard { Id = tile.Id, GameId = gameId, Color = tile.Color, Form = tile.Form, PositionX = tile.Coordinates.X, PositionY = tile.Coordinates.Y });
+            }
+            return tilesOnBoard;
         }
 
 

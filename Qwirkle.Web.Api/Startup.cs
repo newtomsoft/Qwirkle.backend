@@ -32,8 +32,15 @@ namespace Qwirkle.Web.Api
 
             services.AddControllers();
 
-            //services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("UserDbContext")), ServiceLifetime.Scoped);
-            services.AddDbContext<DefaultDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Scoped);
+            string persistance = Environment.GetEnvironmentVariable("PERSISTANCE");
+            if (persistance == "InMemoryDatabase")
+                services.AddDbContext<DefaultDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Scoped);
+            else if (persistance == "Sqlite")
+                services.AddDbContext<DefaultDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("SqliteDbContext")));
+            else if (persistance == "SqlServer")
+                services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("UserDbContext")), ServiceLifetime.Scoped);
+            else
+                throw new ArgumentException("No DbContext defined !");
 
             //services.AddIdentity<TableUser, IdentityRole<int>>(options =>
             //{

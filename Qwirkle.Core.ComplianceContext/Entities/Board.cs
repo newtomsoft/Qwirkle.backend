@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Qwirkle.Core.ComplianceContext.Entities
 {
@@ -12,6 +13,12 @@ namespace Qwirkle.Core.ComplianceContext.Entities
         {
             Id = id;
             Tiles = tiles;
+        }
+
+        public Board(Board board)
+        {
+            Id = board.Id;
+            Tiles = board.Tiles.ToList();
         }
     }
 }

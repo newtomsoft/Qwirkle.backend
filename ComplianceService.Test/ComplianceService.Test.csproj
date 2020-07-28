@@ -4,6 +4,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>Qwirkle.Core.ComplianceContext.Tests</RootNamespace>
+
+    <AssemblyName>Qwirkle.Core.ComplianceContext.Tests</AssemblyName>
+
+    <Configurations>Debug;Release;NoPersitance</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,7 +7,7 @@ namespace Qwirkle.Infra.Persistance
     {
         public DbSet<TileOnBag> TilesOnBag { get; set; }
         public DbSet<TileOnBoard> TilesOnBoard { get; set; }
-        public DbSet<Game> Boards { get; set; }
+        public DbSet<Game> Games { get; set; }
 
 
 

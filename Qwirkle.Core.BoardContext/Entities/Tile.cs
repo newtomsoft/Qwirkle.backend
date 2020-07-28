@@ -1,5 +1,6 @@
 ﻿using Qwirkle.Core.CommonContext.ValueObjects;
 using Qwirkle.Core.CommonContext;
+using System.Collections.Generic;
 
 namespace Qwirkle.Core.BoardContext.Entities
 {
