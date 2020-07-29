@@ -12,13 +12,13 @@ namespace Qwirkle.Web.Api.Controllers
     [Route("[controller]")]
     public class ComplianceController : ControllerBase
     {
-        private readonly ILogger<BagController> _logger;
-        private readonly IRequestComplianceService _iRequestComplianceService;
+        private ILogger<BagController> Logger { get; }
+        private IRequestComplianceService  IRequestComplianceService { get; }
 
         public ComplianceController(ILogger<BagController> logger, IRequestComplianceService iRequestComplianceService)
         {
-            _logger = logger;
-            _iRequestComplianceService = iRequestComplianceService;
+            Logger = logger;
+            IRequestComplianceService = iRequestComplianceService;
         }
 
         [HttpGet("{gameId}/PlayTiles")]
@@ -30,7 +30,7 @@ namespace Qwirkle.Web.Api.Controllers
 
             var tilesToPlay = new List<Tile> { new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInBoard(9, -4)) };
 
-            return _iRequestComplianceService.PlayTiles(board, player, tilesToPlay);
+            return IRequestComplianceService.PlayTiles(board, player, tilesToPlay);
         }
     }
 }
