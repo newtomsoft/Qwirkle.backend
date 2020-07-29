@@ -9,17 +9,17 @@ namespace Qwirkle.Infra.Persistance.Adapters
 {
     public class CompliancePersistanceAdapter : ICompliancePersistance
     {
-        private readonly DefaultDbContext _dbContext;
+        private DefaultDbContext DbContext { get; }
 
         public CompliancePersistanceAdapter(DefaultDbContext defaultDbContext)
         {
-            _dbContext = defaultDbContext;
+            DbContext = defaultDbContext;
         }
 
         public void UpdatePlayerPoints(Board board, Player player)
         {
-            _dbContext.GamePlayers.Update(PlayerEntitiesToGamePlayerPersistance(player));
-            _dbContext.SaveChanges();
+            DbContext.GamePlayers.Update(PlayerEntitiesToGamePlayerPersistance(player));
+            DbContext.SaveChanges();
         }
 
         public bool IsPlayerTurn(int gameId, int playerId)
@@ -34,12 +34,12 @@ namespace Qwirkle.Infra.Persistance.Adapters
 
         public void UpdateBoard(int gameId, List<Tile> tiles)
         {
-            _dbContext.Games.Update(new GamePersistance { Id = gameId, LastPlayedDate = DateTime.Now });
+            DbContext.Games.Update(new GamePersistance { Id = gameId, LastPlayedDate = DateTime.Now });
 
-            var tilesOnBoard = _dbContext.TilesOnBoard.Where(t => t.GameId == gameId).ToList();
+            var tilesOnBoard = DbContext.TilesOnBoard.Where(t => t.GameId == gameId).ToList();
             tilesOnBoard.AddRange(TileEntitiesToTilesOnBoardPersistance(gameId, tiles));
 
-            _dbContext.SaveChanges();
+            DbContext.SaveChanges();
         }
 
         private IEnumerable<TileOnBoardPersistance> TileEntitiesToTilesOnBoardPersistance(int gameId, List<Tile> tiles)
@@ -54,7 +54,7 @@ namespace Qwirkle.Infra.Persistance.Adapters
 
         private GamePlayerPersistance PlayerEntitiesToGamePlayerPersistance(Player player)
         {
-            var gamePlayerPersistance = _dbContext.GamePlayers.Where(gp => gp.Id == player.Id).FirstOrDefault();
+            var gamePlayerPersistance = DbContext.GamePlayers.Where(gp => gp.Id == player.Id).FirstOrDefault();
             gamePlayerPersistance.Points = player.Points;
             return gamePlayerPersistance;
         }
