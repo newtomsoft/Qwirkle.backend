@@ -1,8 +1,6 @@
 ﻿using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.ValueObjects;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,14 +12,13 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         public ComplianceService(ICompliancePersistance persistance) => Persistance = persistance;
 
-        public bool PlayTiles(Board board, List<Tile> tiles)
+        public int PlayTiles(Board board, Player player, List<Tile> tiles)
         {
-            int points;
-            if ((points = CanTilesBePlayed(board, tiles)) == 0) return false;
+            byte points;
+            if ((points = (byte)CanTilesBePlayed(board, tiles)) == 0) return 0;
 
-            // todo
-            //Player points
-            // et persistance.Player poins
+            player.Points += points;
+            Persistance.UpdatePlayerPoints(board, player);
 
             board.Tiles.AddRange(tiles);
             Persistance.UpdateBoard(board.Id, tiles);
@@ -29,7 +26,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
 
             //Persistance.RemovePlayerTiles(tiles);
-            return true;
+            return 1;
         }
 
         public int CanTilesBePlayed(Board board, List<Tile> tiles)

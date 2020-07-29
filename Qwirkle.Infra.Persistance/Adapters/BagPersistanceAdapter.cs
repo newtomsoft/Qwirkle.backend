@@ -10,39 +10,39 @@ namespace Qwirkle.Infra.Persistance.Adapters
 {
     public class BagPersistanceAdapter : IBagPersistance
     {
-        private DefaultDbContext _dbContext { get; }
+        private DefaultDbContext DbContext { get; }
 
 
         public BagPersistanceAdapter(DefaultDbContext defaultDbContext)
         {
-            _dbContext = defaultDbContext;
+            DbContext = defaultDbContext;
         }
 
         public List<Tile> GetAllTilesOfBag(int gameId)
         {
             List<Tile> tilesEntities = new List<Tile>();
-            _dbContext.TilesOnBag.Where(t => t.GameId == gameId).ForEachAsync(t => tilesEntities.Add(TileModelToTileEntity(t))).Wait();
+            DbContext.TilesOnBag.Where(t => t.GameId == gameId).ForEachAsync(t => tilesEntities.Add(TileModelToTileEntity(t))).Wait();
             return tilesEntities;
         }
 
-        public Tile GetRandomTileOfBag(int gameId) => TileModelToTileEntity(_dbContext.TilesOnBag.Where(t => t.GameId == gameId).OrderBy(_ => Guid.NewGuid()).FirstOrDefault());
+        public Tile GetRandomTileOfBag(int gameId) => TileModelToTileEntity(DbContext.TilesOnBag.Where(t => t.GameId == gameId).OrderBy(_ => Guid.NewGuid()).FirstOrDefault());
 
-        public int CountAllTilesOfBag(int gameId) => _dbContext.TilesOnBag.Where(t => t.GameId == gameId).Count();
+        public int CountAllTilesOfBag(int gameId) => DbContext.TilesOnBag.Where(t => t.GameId == gameId).Count();
 
         public void SaveTile(Tile tile)
         {
-            _dbContext.TilesOnBag.Add(TileEntityToTileOnBag(tile));
-            _dbContext.SaveChanges();
+            DbContext.TilesOnBag.Add(TileEntityToTileOnBag(tile));
+            DbContext.SaveChanges();
         }
 
         public void DeleteAllTilesOfBag(int gameId)
         {
-            _dbContext.TilesOnBag.RemoveRange(_dbContext.TilesOnBag.Where(t => t.GameId == gameId));
-            _dbContext.SaveChanges();
+            DbContext.TilesOnBag.RemoveRange(DbContext.TilesOnBag.Where(t => t.GameId == gameId));
+            DbContext.SaveChanges();
         }
 
-        private Tile TileModelToTileEntity(TileOnBag tile) => new Tile(tile.Id, tile.GameId, tile.Color, tile.Form);
-        private TileOnBag TileEntityToTileOnBag(Tile tile) => new TileOnBag { Id = tile.Id, GameId = tile.GameId, Color = tile.Color, Form = tile.Form };
+        private Tile TileModelToTileEntity(TileOnBagPersistance tile) => new Tile(tile.Id, tile.GameId, tile.Color, tile.Form);
+        private TileOnBagPersistance TileEntityToTileOnBag(Tile tile) => new TileOnBagPersistance { Id = tile.Id, GameId = tile.GameId, Color = tile.Color, Form = tile.Form };
 
        
     }

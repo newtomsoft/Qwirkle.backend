@@ -8,5 +8,6 @@ namespace Qwirkle.Core.ComplianceContext.Ports
         bool IsPlayerTurn(int gameId, int playerId);
         void SetPlayerTurn(int gameId, int playerId);
         void UpdateBoard(int gameId, List<Tile> tiles);
+        void UpdatePlayerPoints(Board board, Player player);
     }
 }

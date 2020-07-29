@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,8 +8,10 @@ using Microsoft.Extensions.Hosting;
 using Qwirkle.Core.BagContext.Ports;
 using Qwirkle.Core.BagContext.Services;
 using Qwirkle.Core.ComplianceContext.Ports;
+using Qwirkle.Core.ComplianceContext.Services;
 using Qwirkle.Infra.Persistance;
 using Qwirkle.Infra.Persistance.Adapters;
+using Qwirkle.Infra.Persistance.Models;
 using System;
 
 namespace Qwirkle.Web.Api
@@ -29,6 +32,7 @@ namespace Qwirkle.Web.Api
             services.AddScoped<IRequestBagService, BagService>();
 
             services.AddScoped<ICompliancePersistance, CompliancePersistanceAdapter>();
+            services.AddScoped<IRequestComplianceService, ComplianceService>();
 
             services.AddControllers();
 
@@ -42,40 +46,38 @@ namespace Qwirkle.Web.Api
             else
                 throw new ArgumentException("No DbContext defined !");
 
-            //services.AddIdentity<TableUser, IdentityRole<int>>(options =>
-            //{
-            //    options.Password.RequireDigit = false;
-            //    options.Password.RequireLowercase = false;
-            //    options.Password.RequireNonAlphanumeric = false;
-            //    options.Password.RequireUppercase = false;
-            //    options.Password.RequiredLength = 6;
-            //    options.Password.RequiredUniqueChars = 2;
-            //})
-            //.AddRoleManager<RoleManager<IdentityRole<int>>>()
-            //.AddEntityFrameworkStores<DefaultContext>()
-            //.AddDefaultTokenProviders()
-            //.AddDefaultUI();
+            services.AddIdentity<PlayerPersistance, IdentityRole<int>>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 2;
+            })
+            .AddRoleManager<RoleManager<IdentityRole<int>>>()
+            .AddEntityFrameworkStores<DefaultDbContext>()
+            .AddDefaultTokenProviders()
+            .AddDefaultUI();
 
             services.AddOptions();
-            //services.ConfigureApplicationCookie(options => options.LoginPath = "/Identity/Account/Login");
-            //services.AddSession();
+            services.ConfigureApplicationCookie(options => options.LoginPath = "/Identity/Account/Login");
+            services.AddSession();
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+#if DEBUG
+            app.UseDeveloperExceptionPage();
+#else
+            app.UseExceptionHandler("/Home/Error");
+#endif
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

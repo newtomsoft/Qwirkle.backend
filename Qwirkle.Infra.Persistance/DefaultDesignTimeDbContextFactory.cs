@@ -23,8 +23,8 @@ namespace Data
             else
                 dataBase = "SqliteDbContext";
 
-            Console.WriteLine("ASPNETCORE_ENVIRONMENT is : " + env);
-            Console.WriteLine("data Base is : " + dataBase);
+            Console.WriteLine($"ASPNETCORE_ENVIRONMENT is : {env}");
+            Console.WriteLine($"PERSISTANCE is : {persistance} ; data Base is : {dataBase}");
 
             IConfigurationBuilder builder = new ConfigurationBuilder()
                                .SetBasePath(path)

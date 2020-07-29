@@ -1,13 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Qwirkle.Infra.Persistance.Models;
 
 namespace Qwirkle.Infra.Persistance
 {
-    public class DefaultDbContext : DbContext // : IdentityDbContext<Player, IdentityRole<int>, int>  // TODO quand Player implémenté
+    public class DefaultDbContext : IdentityDbContext<PlayerPersistance, IdentityRole<int>, int>
     {
-        public DbSet<TileOnBag> TilesOnBag { get; set; }
-        public DbSet<TileOnBoard> TilesOnBoard { get; set; }
-        public DbSet<Game> Games { get; set; }
+        public DbSet<TileOnBagPersistance> TilesOnBag { get; set; }
+        public DbSet<TileOnBoardPersistance> TilesOnBoard { get; set; }
+        public DbSet<GamePersistance> Games { get; set; }
+        public DbSet<PlayerPersistance> Players { get; set; }
+        public DbSet<GamePlayerPersistance> GamePlayers { get; set; }
 
 
 
