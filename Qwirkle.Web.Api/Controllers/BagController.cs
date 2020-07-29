@@ -10,26 +10,26 @@ namespace Qwirkle.Web.Api.Controllers
     [Route("[controller]")]
     public class BagController : ControllerBase
     {
-        private readonly ILogger<BagController> _logger;
-        private readonly IRequestBagService _iRequestBagService;
+        private ILogger<BagController> Logger { get; }
+        private IRequestBagService IRequestBagService { get; }
 
         public BagController(ILogger<BagController> logger, IRequestBagService iRequestBagService)
         {
-            _logger = logger;
-            _iRequestBagService = iRequestBagService;
+            Logger = logger;
+            IRequestBagService = iRequestBagService;
         }
 
         [HttpGet("{gameId}/tiles/random")]
         public Tile GetRandomTile(int gameId)
         {
             //_iRequestBagService.GetAllTilesOfBag(gameId);
-            return _iRequestBagService.GetRandomTileOfBag(gameId);
+            return IRequestBagService.GetRandomTileOfBag(gameId);
         }
 
         [HttpGet("{gameId}/tiles")]
         public IEnumerable<Tile> GetTiles(int gameId)
         {
-            return _iRequestBagService.GetAllTilesOfBag(gameId);
+            return IRequestBagService.GetAllTilesOfBag(gameId);
         }
     }
 }
