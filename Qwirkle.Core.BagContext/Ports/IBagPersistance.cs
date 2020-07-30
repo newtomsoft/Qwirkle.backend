@@ -10,6 +10,5 @@ namespace Qwirkle.Core.BagContext.Ports
         void SaveTile(Tile tile);
         int CountAllTilesOfBag(int gameId);
         void DeleteAllTilesOfBag(int gameId);
-
     }
 }

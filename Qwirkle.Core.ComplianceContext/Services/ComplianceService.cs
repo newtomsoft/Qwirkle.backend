@@ -3,6 +3,8 @@ using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.CommonContext;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using Qwirkle.Core.CommonContext.ValueObjects;
 
 namespace Qwirkle.Core.ComplianceContext.Services
 {
@@ -12,24 +14,28 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         public ComplianceService(ICompliancePersistance persistance) => Persistance = persistance;
 
-        public int PlayTiles(Board board, Player player, List<Tile> tiles)
+        public int PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
+            Player player = GetPlayerById(playerId);
+            List<Tile> tilesToPlay = GetTiles(tilesTupleToPlay);
+            Board board = GetBoard(player.GameId);
+
+            if (!DoesThePlayerHaveThisTiles(player, tilesToPlay)) return 0;
+
             byte points;
-            if ((points = (byte)CanTilesBePlayed(board, tiles)) == 0) return 0;
-
-            player.Points += points;
-            Persistance.UpdatePlayerPoints(board, player);
-
-            board.Tiles.AddRange(tiles);
-            Persistance.UpdateBoard(board.Id, tiles);
-
-
-
-            //Persistance.RemovePlayerTiles(tiles);
-            return 1;
+            if ((points = GetPlayPoints(board, tilesToPlay)) == 0) return 0;
+            UpdateGame(board, player, tilesToPlay, points);
+            return points;
         }
 
-        public int CanTilesBePlayed(Board board, List<Tile> tiles)
+        private bool DoesThePlayerHaveThisTiles(Player player, List<Tile> tilesToPlay)
+        {
+            var playerTilesId = player.Tiles.Select(t => t.Id);
+            var tilesIdToPlay = tilesToPlay.Select(t => t.Id);
+            return tilesIdToPlay.All(id => playerTilesId.Contains(id));
+        }
+
+        public byte GetPlayPoints(Board board, List<Tile> tiles)
         {
             if (board.Tiles.Count == 0 && tiles.Count == 1) return 1;
 
@@ -39,18 +45,50 @@ namespace Qwirkle.Core.ComplianceContext.Services
                     AreAllTilesIsolated = false;
             if (board.Tiles.Count > 0 && AreAllTilesIsolated) return 0;
 
-            int totalPoints;
+            byte totalPoints;
             if ((totalPoints = CountTilesMakedValidRow(board, tiles)) == 0) return 0;
             return totalPoints;
         }
 
-        public int CountTilesMakedValidRow(Board board, List<Tile> tiles)
+        private List<Tile> GetTiles(List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
+        {
+            List<Tile> tiles = new List<Tile>();
+            foreach (var (TileId, X, Y) in tilesTupleToPlay)
+            {
+                Tile tile = Persistance.GetTileById(TileId);
+                tile.Coordinates = new CoordinatesInBoard(X, Y);
+                tiles.Add(tile);
+            }
+            return tiles;
+        }
+
+        private Player GetPlayerById(int playerId)
+        {
+            return Persistance.GetPlayerById(playerId);
+        }
+
+        private Board GetBoard(int GameId)
+        {
+            return Persistance.GetBoardByGameId(GameId);
+        }
+
+        private void UpdateGame(Board board, Player player, List<Tile> tilesToPlay, byte points)
+        {
+            player.Points += points;
+            player.GameTurn = false;
+            board.Tiles.AddRange(tilesToPlay);
+            Persistance.UpdatePlayer(player);
+            Persistance.TilesFromBagToPlayer(player, tilesToPlay.Count);
+            Persistance.TilesFromPlayerToBoard(board.Id, tilesToPlay);
+        }
+
+        private byte CountTilesMakedValidRow(Board board, List<Tile> tiles)
         {
             if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
                 return 0;
 
-            int tatalPoints = 0;
-            int points = 0;
+            byte tatalPoints = 0;
+            byte points = 0;
             if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) == tiles.Count)
             {
                 if ((points = CountTilesMakedValidLine(board, tiles)) == 0) return 0;
@@ -81,7 +119,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tatalPoints;
         }
 
-        public int CountTilesMakedValidLine(Board board, List<Tile> tiles)
+        private byte CountTilesMakedValidLine(Board board, List<Tile> tiles)
         {
             var allTilesAlongReferenceTiles = tiles.ToList();
             var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
@@ -99,10 +137,10 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
                 return 0;
 
-            return allTilesAlongReferenceTiles.Count != 6 ? allTilesAlongReferenceTiles.Count : 12;
+            return (byte)(allTilesAlongReferenceTiles.Count != 6 ? allTilesAlongReferenceTiles.Count : 12);
         }
 
-        public int CountTilesMakedValidColumn(Board board, List<Tile> tiles)
+        private byte CountTilesMakedValidColumn(Board board, List<Tile> tiles)
         {
             var allTilesAlongReferenceTiles = tiles.ToList();
             var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
@@ -120,7 +158,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
                 return 0;
 
-            return allTilesAlongReferenceTiles.Count != 6 ? allTilesAlongReferenceTiles.Count : 12;
+            return (byte)(allTilesAlongReferenceTiles.Count != 6 ? allTilesAlongReferenceTiles.Count : 12);
         }
 
         private static bool AreNumbersConsecutive(List<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
@@ -133,15 +171,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
             var tileBottom = board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Bottom());
             return tileRight != null || tileLeft != null || tileTop != null || tileBottom != null;
         }
-
-        public bool IsPlayerTurn(int gameId, int playerId) //todo private
+        public bool IsPlayerTurn(int playerId) //todo private
         {
-            return Persistance.IsPlayerTurn(gameId, playerId);
+            return Persistance.IsPlayerTurn(playerId);
         }
 
-        public void SetPlayerTurn(int gameId, int playerId) //todo private
+        public void SetPlayerTurn(int playerId, bool turn) //todo private
         {
-            Persistance.SetPlayerTurn(gameId, playerId);
+            Persistance.SetPlayerTurn(playerId, turn);
         }
     }
     public static class TileExtension

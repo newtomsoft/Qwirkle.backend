@@ -25,7 +25,6 @@ namespace Qwirkle.Web.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IBagPersistance, BagPersistanceAdapter>();
@@ -46,7 +45,7 @@ namespace Qwirkle.Web.Api
             else
                 throw new ArgumentException("No DbContext defined !");
 
-            services.AddIdentity<PlayerPersistance, IdentityRole<int>>(options =>
+            services.AddIdentity<UserPersistance, IdentityRole<int>>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;
@@ -66,7 +65,6 @@ namespace Qwirkle.Web.Api
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 #if DEBUG

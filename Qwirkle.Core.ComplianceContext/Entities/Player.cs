@@ -1,10 +1,14 @@
-﻿namespace Qwirkle.Core.ComplianceContext.Entities
+﻿using System.Collections.Generic;
+
+namespace Qwirkle.Core.ComplianceContext.Entities
 {
     public class Player
     {
         public int Id { get; set; }
-        public byte BoardPosition { get; set; }
-        public bool IsTurn { get; set; }
+        public int GameId { get; set; }
+        public byte GamePosition { get; set; }
+        public bool GameTurn { get; set; }
         public byte Points { get; set; }
+        public List<Tile> Tiles { get; set; }
     }
 }

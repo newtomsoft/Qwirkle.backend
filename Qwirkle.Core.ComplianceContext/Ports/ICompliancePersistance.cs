@@ -1,13 +1,18 @@
-﻿using Qwirkle.Core.ComplianceContext.Entities;
+﻿using Qwirkle.Core.CommonContext.ValueObjects;
+using Qwirkle.Core.ComplianceContext.Entities;
 using System.Collections.Generic;
 
 namespace Qwirkle.Core.ComplianceContext.Ports
 {
     public interface ICompliancePersistance
     {
-        bool IsPlayerTurn(int gameId, int playerId);
-        void SetPlayerTurn(int gameId, int playerId);
-        void UpdateBoard(int gameId, List<Tile> tiles);
-        void UpdatePlayerPoints(Board board, Player player);
+        bool IsPlayerTurn(int playerId);
+        void SetPlayerTurn(int playerId, bool turn);
+        void TilesFromPlayerToBoard(int gameId, List<Tile> tiles);
+        void UpdatePlayer(Player player);
+        void TilesFromBagToPlayer(Player player, int tilesNumber);
+        Board GetBoardByGameId(int boardId);
+        Player GetPlayerById(int playerId);
+        Tile GetTileById(int tileId);
     }
 }

@@ -4,6 +4,7 @@ using Qwirkle.Core.CommonContext;
 using Qwirkle.Core.CommonContext.ValueObjects;
 using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
+using System;
 using System.Collections.Generic;
 
 namespace Qwirkle.Web.Api.Controllers
@@ -13,7 +14,7 @@ namespace Qwirkle.Web.Api.Controllers
     public class ComplianceController : ControllerBase
     {
         private ILogger<BagController> Logger { get; }
-        private IRequestComplianceService  IRequestComplianceService { get; }
+        private IRequestComplianceService IRequestComplianceService { get; }
 
         public ComplianceController(ILogger<BagController> logger, IRequestComplianceService iRequestComplianceService)
         {
@@ -21,16 +22,18 @@ namespace Qwirkle.Web.Api.Controllers
             IRequestComplianceService = iRequestComplianceService;
         }
 
-        [HttpGet("{gameId}/PlayTiles")]
-        public int PlayTiles(int gameId) // todo complete
+        [HttpGet("{playerId}/PlayTiles")]
+        public int PlayTiles(int playerId) // todo complete
         {
-            var tiles = new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInBoard(9, -5)) };
-            Board board = new Board(gameId, tiles);
-            Player player = new Player { Id = 1 };
+            Logger.LogInformation("controller call");
 
-            var tilesToPlay = new List<Tile> { new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInBoard(9, -4)) };
 
-            return IRequestComplianceService.PlayTiles(board, player, tilesToPlay);
+            (int tileId, sbyte x, sbyte y) tuple1 = (1, -3, 4);
+            (int tileId, sbyte x, sbyte y) tuple2 = (2, -3, 5);
+            var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)> { tuple1, tuple2 };
+
+
+            return IRequestComplianceService.PlayTiles(playerId, tilesToPlay);
         }
     }
 }
