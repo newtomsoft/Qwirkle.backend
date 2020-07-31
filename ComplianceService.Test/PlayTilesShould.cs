@@ -1,18 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.ValueObjects;
-using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.ComplianceContext.Services;
 using Qwirkle.Infra.Persistance;
 using Qwirkle.Infra.Persistance.Adapters;
 using Qwirkle.Infra.Persistance.Models;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Qwirkle.Core.ComplianceContext.Tests
 {

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Qwirkle.Core.BagContext.Services
 {
     public class BagService : IRequestBagService
-    {    
+    {
         private const int NUMBER_OF_TILES_IN_A_FULL_BAG = 108;
         private IBagPersistance Persistance { get; }
 

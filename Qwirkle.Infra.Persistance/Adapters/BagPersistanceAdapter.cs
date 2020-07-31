@@ -43,8 +43,8 @@ namespace Qwirkle.Infra.Persistance.Adapters
         }
 
         private Tile TileModelToTileEntity(TileOnBagPersistance tile) => new Tile(tile.Id, tile.GameId, TileColor.Blue, TileForm.Ring); //todo !
-        private TileOnBagPersistance TileEntityToTileOnBag(Tile tile) => new TileOnBagPersistance { Id = tile.Id, GameId = tile.GameId};
+        private TileOnBagPersistance TileEntityToTileOnBag(Tile tile) => new TileOnBagPersistance { Id = tile.Id, GameId = tile.GameId };
 
-       
+
     }
 }

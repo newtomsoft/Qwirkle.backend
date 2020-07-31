@@ -34,7 +34,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         public void Return0WhenTilesAreInTheSamePlace()
         {
             ComplianceService.Board = new Board(1, new List<Tile>());
-            
+
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInBoard(6, -3)), new Tile(TileColor.Green, TileForm.Star4, new CoordinatesInBoard(6, -3)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInBoard(6, -3)), new Tile(TileColor.Green, TileForm.Star4, new CoordinatesInBoard(6, -3)), new Tile(TileColor.Green, TileForm.Shape, new CoordinatesInBoard(5, -3)) }));
 

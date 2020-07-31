@@ -1,5 +1,5 @@
-﻿using Qwirkle.Core.CommonContext.ValueObjects;
-using Qwirkle.Core.CommonContext;
+﻿using Qwirkle.Core.CommonContext;
+using Qwirkle.Core.CommonContext.ValueObjects;
 
 namespace Qwirkle.Core.ComplianceContext.Entities
 {
@@ -22,6 +22,9 @@ namespace Qwirkle.Core.ComplianceContext.Entities
         }
 
         public Tile(TileColor color, TileForm form, CoordinatesInBoard coordinates) : this(0, color, form, coordinates)
+        { }
+
+        public Tile(TileColor color, TileForm form) : this(0, color, form)
         { }
 
         public Tile(int id)

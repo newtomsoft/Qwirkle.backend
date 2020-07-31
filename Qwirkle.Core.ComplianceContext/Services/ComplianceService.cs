@@ -1,10 +1,10 @@
-﻿using Qwirkle.Core.ComplianceContext.Entities;
+﻿using Qwirkle.Core.CommonContext;
+using Qwirkle.Core.CommonContext.ValueObjects;
+using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
-using Qwirkle.Core.CommonContext;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using Qwirkle.Core.CommonContext.ValueObjects;
 
 namespace Qwirkle.Core.ComplianceContext.Services
 {
@@ -20,7 +20,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         public List<Player> CreateGame(List<int> usersIds)
         {
-            CreateBoard();
+            Board = Persistance.CreateBoard(DateTime.Now);
             List<Player> players = CreatePlayers(usersIds);
             Board.Players = players;
             return players;
@@ -37,7 +37,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
         public int PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
             Player player = GetPlayerById(playerId);
-            if (!IsPlayerTurn(player)) return 0; 
+            if (!IsPlayerTurn(player)) return 0;
 
             List<Tile> tilesToPlay = GetTiles(tilesTupleToPlay);
             GetBoard(player.GameId);
@@ -46,13 +46,22 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
             byte points;
             if ((points = GetPlayPoints(tilesToPlay)) == 0) return 0;
-            UpdateGame(player, tilesToPlay, points);
+            PlayAndUpdateGame(player, tilesToPlay, points);
             return points;
         }
 
-        private void CreateBoard()
+        public bool SwapTiles(int playerId, List<int> tilesIds)
         {
-            Board = Persistance.CreateBoard(DateTime.Now);
+            Player player = GetPlayerById(playerId);
+            if (!IsPlayerTurn(player)) return false;
+
+            List<Tile> tilesToSwap = GetTiles(tilesIds);
+            GetBoard(player.GameId);
+
+            if (!DoesThePlayerHaveThisTiles(player, tilesToSwap)) return false;
+
+            SwapAndUpdateGame(player, tilesToSwap);
+            return true;
         }
 
         private List<Player> CreatePlayers(List<int> usersIds)
@@ -144,17 +153,27 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tiles;
         }
 
-        private Player GetPlayerById(int playerId)
+        private List<Tile> GetTiles(List<int> tilesIds)
         {
-            return Persistance.GetPlayerById(playerId);
+            List<Tile> tiles = new List<Tile>();
+            tilesIds.ForEach(tileId => tiles.Add(Persistance.GetTileById(tileId)));
+            return tiles;
         }
 
-        private void GetBoard(int GameId)
+        private Player GetPlayerById(int playerId) => Persistance.GetPlayerById(playerId);
+
+        private void GetBoard(int GameId) => Board = Persistance.GetBoardByGameId(GameId);
+
+        private void SwapAndUpdateGame(Player player, List<Tile> tilesToSwap)
         {
-            Board = Persistance.GetBoardByGameId(GameId);
+            player.GameTurn = false;
+            Persistance.UpdatePlayer(player);
+            SetNextPlayerTurnToPlay(player.Id);
+            Persistance.TilesFromBagToPlayer(player, tilesToSwap.Count);
+            Persistance.TilesFromPlayerToBag(player, tilesToSwap);
         }
 
-        private void UpdateGame(Player player, List<Tile> tilesToPlay, byte points)
+        private void PlayAndUpdateGame(Player player, List<Tile> tilesToPlay, byte points)
         {
             player.Points += points;
             player.GameTurn = false;

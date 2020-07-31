@@ -8,8 +8,6 @@ using Qwirkle.Infra.Persistance.Adapters;
 using Qwirkle.Infra.Persistance.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace Qwirkle.Core.ComplianceContext.Tests
@@ -91,10 +89,34 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         }
 
         [Fact]
-        public void ReturnApproximatelyEqualWhenSameNumberTilesToPlay()
+        public void ReturnApproximatelyEqualWhenSameNumberTilesToPlayWith2Players()
+        {
+            List<Player> players = new List<Player> { Persistance.GetPlayerById(PLAYER9), Persistance.GetPlayerById(PLAYER3) };
+            var player_count = new Dictionary<int, int> { { PLAYER9, 0 }, { PLAYER3, 0 } };
+            for (int i = 0; i < 1000; i++)
+                player_count[ComplianceService.InitGame(players)]++;
+
+            Assert.True(400 < player_count[PLAYER9]);
+            Assert.True(400 < player_count[PLAYER3]);
+        }
+
+        [Fact]
+        public void ReturnApproximatelyEqualWhenSameNumberTilesToPlayWith3Players()
+        {
+            List<Player> players = new List<Player> { Persistance.GetPlayerById(PLAYER9), Persistance.GetPlayerById(PLAYER3), Persistance.GetPlayerById(PLAYER8) };
+            var player_count = new Dictionary<int, int> { { PLAYER9, 0 }, { PLAYER3, 0 }, { PLAYER8, 0 } };
+            for (int i = 0; i < 1000; i++)
+                player_count[ComplianceService.InitGame(players)]++;
+
+            Assert.True(300 < player_count[PLAYER9]);
+            Assert.True(300 < player_count[PLAYER3]);
+            Assert.True(300 < player_count[PLAYER8]);
+        }
+
+        [Fact]
+        public void ReturnApproximatelyEqualWhenSameNumberTilesToPlayWith4Players()
         {
             List<Player> players = new List<Player> { Persistance.GetPlayerById(PLAYER9), Persistance.GetPlayerById(PLAYER3), Persistance.GetPlayerById(PLAYER8), Persistance.GetPlayerById(PLAYER14) };
-
             var player_count = new Dictionary<int, int> { { PLAYER9, 0 }, { PLAYER3, 0 }, { PLAYER8, 0 }, { PLAYER14, 0 } };
             for (int i = 0; i < 1000; i++)
                 player_count[ComplianceService.InitGame(players)]++;

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Qwirkle.Infra.Persistance;
 using System;
 
-namespace Qwirkle.Core.ComplianceContext.Tests
+namespace Qwirkle.Core.CompliancePersistance.Tests
 {
     public class ConnectionFactory : IDisposable
     {

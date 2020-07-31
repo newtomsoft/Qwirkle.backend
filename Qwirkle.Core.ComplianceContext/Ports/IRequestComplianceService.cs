@@ -1,6 +1,4 @@
-﻿using Qwirkle.Core.ComplianceContext.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Qwirkle.Core.ComplianceContext.Ports
 {

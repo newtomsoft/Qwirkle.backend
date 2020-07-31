@@ -1,6 +1,4 @@
-﻿using Qwirkle.Core.ComplianceContext.Entities;
-using Qwirkle.Core.ComplianceContext.Ports;
-using System.Collections.Generic;
+﻿using Qwirkle.Core.ComplianceContext.Ports;
 
 namespace Qwirkle.Web.Api.Adapters
 {

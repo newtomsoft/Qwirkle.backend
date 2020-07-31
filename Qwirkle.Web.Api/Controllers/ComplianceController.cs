@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.ValueObjects;
-using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
-using System;
 using System.Collections.Generic;
 
 namespace Qwirkle.Web.Api.Controllers
