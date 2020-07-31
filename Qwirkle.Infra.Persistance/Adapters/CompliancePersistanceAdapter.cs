@@ -1,5 +1,4 @@
-﻿using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.ValueObjects;
+﻿using Qwirkle.Core.CommonContext.ValueObjects;
 using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Infra.Persistance.Models;
@@ -18,88 +17,68 @@ namespace Qwirkle.Infra.Persistance.Adapters
             DbContext = defaultDbContext;
         }
 
+        public Player CreatePlayer(int userId, int gameId)
+        {
+            var playerPersistance = new PlayerPersistance { GameId = gameId, UserId = userId };
+            DbContext.Players.Add(playerPersistance);
+            DbContext.SaveChanges();
+            return PlayerPersistanceToPlayerEntity(playerPersistance);
+        }
+
+        public Board CreateBoard(DateTime date)
+        {
+            var game = new GamePersistance { CreatedDate = date };
+            DbContext.Games.Add(game);
+            DbContext.SaveChanges();
+            return GamePersistanceBoardEntity(game);
+        }
+
         public Tile GetTileById(int tileId)
         {
             var tilePersistance = DbContext.Tiles.Where(t => t.Id == tileId).FirstOrDefault();
-            return TilePersistanceToTileEntities(tilePersistance);
-        }
-
-        private Tile TilePersistanceToTileEntities(TilePersistance tilePersistance)
-        {
-            return new Tile(tilePersistance.Id, tilePersistance.Color, tilePersistance.Form);
+            return TilePersistanceToTileEntity(tilePersistance);
         }
 
         public Board GetBoardByGameId(int boardId)
         {
             var gamePersistance = DbContext.Games.Where(g => g.Id == boardId).FirstOrDefault();
             var tilesOnBoardPersistance = DbContext.TilesOnBoard.Where(tb => tb.GameId == boardId).ToList();
-            List<Tile> tiles = TilesOnBoardPersistanceToTilesEntities(tilesOnBoardPersistance);
-            return new Board(gamePersistance.Id, tiles);
-        }
-
-        private List<Tile> TilesOnBoardPersistanceToTilesEntities(List<TileOnBoardPersistance> tilesOnBoard)
-        {
-            var tiles = new List<Tile>();
-            var tilesPersistance = DbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
-            foreach (var tilePersistance in tilesPersistance)
-            {
-                var tileOnBoard = tilesOnBoard.FirstOrDefault(tb => tb.TileId == tilePersistance.Id);
-                tiles.Add(new Tile(tilePersistance.Id, tilePersistance.Color, tilePersistance.Form, new CoordinatesInBoard(tileOnBoard.PositionX, tileOnBoard.PositionY)));
-            }
-            return tiles;
+            var tiles = TilesOnBoardPersistanceToTilesEntities(tilesOnBoardPersistance);
+            var playersPersistance = DbContext.Players.Where(p => p.GameId == boardId).ToList();
+            var players = new List<Player>();
+            playersPersistance.ForEach(player => players.Add(PlayerPersistanceToPlayerEntity(player)));
+            return new Board(gamePersistance.Id, tiles, players);
         }
 
         public Player GetPlayerById(int playerId)
         {
-            var player = PlayerPersistanceToPlayerEntities(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
+            var player = PlayerPersistanceToPlayerEntity(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
             var tilesOnPlayer = DbContext.TilesOnPlayer.Where(x => x.PlayerId == playerId).ToList();
-            var tiles = TilesOnPlayerPersistanceToTilesEntities(tilesOnPlayer);
-            player.Tiles = tiles;
+            player.Tiles = new List<Tile>();
+            tilesOnPlayer.ForEach(tp => player.Tiles.Add(TileOnPlayerPersistanceToTileEntity(tp)));
             return player;
-        }
-
-        private List<Tile> TilesOnPlayerPersistanceToTilesEntities(List<TileOnPlayerPersistance> tilesOnPlayer)
-        {
-            var tiles = new List<Tile>();
-            foreach (var tileOnPlayer in tilesOnPlayer)
-            {
-                tiles.Add(TileOnPlayerPersistanceToTileEntities(tileOnPlayer));
-            }
-            return tiles;
-        }
-
-        private Tile TileOnPlayerPersistanceToTileEntities(TileOnPlayerPersistance tileOnPlayer)
-        {
-            return new Tile(tileOnPlayer.TileId, tileOnPlayer.Tile.Color, tileOnPlayer.Tile.Form);
         }
 
         public void UpdatePlayer(Player player)
         {
-            DbContext.Players.Update(PlayerEntitiesToPlayerPersistance(player));
+            DbContext.Players.Update(PlayerEntityToPlayerPersistance(player));
             DbContext.SaveChanges();
         }
 
         public void TilesFromBagToPlayer(Player player, int tilesNumber)
         {
-            var tilesOnBag = DbContext.TilesOnBag.Where(t => t.GameId == 1).OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList(); //todo
+            var tilesOnBag = DbContext.TilesOnBag.Where(t => t.GameId == player.GameId).OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
             DbContext.TilesOnBag.RemoveRange(tilesOnBag);
-            DbContext.TilesOnPlayer.AddRange(TilesOnBagToTilesOnPlayer(tilesOnBag, player.Id));
+            tilesOnBag.ForEach(tb => DbContext.TilesOnPlayer.Add(TileOnBagToTileOnPlayer(tb, player.Id)));
             DbContext.SaveChanges();
         }
 
-        private List<TileOnPlayerPersistance> TilesOnBagToTilesOnPlayer(List<TileOnBagPersistance> tilesOnBag, int playerId)
+        public void TilesFromPlayerToBag(Player player, int tilesNumber)
         {
-            List<TileOnPlayerPersistance> tilesOnPlayerPersistance = new List<TileOnPlayerPersistance>();
-            foreach (var tileOnBag in tilesOnBag)
-            {
-                tilesOnPlayerPersistance.Add(TileOnBagToTileOnPlayer(tileOnBag, playerId));
-            }
-            return tilesOnPlayerPersistance;
-        }
-
-        private TileOnPlayerPersistance TileOnBagToTileOnPlayer(TileOnBagPersistance tileOnBag, int playerId)
-        {
-            return new TileOnPlayerPersistance { TileId = tileOnBag.TileId, PlayerId = playerId }; // todo position !
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id).OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
+            DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayer);
+            tilesOnPlayer.ForEach(tb => DbContext.TilesOnBag.Add(TileOnPlayerToTileOnBag(tb, player.GameId)));
+            DbContext.SaveChanges();
         }
 
         public void SetPlayerTurn(int playerId, bool turn)
@@ -115,42 +94,60 @@ namespace Qwirkle.Infra.Persistance.Adapters
         {
             var game = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
             game.LastPlayedDate = DateTime.Now;
-            DbContext.TilesOnBoard.AddRange(TilesEntitiesToTilesOnBoardPersistance(tiles, gameId));
+            tiles.ForEach(t => DbContext.TilesOnBoard.Add(TileEntityToTileOnBoardPersistance(t, gameId)));
             DbContext.SaveChanges();
         }
+        private List<Tile> TilesOnBoardPersistanceToTilesEntities(List<TileOnBoardPersistance> tilesOnBoard)
+        {
+            var tiles = new List<Tile>();
+            var tilesPersistance = DbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
+            foreach (var tilePersistance in tilesPersistance)
+            {
+                var tileOnBoard = tilesOnBoard.FirstOrDefault(tb => tb.TileId == tilePersistance.Id);
+                tiles.Add(new Tile(tilePersistance.Id, tilePersistance.Color, tilePersistance.Form, new CoordinatesInBoard(tileOnBoard.PositionX, tileOnBoard.PositionY)));
+            }
+            return tiles;
+        }
 
-        private PlayerPersistance PlayerEntitiesToPlayerPersistance(Player player)
+        private PlayerPersistance PlayerEntityToPlayerPersistance(Player player)
         {
             var gamePlayerPersistance = DbContext.Players.Where(gp => gp.Id == player.Id).FirstOrDefault();
             gamePlayerPersistance.Points = player.Points;
             gamePlayerPersistance.GameTurn = player.GameTurn;
+            gamePlayerPersistance.GamePosition = player.GamePosition;
             return gamePlayerPersistance;
         }
 
-        private Player PlayerPersistanceToPlayerEntities(PlayerPersistance player)
-            => new Player { Id = player.Id, GameId = player.GameId, GameTurn = player.GameTurn, GamePosition = player.GamePosition, Points = player.Points };
-
-        private List<TileOnBoardPersistance> TilesEntitiesToTilesOnBoardPersistance(List<Tile> tiles, int gameId)
+        private Player PlayerPersistanceToPlayerEntity(PlayerPersistance player)
         {
-            var tilesOnBoard = new List<TileOnBoardPersistance>();
-            foreach (var tile in tiles)
-            {
-                tilesOnBoard.Add(TileEntitiesToTileOnBoardPersistance(tile, gameId));
-            }
-            return tilesOnBoard;
+            var playerEntity = new Player { Id = player.Id, GameId = player.GameId, GameTurn = player.GameTurn, GamePosition = player.GamePosition, Points = player.Points };
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == player.Id).ToList();
+            var tiles = new List<Tile>();
+            tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerPersistanceToTileEntity(tp)));
+            playerEntity.Tiles = tiles;
+            return playerEntity;
         }
-
-        private TileOnBoardPersistance TileEntitiesToTileOnBoardPersistance(Tile tile, int gameId)
+        private TileOnBoardPersistance TileEntityToTileOnBoardPersistance(Tile tile, int gameId)
             => new TileOnBoardPersistance { TileId = tile.Id, GameId = gameId, PositionX = tile.Coordinates.X, PositionY = tile.Coordinates.Y };
 
-        private List<TileOnPlayerPersistance> TilesEntitiesToTilesOnPlayerPersistance(List<Tile> tilesToRemove, int playerId)
+        private TileOnPlayerPersistance TileOnBagToTileOnPlayer(TileOnBagPersistance tileOnBag, int playerId)
+            => new TileOnPlayerPersistance { TileId = tileOnBag.TileId, PlayerId = playerId }; // todo position !
+
+        private TileOnBagPersistance TileOnPlayerToTileOnBag(TileOnPlayerPersistance tileOnPlayer, int gameId)
         {
-            var tilesOnPlayer = new List<TileOnPlayerPersistance>();
-            foreach (var tile in tilesToRemove)
-            {
-                tilesOnPlayer.Add(TileEntitiesToTilesOnPlayerPersistance(tile, playerId));
-            }
-            return tilesOnPlayer;
+            return new TileOnBagPersistance { TileId = tileOnPlayer.TileId, GameId = gameId };
+        }
+
+        private Tile TileOnPlayerPersistanceToTileEntity(TileOnPlayerPersistance tileOnPlayer)
+            => new Tile(tileOnPlayer.TileId, tileOnPlayer.Tile.Color, tileOnPlayer.Tile.Form);
+
+        private Tile TilePersistanceToTileEntity(TilePersistance tilePersistance)
+            => new Tile(tilePersistance.Id, tilePersistance.Color, tilePersistance.Form);
+
+        private Board GamePersistanceBoardEntity(GamePersistance game)
+        {
+            var tilesOnBoard = DbContext.TilesOnBoard.Where(tb => tb.GameId == game.Id).ToList();
+            return new Board(game.Id, TilesOnBoardPersistanceToTilesEntities(tilesOnBoard));
         }
 
         private TileOnPlayerPersistance TileEntitiesToTilesOnPlayerPersistance(Tile tile, int playerId)

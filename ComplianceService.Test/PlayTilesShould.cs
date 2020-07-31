@@ -12,6 +12,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Qwirkle.Core.ComplianceContext.Tests
 {
@@ -33,15 +34,16 @@ namespace Qwirkle.Core.ComplianceContext.Tests
 
         public PlayTilesShould()
         {
-            Persistance = new CompliancePersistanceAdapter(Context(Guid.NewGuid().ToString()));
+            Persistance = new CompliancePersistanceAdapter(Context());
             ComplianceService = new ComplianceService(Persistance);
         }
 
-        private DefaultDbContext Context(string dbName)
+        private DefaultDbContext Context()
         {
             var contextOptions = new DbContextOptionsBuilder<DefaultDbContext>()
-                .UseInMemoryDatabase(databaseName: dbName)
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
+
             var dbContext = new DefaultDbContext(contextOptions);
             AddAllTiles(dbContext);
             AddUsers(dbContext);
@@ -51,6 +53,19 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             AddTilesOnBag(dbContext);
             return dbContext;
         }
+
+        private void AddAllTiles(DefaultDbContext dbContext)
+        {
+            const int NUMBER_OF_SAME_TILE = 3;
+            int id = 0;
+            for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
+                foreach (TileColor color in (TileColor[])Enum.GetValues(typeof(TileColor)))
+                    foreach (TileForm form in (TileForm[])Enum.GetValues(typeof(TileForm)))
+                        dbContext.Tiles.Add(new TilePersistance { Id = ++id, Color = color, Form = form });
+
+            dbContext.SaveChanges();
+        }
+
         private static void AddGames(DefaultDbContext dbContext)
         {
             dbContext.Games.Add(new GamePersistance { Id = GAME_ID, });
@@ -68,21 +83,10 @@ namespace Qwirkle.Core.ComplianceContext.Tests
 
         private static void AddPlayers(DefaultDbContext dbContext)
         {
-            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER9, UserId = USER71, GameId = GAME_ID });
-            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER3, UserId = USER21, GameId = GAME_ID });
-            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER8, UserId = USER3, GameId = GAME_ID });
-            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER14, UserId = USER14, GameId = GAME_ID });
-            dbContext.SaveChanges();
-        }
-        private void AddAllTiles(DefaultDbContext dbContext)
-        {
-            const int NUMBER_OF_SAME_TILE = 3;
-            int id = 0;
-            for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
-                foreach (TileColor color in (TileColor[])Enum.GetValues(typeof(TileColor)))
-                    foreach (TileForm form in (TileForm[])Enum.GetValues(typeof(TileForm)))
-                        dbContext.Tiles.Add(new TilePersistance { Id = ++id, Color = color, Form = form });
-
+            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER9, UserId = USER71, GameId = GAME_ID, GamePosition = 1, GameTurn = true });
+            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER3, UserId = USER21, GameId = GAME_ID, GamePosition = 2, GameTurn = false });
+            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER8, UserId = USER3, GameId = GAME_ID, GamePosition = 3, GameTurn = false });
+            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER14, UserId = USER14, GameId = GAME_ID, GamePosition = 4, GameTurn = false });
             dbContext.SaveChanges();
         }
 
@@ -136,6 +140,13 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         }
 
         [Fact]
+        public void Return0WhenItsNotTurnPlayer()
+        {
+            var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)> { (7, -4, 4), (8, -4, 3), (9, -4, 2) };
+            Assert.Equal(0, ComplianceService.PlayTiles(PLAYER3, tilesToPlay));
+        }
+
+        [Fact]
         public void Return0After1PlayerHavePlayedNotHisTiles()
         {
             var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)> { (7, -3, 4) };
@@ -147,7 +158,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         {
             var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)> { (1, -3, 4), (2, -3, 5), (3, -3, 6) };
             ComplianceService.PlayTiles(PLAYER9, tilesToPlay);
-            
+
             var tilesToPlay2 = new List<(int tileId, sbyte x, sbyte y)> { (7, -4, 4), (8, -4, 3), (9, -4, 2) };
             Assert.Equal(5, ComplianceService.PlayTiles(PLAYER3, tilesToPlay2));
         }
@@ -159,7 +170,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             ComplianceService.PlayTiles(PLAYER9, tilesToPlay);
             var tilesToPlay2 = new List<(int tileId, sbyte x, sbyte y)> { (7, -4, 4), (8, -4, 3), (9, -4, 2) };
             ComplianceService.PlayTiles(PLAYER3, tilesToPlay2);
-            
+
             var tilesToPlay3 = new List<(int tileId, sbyte x, sbyte y)> { (13, -2, 4), (14, -2, 3), (15, -2, 2) };
             Assert.Equal(6, ComplianceService.PlayTiles(PLAYER8, tilesToPlay3));
         }
@@ -173,7 +184,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             ComplianceService.PlayTiles(PLAYER3, tilesToPlay2);
             var tilesToPlay3 = new List<(int tileId, sbyte x, sbyte y)> { (13, -2, 4), (14, -2, 3), (15, -2, 2) };
             ComplianceService.PlayTiles(PLAYER8, tilesToPlay3);
-            
+
             var tilesToPlay4 = new List<(int tileId, sbyte x, sbyte y)> { (21, -3, 2), (20, -3, 1), (19, -3, 0) };
             Assert.Equal(6, ComplianceService.PlayTiles(PLAYER14, tilesToPlay4));
         }
