@@ -9,10 +9,10 @@ namespace Qwirkle.Web.Api.Controllers
     [Route("[controller]")]
     public class ComplianceController : ControllerBase
     {
-        private ILogger<BagController> Logger { get; }
+        private ILogger<ComplianceController> Logger { get; }
         private IRequestComplianceService IRequestComplianceService { get; }
 
-        public ComplianceController(ILogger<BagController> logger, IRequestComplianceService iRequestComplianceService)
+        public ComplianceController(ILogger<ComplianceController> logger, IRequestComplianceService iRequestComplianceService)
         {
             Logger = logger;
             IRequestComplianceService = iRequestComplianceService;

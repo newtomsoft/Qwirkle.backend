@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Qwirkle.Core.BagContext.Ports;
-using Qwirkle.Core.BagContext.Services;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.ComplianceContext.Services;
 using Qwirkle.Infra.Persistance;
@@ -26,8 +24,8 @@ namespace Qwirkle.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IBagPersistance, BagPersistanceAdapter>();
-            services.AddScoped<IRequestBagService, BagService>();
+            //services.AddScoped<IBagPersistance, BagPersistanceAdapter>();
+            //services.AddScoped<IRequestBagService, BagService>();
 
             services.AddScoped<ICompliancePersistance, CompliancePersistanceAdapter>();
             services.AddScoped<IRequestComplianceService, ComplianceService>();

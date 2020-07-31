@@ -14,15 +14,15 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         private ICompliancePersistance Persistance { get; }
 
-        public Board Board { get; set; }
+        public Game Game { get; set; }
 
         public ComplianceService(ICompliancePersistance persistance) => Persistance = persistance;
 
         public List<Player> CreateGame(List<int> usersIds)
         {
-            Board = Persistance.CreateBoard(DateTime.Now);
+            Game = Persistance.CreateGame(DateTime.Now);
             List<Player> players = CreatePlayers(usersIds);
-            Board.Players = players;
+            Game.Players = players;
             return players;
         }
 
@@ -40,7 +40,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!IsPlayerTurn(player)) return 0;
 
             List<Tile> tilesToPlay = GetTiles(tilesTupleToPlay);
-            GetBoard(player.GameId);
+            GetGame(player.GameId);
 
             if (!DoesThePlayerHaveThisTiles(player, tilesToPlay)) return 0;
 
@@ -56,7 +56,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!IsPlayerTurn(player)) return false;
 
             List<Tile> tilesToSwap = GetTiles(tilesIds);
-            GetBoard(player.GameId);
+            GetGame(player.GameId);
 
             if (!DoesThePlayerHaveThisTiles(player, tilesToSwap)) return false;
 
@@ -67,7 +67,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
         private List<Player> CreatePlayers(List<int> usersIds)
         {
             List<Player> players = new List<Player>();
-            usersIds.ForEach(userId => players.Add(Persistance.CreatePlayer(userId, Board.Id)));
+            usersIds.ForEach(userId => players.Add(Persistance.CreatePlayer(userId, Game.Id)));
             players = SetPositionsPlayers(players);
             players.ForEach(player => Persistance.UpdatePlayer(player));
             return players;
@@ -128,13 +128,13 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         public byte GetPlayPoints(List<Tile> tiles)
         {
-            if (Board.Tiles.Count == 0 && tiles.Count == 1) return 1;
+            if (Game.Tiles.Count == 0 && tiles.Count == 1) return 1;
 
             bool AreAllTilesIsolated = true;
             foreach (var tile in tiles)
                 if (IsTileIsolated(tile))
                     AreAllTilesIsolated = false;
-            if (Board.Tiles.Count > 0 && AreAllTilesIsolated) return 0;
+            if (Game.Tiles.Count > 0 && AreAllTilesIsolated) return 0;
 
             byte totalPoints;
             if ((totalPoints = CountTilesMakedValidRow(tiles)) == 0) return 0;
@@ -147,7 +147,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             foreach (var (TileId, X, Y) in tilesTupleToPlay)
             {
                 Tile tile = Persistance.GetTileById(TileId);
-                tile.Coordinates = new CoordinatesInBoard(X, Y);
+                tile.Coordinates = new CoordinatesInGame(X, Y);
                 tiles.Add(tile);
             }
             return tiles;
@@ -162,7 +162,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         private Player GetPlayerById(int playerId) => Persistance.GetPlayerById(playerId);
 
-        private void GetBoard(int GameId) => Board = Persistance.GetBoardByGameId(GameId);
+        private void GetGame(int GameId) => Game = Persistance.GetGameByGameId(GameId);
 
         private void SwapAndUpdateGame(Player player, List<Tile> tilesToSwap)
         {
@@ -177,19 +177,19 @@ namespace Qwirkle.Core.ComplianceContext.Services
         {
             player.Points += points;
             player.GameTurn = false;
-            Board.Tiles.AddRange(tilesToPlay);
+            Game.Tiles.AddRange(tilesToPlay);
             Persistance.UpdatePlayer(player);
             SetNextPlayerTurnToPlay(player.Id);
             Persistance.TilesFromBagToPlayer(player, tilesToPlay.Count);
-            Persistance.TilesFromPlayerToBoard(Board.Id, tilesToPlay);
+            Persistance.TilesFromPlayerToGame(Game.Id, tilesToPlay);
         }
 
         private void SetNextPlayerTurnToPlay(int playerId)
         {
-            int position = Board.Players.FirstOrDefault(p => p.Id == playerId).GamePosition;
-            int playersNumber = Board.Players.Count;
+            int position = Game.Players.FirstOrDefault(p => p.Id == playerId).GamePosition;
+            int playersNumber = Game.Players.Count;
             int nextPlayerPosition = position < playersNumber ? position + 1 : 1;
-            Player nexPlayer = Board.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
+            Player nexPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
             nexPlayer.GameTurn = true;
             Persistance.UpdatePlayer(nexPlayer);
         }
@@ -235,14 +235,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
         {
             var allTilesAlongReferenceTiles = tiles.ToList();
             var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
-            var tilesBetweenReference = Board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
+            var tilesBetweenReference = Game.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
             allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
-            var tilesRight = Board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
+            var tilesRight = Game.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
             var tilesRightConsecutive = tilesRight.FirstConsecutives(Direction.Right, max);
             allTilesAlongReferenceTiles.AddRange(tilesRightConsecutive);
 
-            var tilesLeft = Board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
+            var tilesLeft = Game.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
             var tilesLeftConsecutive = tilesLeft.FirstConsecutives(Direction.Left, min);
             allTilesAlongReferenceTiles.AddRange(tilesLeftConsecutive);
 
@@ -256,14 +256,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
         {
             var allTilesAlongReferenceTiles = tiles.ToList();
             var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
-            var tilesBetweenReference = Board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
+            var tilesBetweenReference = Game.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
             allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
-            var tilesUp = Board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
+            var tilesUp = Game.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
             var tilesUpConsecutive = tilesUp.FirstConsecutives(Direction.Top, max);
             allTilesAlongReferenceTiles.AddRange(tilesUpConsecutive);
 
-            var tilesBottom = Board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
+            var tilesBottom = Game.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
             var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
             allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
 
@@ -277,10 +277,10 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         private bool IsTileIsolated(Tile tile)
         {
-            var tileRight = Board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Right());
-            var tileLeft = Board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Left());
-            var tileTop = Board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Top());
-            var tileBottom = Board.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Bottom());
+            var tileRight = Game.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Right());
+            var tileLeft = Game.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Left());
+            var tileTop = Game.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Top());
+            var tileBottom = Game.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Bottom());
             return tileRight != null || tileLeft != null || tileTop != null || tileBottom != null;
         }
 

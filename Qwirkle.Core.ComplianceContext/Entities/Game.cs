@@ -3,24 +3,25 @@ using System.Linq;
 
 namespace Qwirkle.Core.ComplianceContext.Entities
 {
-    public class Board
+    public class Game
     {
         public int Id { get; }
         public List<Tile> Tiles { get; set; }
         public List<Player> Players { get; set; }
+        public Bag Bag { get; set; }
 
-        public Board(int id, List<Tile> tiles, List<Player> players = null)
+        public Game(int id, List<Tile> tiles, List<Player> players = null)
         {
             Id = id;
             Tiles = tiles;
             Players = players;
         }
 
-        public Board(Board board)
+        public Game(Game game)
         {
-            Id = board.Id;
-            Tiles = board.Tiles.ToList();
-            Players = board.Players;
+            Id = game.Id;
+            Tiles = game.Tiles.ToList();
+            Players = game.Players;
         }
     }
 }

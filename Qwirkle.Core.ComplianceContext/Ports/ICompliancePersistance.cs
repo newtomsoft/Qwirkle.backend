@@ -8,15 +8,15 @@ namespace Qwirkle.Core.ComplianceContext.Ports
     {
         bool IsPlayerTurn(int playerId);
         void SetPlayerTurn(int playerId, bool turn);
-        void TilesFromPlayerToBoard(int gameId, List<Tile> tiles);
+        void TilesFromPlayerToGame(int gameId, List<Tile> tiles);
         void UpdatePlayer(Player player);
         void TilesFromBagToPlayer(Player player, int tilesNumber);
         void TilesFromPlayerToBag(Player player, int tilesNumber);
         void TilesFromPlayerToBag(Player player, List<Tile> tiles);
-        Board GetBoardByGameId(int boardId);
+        Game GetGameByGameId(int gameId);
         Player GetPlayerById(int playerId);
         Tile GetTileById(int tileId);
-        Board CreateBoard(DateTime date);
+        Game CreateGame(DateTime date);
         Player CreatePlayer(int userId, int gameId);
     }
 }

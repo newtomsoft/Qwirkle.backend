@@ -8,7 +8,7 @@ namespace Qwirkle.Core.ComplianceContext.Entities
         public int Id { get; }
         public TileColor Color { get; }
         public TileForm Form { get; }
-        public CoordinatesInBoard Coordinates { get; set; }
+        public CoordinatesInGame Coordinates { get; set; }
 
         public Tile(int id, TileColor color, TileForm form)
         {
@@ -16,12 +16,12 @@ namespace Qwirkle.Core.ComplianceContext.Entities
             Color = color;
             Form = form;
         }
-        public Tile(int id, TileColor color, TileForm form, CoordinatesInBoard coordinates) : this(id, color, form)
+        public Tile(int id, TileColor color, TileForm form, CoordinatesInGame coordinates) : this(id, color, form)
         {
             Coordinates = coordinates;
         }
 
-        public Tile(TileColor color, TileForm form, CoordinatesInBoard coordinates) : this(0, color, form, coordinates)
+        public Tile(TileColor color, TileForm form, CoordinatesInGame coordinates) : this(0, color, form, coordinates)
         { }
 
         public Tile(TileColor color, TileForm form) : this(0, color, form)

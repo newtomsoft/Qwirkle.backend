@@ -9,7 +9,7 @@ namespace Qwirkle.Infra.Persistance
     {
         public DbSet<TilePersistance> Tiles { get; set; }
         public DbSet<TileOnBagPersistance> TilesOnBag { get; set; }
-        public DbSet<TileOnBoardPersistance> TilesOnBoard { get; set; }
+        public DbSet<TileOnGamePersistance> TilesOnGame { get; set; }
         public DbSet<TileOnPlayerPersistance> TilesOnPlayer { get; set; }
         public DbSet<GamePersistance> Games { get; set; }
         public override DbSet<UserPersistance> Users { get; set; } // todo override à vérifier

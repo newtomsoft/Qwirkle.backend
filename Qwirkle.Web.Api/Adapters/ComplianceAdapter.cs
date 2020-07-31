@@ -12,9 +12,9 @@ namespace Qwirkle.Web.Api.Adapters
             _compliancePersistance = compliancePersistance;
         }
 
-        //public int PlayTiles(Board board, Player player, List<Tile> tilesToRemove, List<Tile> tilesToReplace)
+        //public int PlayTiles(Game game, Player player, List<Tile> tilesToRemove, List<Tile> tilesToReplace)
         //{
-        //    _compliancePersistance.UpdatePlayer(board, player, tilesToRemove, tilesToReplace);
+        //    _compliancePersistance.UpdatePlayer(game, player, tilesToRemove, tilesToReplace);
 
 
         //    return 1;

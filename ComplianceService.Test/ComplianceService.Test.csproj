@@ -21,8 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Qwirkle.Core.BagContext\Qwirkle.Core.BagContext.csproj" />
-    <ProjectReference Include="..\Qwirkle.Core.BoardContext\Qwirkle.Core.BoardContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Infra.Persistance\Qwirkle.Infra.Persistance.csproj" />
   </ItemGroup>

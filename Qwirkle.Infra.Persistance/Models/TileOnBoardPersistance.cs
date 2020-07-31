@@ -2,8 +2,8 @@
 
 namespace Qwirkle.Infra.Persistance.Models
 {
-    [Table("TileOnBoard")]
-    public class TileOnBoardPersistance
+    [Table("TileOnGame")]
+    public class TileOnGamePersistance
     {
         public int Id { get; set; }
         public int TileId { get; set; }

@@ -1,12 +1,9 @@
 using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.ValueObjects;
-using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Infra.Persistance;
 using Qwirkle.Infra.Persistance.Adapters;
 using Qwirkle.Infra.Persistance.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -63,7 +60,7 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
             var tilesIds = DbContext.Tiles.Select(t => t.Id).ToList();
             for (int i = 1; i <= number; i++)
             {
-                DbContext.TilesOnBag.Add(new TileOnBagPersistance {GameId = gameId, TileId = tilesIds[i] });
+                DbContext.TilesOnBag.Add(new TileOnBagPersistance { GameId = gameId, TileId = tilesIds[i] });
             }
             DbContext.SaveChanges();
         }
@@ -81,11 +78,11 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
         }
 
         [Fact]
-        public void CreateBoardShould()
+        public void CreateGameShould()
         {
-            var board = Persistance.CreateBoard(DateTime.Today);
-            Assert.Empty(board.Tiles);
-            Assert.Empty(board.Players);
+            var game = Persistance.CreateGame(DateTime.Today);
+            Assert.Empty(game.Tiles);
+            Assert.Empty(game.Players);
         }
 
         [Fact]
@@ -93,8 +90,8 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
         {
             byte points = 10;
             byte position = 2;
-            var board = Persistance.CreateBoard(DateTime.Today);
-            var player1 = Persistance.CreatePlayer(USER1, board.Id);
+            var game = Persistance.CreateGame(DateTime.Today);
+            var player1 = Persistance.CreatePlayer(USER1, game.Id);
             player1.Points = points;
             player1.GameTurn = true;
             player1.GamePosition = position;
@@ -109,8 +106,8 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
         [Fact]
         public void TilesFromBagToPlayerShouldNotGiveTileIfBagIsEmpty()
         {
-            var board = Persistance.CreateBoard(DateTime.Today);
-            var player = Persistance.CreatePlayer(USER1, board.Id);
+            var game = Persistance.CreateGame(DateTime.Today);
+            var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, 6);
             var playerUpdate = Persistance.GetPlayerById(player.Id);
             Assert.Empty(playerUpdate.Tiles);
@@ -121,9 +118,9 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
         public void TilesFromBagToPlayerShouldGiveTilesIfBagContainEnoughTiles()
         {
             int TilesNumberToAdd = 3;
-            var board = Persistance.CreateBoard(DateTime.Today);
-            AddTilesOnBag(board.Id, TilesNumberToAdd);
-            var player = Persistance.CreatePlayer(USER1, board.Id);
+            var game = Persistance.CreateGame(DateTime.Today);
+            AddTilesOnBag(game.Id, TilesNumberToAdd);
+            var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToAdd);
             var playerUpdate = Persistance.GetPlayerById(player.Id);
             Assert.Equal(TilesNumberToAdd, playerUpdate.Tiles.Count);
@@ -134,9 +131,9 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
         {
             int TilesNumberToAddInBag = 10;
             int TilesNumberToRequest = 2;
-            var board = Persistance.CreateBoard(DateTime.Today);
-            AddTilesOnBag(board.Id, TilesNumberToAddInBag);
-            var player = Persistance.CreatePlayer(USER1, board.Id);
+            var game = Persistance.CreateGame(DateTime.Today);
+            AddTilesOnBag(game.Id, TilesNumberToAddInBag);
+            var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToRequest);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToRequest);
             var playerUpdate = Persistance.GetPlayerById(player.Id);
@@ -148,9 +145,9 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
         {
             int TilesNumberToAddInBag = 10;
             int TilesNumberToRequest = 2;
-            var board = Persistance.CreateBoard(DateTime.Today);
-            AddTilesOnBag(board.Id, TilesNumberToAddInBag);
-            var player = Persistance.CreatePlayer(USER1, board.Id);
+            var game = Persistance.CreateGame(DateTime.Today);
+            AddTilesOnBag(game.Id, TilesNumberToAddInBag);
+            var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToRequest);
             Persistance.TilesFromPlayerToBag(player, TilesNumberToRequest);
             var playerUpdate = Persistance.GetPlayerById(player.Id);
@@ -158,29 +155,29 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
         }
 
         [Fact]
-        public void GetBoardByGameIdShouldContainPlayer()
+        public void GetGameByGameIdShouldContainPlayer()
         {
             int TilesNumberToAddInBag = 10;
-            var board = Persistance.CreateBoard(DateTime.Today);
-            AddTilesOnBag(board.Id, TilesNumberToAddInBag);
-            var player1 = Persistance.CreatePlayer(USER1, board.Id);
-            var player2 = Persistance.CreatePlayer(USER2, board.Id);
-            var player3 = Persistance.CreatePlayer(USER3, board.Id);
-            var player4 = Persistance.CreatePlayer(USER4, board.Id);
-            var boardUpdate = Persistance.GetBoardByGameId(board.Id);
-            Assert.Contains(player1.Id, boardUpdate.Players.Select(p => p.Id));
-            Assert.Contains(player2.Id, boardUpdate.Players.Select(p => p.Id));
-            Assert.Contains(player3.Id, boardUpdate.Players.Select(p => p.Id));
-            Assert.Contains(player4.Id, boardUpdate.Players.Select(p => p.Id));
+            var game = Persistance.CreateGame(DateTime.Today);
+            AddTilesOnBag(game.Id, TilesNumberToAddInBag);
+            var player1 = Persistance.CreatePlayer(USER1, game.Id);
+            var player2 = Persistance.CreatePlayer(USER2, game.Id);
+            var player3 = Persistance.CreatePlayer(USER3, game.Id);
+            var player4 = Persistance.CreatePlayer(USER4, game.Id);
+            var gameUpdate = Persistance.GetGameByGameId(game.Id);
+            Assert.Contains(player1.Id, gameUpdate.Players.Select(p => p.Id));
+            Assert.Contains(player2.Id, gameUpdate.Players.Select(p => p.Id));
+            Assert.Contains(player3.Id, gameUpdate.Players.Select(p => p.Id));
+            Assert.Contains(player4.Id, gameUpdate.Players.Select(p => p.Id));
         }
         [Fact]
-        public void GetBoardByGameIdShouldContainPlayer2()
+        public void GetGameByGameIdShouldContainPlayer2()
         {
             int TilesNumberToAddInBag = 10;
-            var board = Persistance.CreateBoard(DateTime.Today);
-            AddTilesOnBag(board.Id, TilesNumberToAddInBag);
-            var boardUpdate = Persistance.GetBoardByGameId(board.Id);
-            Assert.Equal(TilesNumberToAddInBag, boardUpdate.Tiles.Count);
+            var game = Persistance.CreateGame(DateTime.Today);
+            AddTilesOnBag(game.Id, TilesNumberToAddInBag);
+            var gameUpdate = Persistance.GetGameByGameId(game.Id);
+            Assert.Equal(TilesNumberToAddInBag, gameUpdate.Tiles.Count);
         }
 
         [Fact]
@@ -189,18 +186,18 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
             int TilesNumberToAddInBag = 10;
             int TilesNumberToRequestFromBag = 2;
             int TilesNumberToRequestFromPlayer = 3;
-            var board = Persistance.CreateBoard(DateTime.Today);
-            AddTilesOnBag(board.Id, TilesNumberToAddInBag);
-            var player = Persistance.CreatePlayer(USER1, board.Id);
+            var game = Persistance.CreateGame(DateTime.Today);
+            AddTilesOnBag(game.Id, TilesNumberToAddInBag);
+            var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToRequestFromBag);
             Persistance.TilesFromPlayerToBag(player, TilesNumberToRequestFromPlayer);
             var playerUpdate = Persistance.GetPlayerById(player.Id);
-            //var boardUpdate = Persistance.GetBoardByGameId(board.Id);
+            //var gameUpdate = Persistance.GetGameByGameId(game.Id);
             Assert.Empty(playerUpdate.Tiles);
-            //Assert.Equal(TilesNumberToAddInBag, boardUpdate.Tiles.Count);
+            //Assert.Equal(TilesNumberToAddInBag, gameUpdate.Tiles.Count);
         }
 
 
-        
+
     }
 }
