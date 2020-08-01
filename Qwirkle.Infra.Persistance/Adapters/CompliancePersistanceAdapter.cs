@@ -145,7 +145,7 @@ namespace Qwirkle.Infra.Persistance.Adapters
         private PlayerPersistance PlayerToPlayerPersistance(Player player) // ! Ne retourne pas les Tiles
         {
             var gamePlayerPersistance = DbContext.Players.Where(gp => gp.Id == player.Id).FirstOrDefault();
-            gamePlayerPersistance.Points = player.Points;
+            gamePlayerPersistance.Points = (byte)player.Points;
             gamePlayerPersistance.GameTurn = player.GameTurn;
             gamePlayerPersistance.GamePosition = player.GamePosition;
             return gamePlayerPersistance;

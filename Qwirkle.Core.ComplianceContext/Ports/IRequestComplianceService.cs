@@ -1,4 +1,5 @@
 ﻿using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.ValueObjects;
 using System.Collections.Generic;
 
 namespace Qwirkle.Core.ComplianceContext.Ports
@@ -6,6 +7,6 @@ namespace Qwirkle.Core.ComplianceContext.Ports
     public interface IRequestComplianceService
     {
         List<Player> CreateGame(List<int> usersIds);
-        int PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay);
+        PlayReturn PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay);
     }
 }

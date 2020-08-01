@@ -121,9 +121,8 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         private void AddTilesOnBag(DefaultDbContext dbContext)
         {
             for (int i = 1; i <= TOTAL_TILES; i++)
-            {
                 dbContext.TilesOnBag.Add(new TileOnBagPersistance { Id = 100 + i, GameId = GAME_ID, TileId = i });
-            }
+
             dbContext.SaveChanges();
         }
 
@@ -131,21 +130,21 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         public void Return3After1PlayerHavePlayedHisTiles()
         {
             var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)> { (1, -3, 4), (2, -3, 5), (3, -3, 6) };
-            Assert.Equal(3, ComplianceService.PlayTiles(PLAYER9, tilesToPlay));
+            Assert.Equal(3, ComplianceService.PlayTiles(PLAYER9, tilesToPlay).Points);
         }
 
         [Fact]
         public void Return0WhenItsNotTurnPlayer()
         {
             var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)> { (7, -4, 4), (8, -4, 3), (9, -4, 2) };
-            Assert.Equal(0, ComplianceService.PlayTiles(PLAYER3, tilesToPlay));
+            Assert.Equal(0, ComplianceService.PlayTiles(PLAYER3, tilesToPlay).Points);
         }
 
         [Fact]
         public void Return0After1PlayerHavePlayedNotHisTiles()
         {
             var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)> { (7, -3, 4) };
-            Assert.Equal(0, ComplianceService.PlayTiles(PLAYER9, tilesToPlay));
+            Assert.Equal(0, ComplianceService.PlayTiles(PLAYER9, tilesToPlay).Points);
         }
 
         [Fact]
@@ -155,7 +154,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             ComplianceService.PlayTiles(PLAYER9, tilesToPlay);
 
             var tilesToPlay2 = new List<(int tileId, sbyte x, sbyte y)> { (7, -4, 4), (8, -4, 3), (9, -4, 2) };
-            Assert.Equal(5, ComplianceService.PlayTiles(PLAYER3, tilesToPlay2));
+            Assert.Equal(5, ComplianceService.PlayTiles(PLAYER3, tilesToPlay2).Points);
         }
 
         [Fact]
@@ -167,7 +166,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             ComplianceService.PlayTiles(PLAYER3, tilesToPlay2);
 
             var tilesToPlay3 = new List<(int tileId, sbyte x, sbyte y)> { (13, -2, 4), (14, -2, 3), (15, -2, 2) };
-            Assert.Equal(6, ComplianceService.PlayTiles(PLAYER8, tilesToPlay3));
+            Assert.Equal(6, ComplianceService.PlayTiles(PLAYER8, tilesToPlay3).Points);
         }
 
         [Fact]
@@ -181,7 +180,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             ComplianceService.PlayTiles(PLAYER8, tilesToPlay3);
 
             var tilesToPlay4 = new List<(int tileId, sbyte x, sbyte y)> { (21, -3, 2), (20, -3, 1), (19, -3, 0) };
-            Assert.Equal(6, ComplianceService.PlayTiles(PLAYER14, tilesToPlay4));
+            Assert.Equal(6, ComplianceService.PlayTiles(PLAYER14, tilesToPlay4).Points);
         }
 
         [Fact]
@@ -197,7 +196,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             ComplianceService.PlayTiles(PLAYER14, tilesToPlay4);
 
             var tilesToPlay5 = new List<(int tileId, sbyte x, sbyte y)> { (4, -3, 2), (5, -3, 1), (6, -3, 0) };
-            Assert.Equal(0, ComplianceService.PlayTiles(PLAYER9, tilesToPlay5));
+            Assert.Equal(0, ComplianceService.PlayTiles(PLAYER9, tilesToPlay5).Points);
         }
 
     }

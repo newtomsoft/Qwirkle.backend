@@ -2,6 +2,7 @@
 using Qwirkle.Core.CommonContext.ValueObjects;
 using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
+using Qwirkle.Core.ComplianceContext.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,9 @@ namespace Qwirkle.Core.ComplianceContext.Services
     public class ComplianceService : IRequestComplianceService
     {
         private const int TILES_NUMBER_PER_PLAYER = 6;
+        private const int TILES_NUMBER_FOR_A_QWIRKLE = 6;
+        private const int POINTS_FOR_A_QWIRKLE = 12;
+
 
         private ICompliancePersistance Persistance { get; }
 
@@ -29,22 +33,22 @@ namespace Qwirkle.Core.ComplianceContext.Services
             RefreshPlayers(players);
             SelectFirstPlayer(players);
             return players;
-        }    
+        }
 
-        public int PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
+        public PlayReturn PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
             Player player = GetPlayer(playerId);
-            if (!IsPlayerTurn(player)) return 0;
+            if (!IsPlayerTurn(player)) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn };
 
             List<Tile> tilesToPlay = GetTiles(tilesTupleToPlay);
             GetGame(player.GameId);
 
-            if (!DoesThePlayerHaveThisTiles(player, tilesToPlay)) return 0;
+            if (!DoesThePlayerHaveThisTiles(player, tilesToPlay)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile };
 
-            byte points;
-            if ((points = GetPlayPoints(tilesToPlay)) == 0) return 0;
-            PlayAndUpdateGame(player, tilesToPlay, points);
-            return points;
+            PlayReturn playReturn = GetPlayReturn(tilesToPlay);
+            if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
+            PlayAndUpdateGame(player, tilesToPlay, playReturn.Points);
+            return playReturn;
         }
 
         public bool SwapTiles(int playerId, List<int> tilesIds)
@@ -124,19 +128,19 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tilesIdToPlay.All(id => playerTilesId.Contains(id));
         }
 
-        public byte GetPlayPoints(List<Tile> tiles)
+        public PlayReturn GetPlayReturn(List<Tile> tiles)
         {
-            if (Game.Tiles.Count == 0 && tiles.Count == 1) return 1;
+            if (Game.Tiles.Count == 0 && tiles.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, Tile = tiles[0] };
 
             bool AreAllTilesIsolated = true;
             foreach (var tile in tiles)
                 if (IsTileIsolated(tile))
                     AreAllTilesIsolated = false;
-            if (Game.Tiles.Count > 0 && AreAllTilesIsolated) return 0;
+            if (Game.Tiles.Count > 0 && AreAllTilesIsolated) return new PlayReturn { Code = PlayReturnCode.TileIsolated, Points = 0 };
 
-            byte totalPoints;
-            if ((totalPoints = CountTilesMakedValidRow(tiles)) == 0) return 0;
-            return totalPoints;
+            int totalPoints;
+            if ((totalPoints = CountTilesMakedValidRow(tiles)) == 0) return new PlayReturn { Code = PlayReturnCode.TilesDontMakedValidRow };
+            return new PlayReturn { Code = PlayReturnCode.Ok, Points = totalPoints };
         }
 
         private List<Tile> GetTiles(List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
@@ -167,13 +171,13 @@ namespace Qwirkle.Core.ComplianceContext.Services
             SetPlayerTurn(player.Id, false);
             //player.GameTurn = false;
             //Persistance.UpdatePlayer(player);
-            
+
             SetNextPlayerTurnToPlay(player.Id);
             Persistance.TilesFromBagToPlayer(player, tilesToSwap.Count);
             Persistance.TilesFromPlayerToBag(player, tilesToSwap);
         }
 
-        private void PlayAndUpdateGame(Player player, List<Tile> tilesToPlay, byte points)
+        private void PlayAndUpdateGame(Player player, List<Tile> tilesToPlay, int points)
         {
             player.Points += points;
             player.GameTurn = false;
@@ -194,13 +198,13 @@ namespace Qwirkle.Core.ComplianceContext.Services
             Persistance.UpdatePlayer(nexPlayer);
         }
 
-        private byte CountTilesMakedValidRow(List<Tile> tiles)
+        private int CountTilesMakedValidRow(List<Tile> tiles)
         {
             if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
                 return 0;
 
-            byte tatalPoints = 0;
-            byte points = 0;
+            int tatalPoints = 0;
+            int points = 0;
             if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) == tiles.Count)
             {
                 if ((points = CountTilesMakedValidLine(tiles)) == 0) return 0;
@@ -231,7 +235,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tatalPoints;
         }
 
-        private byte CountTilesMakedValidLine(List<Tile> tiles)
+        private int CountTilesMakedValidLine(List<Tile> tiles)
         {
             var allTilesAlongReferenceTiles = tiles.ToList();
             var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
@@ -249,10 +253,10 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
                 return 0;
 
-            return (byte)(allTilesAlongReferenceTiles.Count != 6 ? allTilesAlongReferenceTiles.Count : 12);
+            return (allTilesAlongReferenceTiles.Count != TILES_NUMBER_FOR_A_QWIRKLE ? allTilesAlongReferenceTiles.Count : POINTS_FOR_A_QWIRKLE);
         }
 
-        private byte CountTilesMakedValidColumn(List<Tile> tiles)
+        private int CountTilesMakedValidColumn(List<Tile> tiles)
         {
             var allTilesAlongReferenceTiles = tiles.ToList();
             var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
@@ -270,7 +274,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
                 return 0;
 
-            return (byte)(allTilesAlongReferenceTiles.Count != 6 ? allTilesAlongReferenceTiles.Count : 12);
+            return allTilesAlongReferenceTiles.Count != TILES_NUMBER_FOR_A_QWIRKLE ? allTilesAlongReferenceTiles.Count : POINTS_FOR_A_QWIRKLE;
         }
 
         private static bool AreNumbersConsecutive(List<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
@@ -291,7 +295,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             => Persistance.IsPlayerTurn(playerId);
 
         private void SetPlayerTurn(int playerId, bool turn)
-        {    
+        {
             Persistance.SetPlayerTurn(playerId, turn);
             Game.Players.FirstOrDefault(p => p.Id == playerId).GameTurn = turn;
         }
