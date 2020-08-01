@@ -19,5 +19,7 @@ namespace Qwirkle.Web.Api.Adapters
 
         //    return 1;
         //}
+
+
     }
 }

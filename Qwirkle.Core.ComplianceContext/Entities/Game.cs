@@ -10,11 +10,12 @@ namespace Qwirkle.Core.ComplianceContext.Entities
         public List<Player> Players { get; set; }
         public Bag Bag { get; set; }
 
-        public Game(int id, List<Tile> tiles, List<Player> players = null)
+        public Game(int id, List<Tile> tiles, List<Player> players, Bag bag = null)
         {
             Id = id;
             Tiles = tiles;
             Players = players;
+            Bag = bag;
         }
 
         public Game(Game game)
@@ -22,6 +23,7 @@ namespace Qwirkle.Core.ComplianceContext.Entities
             Id = game.Id;
             Tiles = game.Tiles.ToList();
             Players = game.Players;
+            Bag = game.Bag;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         [Fact]
         public void ReturnNumberOfTilesWhenGameIsEmptyAndTilesMakeRow()
         {
-            ComplianceService.Game = new Game(1, new List<Tile>());
+            ComplianceService.Game = new Game(1, new List<Tile>(), new List<Player>());
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(1, 5)) }));
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(13, 69)), new Tile(TileColor.Purple, TileForm.Ring, new CoordinatesInGame(12, 69)) }));
             Assert.Equal(1, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(1, 5)) }));
@@ -25,7 +25,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         [Fact]
         public void Return0WhenGameIsEmptyAndTilesNotInRow()
         {
-            ComplianceService.Game = new Game(1, new List<Tile>());
+            ComplianceService.Game = new Game(1, new List<Tile>(), new List<Player>());
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(1, 5)), new Tile(TileColor.Purple, TileForm.Ring, new CoordinatesInGame(2, 4)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(8, 12)), new Tile(TileColor.Yellow, TileForm.Ring, new CoordinatesInGame(9, 12)), new Tile(TileColor.Purple, TileForm.Ring, new CoordinatesInGame(6, 12)) }));
         }
@@ -33,12 +33,12 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         [Fact]
         public void Return0WhenTilesAreInTheSamePlace()
         {
-            ComplianceService.Game = new Game(1, new List<Tile>());
+            ComplianceService.Game = new Game(1, new List<Tile>(), new List<Player>());
 
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInGame(6, -3)), new Tile(TileColor.Green, TileForm.Star4, new CoordinatesInGame(6, -3)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInGame(6, -3)), new Tile(TileColor.Green, TileForm.Star4, new CoordinatesInGame(6, -3)), new Tile(TileColor.Green, TileForm.Shape, new CoordinatesInGame(5, -3)) }));
 
-            ComplianceService.Game = new Game(1, new List<Tile> { new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)), });
+            ComplianceService.Game = new Game(1, new List<Tile> { new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)), }, new List<Player>());
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInGame(6, -3)), new Tile(TileColor.Green, TileForm.Star4, new CoordinatesInGame(6, -3)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInGame(6, -3)), new Tile(TileColor.Green, TileForm.Star4, new CoordinatesInGame(6, -3)), new Tile(TileColor.Green, TileForm.Shape, new CoordinatesInGame(5, -3)) }));
         }
@@ -48,7 +48,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         {
             ComplianceService.Game = new Game(1, new List<Tile> {
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)),
-            });
+            }, new List<Player>());
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(8, -3)) }));
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -3)) }));
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -4)) }));
@@ -71,7 +71,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Blue, TileForm.Ring, coordinatesNotFree2),
                 new Tile(TileColor.Blue, TileForm.Ring, coordinatesNotFree3),
                 new Tile(TileColor.Blue, TileForm.Ring, coordinatesNotFree4),
-            });
+            }, new List<Player>());
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Shape, coordinatesNotFree1) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Shape, coordinatesNotFree2) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Shape, coordinatesNotFree3) }));
@@ -84,7 +84,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             ComplianceService.Game = new Game(1, new List<Tile> {
                 new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(0, 0)),
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)),
-            });
+            }, new List<Player>());
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Shape, new CoordinatesInGame(1, 7)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Shape, new CoordinatesInGame(-1, 9)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Shape, new CoordinatesInGame(0, 2)) }));
@@ -105,7 +105,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -5)),
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)),
-            });
+            }, new List<Player>());
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(0, 3)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(0, -1)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Green, TileForm.Star8, new CoordinatesInGame(0, 3)) }));
@@ -123,7 +123,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -5)),
                 new Tile(TileColor.Blue, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Orange, TileForm.Square, new CoordinatesInGame(7, -3)),
-            });
+            }, new List<Player>());
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -6)) }));
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Red, TileForm.Square, new CoordinatesInGame(7, -2)) }));
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -2)) }));
@@ -142,7 +142,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(9, -4)),
-            });
+            }, new List<Player>());
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(-1, 0)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(3, 0)) }));
             Assert.Equal(0, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Green, TileForm.Star8, new CoordinatesInGame(-1, 0)) }));
@@ -160,7 +160,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new Tile(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            });
+            }, new List<Player>());
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -4)) }));
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Red, TileForm.Square, new CoordinatesInGame(10, -4)) }));
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }));
@@ -177,7 +177,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new Tile(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            });
+            }, new List<Player>());
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(9, -5)) }));
             Assert.Equal(2, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(9, -5)) }));
         }
@@ -189,7 +189,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new Tile(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            });
+            }, new List<Player>());
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(10, -4)), new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(11, -4)) }));
             Assert.Equal(5, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(10, -4)), new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(11, -4)) }));
         }
@@ -201,7 +201,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new Tile(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            });
+            }, new List<Player>());
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(11, -4)), new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }));
             Assert.Equal(5, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(11, -4)), new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }));
         }
@@ -213,7 +213,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             new Tile(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new Tile(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            });
+            }, new List<Player>());
             Assert.True(0 < ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Yellow, TileForm.Trefail, new CoordinatesInGame(10, -5)), new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)), new Tile(TileColor.Yellow, TileForm.Star8, new CoordinatesInGame(10, -3)) }));
             Assert.Equal(7, ComplianceService.GetPlayPoints(new List<Tile> { new Tile(TileColor.Yellow, TileForm.Trefail, new CoordinatesInGame(10, -5)), new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)), new Tile(TileColor.Yellow, TileForm.Star8, new CoordinatesInGame(10, -3)) }));
         }
@@ -228,7 +228,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Purple, TileForm.Star4, new CoordinatesInGame(10, -4)),
                 new Tile(TileColor.Purple, TileForm.Star8, new CoordinatesInGame(11, -4)),
                 new Tile(TileColor.Purple, TileForm.Trefail, new CoordinatesInGame(12, -4)),
-            });
+            }, new List<Player>());
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -3)),
                 new Tile(TileColor.Yellow, TileForm.Ring, new CoordinatesInGame(8, -3)),
@@ -251,7 +251,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Purple, TileForm.Star4, new CoordinatesInGame(10, -4)),
                 new Tile(TileColor.Purple, TileForm.Star8, new CoordinatesInGame(11, -4)),
                 new Tile(TileColor.Purple, TileForm.Trefail, new CoordinatesInGame(12, -4)),
-            });
+            }, new List<Player>());
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -3)),
                 new Tile(TileColor.Yellow, TileForm.Ring, new CoordinatesInGame(8, -3)),
@@ -268,7 +268,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         {
             ComplianceService.Game = new Game(1, new List<Tile> {
                 new Tile(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -4)),
-            });
+            }, new List<Player>());
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -3)),
                 new Tile(TileColor.Purple, TileForm.Ring, new CoordinatesInGame(8, -4)),
@@ -284,7 +284,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Purple, TileForm.Star4, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Purple, TileForm.Trefail, new CoordinatesInGame(7, -1)),
                 new Tile(TileColor.Purple, TileForm.Shape, new CoordinatesInGame(7, 0)),
-            });
+            }, new List<Player>());
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Purple, TileForm.Star8, new CoordinatesInGame(7, 1)),
                 new Tile(TileColor.Purple, TileForm.Ring, new CoordinatesInGame(7, -5)),
@@ -300,7 +300,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Purple, TileForm.Star4, new CoordinatesInGame(-4, 7)),
                 new Tile(TileColor.Purple, TileForm.Trefail, new CoordinatesInGame(-1,7)),
                 new Tile(TileColor.Purple, TileForm.Shape, new CoordinatesInGame(0, 7)),
-            });
+            }, new List<Player>());
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Purple, TileForm.Star8, new CoordinatesInGame(1, 7)),
                 new Tile(TileColor.Purple, TileForm.Ring, new CoordinatesInGame(-5, 7)),
@@ -321,7 +321,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Purple, TileForm.Star4, new CoordinatesInGame(7, -4)),
                 new Tile(TileColor.Purple, TileForm.Trefail, new CoordinatesInGame(7, -1)),
                 new Tile(TileColor.Purple, TileForm.Shape, new CoordinatesInGame(7, 0)),
-            });
+            }, new List<Player>());
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Purple, TileForm.Star8, new CoordinatesInGame(7, -2)),
                 new Tile(TileColor.Purple, TileForm.Ring, new CoordinatesInGame(7, -5)),
@@ -344,7 +344,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Yellow, TileForm.Trefail, new CoordinatesInGame(16, 3)),
                 new Tile(TileColor.Yellow, TileForm.Star8, new CoordinatesInGame(13, 3)),
                 new Tile(TileColor.Yellow, TileForm.Star4, new CoordinatesInGame(17, 3)),
-            });
+            }, new List<Player>());
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Yellow, TileForm.Shape, new CoordinatesInGame(15, 3)),
                 new Tile(TileColor.Yellow, TileForm.Ring, new CoordinatesInGame(18, 3)),
@@ -366,7 +366,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Blue, TileForm.Star4, new CoordinatesInGame(7, 2)),
                 new Tile(TileColor.Blue, TileForm.Shape, new CoordinatesInGame(7, 1)),
                 new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInGame(7, -1)),
-            });
+            }, new List<Player>());
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(7, 0)),
             };
@@ -380,7 +380,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
                 new Tile(TileColor.Blue, TileForm.Star4, new CoordinatesInGame(2, 7)),
                 new Tile(TileColor.Blue, TileForm.Shape, new CoordinatesInGame(1, 7)),
                 new Tile(TileColor.Green, TileForm.Ring, new CoordinatesInGame(-1, 7)),
-            });
+            }, new List<Player>());
             var tilesTested = new List<Tile> {
                 new Tile(TileColor.Blue, TileForm.Ring, new CoordinatesInGame(0, 7)),
             };

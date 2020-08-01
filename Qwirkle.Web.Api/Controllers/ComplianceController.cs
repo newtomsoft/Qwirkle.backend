@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Qwirkle.Core.ComplianceContext.Ports;
+using Qwirkle.Web.Api.VueModels;
 using System.Collections.Generic;
 
 namespace Qwirkle.Web.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("Games")]
     public class ComplianceController : ControllerBase
     {
         private ILogger<ComplianceController> Logger { get; }
@@ -18,18 +19,24 @@ namespace Qwirkle.Web.Api.Controllers
             IRequestComplianceService = iRequestComplianceService;
         }
 
-        [HttpGet("{playerId}/PlayTiles")]
-        public int PlayTiles(int playerId) // todo complete
+        [HttpPost("")]
+        public ActionResult<int> CreateGame(List<int> usersIds)
+        {
+            Logger.LogInformation($"CreateGame with {usersIds}");
+            var players = IRequestComplianceService.CreateGame(usersIds);
+            return new ObjectResult(players);
+        }
+
+        [HttpPost("PlayTiles/")]
+        public ActionResult<int> PlayTiles(List<TileVM> tiles)
         {
             Logger.LogInformation("controller call");
 
+            var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)>();
+            tiles.ForEach(t => tilesToPlay.Add((t.TileId, t.X, t.Y)));
+            IRequestComplianceService.PlayTiles(tiles[0].PlayerId, tilesToPlay);
 
-            (int tileId, sbyte x, sbyte y) tuple1 = (1, -3, 4);
-            (int tileId, sbyte x, sbyte y) tuple2 = (2, -3, 5);
-            var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)> { tuple1, tuple2 };
-
-
-            return IRequestComplianceService.PlayTiles(playerId, tilesToPlay);
+            return new ObjectResult(tiles); //todo
         }
     }
 }

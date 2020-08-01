@@ -1,4 +1,6 @@
-﻿using Qwirkle.Core.CommonContext.ValueObjects;
+﻿using Microsoft.EntityFrameworkCore;
+using Qwirkle.Core.CommonContext;
+using Qwirkle.Core.CommonContext.ValueObjects;
 using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Infra.Persistance.Models;
@@ -12,9 +14,22 @@ namespace Qwirkle.Infra.Persistance.Adapters
     {
         private DefaultDbContext DbContext { get; }
 
+        private const int TOTAL_TILES = 108;
+
         public CompliancePersistanceAdapter(DefaultDbContext defaultDbContext)
         {
             DbContext = defaultDbContext;
+        }
+
+        public void CreateTiles(int gameId)
+        {
+            AddAllTilesInDataBase();
+
+            var tilesIds = DbContext.Tiles.Select(t => t.Id).ToList();
+            for (int i = 0; i < TOTAL_TILES; i++)
+                DbContext.TilesOnBag.Add(new TileOnBagPersistance { GameId = gameId, TileId = tilesIds[i] });
+
+            DbContext.SaveChanges();
         }
 
         public Player CreatePlayer(int userId, int gameId)
@@ -34,12 +49,9 @@ namespace Qwirkle.Infra.Persistance.Adapters
         }
 
         public Tile GetTileById(int tileId)
-        {
-            var tilePersistance = DbContext.Tiles.Where(t => t.Id == tileId).FirstOrDefault();
-            return TilePersistanceToTile(tilePersistance);
-        }
+            => TilePersistanceToTile(DbContext.Tiles.Where(t => t.Id == tileId).FirstOrDefault());
 
-        public Game GetGameByGameId(int gameId)
+        public Game GetGame(int gameId)
         {
             var gamePersistance = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
             var tilesOnGamePersistance = DbContext.TilesOnGame.Where(tb => tb.GameId == gameId).ToList();
@@ -47,15 +59,21 @@ namespace Qwirkle.Infra.Persistance.Adapters
             var playersPersistance = DbContext.Players.Where(p => p.GameId == gameId).ToList();
             var players = new List<Player>();
             playersPersistance.ForEach(player => players.Add(PlayerPersistanceToPlayer(player)));
-            return new Game(gamePersistance.Id, tiles, players);
+            var tilesOnBag = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
+            Bag bag = new Bag { Id = gameId, Tiles = new List<Tile>() };
+            tilesOnBag.ForEach(t => bag.Tiles.Add(TileOnBagToTile(t)));
+            return new Game(gamePersistance.Id, tiles, players, bag);
         }
 
         public Player GetPlayerById(int playerId)
         {
             var player = PlayerPersistanceToPlayer(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
-            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(x => x.PlayerId == playerId).ToList();
-            player.Tiles = new List<Tile>();
-            tilesOnPlayer.ForEach(tp => player.Tiles.Add(TileOnPlayerPersistanceToTile(tp)));
+            
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(x => x.PlayerId == playerId).Include(t => t.Tile).ToList();
+            
+            //player.Tiles = new List<Tile>();
+            //tilesOnPlayer.ForEach(tp => player.Tiles.Add(TileOnPlayerPersistanceToTile(tp)));
+            
             return player;
         }
 
@@ -73,19 +91,19 @@ namespace Qwirkle.Infra.Persistance.Adapters
             DbContext.SaveChanges();
         }
 
-        public void TilesFromPlayerToBag(Player player, int tilesNumber)
+        public void TilesFromPlayerToBag(Player player, List<Tile> tiles)
         {
-            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id).OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(t => t.Id).Contains(t.TileId)).ToList();
             DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayer);
             tilesOnPlayer.ForEach(tp => DbContext.TilesOnBag.Add(TileOnPlayerToTileOnBag(tp, player.GameId)));
             DbContext.SaveChanges();
         }
 
-        public void TilesFromPlayerToBag(Player player, List<Tile> tiles)
+        public void TilesFromPlayerToGame(int gameId, List<Tile> tiles)
         {
-            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(t => t.Id).Contains(t.Id)).ToList();
-            DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayer);
-            tilesOnPlayer.ForEach(tp => DbContext.TilesOnBag.Add(TileOnPlayerToTileOnBag(tp, player.GameId)));
+            var game = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
+            game.LastPlayedDate = DateTime.Now;
+            tiles.ForEach(t => DbContext.TilesOnGame.Add(TileToTileOnGamePersistance(t, gameId)));
             DbContext.SaveChanges();
         }
 
@@ -95,16 +113,23 @@ namespace Qwirkle.Infra.Persistance.Adapters
             player.GameTurn = turn;
             DbContext.SaveChanges();
         }
+
         public bool IsPlayerTurn(int playerId)
             => DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault().GameTurn;
 
-        public void TilesFromPlayerToGame(int gameId, List<Tile> tiles)
+        private void AddAllTilesInDataBase()
         {
-            var game = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
-            game.LastPlayedDate = DateTime.Now;
-            tiles.ForEach(t => DbContext.TilesOnGame.Add(TileToTileOnGamePersistance(t, gameId)));
+            if (DbContext.Tiles.Count() == TOTAL_TILES) return;
+
+            const int NUMBER_OF_SAME_TILE = 3;
+            for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
+                foreach (TileColor color in (TileColor[])Enum.GetValues(typeof(TileColor)))
+                    foreach (TileForm form in (TileForm[])Enum.GetValues(typeof(TileForm)))
+                        DbContext.Tiles.Add(new TilePersistance { Color = color, Form = form });
+
             DbContext.SaveChanges();
         }
+
         private List<Tile> TilesOnGamePersistanceToTiles(List<TileOnGamePersistance> tilesOnGame)
         {
             var tiles = new List<Tile>();
@@ -117,13 +142,7 @@ namespace Qwirkle.Infra.Persistance.Adapters
             return tiles;
         }
 
-        /// <summary>
-        /// Convertion d'un Player en un PlayerPersistance.
-        /// Ne retourne pas les Tiles
-        /// </summary>
-        /// <param name="player"></param>
-        /// <returns></returns>
-        private PlayerPersistance PlayerToPlayerPersistance(Player player)
+        private PlayerPersistance PlayerToPlayerPersistance(Player player) // ! Ne retourne pas les Tiles
         {
             var gamePlayerPersistance = DbContext.Players.Where(gp => gp.Id == player.Id).FirstOrDefault();
             gamePlayerPersistance.Points = player.Points;
@@ -135,7 +154,7 @@ namespace Qwirkle.Infra.Persistance.Adapters
         private Player PlayerPersistanceToPlayer(PlayerPersistance playerPersistance)
         {
             var player = new Player { Id = playerPersistance.Id, GameId = playerPersistance.GameId, GameTurn = playerPersistance.GameTurn, GamePosition = playerPersistance.GamePosition, Points = playerPersistance.Points };
-            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerPersistance.Id).ToList();
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerPersistance.Id).Include(t => t.Tile).ToList();
             var tiles = new List<Tile>();
             tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerPersistanceToTile(tp)));
             player.Tiles = tiles;
@@ -145,12 +164,10 @@ namespace Qwirkle.Infra.Persistance.Adapters
             => new TileOnGamePersistance { TileId = tile.Id, GameId = gameId, PositionX = tile.Coordinates.X, PositionY = tile.Coordinates.Y };
 
         private TileOnPlayerPersistance TileOnBagToTileOnPlayer(TileOnBagPersistance tileOnBag, int playerId)
-            => new TileOnPlayerPersistance { TileId = tileOnBag.TileId, PlayerId = playerId }; // todo position !
+            => new TileOnPlayerPersistance { TileId = tileOnBag.TileId, PlayerId = playerId };
 
         private TileOnBagPersistance TileOnPlayerToTileOnBag(TileOnPlayerPersistance tileOnPlayer, int gameId)
-        {
-            return new TileOnBagPersistance { TileId = tileOnPlayer.TileId, GameId = gameId };
-        }
+            => new TileOnBagPersistance { TileId = tileOnPlayer.TileId, GameId = gameId };
 
         private Tile TileOnPlayerPersistanceToTile(TileOnPlayerPersistance tileOnPlayer)
             => new Tile(tileOnPlayer.TileId, tileOnPlayer.Tile.Color, tileOnPlayer.Tile.Form);
@@ -159,10 +176,10 @@ namespace Qwirkle.Infra.Persistance.Adapters
             => new Tile(tilePersistance.Id, tilePersistance.Color, tilePersistance.Form);
 
         private Game GamePersistanceToGame(GamePersistance game)
-        {
-            var tilesOnGame = DbContext.TilesOnGame.Where(tb => tb.GameId == game.Id).ToList();
-            return new Game(game.Id, TilesOnGamePersistanceToTiles(tilesOnGame), new List<Player>());
-        }
+            => new Game(game.Id, TilesOnGamePersistanceToTiles(DbContext.TilesOnGame.Where(tb => tb.GameId == game.Id).ToList()), new List<Player>());
+
+        private Tile TileOnBagToTile(TileOnBagPersistance tb)
+            => new Tile(tb.Id, tb.Tile.Color, tb.Tile.Form, new CoordinatesInGame());
 
         private TileOnPlayerPersistance TileToTilesOnPlayerPersistance(Tile tile, int playerId)
             => new TileOnPlayerPersistance { TileId = tile.Id, PlayerId = playerId };

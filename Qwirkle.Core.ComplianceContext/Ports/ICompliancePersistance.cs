@@ -11,12 +11,12 @@ namespace Qwirkle.Core.ComplianceContext.Ports
         void TilesFromPlayerToGame(int gameId, List<Tile> tiles);
         void UpdatePlayer(Player player);
         void TilesFromBagToPlayer(Player player, int tilesNumber);
-        void TilesFromPlayerToBag(Player player, int tilesNumber);
         void TilesFromPlayerToBag(Player player, List<Tile> tiles);
-        Game GetGameByGameId(int gameId);
+        Game GetGame(int gameId);
         Player GetPlayerById(int playerId);
         Tile GetTileById(int tileId);
         Game CreateGame(DateTime date);
         Player CreatePlayer(int userId, int gameId);
+        void CreateTiles(int gameId);
     }
 }

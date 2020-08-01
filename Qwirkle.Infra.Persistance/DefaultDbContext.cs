@@ -16,7 +16,6 @@ namespace Qwirkle.Infra.Persistance
         public DbSet<PlayerPersistance> Players { get; set; }
 
 
-
         public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)
         {
             // Method intentionally left empty.

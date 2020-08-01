@@ -23,20 +23,17 @@ namespace Qwirkle.Core.ComplianceContext.Services
             Game = Persistance.CreateGame(DateTime.Now);
             List<Player> players = CreatePlayers(usersIds);
             Game.Players = players;
-            return players;
-        }
-
-        public int InitGame(List<Player> players)
-        {
-            players.ForEach(player => Persistance.TilesFromPlayerToBag(player, player.Tiles.Count));
+            CreateTiles();
+            players.ForEach(player => Persistance.TilesFromPlayerToBag(player, player.Tiles));
             players.ForEach(player => Persistance.TilesFromBagToPlayer(player, TILES_NUMBER_PER_PLAYER));
-            SynchronizePlayersWithPersistance(players);
-            return SelectFirstPlayer(players);
-        }
+            RefreshPlayers(players);
+            SelectFirstPlayer(players);
+            return players;
+        }    
 
         public int PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
-            Player player = GetPlayerById(playerId);
+            Player player = GetPlayer(playerId);
             if (!IsPlayerTurn(player)) return 0;
 
             List<Tile> tilesToPlay = GetTiles(tilesTupleToPlay);
@@ -52,7 +49,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         public bool SwapTiles(int playerId, List<int> tilesIds)
         {
-            Player player = GetPlayerById(playerId);
+            Player player = GetPlayer(playerId);
             if (!IsPlayerTurn(player)) return false;
 
             List<Tile> tilesToSwap = GetTiles(tilesIds);
@@ -63,6 +60,8 @@ namespace Qwirkle.Core.ComplianceContext.Services
             SwapAndUpdateGame(player, tilesToSwap);
             return true;
         }
+
+        private void CreateTiles() => Persistance.CreateTiles(Game.Id);
 
         private List<Player> CreatePlayers(List<int> usersIds)
         {
@@ -82,19 +81,18 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return players;
         }
 
-        private void SynchronizePlayersWithPersistance(List<Player> players)
+        private void RefreshPlayers(List<Player> players)
         {
             for (int i = 0; i < players.Count; i++)
-                players[i] = GetPlayerById(players[i].Id);
+                players[i] = GetPlayer(players[i].Id);
         }
 
-        private int SelectFirstPlayer(List<Player> players)
+        private void SelectFirstPlayer(List<Player> players)
         {
             var playersWithNumberCanBePlayedTiles = new Dictionary<int, int>();
             players.ForEach(p => playersWithNumberCanBePlayedTiles[p.Id] = CountTilesWhichCanBePlayed(p));
             var playerIdToPlay = playersWithNumberCanBePlayedTiles.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
             SetPlayerTurn(playerIdToPlay, true);
-            return playerIdToPlay;
         }
 
         private int CountTilesWhichCanBePlayed(Player player)
@@ -160,14 +158,16 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tiles;
         }
 
-        private Player GetPlayerById(int playerId) => Persistance.GetPlayerById(playerId);
+        private Player GetPlayer(int playerId) => Persistance.GetPlayerById(playerId);
 
-        private void GetGame(int GameId) => Game = Persistance.GetGameByGameId(GameId);
+        private void GetGame(int GameId) => Game = Persistance.GetGame(GameId);
 
         private void SwapAndUpdateGame(Player player, List<Tile> tilesToSwap)
         {
-            player.GameTurn = false;
-            Persistance.UpdatePlayer(player);
+            SetPlayerTurn(player.Id, false);
+            //player.GameTurn = false;
+            //Persistance.UpdatePlayer(player);
+            
             SetNextPlayerTurnToPlay(player.Id);
             Persistance.TilesFromBagToPlayer(player, tilesToSwap.Count);
             Persistance.TilesFromPlayerToBag(player, tilesToSwap);
@@ -291,8 +291,10 @@ namespace Qwirkle.Core.ComplianceContext.Services
             => Persistance.IsPlayerTurn(playerId);
 
         private void SetPlayerTurn(int playerId, bool turn)
-            => Persistance.SetPlayerTurn(playerId, turn);
-
+        {    
+            Persistance.SetPlayerTurn(playerId, turn);
+            Game.Players.FirstOrDefault(p => p.Id == playerId).GameTurn = turn;
+        }
     }
     public static class TileExtension
     {
