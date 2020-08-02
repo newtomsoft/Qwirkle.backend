@@ -1,4 +1,5 @@
 ﻿using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.ValueObjects;
 using System;
 using System.Collections.Generic;
 
@@ -6,16 +7,16 @@ namespace Qwirkle.Core.ComplianceContext.Ports
 {
     public interface ICompliancePersistance
     {
+        Game CreateGame(DateTime date);
         bool IsPlayerTurn(int playerId);
         void SetPlayerTurn(int playerId, bool turn);
-        void TilesFromPlayerToGame(int gameId, List<Tile> tiles);
         void UpdatePlayer(Player player);
+        void TilesFromPlayerToGame(int gameId, int playerId, List<Tile> tiles);
         void TilesFromBagToPlayer(Player player, int tilesNumber);
         void TilesFromPlayerToBag(Player player, List<Tile> tiles);
         Game GetGame(int gameId);
-        Player GetPlayerById(int playerId);
+        Player GetPlayer(int playerId);
         Tile GetTileById(int tileId);
-        Game CreateGame(DateTime date);
         Player CreatePlayer(int userId, int gameId);
         void CreateTiles(int gameId);
     }

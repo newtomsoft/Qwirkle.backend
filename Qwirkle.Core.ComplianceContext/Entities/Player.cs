@@ -6,7 +6,7 @@ namespace Qwirkle.Core.ComplianceContext.Entities
     {
         public int Id { get; set; }
         public int GameId { get; set; }
-        public byte GamePosition { get; set; }
+        public int GamePosition { get; set; }
         public bool GameTurn { get; set; }
         public int Points { get; set; }
         public List<Tile> Tiles { get; set; }

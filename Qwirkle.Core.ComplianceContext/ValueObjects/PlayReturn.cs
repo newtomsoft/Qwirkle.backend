@@ -1,8 +1,5 @@
 ﻿using Qwirkle.Core.CommonContext;
 using Qwirkle.Core.ComplianceContext.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Qwirkle.Core.ComplianceContext.ValueObjects
 {

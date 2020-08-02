@@ -1,16 +1,16 @@
 ﻿using Qwirkle.Core.CommonContext;
 using Qwirkle.Core.CommonContext.ValueObjects;
 
-namespace Qwirkle.Core.BoardContext.Entities
+namespace Qwirkle.Core.GameContext.Entities
 {
     public class Tile
     {
         public int Id { get; }
         public TileColor Color { get; }
         public TileForm Form { get; }
-        public CoordinatesInBoard Coordinates { get; }
+        public CoordinatesInGame Coordinates { get; }
 
-        public Tile(int id, TileColor color, TileForm form, CoordinatesInBoard coordinates)
+        public Tile(int id, TileColor color, TileForm form, CoordinatesInGame coordinates)
         {
             Id = id;
             Color = color;
@@ -18,7 +18,7 @@ namespace Qwirkle.Core.BoardContext.Entities
             Coordinates = coordinates;
         }
 
-        public Tile(TileColor color, TileForm form, CoordinatesInBoard coordinates) : this(0, color, form, coordinates)
+        public Tile(TileColor color, TileForm form, CoordinatesInGame coordinates) : this(0, color, form, coordinates)
         { }
 
         public Tile(int id)

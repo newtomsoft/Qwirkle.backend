@@ -17,5 +17,12 @@ namespace Qwirkle.Core.PlayerContext.Entities
             Color = color;
             Form = form;
         }
+
+        public Tile(int tileId, TileColor color, TileForm form)
+        {
+            Id = tileId;
+            Color = color;
+            Form = form;
+        }
     }
 }

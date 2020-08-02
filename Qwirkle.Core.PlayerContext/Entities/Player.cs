@@ -1,11 +1,15 @@
-﻿namespace Qwirkle.Core.PlayerContext.Entities.Player
+﻿using System.Collections.Generic;
+
+namespace Qwirkle.Core.PlayerContext.Entities.Player
 {
     public class Player
     {
-        public int Id { get; }
-        public string Pseudo { get; }
-        public byte Points { get; }
-        public byte BoardPosition { get; }
-        public bool IsTurn { get; }
+        public int Id { get; set; }
+        public int GameId { get; set; }
+        public string Pseudo { get; set; }
+        public byte Points { get; set; }
+        public byte GamePosition { get; set; }
+        public bool GameTurn { get; set; }
+        public List<Tile> Tiles { get; set; }
     }
 }

@@ -6,6 +6,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.ComplianceContext.Services;
+using Qwirkle.Core.GameContext.Ports;
+using Qwirkle.Core.GameContext.Services;
+using Qwirkle.Core.PlayerContext.Ports;
+using Qwirkle.Core.PlayerContext.Services;
 using Qwirkle.Infra.Persistance;
 using Qwirkle.Infra.Persistance.Adapters;
 using Qwirkle.Infra.Persistance.Models;
@@ -24,11 +28,14 @@ namespace Qwirkle.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddScoped<IBagPersistance, BagPersistanceAdapter>();
-            //services.AddScoped<IRequestBagService, BagService>();
-
             services.AddScoped<ICompliancePersistance, CompliancePersistanceAdapter>();
+            services.AddScoped<IGamePersistance, GamePersistanceAdapter>();
+            services.AddScoped<IPlayerPersistance, PlayerPersistanceAdapter>();
+
             services.AddScoped<IRequestComplianceService, ComplianceService>();
+            services.AddScoped<IRequestGameService, GameService>();
+            services.AddScoped<IRequestPlayerService, PlayerService>();
+
 
             services.AddControllers();
 

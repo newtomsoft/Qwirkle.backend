@@ -162,16 +162,13 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tiles;
         }
 
-        private Player GetPlayer(int playerId) => Persistance.GetPlayerById(playerId);
+        private Player GetPlayer(int playerId) => Persistance.GetPlayer(playerId);
 
         private void GetGame(int GameId) => Game = Persistance.GetGame(GameId);
 
         private void SwapAndUpdateGame(Player player, List<Tile> tilesToSwap)
         {
             SetPlayerTurn(player.Id, false);
-            //player.GameTurn = false;
-            //Persistance.UpdatePlayer(player);
-
             SetNextPlayerTurnToPlay(player.Id);
             Persistance.TilesFromBagToPlayer(player, tilesToSwap.Count);
             Persistance.TilesFromPlayerToBag(player, tilesToSwap);
@@ -185,7 +182,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             Persistance.UpdatePlayer(player);
             SetNextPlayerTurnToPlay(player.Id);
             Persistance.TilesFromBagToPlayer(player, tilesToPlay.Count);
-            Persistance.TilesFromPlayerToGame(Game.Id, tilesToPlay);
+            Persistance.TilesFromPlayerToGame(Game.Id, player.Id, tilesToPlay);
         }
 
         private void SetNextPlayerTurnToPlay(int playerId)

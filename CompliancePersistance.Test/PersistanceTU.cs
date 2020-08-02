@@ -99,7 +99,7 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
             player1.GamePosition = position;
             Persistance.UpdatePlayer(player1);
 
-            var playerUpdate = Persistance.GetPlayerById(player1.Id);
+            var playerUpdate = Persistance.GetPlayer(player1.Id);
             Assert.Equal(points, playerUpdate.Points);
             Assert.True(playerUpdate.GameTurn);
             Assert.Equal(position, playerUpdate.GamePosition);
@@ -111,7 +111,7 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
             var game = Persistance.CreateGame(DateTime.Today);
             var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, 6);
-            var playerUpdate = Persistance.GetPlayerById(player.Id);
+            var playerUpdate = Persistance.GetPlayer(player.Id);
             Assert.Empty(playerUpdate.Tiles);
             Assert.Empty(playerUpdate.Tiles);
         }
@@ -124,7 +124,7 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
             AddTilesOnBag(game.Id, TilesNumberToAdd);
             var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToAdd);
-            var playerUpdate = Persistance.GetPlayerById(player.Id);
+            var playerUpdate = Persistance.GetPlayer(player.Id);
             Assert.Equal(TilesNumberToAdd, playerUpdate.Tiles.Count);
         }
 
@@ -138,7 +138,7 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
             var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToRequest);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToRequest);
-            var playerUpdate = Persistance.GetPlayerById(player.Id);
+            var playerUpdate = Persistance.GetPlayer(player.Id);
             Assert.Equal(TilesNumberToRequest + TilesNumberToRequest, playerUpdate.Tiles.Count);
         }
 
@@ -151,9 +151,9 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
             AddTilesOnBag(game.Id, TilesNumberToAddInBag);
             var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToRequestFromBag);
-            var playerAfterDraw = Persistance.GetPlayerById(player.Id);
+            var playerAfterDraw = Persistance.GetPlayer(player.Id);
             Persistance.TilesFromPlayerToBag(playerAfterDraw, playerAfterDraw.Tiles);
-            var playerUpdate = Persistance.GetPlayerById(player.Id);
+            var playerUpdate = Persistance.GetPlayer(player.Id);
             var gameUpdate = Persistance.GetGame(game.Id);
             Assert.Empty(playerUpdate.Tiles);
             Assert.Equal(TilesNumberToAddInBag, gameUpdate.Bag.Tiles.Count);
@@ -195,10 +195,10 @@ namespace Qwirkle.Core.CompliancePersistance.Tests
             AddTilesOnBag(game.Id, TilesNumberToAddInBag);
             var player = Persistance.CreatePlayer(USER1, game.Id);
             Persistance.TilesFromBagToPlayer(player, TilesNumberToRequestFromBag);
-            player = Persistance.GetPlayerById(player.Id);
+            player = Persistance.GetPlayer(player.Id);
             var coordinates = new CoordinatesInGame(2, 5);
             player.Tiles[0].Coordinates = coordinates;
-            Persistance.TilesFromPlayerToGame(game.Id, new List<Tile> { player.Tiles[0] });
+            Persistance.TilesFromPlayerToGame(game.Id, player.Id, new List<Tile> { player.Tiles[0] });
             var gameUpdate = Persistance.GetGame(game.Id);
             Assert.Single(gameUpdate.Tiles);
             Assert.Equal(coordinates, gameUpdate.Tiles[0].Coordinates);
