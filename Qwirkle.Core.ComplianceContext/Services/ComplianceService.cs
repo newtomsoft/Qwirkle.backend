@@ -9,27 +9,27 @@ using System.Linq;
 
 namespace Qwirkle.Core.ComplianceContext.Services
 {
-    public class ComplianceService : IRequestComplianceService
+    public class ComplianceService : IRequestCompliance
     {
         private const int TILES_NUMBER_PER_PLAYER = 6;
         private const int TILES_NUMBER_FOR_A_QWIRKLE = 6;
         private const int POINTS_FOR_A_QWIRKLE = 12;
 
 
-        private ICompliancePersistance Persistance { get; }
+        private ICompliancePersistance PersistanceAdapter { get; }
 
         public Game Game { get; set; }
 
-        public ComplianceService(ICompliancePersistance persistance) => Persistance = persistance;
+        public ComplianceService(ICompliancePersistance persistanceAdapter) => PersistanceAdapter = persistanceAdapter;
 
         public List<Player> CreateGame(List<int> usersIds)
         {
-            Game = Persistance.CreateGame(DateTime.Now);
+            Game = PersistanceAdapter.CreateGame(DateTime.Now);
             List<Player> players = CreatePlayers(usersIds);
             Game.Players = players;
             CreateTiles();
-            players.ForEach(player => Persistance.TilesFromPlayerToBag(player, player.Tiles));
-            players.ForEach(player => Persistance.TilesFromBagToPlayer(player, TILES_NUMBER_PER_PLAYER));
+            players.ForEach(player => PersistanceAdapter.TilesFromPlayerToBag(player, player.Tiles));
+            players.ForEach(player => PersistanceAdapter.TilesFromBagToPlayer(player, TILES_NUMBER_PER_PLAYER));
             RefreshPlayers(players);
             SelectFirstPlayer(players);
             return players;
@@ -65,14 +65,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return true;
         }
 
-        private void CreateTiles() => Persistance.CreateTiles(Game.Id);
+        private void CreateTiles() => PersistanceAdapter.CreateTiles(Game.Id);
 
         private List<Player> CreatePlayers(List<int> usersIds)
         {
             List<Player> players = new List<Player>();
-            usersIds.ForEach(userId => players.Add(Persistance.CreatePlayer(userId, Game.Id)));
+            usersIds.ForEach(userId => players.Add(PersistanceAdapter.CreatePlayer(userId, Game.Id)));
             players = SetPositionsPlayers(players);
-            players.ForEach(player => Persistance.UpdatePlayer(player));
+            players.ForEach(player => PersistanceAdapter.UpdatePlayer(player));
             return players;
         }
 
@@ -148,7 +148,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             List<Tile> tiles = new List<Tile>();
             foreach (var (TileId, X, Y) in tilesTupleToPlay)
             {
-                Tile tile = Persistance.GetTileById(TileId);
+                Tile tile = PersistanceAdapter.GetTileById(TileId);
                 tile.Coordinates = new CoordinatesInGame(X, Y);
                 tiles.Add(tile);
             }
@@ -158,20 +158,20 @@ namespace Qwirkle.Core.ComplianceContext.Services
         private List<Tile> GetTiles(List<int> tilesIds)
         {
             List<Tile> tiles = new List<Tile>();
-            tilesIds.ForEach(tileId => tiles.Add(Persistance.GetTileById(tileId)));
+            tilesIds.ForEach(tileId => tiles.Add(PersistanceAdapter.GetTileById(tileId)));
             return tiles;
         }
 
-        private Player GetPlayer(int playerId) => Persistance.GetPlayer(playerId);
+        private Player GetPlayer(int playerId) => PersistanceAdapter.GetPlayer(playerId);
 
-        private void GetGame(int GameId) => Game = Persistance.GetGame(GameId);
+        private void GetGame(int GameId) => Game = PersistanceAdapter.GetGame(GameId);
 
         private void SwapAndUpdateGame(Player player, List<Tile> tilesToSwap)
         {
             SetPlayerTurn(player.Id, false);
             SetNextPlayerTurnToPlay(player.Id);
-            Persistance.TilesFromBagToPlayer(player, tilesToSwap.Count);
-            Persistance.TilesFromPlayerToBag(player, tilesToSwap);
+            PersistanceAdapter.TilesFromBagToPlayer(player, tilesToSwap.Count);
+            PersistanceAdapter.TilesFromPlayerToBag(player, tilesToSwap);
         }
 
         private void PlayAndUpdateGame(Player player, List<Tile> tilesToPlay, int points)
@@ -179,10 +179,10 @@ namespace Qwirkle.Core.ComplianceContext.Services
             player.Points += points;
             player.GameTurn = false;
             Game.Tiles.AddRange(tilesToPlay);
-            Persistance.UpdatePlayer(player);
+            PersistanceAdapter.UpdatePlayer(player);
             SetNextPlayerTurnToPlay(player.Id);
-            Persistance.TilesFromBagToPlayer(player, tilesToPlay.Count);
-            Persistance.TilesFromPlayerToGame(Game.Id, player.Id, tilesToPlay);
+            PersistanceAdapter.TilesFromBagToPlayer(player, tilesToPlay.Count);
+            PersistanceAdapter.TilesFromPlayerToGame(Game.Id, player.Id, tilesToPlay);
         }
 
         private void SetNextPlayerTurnToPlay(int playerId)
@@ -192,7 +192,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             int nextPlayerPosition = position < playersNumber ? position + 1 : 1;
             Player nexPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
             nexPlayer.GameTurn = true;
-            Persistance.UpdatePlayer(nexPlayer);
+            PersistanceAdapter.UpdatePlayer(nexPlayer);
         }
 
         private int CountTilesMakedValidRow(List<Tile> tiles)
@@ -289,11 +289,11 @@ namespace Qwirkle.Core.ComplianceContext.Services
             => player.GameTurn;
 
         private bool IsPlayerTurn(int playerId)
-            => Persistance.IsPlayerTurn(playerId);
+            => PersistanceAdapter.IsPlayerTurn(playerId);
 
         private void SetPlayerTurn(int playerId, bool turn)
         {
-            Persistance.SetPlayerTurn(playerId, turn);
+            PersistanceAdapter.SetPlayerTurn(playerId, turn);
             Game.Players.FirstOrDefault(p => p.Id == playerId).GameTurn = turn;
         }
     }

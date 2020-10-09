@@ -2,7 +2,7 @@
 
 namespace Qwirkle.Core.PlayerContext.Ports
 {
-    public interface IRequestPlayerService
+    public interface IRequestPlayer
     {
         Player GetPlayer(int playerId);
     }

@@ -32,9 +32,9 @@ namespace Qwirkle.Web.Api
             services.AddScoped<IGamePersistance, GamePersistanceAdapter>();
             services.AddScoped<IPlayerPersistance, PlayerPersistanceAdapter>();
 
-            services.AddScoped<IRequestComplianceService, ComplianceService>();
-            services.AddScoped<IRequestGameService, GameService>();
-            services.AddScoped<IRequestPlayerService, PlayerService>();
+            services.AddScoped<IRequestCompliance, ComplianceService>();
+            services.AddScoped<IRequestGame, GameService>();
+            services.AddScoped<IRequestPlayer, PlayerService>();
 
 
             services.AddControllers();

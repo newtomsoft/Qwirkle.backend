@@ -2,7 +2,7 @@
 
 namespace Qwirkle.Core.GameContext.Ports
 {
-    public interface IRequestGameService
+    public interface IRequestGame
     {
         Game GetGame(int gameId);
     }

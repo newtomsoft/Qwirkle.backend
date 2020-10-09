@@ -3,16 +3,16 @@ using Qwirkle.Core.PlayerContext.Ports;
 
 namespace Qwirkle.Core.PlayerContext.Services
 {
-    public class PlayerService : IRequestPlayerService
+    public class PlayerService : IRequestPlayer
     {
-        private IPlayerPersistance Persistance { get; }
+        private IPlayerPersistance PersistanceAdapter { get; }
 
 
-        public PlayerService(IPlayerPersistance persistance) => Persistance = persistance;
+        public PlayerService(IPlayerPersistance persistanceAdapter) => PersistanceAdapter = persistanceAdapter;
 
         public Player GetPlayer(int playerId)
         {
-            return Persistance.GetPlayer(playerId);
+            return PersistanceAdapter.GetPlayer(playerId);
         }
     }
 }

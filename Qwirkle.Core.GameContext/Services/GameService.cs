@@ -3,16 +3,16 @@ using Qwirkle.Core.GameContext.Ports;
 
 namespace Qwirkle.Core.GameContext.Services
 {
-    public class GameService : IRequestGameService
+    public class GameService : IRequestGame
     {
-        private IGamePersistance Persistance { get; }
+        private IGamePersistance PersistanceAdapter { get; }
 
 
-        public GameService(IGamePersistance persistance) => Persistance = persistance;
+        public GameService(IGamePersistance persistanceAdapter) => PersistanceAdapter = persistanceAdapter;
 
         public Game GetGame(int gameId)
         {
-            return Persistance.GetGame(gameId);
+            return PersistanceAdapter.GetGame(gameId);
         }
     }
 }
