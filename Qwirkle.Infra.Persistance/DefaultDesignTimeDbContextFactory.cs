@@ -16,9 +16,7 @@ namespace Data
             string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             string persistance = Environment.GetEnvironmentVariable("PERSISTANCE");
             string dataBase;
-            if (persistance == "Sqlite")
-                dataBase = "SqliteDbContext";
-            else if (persistance == "SqlServer")
+            if (persistance == "SqlServer")
                 dataBase = "AdminDbContext";
             else
                 dataBase = "SqliteDbContext";
@@ -33,7 +31,7 @@ namespace Data
             string connectionString = config.GetConnectionString(dataBase);
             if (persistance == "SqlServer")
                 optionBuilder.UseSqlServer(connectionString);
-            else if (persistance == "Sqlite")
+            else
                 optionBuilder.UseSqlite(connectionString);
             return new DefaultDbContext(optionBuilder.Options);
         }
