@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Qwirkle.Core.ComplianceContext.Ports
 {
-    public interface ICompliancePersistance
+    public interface ICompliancePersistence
     {
         Game CreateGame(DateTime date);
         bool IsPlayerTurn(int playerId);

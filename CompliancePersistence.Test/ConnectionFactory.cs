@@ -1,9 +1,9 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Qwirkle.Infra.Persistance;
+using Qwirkle.Infra.Persistence;
 using System;
 
-namespace Qwirkle.Core.CompliancePersistance.Tests
+namespace Qwirkle.Core.CompliancePersistence.Tests
 {
     public class ConnectionFactory : IDisposable
     {

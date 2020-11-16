@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Qwirkle.Infra.Persistance.Models
+namespace Qwirkle.Infra.Persistence.Models
 {
     [Table("TileOnGame")]
-    public class TileOnGamePersistance
+    public class TileOnGamePersistence
     {
         public int Id { get; set; }
         public int TileId { get; set; }
@@ -11,7 +11,7 @@ namespace Qwirkle.Infra.Persistance.Models
         public sbyte PositionX { get; set; }
         public sbyte PositionY { get; set; }
 
-        public virtual TilePersistance Tile { get; set; }
-        public virtual GamePersistance Game { get; set; }
+        public virtual TilePersistence Tile { get; set; }
+        public virtual GamePersistence Game { get; set; }
     }
 }

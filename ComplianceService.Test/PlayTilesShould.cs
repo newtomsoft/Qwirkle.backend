@@ -2,9 +2,9 @@
 using Qwirkle.Core.CommonContext;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.ComplianceContext.Services;
-using Qwirkle.Infra.Persistance;
-using Qwirkle.Infra.Persistance.Adapters;
-using Qwirkle.Infra.Persistance.Models;
+using Qwirkle.Infra.Persistence;
+using Qwirkle.Infra.Persistence.Adapters;
+using Qwirkle.Infra.Persistence.Models;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -14,7 +14,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
     public class PlayTilesShould
     {
         private ComplianceService ComplianceService { get; set; }
-        private ICompliancePersistance Persistance { get; set; }
+        private ICompliancePersistence Persistence { get; set; }
 
         private const int TOTAL_TILES = 108;
         private const int GAME_ID = 7;
@@ -29,8 +29,8 @@ namespace Qwirkle.Core.ComplianceContext.Tests
 
         public PlayTilesShould()
         {
-            Persistance = new CompliancePersistanceAdapter(Context());
-            ComplianceService = new ComplianceService(Persistance);
+            Persistence = new CompliancePersistenceAdapter(Context());
+            ComplianceService = new ComplianceService(Persistence);
         }
 
         private DefaultDbContext Context()
@@ -56,64 +56,64 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
                 foreach (TileColor color in (TileColor[])Enum.GetValues(typeof(TileColor)))
                     foreach (TileForm form in (TileForm[])Enum.GetValues(typeof(TileForm)))
-                        dbContext.Tiles.Add(new TilePersistance { Id = ++id, Color = color, Form = form });
+                        dbContext.Tiles.Add(new TilePersistence { Id = ++id, Color = color, Form = form });
 
             dbContext.SaveChanges();
         }
 
         private static void AddGames(DefaultDbContext dbContext)
         {
-            dbContext.Games.Add(new GamePersistance { Id = GAME_ID, });
+            dbContext.Games.Add(new GamePersistence { Id = GAME_ID, });
             dbContext.SaveChanges();
         }
 
         private static void AddUsers(DefaultDbContext dbContext)
         {
-            dbContext.Users.Add(new UserPersistance { Id = USER71 });
-            dbContext.Users.Add(new UserPersistance { Id = USER21 });
-            dbContext.Users.Add(new UserPersistance { Id = USER3 });
-            dbContext.Users.Add(new UserPersistance { Id = USER14 });
+            dbContext.Users.Add(new UserPersistence { Id = USER71 });
+            dbContext.Users.Add(new UserPersistence { Id = USER21 });
+            dbContext.Users.Add(new UserPersistence { Id = USER3 });
+            dbContext.Users.Add(new UserPersistence { Id = USER14 });
             dbContext.SaveChanges();
         }
 
         private static void AddPlayers(DefaultDbContext dbContext)
         {
-            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER9, UserId = USER71, GameId = GAME_ID, GamePosition = 1, GameTurn = true });
-            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER3, UserId = USER21, GameId = GAME_ID, GamePosition = 2, GameTurn = false });
-            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER8, UserId = USER3, GameId = GAME_ID, GamePosition = 3, GameTurn = false });
-            dbContext.Players.Add(new PlayerPersistance { Id = PLAYER14, UserId = USER14, GameId = GAME_ID, GamePosition = 4, GameTurn = false });
+            dbContext.Players.Add(new PlayerPersistence { Id = PLAYER9, UserId = USER71, GameId = GAME_ID, GamePosition = 1, GameTurn = true });
+            dbContext.Players.Add(new PlayerPersistence { Id = PLAYER3, UserId = USER21, GameId = GAME_ID, GamePosition = 2, GameTurn = false });
+            dbContext.Players.Add(new PlayerPersistence { Id = PLAYER8, UserId = USER3, GameId = GAME_ID, GamePosition = 3, GameTurn = false });
+            dbContext.Players.Add(new PlayerPersistence { Id = PLAYER14, UserId = USER14, GameId = GAME_ID, GamePosition = 4, GameTurn = false });
             dbContext.SaveChanges();
         }
 
         private static void AddTilesOnPlayers(DefaultDbContext dbContext)
         {
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 1, PlayerId = PLAYER9, TileId = 1 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 2, PlayerId = PLAYER9, TileId = 2 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 3, PlayerId = PLAYER9, TileId = 3 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 4, PlayerId = PLAYER9, TileId = 4 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 5, PlayerId = PLAYER9, TileId = 5 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 6, PlayerId = PLAYER9, TileId = 6 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 1, PlayerId = PLAYER9, TileId = 1 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 2, PlayerId = PLAYER9, TileId = 2 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 3, PlayerId = PLAYER9, TileId = 3 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 4, PlayerId = PLAYER9, TileId = 4 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 5, PlayerId = PLAYER9, TileId = 5 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 6, PlayerId = PLAYER9, TileId = 6 });
 
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 11, PlayerId = PLAYER3, TileId = 7 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 12, PlayerId = PLAYER3, TileId = 8 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 13, PlayerId = PLAYER3, TileId = 9 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 14, PlayerId = PLAYER3, TileId = 10 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 15, PlayerId = PLAYER3, TileId = 11 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 16, PlayerId = PLAYER3, TileId = 12 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 11, PlayerId = PLAYER3, TileId = 7 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 12, PlayerId = PLAYER3, TileId = 8 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 13, PlayerId = PLAYER3, TileId = 9 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 14, PlayerId = PLAYER3, TileId = 10 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 15, PlayerId = PLAYER3, TileId = 11 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 16, PlayerId = PLAYER3, TileId = 12 });
 
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 21, PlayerId = PLAYER8, TileId = 13 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 22, PlayerId = PLAYER8, TileId = 14 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 23, PlayerId = PLAYER8, TileId = 15 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 24, PlayerId = PLAYER8, TileId = 16 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 25, PlayerId = PLAYER8, TileId = 17 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 26, PlayerId = PLAYER8, TileId = 18 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 21, PlayerId = PLAYER8, TileId = 13 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 22, PlayerId = PLAYER8, TileId = 14 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 23, PlayerId = PLAYER8, TileId = 15 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 24, PlayerId = PLAYER8, TileId = 16 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 25, PlayerId = PLAYER8, TileId = 17 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 26, PlayerId = PLAYER8, TileId = 18 });
 
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 31, PlayerId = PLAYER14, TileId = 19 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 32, PlayerId = PLAYER14, TileId = 20 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 33, PlayerId = PLAYER14, TileId = 21 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 34, PlayerId = PLAYER14, TileId = 22 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 35, PlayerId = PLAYER14, TileId = 23 });
-            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistance { Id = 36, PlayerId = PLAYER14, TileId = 24 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 31, PlayerId = PLAYER14, TileId = 19 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 32, PlayerId = PLAYER14, TileId = 20 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 33, PlayerId = PLAYER14, TileId = 21 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 34, PlayerId = PLAYER14, TileId = 22 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 35, PlayerId = PLAYER14, TileId = 23 });
+            dbContext.TilesOnPlayer.Add(new TileOnPlayerPersistence { Id = 36, PlayerId = PLAYER14, TileId = 24 });
 
             dbContext.SaveChanges();
         }
@@ -121,7 +121,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         private void AddTilesOnBag(DefaultDbContext dbContext)
         {
             for (int i = 1; i <= TOTAL_TILES; i++)
-                dbContext.TilesOnBag.Add(new TileOnBagPersistance { Id = 100 + i, GameId = GAME_ID, TileId = i });
+                dbContext.TilesOnBag.Add(new TileOnBagPersistence { Id = 100 + i, GameId = GAME_ID, TileId = i });
 
             dbContext.SaveChanges();
         }

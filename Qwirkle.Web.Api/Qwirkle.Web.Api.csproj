@@ -25,7 +25,7 @@
     <ProjectReference Include="..\Qwirkle.Core.GameContext\Qwirkle.Core.GameContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.PlayerContext\Qwirkle.Core.PlayerContext.csproj" />
 
-    <ProjectReference Include="..\Qwirkle.Infra.Persistance\Qwirkle.Infra.Persistance.csproj" />
+    <ProjectReference Include="..\Qwirkle.Infra.Persistence\Qwirkle.Infra.Persistence.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="https://batect.dev/configSchema.json" /></VisualStudio></ProjectExtensions>

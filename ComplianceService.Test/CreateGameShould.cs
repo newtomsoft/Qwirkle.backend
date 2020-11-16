@@ -1,8 +1,8 @@
 ﻿using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.ComplianceContext.Services;
-using Qwirkle.Infra.Persistance;
-using Qwirkle.Infra.Persistance.Adapters;
-using Qwirkle.Infra.Persistance.Models;
+using Qwirkle.Infra.Persistence;
+using Qwirkle.Infra.Persistence.Adapters;
+using Qwirkle.Infra.Persistence.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -12,7 +12,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
     public class CreateGameShould
     {
         private ComplianceService ComplianceService { get; set; }
-        private ICompliancePersistance Persistance { get; set; }
+        private ICompliancePersistence Persistence { get; set; }
         private DefaultDbContext DbContext { get; set; }
 
         private const int USER1 = 71;
@@ -25,17 +25,17 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         {
             var factory = new ConnectionFactory();
             DbContext = factory.CreateContextForInMemory();
-            Persistance = new CompliancePersistanceAdapter(DbContext);
-            ComplianceService = new ComplianceService(Persistance);
+            Persistence = new CompliancePersistenceAdapter(DbContext);
+            ComplianceService = new ComplianceService(Persistence);
             AddUsers();
         }
 
         private void AddUsers()
         {
-            DbContext.Users.Add(new UserPersistance { Id = USER1 });
-            DbContext.Users.Add(new UserPersistance { Id = USER2 });
-            DbContext.Users.Add(new UserPersistance { Id = USER3 });
-            DbContext.Users.Add(new UserPersistance { Id = USER4 });
+            DbContext.Users.Add(new UserPersistence { Id = USER1 });
+            DbContext.Users.Add(new UserPersistence { Id = USER2 });
+            DbContext.Users.Add(new UserPersistence { Id = USER3 });
+            DbContext.Users.Add(new UserPersistence { Id = USER4 });
             DbContext.SaveChanges();
         }
 

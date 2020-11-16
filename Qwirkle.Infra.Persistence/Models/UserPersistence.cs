@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Qwirkle.Infra.Persistance.Models
+namespace Qwirkle.Infra.Persistence.Models
 {
     [Table("User")]
-    public class UserPersistance : IdentityUser<int>
+    public class UserPersistence : IdentityUser<int>
     {
         [Column("Pseudo")]
         override public string UserName { get; set; }

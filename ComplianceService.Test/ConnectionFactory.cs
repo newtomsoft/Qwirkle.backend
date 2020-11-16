@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Qwirkle.Infra.Persistance;
+using Qwirkle.Infra.Persistence;
 using System;
 
 namespace Qwirkle.Core.ComplianceContext.Tests

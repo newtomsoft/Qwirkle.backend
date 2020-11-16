@@ -10,9 +10,9 @@ using Qwirkle.Core.GameContext.Ports;
 using Qwirkle.Core.GameContext.Services;
 using Qwirkle.Core.PlayerContext.Ports;
 using Qwirkle.Core.PlayerContext.Services;
-using Qwirkle.Infra.Persistance;
-using Qwirkle.Infra.Persistance.Adapters;
-using Qwirkle.Infra.Persistance.Models;
+using Qwirkle.Infra.Persistence;
+using Qwirkle.Infra.Persistence.Adapters;
+using Qwirkle.Infra.Persistence.Models;
 using System;
 
 namespace Qwirkle.Web.Api
@@ -28,9 +28,9 @@ namespace Qwirkle.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ICompliancePersistance, CompliancePersistanceAdapter>();
-            services.AddScoped<IGamePersistance, GamePersistanceAdapter>();
-            services.AddScoped<IPlayerPersistance, PlayerPersistanceAdapter>();
+            services.AddScoped<ICompliancePersistence, CompliancePersistenceAdapter>();
+            services.AddScoped<IGamePersistence, GamePersistenceAdapter>();
+            services.AddScoped<IPlayerPersistence, PlayerPersistenceAdapter>();
 
             services.AddScoped<IRequestCompliance, ComplianceService>();
             services.AddScoped<IRequestGame, GameService>();
@@ -48,7 +48,7 @@ namespace Qwirkle.Web.Api
             else
                 throw new ArgumentException("No DbContext defined !");
 
-            services.AddIdentity<UserPersistance, IdentityRole<int>>(options =>
+            services.AddIdentity<UserPersistence, IdentityRole<int>>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Qwirkle.Core.BagContext.Ports
 {
-    public interface IBagPersistance
+    public interface IBagPersistence
     {
         List<Tile> GetAllTilesOfBag(int gameId);
         Tile GetRandomTileOfBag(int gameId);

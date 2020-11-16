@@ -2,7 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Configurations>Debug;Release;NoPersitance</Configurations>
+    <Configurations>Debug;Release;NoPersitence</Configurations>
+    <AssemblyName>Qwirkle.Infra.Persistence</AssemblyName>
+    <RootNamespace>Qwirkle.Infra.Persistence</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

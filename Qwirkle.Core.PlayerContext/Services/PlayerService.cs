@@ -5,14 +5,14 @@ namespace Qwirkle.Core.PlayerContext.Services
 {
     public class PlayerService : IRequestPlayer
     {
-        private IPlayerPersistance PersistanceAdapter { get; }
+        private IPlayerPersistence PersistenceAdapter { get; }
 
 
-        public PlayerService(IPlayerPersistance persistanceAdapter) => PersistanceAdapter = persistanceAdapter;
+        public PlayerService(IPlayerPersistence persistenceAdapter) => PersistenceAdapter = persistenceAdapter;
 
         public Player GetPlayer(int playerId)
         {
-            return PersistanceAdapter.GetPlayer(playerId);
+            return PersistenceAdapter.GetPlayer(playerId);
         }
     }
 }

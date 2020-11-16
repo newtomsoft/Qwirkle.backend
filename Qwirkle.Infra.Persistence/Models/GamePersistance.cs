@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Qwirkle.Infra.Persistance.Models
+namespace Qwirkle.Infra.Persistence.Models
 {
-    public class GamePersistance
+    public class GamePersistence
     {
         public int Id { get; set; }
         public DateTime CreatedDate { get; set; }

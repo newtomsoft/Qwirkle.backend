@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Qwirkle.Core.GameContext.Ports
 {
-    public interface IGamePersistance
+    public interface IGamePersistence
     {
         Game GetGame(int gameId);
     }

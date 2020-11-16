@@ -5,14 +5,14 @@ namespace Qwirkle.Core.GameContext.Services
 {
     public class GameService : IRequestGame
     {
-        private IGamePersistance PersistanceAdapter { get; }
+        private IGamePersistence PersistenceAdapter { get; }
 
 
-        public GameService(IGamePersistance persistanceAdapter) => PersistanceAdapter = persistanceAdapter;
+        public GameService(IGamePersistence persistenceAdapter) => PersistenceAdapter = persistenceAdapter;
 
         public Game GetGame(int gameId)
         {
-            return PersistanceAdapter.GetGame(gameId);
+            return PersistenceAdapter.GetGame(gameId);
         }
     }
 }

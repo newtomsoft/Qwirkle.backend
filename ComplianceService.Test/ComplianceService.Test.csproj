@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
-    <ProjectReference Include="..\Qwirkle.Infra.Persistance\Qwirkle.Infra.Persistance.csproj" />
+    <ProjectReference Include="..\Qwirkle.Infra.Persistence\Qwirkle.Infra.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

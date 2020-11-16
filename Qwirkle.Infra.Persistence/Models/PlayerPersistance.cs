@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Qwirkle.Infra.Persistance.Models
+namespace Qwirkle.Infra.Persistence.Models
 {
     [Table("Player")]
-    public class PlayerPersistance
+    public class PlayerPersistence
     {
         public int Id { get; set; }
         public int GameId { get; set; }
@@ -12,7 +12,7 @@ namespace Qwirkle.Infra.Persistance.Models
         public bool GameTurn { get; set; }
         public byte GamePosition { get; set; }
 
-        public GamePersistance Game { get; set; }
-        public UserPersistance User { get; set; }
+        public GamePersistence Game { get; set; }
+        public UserPersistence User { get; set; }
     }
 }

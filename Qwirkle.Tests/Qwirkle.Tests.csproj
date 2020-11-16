@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Qwirkle.Core.BagContext\Qwirkle.Core.BagContext.csproj" />
-    <ProjectReference Include="..\Qwirkle.Infra.Persistance\Qwirkle.Infra.Persistance.csproj" />
+    <ProjectReference Include="..\Qwirkle.Infra.Persistence\Qwirkle.Infra.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
