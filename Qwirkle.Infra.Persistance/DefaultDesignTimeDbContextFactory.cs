@@ -19,7 +19,7 @@ namespace Data
             if (persistance == "SqlServer")
                 dataBase = "AdminDbContext";
             else
-                dataBase = "SqliteDbContext";
+                dataBase = "Sqlite";
 
             Console.WriteLine($"ASPNETCORE_ENVIRONMENT is : {env}");
             Console.WriteLine($"PERSISTANCE is : {persistance} ; data Base is : {dataBase}");

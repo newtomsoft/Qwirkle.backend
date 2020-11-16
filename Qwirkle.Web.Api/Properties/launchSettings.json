@@ -9,11 +9,11 @@
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "Development InMemoryDatabase": {
+    "Development InMemory": {
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "PERSISTANCE": "InMemoryDatabase",
+        "PERSISTENCE": "InMemory",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
@@ -21,7 +21,7 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "PERSISTANCE": "Sqlite",
+        "PERSISTENCE": "Sqlite",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
@@ -29,16 +29,8 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "PERSISTANCE": "SqlServer",
+        "PERSISTENCE": "SqlServer",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "Production SqlServer": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "PERSISTANCE": "SqlServer",
-        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     }
   }

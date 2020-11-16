@@ -36,16 +36,15 @@ namespace Qwirkle.Web.Api
             services.AddScoped<IRequestGame, GameService>();
             services.AddScoped<IRequestPlayer, PlayerService>();
 
-
             services.AddControllers();
 
-            string persistance = Environment.GetEnvironmentVariable("PERSISTANCE");
-            if (persistance == "InMemoryDatabase")
+            string persistence = Environment.GetEnvironmentVariable("PERSISTENCE");
+            if (persistence == "InMemory")
                 services.AddDbContext<DefaultDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Scoped);
-            else if (persistance == "Sqlite")
-                services.AddDbContext<DefaultDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("SqliteDbContext")));
-            else if (persistance == "SqlServer")
-                services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("UserDbContext")), ServiceLifetime.Scoped);
+            else if (persistence == "Sqlite")
+                services.AddDbContext<DefaultDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
+            else if (persistence == "SqlServer")
+                services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SqlServer")), ServiceLifetime.Scoped);
             else
                 throw new ArgumentException("No DbContext defined !");
 
