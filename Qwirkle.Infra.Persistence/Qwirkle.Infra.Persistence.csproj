@@ -19,9 +19,11 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="Newtomsoft.Tools" Version="0.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\NewtomSoft.Libraries\EFTools\Newtomsoft.Tools.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.GameContext\Qwirkle.Core.GameContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.PlayerContext\Qwirkle.Core.PlayerContext.csproj" />

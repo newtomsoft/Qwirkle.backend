@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtomsoft.Tools;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.ComplianceContext.Services;
 using Qwirkle.Core.GameContext.Ports;
@@ -14,6 +15,7 @@ using Qwirkle.Infra.Persistence;
 using Qwirkle.Infra.Persistence.Adapters;
 using Qwirkle.Infra.Persistence.Models;
 using System;
+using System.IO;
 
 namespace Qwirkle.Web.Api
 {
@@ -38,15 +40,7 @@ namespace Qwirkle.Web.Api
 
             services.AddControllers();
 
-            string persistence = Environment.GetEnvironmentVariable("PERSISTENCE");
-            if (persistence == "InMemory")
-                services.AddDbContext<DefaultDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString()), ServiceLifetime.Scoped);
-            else if (persistence == "Sqlite")
-                services.AddDbContext<DefaultDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("Sqlite")));
-            else if (persistence == "SqlServer")
-                services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SqlServer")), ServiceLifetime.Scoped);
-            else
-                throw new ArgumentException("No DbContext defined !");
+            EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, Configuration);
 
             services.AddIdentity<UserPersistence, IdentityRole<int>>(options =>
             {
@@ -65,7 +59,6 @@ namespace Qwirkle.Web.Api
             services.AddOptions();
             services.ConfigureApplicationCookie(options => options.LoginPath = "/Identity/Account/Login");
             services.AddSession();
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
