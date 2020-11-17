@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtomsoft.Tools;
@@ -14,8 +13,6 @@ using Qwirkle.Core.PlayerContext.Services;
 using Qwirkle.Infra.Persistence;
 using Qwirkle.Infra.Persistence.Adapters;
 using Qwirkle.Infra.Persistence.Models;
-using System;
-using System.IO;
 
 namespace Qwirkle.Web.Api
 {
