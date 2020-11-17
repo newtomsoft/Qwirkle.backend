@@ -19,7 +19,6 @@ namespace Qwirkle.Infra.Persistence.Adapters
         {
             DbContext = defaultDbContext;
         }
-
         
         public Game GetGame(int gameId)
         {
