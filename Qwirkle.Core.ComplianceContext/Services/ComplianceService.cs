@@ -25,14 +25,13 @@ namespace Qwirkle.Core.ComplianceContext.Services
         public List<Player> CreateGame(List<int> usersIds)
         {
             Game = PersistenceAdapter.CreateGame(DateTime.Now);
-            List<Player> players = CreatePlayers(usersIds);
-            Game.Players = players;
+            CreatePlayers(usersIds);
             CreateTiles();
-            players.ForEach(player => PersistenceAdapter.TilesFromPlayerToBag(player, player.Tiles));
-            players.ForEach(player => PersistenceAdapter.TilesFromBagToPlayer(player, TILES_NUMBER_PER_PLAYER));
-            RefreshPlayers(players);
-            SelectFirstPlayer(players);
-            return players;
+            Game.Players.ForEach(player => PersistenceAdapter.TilesFromPlayerToBag(player, player.Tiles));
+            Game.Players.ForEach(player => PersistenceAdapter.TilesFromBagToPlayer(player, TILES_NUMBER_PER_PLAYER));
+            RefreshPlayers();
+            SelectFirstPlayer();
+            return Game.Players;
         }
 
         public PlayReturn PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
@@ -67,34 +66,31 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         private void CreateTiles() => PersistenceAdapter.CreateTiles(Game.Id);
 
-        private List<Player> CreatePlayers(List<int> usersIds)
+        private void CreatePlayers(List<int> usersIds)
         {
-            List<Player> players = new List<Player>();
-            usersIds.ForEach(userId => players.Add(PersistenceAdapter.CreatePlayer(userId, Game.Id)));
-            players = SetPositionsPlayers(players);
-            players.ForEach(player => PersistenceAdapter.UpdatePlayer(player));
-            return players;
+            Game.Players = new List<Player>();
+            usersIds.ForEach(userId => Game.Players.Add(PersistenceAdapter.CreatePlayer(userId, Game.Id)));
+            SetPositionsPlayers();
+            Game.Players.ForEach(player => PersistenceAdapter.UpdatePlayer(player));
         }
 
-        private List<Player> SetPositionsPlayers(List<Player> players)
+        private void SetPositionsPlayers()
         {
-            players = players.OrderBy(_ => Guid.NewGuid()).ToList();
-            for (int i = 0; i < players.Count; i++)
-                players[i].GamePosition = (byte)(i + 1);
-
-            return players;
+            Game.Players = Game.Players.OrderBy(_ => Guid.NewGuid()).ToList();
+            for (int i = 0; i < Game.Players.Count; i++)
+                Game.Players[i].GamePosition = (byte)(i + 1);
         }
 
-        private void RefreshPlayers(List<Player> players)
+        private void RefreshPlayers()
         {
-            for (int i = 0; i < players.Count; i++)
-                players[i] = GetPlayer(players[i].Id);
+            for (int i = 0; i < Game.Players.Count; i++)
+                Game.Players[i] = GetPlayer(Game.Players[i].Id);
         }
 
-        private void SelectFirstPlayer(List<Player> players)
+        private void SelectFirstPlayer()
         {
             var playersWithNumberCanBePlayedTiles = new Dictionary<int, int>();
-            players.ForEach(p => playersWithNumberCanBePlayedTiles[p.Id] = CountTilesWhichCanBePlayed(p));
+            Game.Players.ForEach(p => playersWithNumberCanBePlayedTiles[p.Id] = CountTilesWhichCanBePlayed(p));
             var playerIdToPlay = playersWithNumberCanBePlayedTiles.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
             SetPlayerTurn(playerIdToPlay, true);
         }

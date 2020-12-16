@@ -339,3 +339,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /Qwirkle.Infra.Persistance/Qwirkle.sqlite
+/Qwirkle.Web.Api/database.sqlite
