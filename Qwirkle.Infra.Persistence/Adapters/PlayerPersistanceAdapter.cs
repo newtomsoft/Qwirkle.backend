@@ -1,11 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.ValueObjects;
 using Qwirkle.Core.PlayerContext.Entities;
 using Qwirkle.Core.PlayerContext.Entities.Player;
 using Qwirkle.Core.PlayerContext.Ports;
 using Qwirkle.Infra.Persistence.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,7 +18,7 @@ namespace Qwirkle.Infra.Persistence.Adapters
             DbContext = defaultDbContext;
         }
 
-        
+
         public Player GetPlayer(int playerId)
            => PlayerPersistenceToPlayer(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
 

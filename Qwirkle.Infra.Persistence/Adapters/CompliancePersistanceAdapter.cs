@@ -98,7 +98,7 @@ namespace Qwirkle.Infra.Persistence.Adapters
             var game = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
             game.LastPlayedDate = DateTime.Now;
             tiles.ForEach(t => DbContext.TilesOnGame.Add(TileToTileOnGamePersistence(t, gameId)));
-            tiles.ForEach(t=> DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.FirstOrDefault(tp => tp.TileId == t.Id && tp.PlayerId == playerId)));
+            tiles.ForEach(t => DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.FirstOrDefault(tp => tp.TileId == t.Id && tp.PlayerId == playerId)));
             DbContext.SaveChanges();
         }
 
@@ -177,6 +177,6 @@ namespace Qwirkle.Infra.Persistence.Adapters
             => new Tile(tb.Id, tb.Tile.Color, tb.Tile.Form, new CoordinatesInGame());
 
         private TileOnPlayerPersistence TileToTileOnPlayerPersistence(Tile tile, int playerId)
-            => new TileOnPlayerPersistence { Id=tile.Id, TileId = tile.Id, PlayerId = playerId };
+            => new TileOnPlayerPersistence { Id = tile.Id, TileId = tile.Id, PlayerId = playerId };
     }
 }

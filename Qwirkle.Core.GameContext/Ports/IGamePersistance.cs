@@ -1,6 +1,4 @@
 ﻿using Qwirkle.Core.GameContext.Entities;
-using System;
-using System.Collections.Generic;
 
 namespace Qwirkle.Core.GameContext.Ports
 {

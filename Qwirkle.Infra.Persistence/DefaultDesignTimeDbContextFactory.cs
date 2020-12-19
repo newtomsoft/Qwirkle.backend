@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
-using Qwirkle.Infra.Persistence;
 using Newtomsoft.Tools;
+using Qwirkle.Infra.Persistence;
 
 namespace Data
 {

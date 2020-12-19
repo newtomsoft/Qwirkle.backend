@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Qwirkle.Core.ComplianceContext.Ports;
-using Qwirkle.Core.GameContext.Entities;
 using Qwirkle.Core.GameContext.Ports;
 using Qwirkle.Core.PlayerContext.Ports;
 using Qwirkle.Web.Api.VueModels;

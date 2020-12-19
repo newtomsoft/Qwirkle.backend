@@ -18,7 +18,7 @@ namespace Qwirkle.Infra.Persistence.Adapters
         {
             DbContext = defaultDbContext;
         }
-        
+
         public Game GetGame(int gameId)
         {
             var gamePersistence = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
@@ -43,8 +43,8 @@ namespace Qwirkle.Infra.Persistence.Adapters
         }
 
 
-         private Tile TileOnBagToTile(TileOnBagPersistence tb)
-            => new Tile(tb.Id, tb.Tile.Color, tb.Tile.Form, new CoordinatesInGame());
+        private Tile TileOnBagToTile(TileOnBagPersistence tb)
+           => new Tile(tb.Id, tb.Tile.Color, tb.Tile.Form, new CoordinatesInGame());
 
     }
 }
