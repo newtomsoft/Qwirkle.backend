@@ -1,6 +1,6 @@
 ﻿namespace Qwirkle.Web.Api.VueModels
 {
-    public class TileVM
+    public class TileViewModel
     {
         public int PlayerId { get; set; }
         public int TileId { get; set; }
