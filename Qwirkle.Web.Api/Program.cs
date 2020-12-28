@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.IO;
 
 namespace Qwirkle.Web.Api
 {
@@ -7,14 +11,19 @@ namespace Qwirkle.Web.Api
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            var host= WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostContext, config) =>
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
+                    config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"sharesettings.{hostContext.HostingEnvironment.EnvironmentName}.json"), optional: true); //When dev
+                    config.AddJsonFile($"sharesettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true); //When published
+                })
+                .UseStartup<Startup>();
+            return host;
+        }
     }
 }

@@ -13,6 +13,7 @@ using Qwirkle.Core.PlayerContext.Services;
 using Qwirkle.Infra.Persistence;
 using Qwirkle.Infra.Persistence.Adapters;
 using Qwirkle.Infra.Persistence.Models;
+using System;
 
 namespace Qwirkle.Web.Api
 {
@@ -37,7 +38,7 @@ namespace Qwirkle.Web.Api
 
             services.AddControllers();
 
-            EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, Configuration);
+            EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, Configuration);         
 
             services.AddIdentity<UserPersistence, IdentityRole<int>>(options =>
             {
