@@ -340,3 +340,5 @@ ASALocalRun/
 healthchecksdb
 /Qwirkle.Infra.Persistance/Qwirkle.sqlite
 /Qwirkle.Web.Api/database.sqlite
+/database.sqlite
+/kwirkleDevelopment.sqlite

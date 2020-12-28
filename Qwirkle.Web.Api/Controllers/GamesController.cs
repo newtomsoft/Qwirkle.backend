@@ -55,7 +55,7 @@ namespace Qwirkle.Web.Api.Controllers
         }
 
         [HttpPost("PlayTiles/")]
-        public ActionResult<int> PlayTiles(List<TileVM> tiles)
+        public ActionResult<int> PlayTiles(List<TileViewModel> tiles)
         {
             Logger.LogInformation("controller call");
 
