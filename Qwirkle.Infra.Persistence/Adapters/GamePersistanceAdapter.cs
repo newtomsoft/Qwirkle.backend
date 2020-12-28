@@ -21,13 +21,13 @@ namespace Qwirkle.Infra.Persistence.Adapters
 
         public Game GetGame(int gameId)
         {
-            var gamePersistence = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
-            var tilesOnGamePersistence = DbContext.TilesOnGame.Where(tb => tb.GameId == gameId).ToList();
-            var tiles = TilesOnGamePersistenceToTiles(tilesOnGamePersistence);
+            var game = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
+            var tilesOnGame = DbContext.TilesOnGame.Where(tb => tb.GameId == gameId).ToList();
+            var tiles = TilesOnGamePersistenceToTiles(tilesOnGame);
             var tilesOnBag = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
             Bag bag = new Bag { Id = gameId, Tiles = new List<Tile>() };
             tilesOnBag.ForEach(t => bag.Tiles.Add(TileOnBagToTile(t)));
-            return new Game(gamePersistence.Id, tiles, bag);
+            return new Game(game.Id, tiles, bag);
         }
 
         private List<Tile> TilesOnGamePersistenceToTiles(List<TileOnGamePersistence> tilesOnGame)

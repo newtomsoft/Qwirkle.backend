@@ -60,7 +60,7 @@ namespace Qwirkle.Infra.Persistence.Adapters
             var players = new List<Player>();
             playersPersistence.ForEach(player => players.Add(PlayerPersistenceToPlayer(player)));
             var tilesOnBag = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
-            Bag bag = new Bag { Id = gameId, Tiles = new List<Tile>() };
+            var bag = new Bag { Id = gameId, Tiles = new List<Tile>() };
             tilesOnBag.ForEach(t => bag.Tiles.Add(TileOnBagToTile(t)));
             return new Game(gamePersistence.Id, tiles, players, bag);
         }
@@ -118,8 +118,8 @@ namespace Qwirkle.Infra.Persistence.Adapters
 
             const int NUMBER_OF_SAME_TILE = 3;
             for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
-                foreach (TileColor color in (TileColor[])Enum.GetValues(typeof(TileColor)))
-                    foreach (TileForm form in (TileForm[])Enum.GetValues(typeof(TileForm)))
+                foreach (var color in (TileColor[])Enum.GetValues(typeof(TileColor)))
+                    foreach (var form in (TileForm[])Enum.GetValues(typeof(TileForm)))
                         DbContext.Tiles.Add(new TilePersistence { Color = color, Form = form });
 
             DbContext.SaveChanges();
