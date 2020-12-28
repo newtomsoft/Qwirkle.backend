@@ -51,14 +51,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompliancePersistence.Test"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Core.GameContext", "Qwirkle.Core.GameContext\Qwirkle.Core.GameContext.csproj", "{625A4027-0D2C-4296-9B4F-180B9AE9DB12}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{597C8BA8-5103-4AB2-9893-943DB8BABD64}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{597C8BA8-5103-4AB2-9893-943DB8BABD64}"
 	ProjectSection(SolutionItems) = preProject
 		sharesettings.Development.json = sharesettings.Development.json
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtomsoft.Tools", "..\Newtomsoft.Tools\Newtomsoft.Tools.csproj", "{697C9A09-6B05-46A7-AE0D-FAF67A75CEB7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External Dependencies", "External Dependencies", "{425D92A2-24B9-413A-AE06-B719DEC5B897}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,10 +102,6 @@ Global
 		{625A4027-0D2C-4296-9B4F-180B9AE9DB12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{625A4027-0D2C-4296-9B4F-180B9AE9DB12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{625A4027-0D2C-4296-9B4F-180B9AE9DB12}.Release|Any CPU.Build.0 = Release|Any CPU
-		{697C9A09-6B05-46A7-AE0D-FAF67A75CEB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{697C9A09-6B05-46A7-AE0D-FAF67A75CEB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{697C9A09-6B05-46A7-AE0D-FAF67A75CEB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{697C9A09-6B05-46A7-AE0D-FAF67A75CEB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,7 +117,6 @@ Global
 		{A1942291-31E6-4E5E-85D1-2CC5D0F3A47F} = {1B8ED7D0-5EC2-4184-A60E-ED93DE572802}
 		{6144CFEF-DCB8-44DB-BB1D-076D0EC4AF5D} = {1B8ED7D0-5EC2-4184-A60E-ED93DE572802}
 		{625A4027-0D2C-4296-9B4F-180B9AE9DB12} = {2094B01D-ED38-4071-9B68-636AE81C694B}
-		{697C9A09-6B05-46A7-AE0D-FAF67A75CEB7} = {425D92A2-24B9-413A-AE06-B719DEC5B897}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {326A9AD2-C15D-4772-8BB7-E6B195208FDB}

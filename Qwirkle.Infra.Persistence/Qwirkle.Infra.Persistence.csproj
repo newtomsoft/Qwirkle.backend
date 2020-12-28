@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Newtomsoft.Tools\Newtomsoft.Tools.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.GameContext\Qwirkle.Core.GameContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.PlayerContext\Qwirkle.Core.PlayerContext.csproj" />

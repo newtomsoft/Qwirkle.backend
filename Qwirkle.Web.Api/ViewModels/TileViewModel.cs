@@ -1,4 +1,9 @@
-﻿namespace Qwirkle.Web.Api.VueModels
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Qwirkle.Web.Api.VueModels
 {
     public class TileViewModel
     {
