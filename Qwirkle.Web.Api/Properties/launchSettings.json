@@ -1,37 +1,53 @@
 {
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
-    "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:61969",
       "sslPort": 44343
-    }
+    },
+    "windowsAuthentication": false
   },
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "Development InMemory": {
       "commandName": "Project",
-      "launchBrowser": true,
       "environmentVariables": {
         "PERSISTENCE": "InMemory",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchBrowser": true
+    },
+    "Development MySql": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "PERSISTENCE": "MySql",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "launchBrowser": true
+    },
+    "Development PostgreSql": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "PERSISTENCE": "PostgreSql"
+      },
+      "launchBrowser": true
     },
     "Development Sqlite": {
       "commandName": "Project",
-      "launchBrowser": true,
       "environmentVariables": {
         "PERSISTENCE": "Sqlite",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchBrowser": true
     },
     "Development SqlServer": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
+      "commandName": "Project",
       "environmentVariables": {
         "PERSISTENCE": "SqlServer",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "launchBrowser": true
     }
   }
 }
