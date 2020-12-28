@@ -7,7 +7,6 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
 {
     public class ConnectionFactory : IDisposable
     {
-
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
