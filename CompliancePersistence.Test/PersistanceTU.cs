@@ -14,6 +14,7 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
 {
     public class PersistenceTU
     {
+        #region private attributs
         private ICompliancePersistence Persistence { get; set; }
         private DefaultDbContext DbContext { get; set; }
 
@@ -21,6 +22,7 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
         private const int USER2 = 21;
         private const int USER3 = 3;
         private const int USER4 = 14;
+        #endregion
 
         public PersistenceTU()
         {
@@ -31,6 +33,8 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
             AddGame();
             AddAllTiles();
         }
+
+        #region private methods
         private void AddUsers()
         {
             DbContext.Users.Add(new UserPersistence { Id = USER1 });
@@ -66,6 +70,7 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
             }
             DbContext.SaveChanges();
         }
+        #endregion
 
         [Fact]
         public void CreatePlayerShould()
