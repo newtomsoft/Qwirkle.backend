@@ -17,10 +17,11 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="Newtomsoft.Tools" Version="0.0.3" />
+    <PackageReference Include="Newtomsoft.Tools" Version="0.1.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Newtomsoft.Tools\Newtomsoft.Tools.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.GameContext\Qwirkle.Core.GameContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.PlayerContext\Qwirkle.Core.PlayerContext.csproj" />
