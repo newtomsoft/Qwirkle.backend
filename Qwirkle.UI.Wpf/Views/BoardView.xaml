@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Qwirkle.UI.Wpf.Views.BoardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:views="clr-namespace:Qwirkle.UI.Wpf.Views"
+             xmlns:viewModels="clr-namespace:Qwirkle.UI.Wpf.ViewModels"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:BoardViewModel}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBox Grid.Row="0" Grid.Column="0" Text="0-0"></TextBox>
+        <TextBox Grid.Row="0" Grid.Column="9" Text="0-9"></TextBox>
+        <TextBox Grid.Row="9" Grid.Column="0" Text="9-0"></TextBox>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="1-1"></TextBox>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="2-1"></TextBox>
+        <TextBox Grid.Row="2" Grid.Column="2" Text="2-2"></TextBox>
+        <TextBox Grid.Row="9" Grid.Column="9" Text="9-9"></TextBox>
+        <TextBox Grid.Row="2" Grid.Column="1" Text="2-1"></TextBox>
+    </Grid>
+</UserControl>

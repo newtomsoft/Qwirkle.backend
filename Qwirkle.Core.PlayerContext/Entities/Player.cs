@@ -10,6 +10,6 @@ namespace Qwirkle.Core.PlayerContext.Entities.Player
         public byte Points { get; set; }
         public byte GamePosition { get; set; }
         public bool GameTurn { get; set; }
-        public List<Tile> Tiles { get; set; }
+        public Rack Rack { get; set; }
     }
 }

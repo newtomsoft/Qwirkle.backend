@@ -28,7 +28,7 @@ namespace Qwirkle.Infra.Persistence.Adapters
             var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerPersistence.Id).Include(t => t.Tile).ToList();
             var tiles = new List<Tile>();
             tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerPersistenceToTile(tp)));
-            player.Tiles = tiles;
+            player.Rack = new Rack(tiles.ToArray());
             return player;
         }
         private Tile TileOnPlayerPersistenceToTile(TileOnPlayerPersistence tileOnPlayer)

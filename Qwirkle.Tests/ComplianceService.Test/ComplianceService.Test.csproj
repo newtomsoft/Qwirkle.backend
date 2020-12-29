@@ -4,6 +4,12 @@
     <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <RootNamespace>Qwirkle.Core.ComplianceContext.Tests</RootNamespace>
+
+    <AssemblyName>Qwirkle.Core.ComplianceContext.Tests</AssemblyName>
+
+    <Configurations>Debug;Release;NoPersitance</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,8 +24,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <ProjectReference Include="..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
-    <ProjectReference Include="..\Qwirkle.Infra.Persistence\Qwirkle.Infra.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
+    <ProjectReference Include="..\..\Qwirkle.Infra.Persistence\Qwirkle.Infra.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
