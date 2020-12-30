@@ -22,6 +22,11 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
         public RackViewModel PlayerRack { get; private set; }
         public BoardViewModel Board { get; private set; }
+        public ControlsViewModel Controls { get; private set; }
+
+        public ICommand PlayTiles { get; private set; }
+        public ICommand ViewTips { get; private set; }
+        public ICommand DismissMessageInfo { get; private set; }
 
         public string MessageInfo
         {
@@ -36,7 +41,6 @@ namespace Qwirkle.UI.Wpf.ViewModels
                 NotifyPropertyChanged();
             }
         }
-
         public bool MessageInfoIsVisible
         {
             get
@@ -55,10 +59,6 @@ namespace Qwirkle.UI.Wpf.ViewModels
         //public ProductViewModel SelectedProduct { get; set; }
         //public ObservableCollection<ProductViewModel> ProductsInChart { get; private set; }
 
-        public ICommand PlayTiles { get; private set; }
-        public ICommand ViewTips { get; private set; }
-        public ICommand DismissMessageInfo { get; private set; }
-
         public GameViewModel(Dispatcher uiDispatcher) : base(uiDispatcher)
         {
             PlayTiles = new RelayCommand(OnPlayTiles);
@@ -74,6 +74,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
             PlayerRack = new RackViewModel(rack, uiDispatcher);
             Board = new BoardViewModel(uiDispatcher);
+            Controls = new ControlsViewModel(uiDispatcher);
 
             DismissMessageInfo = new RelayCommand(OnDismissMessageInfo);
         }

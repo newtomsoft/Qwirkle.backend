@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -12,7 +10,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
         public string square1 = "1";
         public string square2 = "2";
         public string square3 = "3";
-
+        public ICommand ChangeTiles { get; private set; }
         public ICommand Play { get; private set; }
         public ICommand Tips { get; private set; }
 
@@ -20,16 +18,22 @@ namespace Qwirkle.UI.Wpf.ViewModels
         {
             Play = new RelayCommand(OnPlay);
             Tips = new RelayCommand(OnTips);
+            ChangeTiles = new RelayCommand(OnChangeTiles);
+        }
+
+        private void OnChangeTiles()
+        {
+            MessageBox.Show("Fonctionnalité échange des tuiles en cours de dev...");
         }
 
         private void OnTips()
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Fonctionnalité Tips en cours de dev...");
         }
 
         private void OnPlay()
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Fonctionnalité Play en cours de dev...");
         }
     }
 }

@@ -11,8 +11,10 @@
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
         <Button Grid.Row="0" Content="Play" Command="{Binding Play}"></Button>
         <Button Grid.Row="1" Content="Tips" Command="{Binding Tips}"></Button>
+        <Button Grid.Row="2" Content="Change tiles" Command="{Binding ChangeTiles}"></Button>
     </Grid>
 </UserControl>

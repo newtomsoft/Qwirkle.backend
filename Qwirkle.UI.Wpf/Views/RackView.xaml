@@ -17,14 +17,12 @@
             <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <!--<Image Grid.Column="0" Source="{Binding ImagePath[0]}"></Image>-->
-        <Image Grid.Column="0" Source="D:\\Boulot\\projets info\\Qwirkle\\Qwirkle.Infra.Persistence\\Images\\Tiles\\Png\\BlueCircle.png"></Image>
-        <!--<Image Grid.Column="1" Source="{Binding ImagePath[1]}"></Image>-->
-        <Image Grid.Column="1" Source="D:\\Boulot\\projets info\\Qwirkle\\Qwirkle.Infra.Persistence\\Images\\Tiles\\Png\\BlueSquare.png"></Image>
+        <Image Grid.Column="0" Source="{Binding ImagePath[0]}"></Image>
+        <Image Grid.Column="1" Source="{Binding ImagePath[1]}"></Image>
         <Image Grid.Column="2" Source="{Binding ImagePath[2]}"></Image>
         <Image Grid.Column="3" Source="{Binding ImagePath[3]}"></Image>
         <Image Grid.Column="4" Source="{Binding ImagePath[4]}"></Image>
         <Image Grid.Column="5" Source="{Binding ImagePath[5]}"></Image>
-        
+
     </Grid>
 </UserControl>
