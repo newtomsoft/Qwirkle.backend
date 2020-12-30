@@ -79,7 +79,7 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
             var player = Persistence.CreatePlayer(USER1, game.Id);
             Assert.Equal(game.Id, player.GameId);
             Assert.Equal(0, player.GamePosition);
-            Assert.False(player.GameTurn);
+            Assert.False(player.IsTurn);
             Assert.Equal(0, player.Points);
             Assert.Empty(player.Tiles);
         }
@@ -100,13 +100,13 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
             var game = Persistence.CreateGame(DateTime.Today);
             var player1 = Persistence.CreatePlayer(USER1, game.Id);
             player1.Points = points;
-            player1.GameTurn = true;
+            player1.SetTurn(true);
             player1.GamePosition = position;
             Persistence.UpdatePlayer(player1);
 
             var playerUpdate = Persistence.GetPlayer(player1.Id);
             Assert.Equal(points, playerUpdate.Points);
-            Assert.True(playerUpdate.GameTurn);
+            Assert.True(playerUpdate.IsTurn);
             Assert.Equal(position, playerUpdate.GamePosition);
         }
 

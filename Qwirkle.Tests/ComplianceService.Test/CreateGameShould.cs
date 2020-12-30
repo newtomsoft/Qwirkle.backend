@@ -49,7 +49,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 3);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 4);
-            Assert.Equal(1, players.Count(p => p.GameTurn));
+            Assert.Equal(1, players.Count(p => p.IsTurn));
             Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
             Assert.Equal(4, players.Select(p => p.Tiles.Count == TILES_NUMBER_PER_PLAYER).Count());
 
@@ -64,7 +64,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 3);
-            Assert.Equal(1, players.Count(p => p.GameTurn));
+            Assert.Equal(1, players.Count(p => p.IsTurn));
             Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
             Assert.Equal(3, players.Select(p => p.Tiles.Count == TILES_NUMBER_PER_PLAYER).Count());
         }
@@ -77,7 +77,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
 
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
-            Assert.Equal(1, players.Count(p => p.GameTurn));
+            Assert.Equal(1, players.Count(p => p.IsTurn));
             Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
             Assert.Equal(2, players.Select(p => p.Tiles.Count == TILES_NUMBER_PER_PLAYER).Count());
         }
@@ -88,7 +88,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             var userIds = new List<int> { USER3 };
             var players = ComplianceService.CreateGame(userIds);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
-            Assert.Equal(1, players.Count(p => p.GameTurn));
+            Assert.Equal(1, players.Count(p => p.IsTurn));
             Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
             Assert.Single(players.Select(p => p.Tiles.Count == TILES_NUMBER_PER_PLAYER));
         }
