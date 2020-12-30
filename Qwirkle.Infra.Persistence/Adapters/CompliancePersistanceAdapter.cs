@@ -141,18 +141,17 @@ namespace Qwirkle.Infra.Persistence.Adapters
         {
             var gamePlayerPersistence = DbContext.Players.Where(gp => gp.Id == player.Id).FirstOrDefault();
             gamePlayerPersistence.Points = (byte)player.Points;
-            gamePlayerPersistence.GameTurn = player.GameTurn;
+            gamePlayerPersistence.GameTurn = player.IsTurn;
             gamePlayerPersistence.GamePosition = (byte)player.GamePosition;
             return gamePlayerPersistence;
         }
 
         private Player PlayerPersistenceToPlayer(PlayerPersistence playerPersistence)
         {
-            var player = new Player { Id = playerPersistence.Id, GameId = playerPersistence.GameId, GameTurn = playerPersistence.GameTurn, GamePosition = playerPersistence.GamePosition, Points = playerPersistence.Points };
             var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerPersistence.Id).Include(t => t.Tile).ToList();
-            var tiles = new List<Tile>();
+            var tiles = new List<Tile>();      
             tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerPersistenceToTile(tp)));
-            player.Tiles = tiles;
+            var player = new Player(playerPersistence.Id, playerPersistence.GameId, playerPersistence.GamePosition, playerPersistence.Points, tiles, playerPersistence.GameTurn);
             return player;
         }
         private TileOnGamePersistence TileToTileOnGamePersistence(Tile tile, int gameId)

@@ -15,7 +15,6 @@ namespace Qwirkle.Core.ComplianceContext.Services
         private const int TILES_NUMBER_FOR_A_QWIRKLE = 6;
         private const int POINTS_FOR_A_QWIRKLE = 12;
 
-
         private ICompliancePersistence PersistenceAdapter { get; }
 
         public Game Game { get; set; }
@@ -27,8 +26,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             Game = PersistenceAdapter.CreateGame(DateTime.Now);
             CreatePlayers(usersIds);
             CreateTiles();
-            Game.Players.ForEach(player => PersistenceAdapter.TilesFromPlayerToBag(player, player.Tiles));
-            Game.Players.ForEach(player => PersistenceAdapter.TilesFromBagToPlayer(player, TILES_NUMBER_PER_PLAYER));
+            DealTilesToPlayers();
             RefreshPlayers();
             SelectFirstPlayer();
             return Game.Players;
@@ -37,31 +35,37 @@ namespace Qwirkle.Core.ComplianceContext.Services
         public PlayReturn PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
             Player player = GetPlayer(playerId);
-            if (!IsPlayerTurn(player)) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn };
+            if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn };
 
             List<Tile> tilesToPlay = GetTiles(tilesTupleToPlay);
             GetGame(player.GameId);
 
-            if (!DoesThePlayerHaveThisTiles(player, tilesToPlay)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile };
+            if (!player.HasTiles(tilesToPlay)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile };
 
             PlayReturn playReturn = GetPlayReturn(tilesToPlay);
             if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
-            PlayAndUpdateGame(player, tilesToPlay, playReturn.Points);
+            PlayTiles(player, tilesToPlay, playReturn.Points);
             return playReturn;
         }
 
         public bool SwapTiles(int playerId, List<int> tilesIds)
         {
             Player player = GetPlayer(playerId);
-            if (!IsPlayerTurn(player)) return false;
+            if (!player.IsTurn) return false;
 
             List<Tile> tilesToSwap = GetTiles(tilesIds);
             GetGame(player.GameId);
 
-            if (!DoesThePlayerHaveThisTiles(player, tilesToSwap)) return false;
+            if (!player.HasTiles(tilesToSwap)) return false;
 
-            SwapAndUpdateGame(player, tilesToSwap);
+            SwapTiles(player, tilesToSwap);
             return true;
+        }
+
+        private void DealTilesToPlayers()
+        {
+            Game.Players.ForEach(player => PersistenceAdapter.TilesFromPlayerToBag(player, player.Tiles));
+            Game.Players.ForEach(player => PersistenceAdapter.TilesFromBagToPlayer(player, TILES_NUMBER_PER_PLAYER));
         }
 
         private void CreateTiles() => PersistenceAdapter.CreateTiles(Game.Id);
@@ -117,13 +121,6 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return Math.Max(maxSameColor, maxSameForm) + 1;
         }
 
-        private bool DoesThePlayerHaveThisTiles(Player player, List<Tile> tilesToPlay)
-        {
-            var playerTilesId = player.Tiles.Select(t => t.Id);
-            var tilesIdToPlay = tilesToPlay.Select(t => t.Id);
-            return tilesIdToPlay.All(id => playerTilesId.Contains(id));
-        }
-
         public PlayReturn GetPlayReturn(List<Tile> tiles)
         {
             if (Game.Tiles.Count == 0 && tiles.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, Tile = tiles[0] };
@@ -162,7 +159,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         private void GetGame(int GameId) => Game = PersistenceAdapter.GetGame(GameId);
 
-        private void SwapAndUpdateGame(Player player, List<Tile> tilesToSwap)
+        private void SwapTiles(Player player, List<Tile> tilesToSwap)
         {
             SetPlayerTurn(player.Id, false);
             SetNextPlayerTurnToPlay(player.Id);
@@ -170,10 +167,10 @@ namespace Qwirkle.Core.ComplianceContext.Services
             PersistenceAdapter.TilesFromPlayerToBag(player, tilesToSwap);
         }
 
-        private void PlayAndUpdateGame(Player player, List<Tile> tilesToPlay, int points)
+        private void PlayTiles(Player player, List<Tile> tilesToPlay, int points)
         {
             player.Points += points;
-            player.GameTurn = false;
+            player.SetTurn(false);
             Game.Tiles.AddRange(tilesToPlay);
             PersistenceAdapter.UpdatePlayer(player);
             SetNextPlayerTurnToPlay(player.Id);
@@ -187,7 +184,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             int playersNumber = Game.Players.Count;
             int nextPlayerPosition = position < playersNumber ? position + 1 : 1;
             Player nexPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
-            nexPlayer.GameTurn = true;
+            nexPlayer.SetTurn(true);
             PersistenceAdapter.UpdatePlayer(nexPlayer);
         }
 
@@ -246,7 +243,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
                 return 0;
 
-            return (allTilesAlongReferenceTiles.Count != TILES_NUMBER_FOR_A_QWIRKLE ? allTilesAlongReferenceTiles.Count : POINTS_FOR_A_QWIRKLE);
+            return allTilesAlongReferenceTiles.Count != TILES_NUMBER_FOR_A_QWIRKLE ? allTilesAlongReferenceTiles.Count : POINTS_FOR_A_QWIRKLE;
         }
 
         private int CountTilesMakedValidColumn(List<Tile> tiles)
@@ -281,16 +278,13 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tileRight != null || tileLeft != null || tileTop != null || tileBottom != null;
         }
 
-        private bool IsPlayerTurn(Player player)
-            => player.GameTurn;
-
         private bool IsPlayerTurn(int playerId)
             => PersistenceAdapter.IsPlayerTurn(playerId);
 
         private void SetPlayerTurn(int playerId, bool turn)
         {
             PersistenceAdapter.SetPlayerTurn(playerId, turn);
-            Game.Players.FirstOrDefault(p => p.Id == playerId).GameTurn = turn;
+            Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(turn);
         }
     }
     public static class TileExtension
