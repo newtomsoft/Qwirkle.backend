@@ -7,22 +7,27 @@
              mc:Ignorable="d" 
              d:DesignHeight="60" d:DesignWidth="400"
              d:DataContext="{d:DesignInstance viewmodels:RackViewModel}">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
-        </Grid.ColumnDefinitions>
 
-        <Image Grid.Column="0" Source="{Binding ImagePath[0]}"></Image>
-        <Image Grid.Column="1" Source="{Binding ImagePath[1]}"></Image>
-        <Image Grid.Column="2" Source="{Binding ImagePath[2]}"></Image>
-        <Image Grid.Column="3" Source="{Binding ImagePath[3]}"></Image>
-        <Image Grid.Column="4" Source="{Binding ImagePath[4]}"></Image>
-        <Image Grid.Column="5" Source="{Binding ImagePath[5]}"></Image>
-
-    </Grid>
+    <DataGrid Name="Tiles"
+              Margin="10"
+              AutoGenerateColumns="False"
+              IsReadOnly="True"
+              ItemsSource="{Binding Path=Tiles}"
+              SelectedItem="{Binding SelectedTile}">
+        <DataGrid.Columns>
+            <DataGridTemplateColumn Width="120">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding Image}" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+        <DataGrid.LayoutTransform>
+            <TransformGroup>
+                <RotateTransform Angle="-90"/>
+                <ScaleTransform ScaleX="1" ScaleY="-1" />
+            </TransformGroup>
+        </DataGrid.LayoutTransform>
+    </DataGrid>
 </UserControl>

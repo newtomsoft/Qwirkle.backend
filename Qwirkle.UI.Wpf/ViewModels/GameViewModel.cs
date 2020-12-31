@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -20,21 +21,17 @@ namespace Qwirkle.UI.Wpf.ViewModels
         private IRequestCompliance RequestCompliance { get; }
         private IRequestGame RequestGame { get; }
         private IRequestPlayer RequestPlayer { get; }
-        public RackViewModel PlayerRack { get; private set; }
+
+        public RackViewModel Rack { get; private set; }
         public BoardViewModel Board { get; private set; }
-        public ControlsViewModel Controls { get; private set; }
-        public ICommand PlayTiles { get; private set; }
-        public ICommand ViewTips { get; private set; }
-        
+
+        public ICommand ChangeTiles { get; private set; }
+        public ICommand Play { get; private set; }
+        public ICommand Tips { get; private set; }
+
+
         public GameViewModel(IRequestCompliance requestCompliance, IRequestGame requestGameService, IRequestPlayer requestPlayerService, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
-            RequestCompliance = requestCompliance;
-            RequestGame = requestGameService;
-            RequestPlayer = requestPlayerService;
-
-            PlayTiles = new RelayCommand(OnPlayTiles);
-            ViewTips = new RelayCommand(OnViewTips);
-
             Tile tile0 = new Tile(1, TileColor.Blue, TileForm.Ring, 0);
             Tile tile1 = new Tile(2, TileColor.Red, TileForm.Square, 1);
             Tile tile2 = new Tile(3, TileColor.Purple, TileForm.Square, 2);
@@ -43,19 +40,35 @@ namespace Qwirkle.UI.Wpf.ViewModels
             Tile tile5 = new Tile(6, TileColor.Orange, TileForm.Ring, 5);
             Rack rack = new Rack(new Tile[] {tile0, tile1, tile2, tile3, tile4, tile5 });
 
-            PlayerRack = new RackViewModel(rack, uiDispatcher);
+            RequestCompliance = requestCompliance;
+            RequestGame = requestGameService;
+            RequestPlayer = requestPlayerService;
+
+            Play = new RelayCommand(OnPlay);
+            Tips = new RelayCommand(OnTips);
+            ChangeTiles = new RelayCommand(OnChangeTiles);
+
+            Rack = new RackViewModel(rack, uiDispatcher);
             Board = new BoardViewModel(uiDispatcher);
-            Controls = new ControlsViewModel(requestCompliance, requestGameService, requestPlayerService,  uiDispatcher);
         }
 
-        private void OnViewTips()
+        private void OnChangeTiles()
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Fonctionnalité échange des tuiles en cours de dev...");
+
+            var selectedtile = Rack.SelectedTile;
+
+            //RequestCompliance.CreateGame(new List<int> { 1, 2, 3 });
         }
 
-        private void OnPlayTiles()
+        private void OnTips()
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Fonctionnalité Tips en cours de dev...");
+        }
+
+        private void OnPlay()
+        {
+            MessageBox.Show("Fonctionnalité Play en cours de dev...");
         }
     }
 }

@@ -15,9 +15,6 @@
         <DataTemplate DataType="{x:Type viewModels:RackViewModel}">
             <views:RackView></views:RackView>
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModels:ControlsViewModel}">
-            <views:ControlsView></views:ControlsView>
-        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
@@ -32,7 +29,7 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <views:ControlsView Grid.Column="1" Grid.RowSpan="2" DataContext="{Binding Controls}"/>
+        <views:ControlsView Grid.Column="1" Grid.RowSpan="2"/>
         <views:BoardView Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" DataContext="{Binding Board}"/>
         <views:RackView Grid.Row="2" Grid.ColumnSpan="2" DataContext="{Binding PlayerRack}"/>
     </Grid>
