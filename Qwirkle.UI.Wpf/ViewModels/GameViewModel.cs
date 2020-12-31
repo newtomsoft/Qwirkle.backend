@@ -1,6 +1,9 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using Qwirkle.Core.CommonContext;
+using Qwirkle.Core.ComplianceContext.Ports;
+using Qwirkle.Core.GameContext.Ports;
 using Qwirkle.Core.PlayerContext.Entities;
+using Qwirkle.Core.PlayerContext.Ports;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,53 +17,21 @@ namespace Qwirkle.UI.Wpf.ViewModels
 {
     public class GameViewModel : ViewModelBase, IPageViewModel
     {
-        //private readonly IEnumerable<Product> _availableProducts;
-        //private readonly User _user;
-        //private readonly BuyingService _buyingService = new BuyingService();
-        private string _messageInfo;
-        private bool _messageInfoIsVisible;
-
+        private IRequestCompliance RequestCompliance { get; }
+        private IRequestGame RequestGame { get; }
+        private IRequestPlayer RequestPlayer { get; }
         public RackViewModel PlayerRack { get; private set; }
         public BoardViewModel Board { get; private set; }
         public ControlsViewModel Controls { get; private set; }
-
         public ICommand PlayTiles { get; private set; }
         public ICommand ViewTips { get; private set; }
-        public ICommand DismissMessageInfo { get; private set; }
-
-        public string MessageInfo
+        
+        public GameViewModel(IRequestCompliance requestCompliance, IRequestGame requestGameService, IRequestPlayer requestPlayerService, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
-            get
-            {
-                return _messageInfo;
-            }
+            RequestCompliance = requestCompliance;
+            RequestGame = requestGameService;
+            RequestPlayer = requestPlayerService;
 
-            set
-            {
-                _messageInfo = value;
-                NotifyPropertyChanged();
-            }
-        }
-        public bool MessageInfoIsVisible
-        {
-            get
-            {
-                return _messageInfoIsVisible;
-            }
-
-            set
-            {
-                _messageInfoIsVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        //public IEnumerable<ProductViewModel> ProductsAvailable { get; private set; }
-        //public ProductViewModel SelectedProduct { get; set; }
-        //public ObservableCollection<ProductViewModel> ProductsInChart { get; private set; }
-
-        public GameViewModel(Dispatcher uiDispatcher) : base(uiDispatcher)
-        {
             PlayTiles = new RelayCommand(OnPlayTiles);
             ViewTips = new RelayCommand(OnViewTips);
 
@@ -74,9 +45,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
             PlayerRack = new RackViewModel(rack, uiDispatcher);
             Board = new BoardViewModel(uiDispatcher);
-            Controls = new ControlsViewModel(uiDispatcher);
-
-            DismissMessageInfo = new RelayCommand(OnDismissMessageInfo);
+            Controls = new ControlsViewModel(requestCompliance, requestGameService, requestPlayerService,  uiDispatcher);
         }
 
         private void OnViewTips()
@@ -87,18 +56,6 @@ namespace Qwirkle.UI.Wpf.ViewModels
         private void OnPlayTiles()
         {
             throw new NotImplementedException();
-        }
-
-        private void OnDismissMessageInfo()
-        {
-            MessageInfoIsVisible = false;
-            MessageInfo = string.Empty;
-        }
-
-        private void DisplayMessage(string message)
-        {
-            MessageInfoIsVisible = true;
-            MessageInfo = message;
         }
     }
 }

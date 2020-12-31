@@ -1,4 +1,7 @@
-﻿using Qwirkle.UI.Wpf.ViewModels;
+﻿using Qwirkle.Core.ComplianceContext.Ports;
+using Qwirkle.Core.GameContext.Ports;
+using Qwirkle.Core.PlayerContext.Ports;
+using Qwirkle.UI.Wpf.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +21,10 @@ namespace Qwirkle.UI.Wpf.Views
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(IRequestCompliance requestCompliance, IRequestGame requestGameService, IRequestPlayer requestPlayerService)
         {
             InitializeComponent();
-            DataContext = new MainViewModel(Dispatcher);
+            DataContext = new MainViewModel(requestCompliance, requestGameService, requestPlayerService, Dispatcher);
         }
     }
 }
