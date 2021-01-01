@@ -8,5 +8,6 @@ namespace Qwirkle.Core.ComplianceContext.Ports
     {
         List<Player> CreateGame(List<int> usersIds);
         PlayReturn PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay);
+        bool SwapTiles(int playerId, List<int> tilesIds);
     }
 }
