@@ -10,6 +10,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
 {
     public class TileViewModel
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public BitmapImage Image { get; set; }
     }

@@ -15,7 +15,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var propertyChanged = PropertyChanged;
             if (propertyChanged == null)

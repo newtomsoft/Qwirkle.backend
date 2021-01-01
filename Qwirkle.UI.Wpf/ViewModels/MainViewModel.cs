@@ -20,7 +20,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
             private set
             {
                 _currentViewModel = value;
-                NotifyPropertyChanged();
+                OnPropertyChanged();
             }
         }
 

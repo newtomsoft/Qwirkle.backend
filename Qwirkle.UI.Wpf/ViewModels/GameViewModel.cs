@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Command;
-using Qwirkle.Core.CommonContext;
+﻿using Qwirkle.Core.CommonContext;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.GameContext.Ports;
 using Qwirkle.Core.PlayerContext.Entities;
@@ -26,7 +25,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
         public BoardViewModel Board { get; private set; }
 
         public ICommand ChangeTiles { get; private set; }
-        public ICommand Play { get; private set; }
+        public string Play { get; private set; }
         public ICommand Tips { get; private set; }
 
 
@@ -44,7 +43,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
             RequestGame = requestGameService;
             RequestPlayer = requestPlayerService;
 
-            Play = new RelayCommand(OnPlay);
+            //Play = new RelayCommand(OnPlay);
             Tips = new RelayCommand(OnTips);
             ChangeTiles = new RelayCommand(OnChangeTiles);
 
@@ -54,11 +53,13 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
         private void OnChangeTiles()
         {
-            MessageBox.Show("Fonctionnalité échange des tuiles en cours de dev...");
-
-            var selectedtile = Rack.SelectedTile;
-
-            //RequestCompliance.CreateGame(new List<int> { 1, 2, 3 });
+            if (Rack.SelectedCells.Count == 0) return;
+            List<int> tilesIds = new List<int>();
+            foreach (var cell in Rack.SelectedCells)
+            {
+                tilesIds.Add(((TileViewModel)cell.Item).Id);
+            }
+            RequestCompliance.SwapTiles(1, tilesIds);
         }
 
         private void OnTips()

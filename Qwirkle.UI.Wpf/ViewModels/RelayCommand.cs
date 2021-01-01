@@ -5,18 +5,13 @@ namespace Qwirkle.UI.Wpf.ViewModels
 {
     public class RelayCommand : ICommand
     {
-        private readonly Action _execute;
+        private readonly Action _action;
 
         private readonly Predicate<object> _canExecute;
 
-        public RelayCommand(Action execute, Predicate<object> canExecute = null)
+        public RelayCommand(Action action, Predicate<object> canExecute = null)
         {
-            if (execute == null)
-            {
-                throw new ArgumentNullException("execute");
-            }
-
-            _execute = execute;
+            _action = action ?? throw new ArgumentNullException("action is not defined");
             _canExecute = canExecute;
         }
 
@@ -33,7 +28,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
         public void Execute(object parameter)
         {
-            _execute();
+            _action();
         }
     }
 
