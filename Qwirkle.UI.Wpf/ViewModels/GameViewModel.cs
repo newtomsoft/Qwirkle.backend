@@ -25,7 +25,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
         public BoardViewModel Board { get; private set; }
 
         public ICommand ChangeTiles { get; private set; }
-        public string Play { get; private set; }
+        public ICommand Play { get; private set; }
         public ICommand Tips { get; private set; }
 
 
@@ -43,7 +43,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
             RequestGame = requestGameService;
             RequestPlayer = requestPlayerService;
 
-            //Play = new RelayCommand(OnPlay);
+            Play = new RelayCommand(OnPlay);
             Tips = new RelayCommand(OnTips);
             ChangeTiles = new RelayCommand(OnChangeTiles);
 
