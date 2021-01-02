@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Qwirkle.Core.CommonContext.Entities
+namespace Qwirkle.Core.ComplianceContext.Entities
 {
     public class Board
     {

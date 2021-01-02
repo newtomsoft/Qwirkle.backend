@@ -1,9 +1,7 @@
-﻿using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.Entities;
-using Qwirkle.Core.CommonContext.Enums;
+﻿using Qwirkle.Core.ComplianceContext;
+using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.Enums;
 using Qwirkle.Core.ComplianceContext.Ports;
-using Qwirkle.Core.GameContext.Ports;
-using Qwirkle.Core.PlayerContext.Ports;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +17,6 @@ namespace Qwirkle.UI.Wpf.ViewModels
     public class GameViewModel : ViewModelBase, IPageViewModel
     {
         private IRequestCompliance RequestCompliance { get; }
-        private IRequestGame RequestGame { get; }
         private IRequestPlayer RequestPlayer { get; }
 
         public RackViewModel Rack { get; private set; }
@@ -30,7 +27,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
         public ICommand Tips { get; private set; }
 
 
-        public GameViewModel(IRequestCompliance requestCompliance, IRequestGame requestGameService, IRequestPlayer requestPlayerService, Dispatcher uiDispatcher) : base(uiDispatcher)
+        public GameViewModel(IRequestCompliance requestCompliance, IRequestPlayer requestPlayerService, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
             var tile0 = new TileOnPlayer(0, 1, TileColor.Blue, TileForm.Ring);
             var tile1 = new TileOnPlayer(1, 2, TileColor.Red, TileForm.Square);
@@ -41,7 +38,6 @@ namespace Qwirkle.UI.Wpf.ViewModels
             Rack rack = new Rack(new List<TileOnPlayer> { tile0, tile1, tile2, tile3, tile4, tile5 });
 
             RequestCompliance = requestCompliance;
-            RequestGame = requestGameService;
             RequestPlayer = requestPlayerService;
 
             Play = new RelayCommand(OnPlay);

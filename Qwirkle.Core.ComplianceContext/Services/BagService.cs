@@ -1,13 +1,12 @@
-﻿using Qwirkle.Core.BagContext.Ports;
-using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.Entities;
-using Qwirkle.Core.CommonContext.Enums;
+﻿using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.Enums;
+using Qwirkle.Core.ComplianceContext.Ports;
 using System;
 using System.Collections.Generic;
 
-namespace Qwirkle.Core.BagContext.Services
+namespace Qwirkle.Core.ComplianceContext.Services
 {
-    public class BagService : IRequestBagService
+    public class BagService : IRequestBag
     {
         private const int NUMBER_OF_TILES_IN_A_FULL_BAG = 108;
         private IBagPersistence Persistence { get; }

@@ -1,7 +1,7 @@
-﻿using Qwirkle.Core.CommonContext.Enums;
-using Qwirkle.Core.CommonContext.ValueObjects;
+﻿using Qwirkle.Core.ComplianceContext.Enums;
+using Qwirkle.Core.ComplianceContext.ValueObjects;
 
-namespace Qwirkle.Core.CommonContext.Entities
+namespace Qwirkle.Core.ComplianceContext.Entities
 {
     public class TileOnBoard : Tile
     {

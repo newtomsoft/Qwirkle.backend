@@ -1,9 +1,9 @@
-﻿using Qwirkle.Core.CommonContext.Entities;
+﻿using Qwirkle.Core.ComplianceContext.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Qwirkle.Core.CommonContext.Entities
+namespace Qwirkle.Core.ComplianceContext.Entities
 {
     public class Player
     {

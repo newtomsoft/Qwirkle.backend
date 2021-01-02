@@ -1,6 +1,4 @@
 ﻿using Qwirkle.Core.ComplianceContext.Ports;
-using Qwirkle.Core.GameContext.Ports;
-using Qwirkle.Core.PlayerContext.Ports;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
@@ -11,7 +9,6 @@ namespace Qwirkle.UI.Wpf.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private IRequestCompliance RequestCompliance { get; }
-        private IRequestGame RequestGame { get; }
         private IRequestPlayer RequestPlayer { get; }
 
         public GameViewModel GameViewModel { get; private set; }
@@ -37,16 +34,13 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
 
 
-        public MainViewModel(IRequestCompliance requestCompliance, IRequestGame requestGameService, IRequestPlayer requestPlayerService, Dispatcher uiDispatcher) : base(uiDispatcher)
+        public MainViewModel(IRequestCompliance requestCompliance, IRequestPlayer requestPlayerService, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
-            GameViewModel = new GameViewModel(requestCompliance, requestGameService, requestPlayerService, uiDispatcher);
+            GameViewModel = new GameViewModel(requestCompliance, requestPlayerService, uiDispatcher);
             NewGame = new RelayCommand(OnNewGame);
 
             RequestCompliance = requestCompliance;
-            RequestGame = requestGameService;
             RequestPlayer = requestPlayerService;
-
-
         }
 
         private void OnNewGame()

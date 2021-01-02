@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.Entities;
-using Qwirkle.Core.CommonContext.Enums;
-using Qwirkle.Core.CommonContext.ValueObjects;
+using Qwirkle.Core.ComplianceContext;
+using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.Enums;
+using Qwirkle.Core.ComplianceContext.ValueObjects;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Infra.Persistence.Models;
 using System;

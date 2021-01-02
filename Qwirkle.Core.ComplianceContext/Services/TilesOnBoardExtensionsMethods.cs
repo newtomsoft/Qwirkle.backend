@@ -1,5 +1,5 @@
-﻿using Qwirkle.Core.CommonContext.Entities;
-using Qwirkle.Core.CommonContext.Enums;
+﻿using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.Enums;
 using System.Collections.Generic;
 
 namespace Qwirkle.Core.ComplianceContext.Services

@@ -1,4 +1,4 @@
-﻿namespace Qwirkle.Core.CommonContext.Enums
+﻿namespace Qwirkle.Core.ComplianceContext.Enums
 {
     public enum TileColor
     {

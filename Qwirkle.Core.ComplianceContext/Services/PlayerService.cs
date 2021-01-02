@@ -1,7 +1,7 @@
-﻿using Qwirkle.Core.CommonContext.Entities;
-using Qwirkle.Core.PlayerContext.Ports;
+﻿using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.Ports;
 
-namespace Qwirkle.Core.PlayerContext.Services
+namespace Qwirkle.Core.ComplianceContext.Services
 {
     public class PlayerService : IRequestPlayer
     {

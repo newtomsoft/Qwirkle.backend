@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Qwirkle.Core.CommonContext.Entities;
-using Qwirkle.Core.PlayerContext.Ports;
+using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Infra.Persistence.Models;
 using System.Collections.Generic;
 using System.Linq;

@@ -17,10 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Qwirkle.Core.CommonContext\Qwirkle.Core.CommonContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
-    <ProjectReference Include="..\Qwirkle.Core.GameContext\Qwirkle.Core.GameContext.csproj" />
-    <ProjectReference Include="..\Qwirkle.Core.PlayerContext\Qwirkle.Core.PlayerContext.csproj" />
     <ProjectReference Include="..\Qwirkle.Infra.Persistence\Qwirkle.Infra.Persistence.csproj" />
   </ItemGroup>
 

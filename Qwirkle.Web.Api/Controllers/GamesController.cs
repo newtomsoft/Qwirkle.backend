@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Qwirkle.Core.ComplianceContext.Ports;
-using Qwirkle.Core.GameContext.Ports;
-using Qwirkle.Core.PlayerContext.Ports;
 using Qwirkle.Web.Api.VueModels;
 using System.Collections.Generic;
 
@@ -14,14 +12,12 @@ namespace Qwirkle.Web.Api.Controllers
     {
         private ILogger<GamesController> Logger { get; }
         private IRequestCompliance RequestCompliance { get; }
-        private IRequestGame RequestGame { get; }
         private IRequestPlayer RequestPlayer { get; }
 
-        public GamesController(ILogger<GamesController> logger, IRequestCompliance requestCompliance, IRequestGame requestGameService, IRequestPlayer requestPlayerService)
+        public GamesController(ILogger<GamesController> logger, IRequestCompliance requestCompliance, IRequestPlayer requestPlayerService)
         {
             Logger = logger;
             RequestCompliance = requestCompliance;
-            RequestGame = requestGameService;
             RequestPlayer = requestPlayerService;
         }
 
@@ -39,7 +35,7 @@ namespace Qwirkle.Web.Api.Controllers
         {
             Logger.LogInformation("controller call");
 
-            var game = RequestGame.GetGame(gameId);
+            var game = RequestCompliance.GetGame(gameId);
 
             return new ObjectResult(game);
         }

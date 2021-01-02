@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Qwirkle.Core.CommonContext.Entities
+namespace Qwirkle.Core.ComplianceContext.Entities
 {
     public class Rack
     {

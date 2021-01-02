@@ -1,9 +1,7 @@
-﻿using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.Entities;
-using Qwirkle.Core.CommonContext.Enums;
-using Qwirkle.Core.CommonContext.ValueObjects;
-using Qwirkle.Core.ComplianceContext.Ports;
+﻿using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.Enums;
 using Qwirkle.Core.ComplianceContext.ValueObjects;
+using Qwirkle.Core.ComplianceContext.Ports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +44,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
                 tilesIds.Add(tiles.Id);
             }
 
-            GetGame(player.GameId);
+            Game = GetGame(player.GameId);
 
             if (!player.HasTiles(tilesIds)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile };
 
@@ -63,7 +61,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             if (!player.HasTiles(tilesIds)) return false;
 
             List<TileOnPlayer> tilesToSwap = GetPlayerTiles(tilesIds);
-            GetGame(player.GameId);
+            Game = GetGame(player.GameId);
 
             SwapTiles(player, tilesToSwap);
             return true;
@@ -154,7 +152,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         private Player GetPlayer(int playerId) => PersistenceAdapter.GetPlayer(playerId);
 
-        private void GetGame(int GameId) => Game = PersistenceAdapter.GetGame(GameId);
+        public Game GetGame(int GameId) => PersistenceAdapter.GetGame(GameId);
 
         private void SwapTiles(Player player, List<TileOnPlayer> tilesToSwap)
         {

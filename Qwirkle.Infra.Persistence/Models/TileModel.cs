@@ -1,5 +1,5 @@
-﻿using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.Enums;
+﻿using Qwirkle.Core.ComplianceContext;
+using Qwirkle.Core.ComplianceContext.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Qwirkle.Infra.Persistence.Models

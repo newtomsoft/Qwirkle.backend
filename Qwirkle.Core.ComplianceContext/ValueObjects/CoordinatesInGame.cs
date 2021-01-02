@@ -1,4 +1,4 @@
-﻿namespace Qwirkle.Core.CommonContext.ValueObjects
+﻿namespace Qwirkle.Core.ComplianceContext.ValueObjects
 {
     using Abscissa = System.SByte;
     using Ordinate = System.SByte;

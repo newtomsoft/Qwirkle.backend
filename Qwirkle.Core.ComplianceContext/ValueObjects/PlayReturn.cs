@@ -1,6 +1,6 @@
-﻿using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.CommonContext.Entities;
-using Qwirkle.Core.CommonContext.Enums;
+﻿using Qwirkle.Core.ComplianceContext;
+using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.ComplianceContext.Enums;
 
 namespace Qwirkle.Core.ComplianceContext.ValueObjects
 {

@@ -6,14 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtomsoft.Tools;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.ComplianceContext.Services;
-using Qwirkle.Core.GameContext.Ports;
-using Qwirkle.Core.GameContext.Services;
-using Qwirkle.Core.PlayerContext.Ports;
-using Qwirkle.Core.PlayerContext.Services;
 using Qwirkle.Infra.Persistence;
 using Qwirkle.Infra.Persistence.Adapters;
 using Qwirkle.Infra.Persistence.Models;
-using System;
 
 namespace Qwirkle.Web.Api
 {
@@ -29,11 +24,9 @@ namespace Qwirkle.Web.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICompliancePersistence, CompliancePersistenceAdapter>();
-            services.AddScoped<IGamePersistence, GamePersistenceAdapter>();
             services.AddScoped<IPlayerPersistence, PlayerPersistenceAdapter>();
 
             services.AddScoped<IRequestCompliance, ComplianceService>();
-            services.AddScoped<IRequestGame, GameService>();
             services.AddScoped<IRequestPlayer, PlayerService>();
 
             services.AddControllers();
