@@ -1,4 +1,5 @@
 ﻿using Qwirkle.Core.CommonContext;
+using Qwirkle.Core.CommonContext.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

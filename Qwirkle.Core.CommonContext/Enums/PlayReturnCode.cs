@@ -1,4 +1,4 @@
-﻿namespace Qwirkle.Core.CommonContext
+﻿namespace Qwirkle.Core.CommonContext.Enums
 {
     public enum PlayReturnCode
     {

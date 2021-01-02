@@ -1,5 +1,6 @@
 ﻿using Qwirkle.Core.CommonContext;
 using Qwirkle.Core.CommonContext.Entities;
+using Qwirkle.Core.CommonContext.Enums;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.GameContext.Ports;
 using Qwirkle.Core.PlayerContext.Ports;

@@ -1,4 +1,6 @@
-﻿namespace Qwirkle.Core.CommonContext.Entities
+﻿using Qwirkle.Core.CommonContext.Enums;
+
+namespace Qwirkle.Core.CommonContext.Entities
 {
     public class Tile
     {

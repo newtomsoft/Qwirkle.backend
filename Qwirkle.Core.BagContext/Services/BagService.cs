@@ -1,6 +1,7 @@
 ﻿using Qwirkle.Core.BagContext.Ports;
 using Qwirkle.Core.CommonContext;
 using Qwirkle.Core.CommonContext.Entities;
+using Qwirkle.Core.CommonContext.Enums;
 using System;
 using System.Collections.Generic;
 

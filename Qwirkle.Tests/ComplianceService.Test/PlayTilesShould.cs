@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Qwirkle.Core.CommonContext;
+using Qwirkle.Core.CommonContext.Enums;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.ComplianceContext.Services;
 using Qwirkle.Infra.Persistence;

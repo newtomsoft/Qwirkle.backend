@@ -9,8 +9,4 @@
     <ProjectReference Include="..\Qwirkle.Core.CommonContext\Qwirkle.Core.CommonContext.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ValueObjects\" />
-  </ItemGroup>
-
 </Project>
