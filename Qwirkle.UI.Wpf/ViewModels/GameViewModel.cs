@@ -1,7 +1,7 @@
 ﻿using Qwirkle.Core.CommonContext;
+using Qwirkle.Core.CommonContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Core.GameContext.Ports;
-using Qwirkle.Core.PlayerContext.Entities;
 using Qwirkle.Core.PlayerContext.Ports;
 using System;
 using System.Collections.Generic;
@@ -31,13 +31,13 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
         public GameViewModel(IRequestCompliance requestCompliance, IRequestGame requestGameService, IRequestPlayer requestPlayerService, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
-            Tile tile0 = new Tile(1, TileColor.Blue, TileForm.Ring, 0);
-            Tile tile1 = new Tile(2, TileColor.Red, TileForm.Square, 1);
-            Tile tile2 = new Tile(3, TileColor.Purple, TileForm.Square, 2);
-            Tile tile3 = new Tile(4, TileColor.Purple, TileForm.Trefail, 3);
-            Tile tile4 = new Tile(5, TileColor.Orange, TileForm.Trefail, 4);
-            Tile tile5 = new Tile(6, TileColor.Orange, TileForm.Ring, 5);
-            Rack rack = new Rack(new Tile[] {tile0, tile1, tile2, tile3, tile4, tile5 });
+            var tile0 = new TileOnPlayer(0, 1, TileColor.Blue, TileForm.Ring);
+            var tile1 = new TileOnPlayer(1, 2, TileColor.Red, TileForm.Square);
+            var tile2 = new TileOnPlayer(2, 3, TileColor.Purple, TileForm.Square);
+            var tile3 = new TileOnPlayer(3, 4, TileColor.Purple, TileForm.Trefail);
+            var tile4 = new TileOnPlayer(4, 5, TileColor.Orange, TileForm.Trefail);
+            var tile5 = new TileOnPlayer(5, 6, TileColor.Orange, TileForm.Ring);
+            Rack rack = new Rack(new List<TileOnPlayer> { tile0, tile1, tile2, tile3, tile4, tile5 });
 
             RequestCompliance = requestCompliance;
             RequestGame = requestGameService;
@@ -59,6 +59,8 @@ namespace Qwirkle.UI.Wpf.ViewModels
             {
                 tilesIds.Add(((TileViewModel)cell.Item).Id);
             }
+
+
             RequestCompliance.SwapTiles(1, tilesIds);
         }
 

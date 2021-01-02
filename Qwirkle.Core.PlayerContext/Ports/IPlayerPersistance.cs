@@ -1,4 +1,4 @@
-﻿using Qwirkle.Core.PlayerContext.Entities.Player;
+﻿using Qwirkle.Core.CommonContext.Entities;
 
 namespace Qwirkle.Core.PlayerContext.Ports
 {

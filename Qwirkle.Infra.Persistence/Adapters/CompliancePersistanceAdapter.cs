@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Qwirkle.Core.CommonContext;
+using Qwirkle.Core.CommonContext.Entities;
 using Qwirkle.Core.CommonContext.ValueObjects;
-using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
 using Qwirkle.Infra.Persistence.Models;
 using System;
@@ -27,51 +27,54 @@ namespace Qwirkle.Infra.Persistence.Adapters
 
             var tilesIds = DbContext.Tiles.Select(t => t.Id).ToList();
             for (int i = 0; i < TOTAL_TILES; i++)
-                DbContext.TilesOnBag.Add(new TileOnBagPersistence { GameId = gameId, TileId = tilesIds[i] });
+                DbContext.TilesOnBag.Add(new TileOnBagModel { GameId = gameId, TileId = tilesIds[i] });
 
             DbContext.SaveChanges();
         }
 
         public Player CreatePlayer(int userId, int gameId)
         {
-            var playerPersistence = new PlayerPersistence { GameId = gameId, UserId = userId };
-            DbContext.Players.Add(playerPersistence);
+            var playerModel = new PlayerModel { GameId = gameId, UserId = userId };
+            DbContext.Players.Add(playerModel);
             DbContext.SaveChanges();
-            return PlayerPersistenceToPlayer(playerPersistence);
+            return PlayerModelToPlayer(playerModel);
         }
 
         public Game CreateGame(DateTime date)
         {
-            var game = new GamePersistence { CreatedDate = date };
+            var game = new GameModel { CreatDate = date };
             DbContext.Games.Add(game);
             DbContext.SaveChanges();
-            return GamePersistenceToGame(game);
+            return GameModelToGame(game);
         }
 
         public Tile GetTileById(int tileId)
-            => TilePersistenceToTile(DbContext.Tiles.Where(t => t.Id == tileId).FirstOrDefault());
+            => TileModelToTile(DbContext.Tiles.Where(t => t.Id == tileId).FirstOrDefault());
+
+        public TileOnPlayer GetTileOnPlayerById(int tileId)
+            => TileOnPlayerModelToEntity(DbContext.TilesOnPlayer.Where(t => t.Id == tileId).FirstOrDefault());
 
         public Game GetGame(int gameId)
         {
-            var gamePersistence = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
-            var tilesOnGamePersistence = DbContext.TilesOnGame.Where(tb => tb.GameId == gameId).ToList();
-            var tiles = TilesOnGamePersistenceToTiles(tilesOnGamePersistence);
-            var playersPersistence = DbContext.Players.Where(p => p.GameId == gameId).ToList();
+            var gameModel = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
+            var tilesOnGameModel = DbContext.TilesOnBoard.Where(tb => tb.GameId == gameId).ToList();
+            var tiles = TilesOnBoardModelToEntity(tilesOnGameModel);
+            var playersModel = DbContext.Players.Where(p => p.GameId == gameId).ToList();
             var players = new List<Player>();
-            playersPersistence.ForEach(player => players.Add(PlayerPersistenceToPlayer(player)));
-            var tilesOnBag = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
-            var bag = new Bag { Id = gameId, Tiles = new List<Tile>() };
-            tilesOnBag.ForEach(t => bag.Tiles.Add(TileOnBagToTile(t)));
-            return new Game(gamePersistence.Id, tiles, players, bag);
+            playersModel.ForEach(player => players.Add(PlayerModelToPlayer(player)));
+            var tilesOnBagModel = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
+            var bag = new Bag(gameId);
+            tilesOnBagModel.ForEach(t => bag.Tiles.Add(TileOnBagModelToEntity(t)));
+            return new Game(gameModel.Id, tiles, players, bag);
         }
 
         public Player GetPlayer(int playerId)
-            => PlayerPersistenceToPlayer(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
+            => PlayerModelToPlayer(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
 
 
         public void UpdatePlayer(Player player)
         {
-            DbContext.Players.Update(PlayerToPlayerPersistence(player));
+            DbContext.Players.Update(PlayerToPlayerModel(player));
             DbContext.SaveChanges();
         }
 
@@ -83,21 +86,21 @@ namespace Qwirkle.Infra.Persistence.Adapters
             DbContext.SaveChanges();
         }
 
-        public void TilesFromPlayerToBag(Player player, List<Tile> tiles)
+        public void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles)
         {
             var game = DbContext.Games.Where(g => g.Id == player.GameId).FirstOrDefault();
-            game.LastPlayedDate = DateTime.Now;
+            game.LastPlayDate = DateTime.Now;
             var tilesOnPlayer = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(t => t.Id).Contains(t.TileId)).ToList();
             DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayer);
             tilesOnPlayer.ForEach(tp => DbContext.TilesOnBag.Add(TileOnPlayerToTileOnBag(tp, player.GameId)));
             DbContext.SaveChanges();
         }
 
-        public void TilesFromPlayerToGame(int gameId, int playerId, List<Tile> tiles)
+        public void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles)
         {
             var game = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
-            game.LastPlayedDate = DateTime.Now;
-            tiles.ForEach(t => DbContext.TilesOnGame.Add(TileToTileOnGamePersistence(t, gameId)));
+            game.LastPlayDate = DateTime.Now;
+            tiles.ForEach(t => DbContext.TilesOnBoard.Add(TileToTileOnGameModel(t, gameId)));
             tiles.ForEach(t => DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.FirstOrDefault(tp => tp.TileId == t.Id && tp.PlayerId == playerId)));
             DbContext.SaveChanges();
         }
@@ -120,62 +123,64 @@ namespace Qwirkle.Infra.Persistence.Adapters
             for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
                 foreach (var color in (TileColor[])Enum.GetValues(typeof(TileColor)))
                     foreach (var form in (TileForm[])Enum.GetValues(typeof(TileForm)))
-                        DbContext.Tiles.Add(new TilePersistence { Color = color, Form = form });
+                        DbContext.Tiles.Add(new TileModel { Color = color, Form = form });
 
             DbContext.SaveChanges();
         }
 
-        private List<Tile> TilesOnGamePersistenceToTiles(List<TileOnGamePersistence> tilesOnGame)
+        private List<TileOnBoard> TilesOnBoardModelToEntity(List<TileOnBoardModel> tilesOnBoard)
         {
-            var tiles = new List<Tile>();
-            var tilesPersistence = DbContext.Tiles.Where(t => tilesOnGame.Select(tb => tb.TileId).Contains(t.Id)).ToList();
-            foreach (var tilePersistence in tilesPersistence)
+            var tiles = new List<TileOnBoard>();
+            var tilesModel = DbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
+            foreach (var tileModel in tilesModel)
             {
-                var tileOnGame = tilesOnGame.FirstOrDefault(tb => tb.TileId == tilePersistence.Id);
-                tiles.Add(new Tile(tilePersistence.Id, tilePersistence.Color, tilePersistence.Form, new CoordinatesInGame(tileOnGame.PositionX, tileOnGame.PositionY)));
+                var tileOnGame = tilesOnBoard.FirstOrDefault(tb => tb.TileId == tileModel.Id);
+                tiles.Add(new TileOnBoard(tileModel.Id, tileModel.Color, tileModel.Form, new CoordinatesInGame(tileOnGame.PositionX, tileOnGame.PositionY)));
             }
             return tiles;
         }
 
-        private PlayerPersistence PlayerToPlayerPersistence(Player player) // ! Ne retourne pas les Tiles
+        private PlayerModel PlayerToPlayerModel(Player player) // ! Ne retourne pas les Tiles
         {
-            var gamePlayerPersistence = DbContext.Players.Where(gp => gp.Id == player.Id).FirstOrDefault();
-            gamePlayerPersistence.Points = (byte)player.Points;
-            gamePlayerPersistence.GameTurn = player.IsTurn;
-            gamePlayerPersistence.GamePosition = (byte)player.GamePosition;
-            return gamePlayerPersistence;
+            var gamePlayerModel = DbContext.Players.Where(gp => gp.Id == player.Id).FirstOrDefault();
+            gamePlayerModel.Points = (byte)player.Points;
+            gamePlayerModel.GameTurn = player.IsTurn;
+            gamePlayerModel.GamePosition = (byte)player.GamePosition;
+            return gamePlayerModel;
         }
 
-        private Player PlayerPersistenceToPlayer(PlayerPersistence playerPersistence)
+        private Player PlayerModelToPlayer(PlayerModel playerModel)
         {
-            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerPersistence.Id).Include(t => t.Tile).ToList();
-            var tiles = new List<Tile>();      
-            tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerPersistenceToTile(tp)));
-            var player = new Player(playerPersistence.Id, playerPersistence.GameId, playerPersistence.GamePosition, playerPersistence.Points, tiles, playerPersistence.GameTurn);
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerModel.Id).Include(t => t.Tile).ToList();
+            var tiles = new List<TileOnPlayer>();      
+            tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerModelToEntity(tp)));
+            var player = new Player(playerModel.Id, playerModel.GameId, playerModel.GamePosition, playerModel.Points, tiles, playerModel.GameTurn);
             return player;
         }
-        private TileOnGamePersistence TileToTileOnGamePersistence(Tile tile, int gameId)
-            => new TileOnGamePersistence { TileId = tile.Id, GameId = gameId, PositionX = tile.Coordinates.X, PositionY = tile.Coordinates.Y };
+        private TileOnBoardModel TileToTileOnGameModel(TileOnBoard tile, int gameId)
+            => new TileOnBoardModel { TileId = tile.Id, GameId = gameId, PositionX = tile.Coordinates.X, PositionY = tile.Coordinates.Y };
 
-        private TileOnPlayerPersistence TileOnBagToTileOnPlayer(TileOnBagPersistence tileOnBag, int playerId)
-            => new TileOnPlayerPersistence { TileId = tileOnBag.TileId, PlayerId = playerId };
+        private TileOnPlayerModel TileOnBagToTileOnPlayer(TileOnBagModel tileOnBag, int playerId)
+            => new TileOnPlayerModel { TileId = tileOnBag.TileId, PlayerId = playerId };
 
-        private TileOnBagPersistence TileOnPlayerToTileOnBag(TileOnPlayerPersistence tileOnPlayer, int gameId)
-            => new TileOnBagPersistence { TileId = tileOnPlayer.TileId, GameId = gameId };
+        private TileOnBagModel TileOnPlayerToTileOnBag(TileOnPlayerModel tileOnPlayer, int gameId)
+            => new TileOnBagModel { TileId = tileOnPlayer.TileId, GameId = gameId };
 
-        private Tile TileOnPlayerPersistenceToTile(TileOnPlayerPersistence tileOnPlayer)
-            => new Tile(tileOnPlayer.TileId, tileOnPlayer.Tile.Color, tileOnPlayer.Tile.Form);
+        private TileOnPlayer TileOnPlayerModelToEntity(TileOnPlayerModel tileOnPlayer)
+            => new TileOnPlayer(tileOnPlayer.RackPosition, tileOnPlayer.TileId, tileOnPlayer.Tile.Color, tileOnPlayer.Tile.Form);
 
-        private Tile TilePersistenceToTile(TilePersistence tilePersistence)
-            => new Tile(tilePersistence.Id, tilePersistence.Color, tilePersistence.Form);
+        private Tile TileModelToTile(TileModel tileModel)
+            => new Tile(tileModel.Id, tileModel.Color, tileModel.Form);
 
-        private Game GamePersistenceToGame(GamePersistence game)
-            => new Game(game.Id, TilesOnGamePersistenceToTiles(DbContext.TilesOnGame.Where(tb => tb.GameId == game.Id).ToList()), new List<Player>());
+        private Game GameModelToGame(GameModel game)
+            => new Game(game.Id, TilesOnBoardModelToEntity(DbContext.TilesOnBoard.Where(tb => tb.GameId == game.Id).ToList()), new List<Player>());
 
-        private Tile TileOnBagToTile(TileOnBagPersistence tb)
-            => new Tile(tb.Id, tb.Tile.Color, tb.Tile.Form, new CoordinatesInGame());
+        private TileOnBag TileOnBagModelToEntity(TileOnBagModel tb)
+            => new TileOnBag(tb.Id, tb.Tile.Color, tb.Tile.Form);
 
-        private TileOnPlayerPersistence TileToTileOnPlayerPersistence(Tile tile, int playerId)
-            => new TileOnPlayerPersistence { Id = tile.Id, TileId = tile.Id, PlayerId = playerId };
+        private TileOnPlayerModel TileToTileOnPlayerModel(TileOnBag tile, int playerId)
+            => new TileOnPlayerModel { Id = tile.Id, TileId = tile.Id, PlayerId = playerId };
+
+
     }
 }

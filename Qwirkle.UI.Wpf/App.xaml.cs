@@ -35,8 +35,7 @@ namespace Qwirkle.UI.Wpf
 
             EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, GetConfiguration());
 
-            var serviceProvider = services.BuildServiceProvider();
-            var mainWindow = serviceProvider.GetService<MainWindow>();
+            var mainWindow = services.BuildServiceProvider().GetService<MainWindow>();
             mainWindow.Show();
         }
 

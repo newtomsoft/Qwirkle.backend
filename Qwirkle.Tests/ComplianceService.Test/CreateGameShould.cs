@@ -32,10 +32,10 @@ namespace Qwirkle.Core.ComplianceContext.Tests
 
         private void AddUsers()
         {
-            DbContext.Users.Add(new UserPersistence { Id = USER1 });
-            DbContext.Users.Add(new UserPersistence { Id = USER2 });
-            DbContext.Users.Add(new UserPersistence { Id = USER3 });
-            DbContext.Users.Add(new UserPersistence { Id = USER4 });
+            DbContext.Users.Add(new UserModel { Id = USER1 });
+            DbContext.Users.Add(new UserModel { Id = USER2 });
+            DbContext.Users.Add(new UserModel { Id = USER3 });
+            DbContext.Users.Add(new UserModel { Id = USER4 });
             DbContext.SaveChanges();
         }
 
@@ -51,7 +51,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 4);
             Assert.Equal(1, players.Count(p => p.IsTurn));
             Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-            Assert.Equal(4, players.Select(p => p.Tiles.Count == TILES_NUMBER_PER_PLAYER).Count());
+            Assert.Equal(4, players.Select(p => p.Rack.Tiles.Count == TILES_NUMBER_PER_PLAYER).Count());
 
         }
 
@@ -66,7 +66,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 3);
             Assert.Equal(1, players.Count(p => p.IsTurn));
             Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-            Assert.Equal(3, players.Select(p => p.Tiles.Count == TILES_NUMBER_PER_PLAYER).Count());
+            Assert.Equal(3, players.Select(p => p.Rack.Tiles.Count == TILES_NUMBER_PER_PLAYER).Count());
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
             Assert.Equal(1, players.Count(p => p.IsTurn));
             Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-            Assert.Equal(2, players.Select(p => p.Tiles.Count == TILES_NUMBER_PER_PLAYER).Count());
+            Assert.Equal(2, players.Select(p => p.Rack.Tiles.Count == TILES_NUMBER_PER_PLAYER).Count());
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
             Assert.Equal(1, players.Count(p => p.IsTurn));
             Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-            Assert.Single(players.Select(p => p.Tiles.Count == TILES_NUMBER_PER_PLAYER));
+            Assert.Single(players.Select(p => p.Rack.Tiles.Count == TILES_NUMBER_PER_PLAYER));
         }
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Qwirkle.Infra.Persistence.Models
 {
-    [Table("TileOnGame")]
-    public class TileOnGamePersistence
+    [Table("TileOnBoard")]
+    public class TileOnBoardModel
     {
         public int Id { get; set; }
         public int TileId { get; set; }
@@ -11,7 +11,7 @@ namespace Qwirkle.Infra.Persistence.Models
         public sbyte PositionX { get; set; }
         public sbyte PositionY { get; set; }
 
-        public virtual TilePersistence Tile { get; set; }
-        public virtual GamePersistence Game { get; set; }
+        public virtual TileModel Tile { get; set; }
+        public virtual GameModel Game { get; set; }
     }
 }

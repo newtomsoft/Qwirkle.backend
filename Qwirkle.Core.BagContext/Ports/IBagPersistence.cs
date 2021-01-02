@@ -1,4 +1,4 @@
-﻿using Qwirkle.Core.BagContext.Entities;
+﻿using Qwirkle.Core.CommonContext.Entities;
 using System.Collections.Generic;
 
 namespace Qwirkle.Core.BagContext.Ports
@@ -7,7 +7,7 @@ namespace Qwirkle.Core.BagContext.Ports
     {
         List<Tile> GetAllTilesOfBag(int gameId);
         Tile GetRandomTileOfBag(int gameId);
-        void SaveTile(Tile tile);
+        void SaveTile(int gameId, Tile tile);
         int CountAllTilesOfBag(int gameId);
         void DeleteAllTilesOfBag(int gameId);
     }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Qwirkle.Core.PlayerContext.Entities;
-using Qwirkle.Core.PlayerContext.Entities.Player;
+using Qwirkle.Core.CommonContext.Entities;
 using Qwirkle.Core.PlayerContext.Ports;
 using Qwirkle.Infra.Persistence.Models;
 using System.Collections.Generic;
@@ -22,18 +21,16 @@ namespace Qwirkle.Infra.Persistence.Adapters
         public Player GetPlayer(int playerId)
            => PlayerPersistenceToPlayer(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
 
-        private Player PlayerPersistenceToPlayer(PlayerPersistence playerPersistence)
+        private Player PlayerPersistenceToPlayer(PlayerModel p)
         {
-            var player = new Player { Id = playerPersistence.Id, GameId = playerPersistence.GameId, GameTurn = playerPersistence.GameTurn, GamePosition = playerPersistence.GamePosition, Points = playerPersistence.Points };
-            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerPersistence.Id).Include(t => t.Tile).ToList();
-            var tiles = new List<Tile>();
-            tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerPersistenceToTile(tp)));
-            player.Rack = new Rack(tiles.ToArray());
+            var tiles = new List<TileOnPlayer>();
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == p.Id).Include(t => t.Tile).ToList();
+            tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerModelToEntity(tp)));
+            var player = new Player(p.Id, p.GameId, p.GamePosition, p.Points, tiles, p.GameTurn);
             return player;
         }
-        private Tile TileOnPlayerPersistenceToTile(TileOnPlayerPersistence tileOnPlayer)
-         => new Tile(tileOnPlayer.TileId, tileOnPlayer.Tile.Color, tileOnPlayer.Tile.Form);
 
-
+        private TileOnPlayer TileOnPlayerModelToEntity(TileOnPlayerModel t)
+         => new TileOnPlayer(t.RackPosition, t.TileId, t.Tile.Color, t.Tile.Form);
     }
 }

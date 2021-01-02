@@ -5,15 +5,15 @@ using Qwirkle.Infra.Persistence.Models;
 
 namespace Qwirkle.Infra.Persistence
 {
-    public class DefaultDbContext : IdentityDbContext<UserPersistence, IdentityRole<int>, int>
+    public class DefaultDbContext : IdentityDbContext<UserModel, IdentityRole<int>, int>
     {
-        public DbSet<TilePersistence> Tiles { get; set; }
-        public DbSet<TileOnBagPersistence> TilesOnBag { get; set; }
-        public DbSet<TileOnGamePersistence> TilesOnGame { get; set; }
-        public DbSet<TileOnPlayerPersistence> TilesOnPlayer { get; set; }
-        public DbSet<GamePersistence> Games { get; set; }
-        public override DbSet<UserPersistence> Users { get; set; } // todo override à vérifier
-        public DbSet<PlayerPersistence> Players { get; set; }
+        public DbSet<TileModel> Tiles { get; set; }
+        public DbSet<TileOnBagModel> TilesOnBag { get; set; }
+        public DbSet<TileOnBoardModel> TilesOnBoard { get; set; }
+        public DbSet<TileOnPlayerModel> TilesOnPlayer { get; set; }
+        public DbSet<GameModel> Games { get; set; }
+        public override DbSet<UserModel> Users { get; set; } // todo override à vérifier
+        public DbSet<PlayerModel> Players { get; set; }
 
 
         public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)

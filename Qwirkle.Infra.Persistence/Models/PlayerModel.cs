@@ -3,7 +3,7 @@
 namespace Qwirkle.Infra.Persistence.Models
 {
     [Table("Player")]
-    public class PlayerPersistence
+    public class PlayerModel
     {
         public int Id { get; set; }
         public int GameId { get; set; }
@@ -12,7 +12,7 @@ namespace Qwirkle.Infra.Persistence.Models
         public bool GameTurn { get; set; }
         public byte GamePosition { get; set; }
 
-        public GamePersistence Game { get; set; }
-        public UserPersistence User { get; set; }
+        public GameModel Game { get; set; }
+        public UserModel User { get; set; }
     }
 }

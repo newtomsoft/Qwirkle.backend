@@ -1,4 +1,4 @@
-﻿using Qwirkle.Core.GameContext.Entities;
+﻿using Qwirkle.Core.CommonContext.Entities;
 using Qwirkle.Core.GameContext.Ports;
 
 namespace Qwirkle.Core.GameContext.Services

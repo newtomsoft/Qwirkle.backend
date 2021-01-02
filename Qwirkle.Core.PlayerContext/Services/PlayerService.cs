@@ -1,4 +1,4 @@
-﻿using Qwirkle.Core.PlayerContext.Entities.Player;
+﻿using Qwirkle.Core.CommonContext.Entities;
 using Qwirkle.Core.PlayerContext.Ports;
 
 namespace Qwirkle.Core.PlayerContext.Services
@@ -14,5 +14,6 @@ namespace Qwirkle.Core.PlayerContext.Services
         {
             return PersistenceAdapter.GetPlayer(playerId);
         }
+
     }
 }

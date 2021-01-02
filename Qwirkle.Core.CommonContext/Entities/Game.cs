@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using Qwirkle.Core.CommonContext.Entities;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace Qwirkle.Core.ComplianceContext.Entities
+namespace Qwirkle.Core.CommonContext.Entities
 {
     public class Game
     {
         public int Id { get; }
-        public List<Tile> Tiles { get; set; }
+        public List<TileOnBoard> Tiles { get; set; }
         public List<Player> Players { get; set; }
         public Bag Bag { get; set; }
 
-        public Game(int id, List<Tile> tiles, List<Player> players, Bag bag = null)
+        public Game(int id, List<TileOnBoard> tiles, List<Player> players, Bag bag = null)
         {
             Id = id;
             Tiles = tiles;

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Qwirkle.Infra.Persistence.Models
 {
     [Table("User")]
-    public class UserPersistence : IdentityUser<int>
+    public class UserModel : IdentityUser<int>
     {
         [Column("Pseudo")]
         override public string UserName { get; set; }

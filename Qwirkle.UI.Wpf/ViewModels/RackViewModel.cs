@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.PlatformUI;
-using Qwirkle.Core.PlayerContext.Entities;
+﻿using Qwirkle.Core.CommonContext.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

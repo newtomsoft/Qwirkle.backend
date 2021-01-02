@@ -1,4 +1,4 @@
-﻿using Qwirkle.Core.ComplianceContext.Entities;
+﻿using Qwirkle.Core.CommonContext.Entities;
 using Qwirkle.Core.ComplianceContext.ValueObjects;
 using System.Collections.Generic;
 

@@ -1,4 +1,4 @@
-﻿using Qwirkle.Core.ComplianceContext.Entities;
+﻿using Qwirkle.Core.CommonContext.Entities;
 using System;
 using System.Collections.Generic;
 
@@ -10,12 +10,13 @@ namespace Qwirkle.Core.ComplianceContext.Ports
         bool IsPlayerTurn(int playerId);
         void SetPlayerTurn(int playerId, bool turn);
         void UpdatePlayer(Player player);
-        void TilesFromPlayerToGame(int gameId, int playerId, List<Tile> tiles);
+        void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles);
         void TilesFromBagToPlayer(Player player, int tilesNumber);
-        void TilesFromPlayerToBag(Player player, List<Tile> tiles);
+        void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles);
         Game GetGame(int gameId);
         Player GetPlayer(int playerId);
         Tile GetTileById(int tileId);
+        TileOnPlayer GetTileOnPlayerById(int tileId);
         Player CreatePlayer(int userId, int gameId);
         void CreateTiles(int gameId);
     }

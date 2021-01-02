@@ -1,12 +1,12 @@
 ﻿using Qwirkle.Core.CommonContext;
-using Qwirkle.Core.ComplianceContext.Entities;
+using Qwirkle.Core.CommonContext.Entities;
 
 namespace Qwirkle.Core.ComplianceContext.ValueObjects
 {
     public struct PlayReturn
     {
         public PlayReturnCode Code { get; set; }
-        public Tile Tile { get; set; }
+        public TileOnBoard Tile { get; set; }
         public int Points { get; set; }
     }
 }

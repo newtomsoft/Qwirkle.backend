@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Qwirkle.Infra.Persistence.Models
 {
     [Table("Tile")]
-    public class TilePersistence
+    public class TileModel
     {
         public int Id { get; set; }
         public TileForm Form { get; set; }

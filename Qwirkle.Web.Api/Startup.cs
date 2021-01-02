@@ -40,7 +40,7 @@ namespace Qwirkle.Web.Api
 
             EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, Configuration);         
 
-            services.AddIdentity<UserPersistence, IdentityRole<int>>(options =>
+            services.AddIdentity<UserModel, IdentityRole<int>>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;

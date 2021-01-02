@@ -1,6 +1,6 @@
-﻿using Qwirkle.Core.BagContext.Entities;
-using Qwirkle.Core.BagContext.Ports;
+﻿using Qwirkle.Core.BagContext.Ports;
 using Qwirkle.Core.CommonContext;
+using Qwirkle.Core.CommonContext.Entities;
 using System;
 using System.Collections.Generic;
 
@@ -32,7 +32,7 @@ namespace Qwirkle.Core.BagContext.Services
             foreach (TileColor color in (TileColor[])Enum.GetValues(typeof(TileColor)))
                 foreach (TileForm form in (TileForm[])Enum.GetValues(typeof(TileForm)))
                     for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
-                        Persistence.SaveTile(new Tile(0, gameId, color, form));
+                        Persistence.SaveTile(gameId, new Tile(0, color, form));
         }
 
         private void DeleteAllTilesOfBag(int gameId) => Persistence.DeleteAllTilesOfBag(gameId);
