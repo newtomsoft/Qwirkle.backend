@@ -115,13 +115,13 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         public PlayReturn GetPlayReturn(List<TileOnBoard> tiles)
         {
-            if (Game.Tiles.Count == 0 && tiles.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, Tile = tiles[0] };
+            if (Game.Board.Tiles.Count == 0 && tiles.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, Tile = tiles[0] };
 
             bool AreAllTilesIsolated = true;
             foreach (var tile in tiles)
-                if (Game.IsIsolatedTile(tile))
+                if (Game.Board.IsIsolatedTile(tile))
                     AreAllTilesIsolated = false;
-            if (Game.Tiles.Count > 0 && AreAllTilesIsolated) return new PlayReturn { Code = PlayReturnCode.TileIsolated, Points = 0 };
+            if (Game.Board.Tiles.Count > 0 && AreAllTilesIsolated) return new PlayReturn { Code = PlayReturnCode.TileIsolated, Points = 0 };
 
             int totalPoints;
             if ((totalPoints = CountTilesMakedValidRow(tiles)) == 0) return new PlayReturn { Code = PlayReturnCode.TilesDontMakedValidRow };
@@ -168,7 +168,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
         {
             player.Points += points;
             player.SetTurn(false);
-            Game.Tiles.AddRange(tilesToPlay);
+            Game.Board.Tiles.AddRange(tilesToPlay);
             PersistenceAdapter.UpdatePlayer(player);
             SetNextPlayerTurnToPlay(player.Id);
             PersistenceAdapter.TilesFromBagToPlayer(player, tilesToPlay.Count);
@@ -226,14 +226,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
         {
             var allTilesAlongReferenceTiles = tiles.ToList();
             var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
-            var tilesBetweenReference = Game.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
+            var tilesBetweenReference = Game.Board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
             allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
-            var tilesRight = Game.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
+            var tilesRight = Game.Board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
             var tilesRightConsecutive = tilesRight.FirstConsecutives(Direction.Right, max);
             allTilesAlongReferenceTiles.AddRange(tilesRightConsecutive);
 
-            var tilesLeft = Game.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
+            var tilesLeft = Game.Board.Tiles.Where(t => t.Coordinates.Y == tiles[0].Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
             var tilesLeftConsecutive = tilesLeft.FirstConsecutives(Direction.Left, min);
             allTilesAlongReferenceTiles.AddRange(tilesLeftConsecutive);
 
@@ -247,14 +247,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
         {
             var allTilesAlongReferenceTiles = tiles.ToList();
             var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
-            var tilesBetweenReference = Game.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
+            var tilesBetweenReference = Game.Board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
             allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
-            var tilesUp = Game.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
+            var tilesUp = Game.Board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
             var tilesUpConsecutive = tilesUp.FirstConsecutives(Direction.Top, max);
             allTilesAlongReferenceTiles.AddRange(tilesUpConsecutive);
 
-            var tilesBottom = Game.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
+            var tilesBottom = Game.Board.Tiles.Where(t => t.Coordinates.X == tiles[0].Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
             var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
             allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
 

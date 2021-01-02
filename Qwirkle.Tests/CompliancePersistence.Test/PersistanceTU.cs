@@ -89,7 +89,7 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
         public void CreateGameShould()
         {
             var game = Persistence.CreateGame(DateTime.Today);
-            Assert.Empty(game.Tiles);
+            Assert.Empty(game.Board.Tiles);
             Assert.Empty(game.Players);
         }
 
@@ -206,8 +206,8 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
             var tile = new TileOnBoard(player.Rack.Tiles[0], coordinates);
             Persistence.TilesFromPlayerToGame(game.Id, player.Id, new List<TileOnBoard> { tile });
             var gameUpdate = Persistence.GetGame(game.Id);
-            Assert.Single(gameUpdate.Tiles);
-            Assert.Equal(coordinates, gameUpdate.Tiles[0].Coordinates);
+            Assert.Single(gameUpdate.Board.Tiles);
+            Assert.Equal(coordinates, gameUpdate.Board.Tiles[0].Coordinates);
         }
 
     }
