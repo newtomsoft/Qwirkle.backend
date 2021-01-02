@@ -119,7 +119,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
             bool AreAllTilesIsolated = true;
             foreach (var tile in tiles)
-                if (IsTileIsolated(tile))
+                if (Game.IsIsolatedTile(tile))
                     AreAllTilesIsolated = false;
             if (Game.Tiles.Count > 0 && AreAllTilesIsolated) return new PlayReturn { Code = PlayReturnCode.TileIsolated, Points = 0 };
 
@@ -265,15 +265,6 @@ namespace Qwirkle.Core.ComplianceContext.Services
         }
 
         private static bool AreNumbersConsecutive(List<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
-
-        private bool IsTileIsolated(TileOnBoard tile)
-        {
-            var tileRight = Game.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Right());
-            var tileLeft = Game.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Left());
-            var tileTop = Game.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Top());
-            var tileBottom = Game.Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Bottom());
-            return tileRight != null || tileLeft != null || tileTop != null || tileBottom != null;
-        }
 
         private void SetPlayerTurn(int playerId, bool turn)
         {

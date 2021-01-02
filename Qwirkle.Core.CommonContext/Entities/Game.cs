@@ -26,5 +26,14 @@ namespace Qwirkle.Core.CommonContext.Entities
             Players = game.Players;
             Bag = game.Bag;
         }
+
+        public bool IsIsolatedTile(TileOnBoard tile)
+        {
+            var tileRight = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Right());
+            var tileLeft = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Left());
+            var tileTop = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Top());
+            var tileBottom = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Bottom());
+            return tileRight != null || tileLeft != null || tileTop != null || tileBottom != null;
+        }
     }
 }
