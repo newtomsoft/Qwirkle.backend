@@ -69,7 +69,6 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return true;
         }
 
-
         private void DealTilesToPlayers()
         {
             foreach (var player in Game.Players)
@@ -109,31 +108,9 @@ namespace Qwirkle.Core.ComplianceContext.Services
         private void SelectFirstPlayer()
         {
             var playersWithNumberCanBePlayedTiles = new Dictionary<int, int>();
-            Game.Players.ForEach(p => playersWithNumberCanBePlayedTiles[p.Id] = CountTilesWhichCanBePlayed(p));
+            Game.Players.ForEach(p => playersWithNumberCanBePlayedTiles[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
             var playerIdToPlay = playersWithNumberCanBePlayedTiles.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
             SetPlayerTurn(playerIdToPlay, true);
-        }
-
-        private int CountTilesWhichCanBePlayed(Player player)
-        {
-            var tiles = player.Rack.Tiles;
-            int maxSameColor = 0;
-            int maxSameForm = 0;
-            for (int i = 0; i < tiles.Count; i++)
-            {
-                int sameColor = 0;
-                int sameForm = 0;
-                for (int j = i + 1; j < tiles.Count; j++)
-                {
-                    if (tiles[i].Color == tiles[j].Color && tiles[i].Form != tiles[j].Form)
-                        sameColor++;
-                    if (tiles[i].Color != tiles[j].Color && tiles[i].Form == tiles[j].Form)
-                        sameForm++;
-                }
-                maxSameColor = Math.Max(maxSameColor, sameColor);
-                maxSameForm = Math.Max(maxSameForm, sameForm);
-            }
-            return Math.Max(maxSameColor, maxSameForm) + 1;
         }
 
         public PlayReturn GetPlayReturn(List<TileOnBoard> tiles)
@@ -173,13 +150,6 @@ namespace Qwirkle.Core.ComplianceContext.Services
                 tilesOnPlayer.Add(tile);
             }
             return tilesOnPlayer;
-        }
-
-        private List<Tile> GetTiles(List<int> tilesIds)
-        {
-            List<Tile> tiles = new List<Tile>();
-            tilesIds.ForEach(tileId => tiles.Add(PersistenceAdapter.GetTileById(tileId)));
-            return tiles;
         }
 
         private Player GetPlayer(int playerId) => PersistenceAdapter.GetPlayer(playerId);
@@ -305,45 +275,10 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tileRight != null || tileLeft != null || tileTop != null || tileBottom != null;
         }
 
-        private bool IsPlayerTurn(int playerId)
-            => PersistenceAdapter.IsPlayerTurn(playerId);
-
         private void SetPlayerTurn(int playerId, bool turn)
         {
             PersistenceAdapter.SetPlayerTurn(playerId, turn);
             Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(turn);
         }
-    }
-    public static class TileExtension
-    {
-        public static List<TileOnBoard> FirstConsecutives(this List<TileOnBoard> tiles, Direction direction, sbyte reference)
-        {
-            int diff = direction == Direction.Right || direction == Direction.Top ? -1 : 1;
-            var result = new List<TileOnBoard>();
-            if (tiles.Count == 0) return result;
-            if ((direction == Direction.Left || direction == Direction.Right) && reference != tiles[0].Coordinates.X + diff) return result;
-            if ((direction == Direction.Top || direction == Direction.Bottom) && reference != tiles[0].Coordinates.Y + diff) return result;
-
-            result.Add(tiles[0]);
-            for (int i = 1; i < tiles.Count; i++)
-            {
-                if ((direction == Direction.Left || direction == Direction.Right) && tiles[i - 1].Coordinates.X == tiles[i].Coordinates.X + diff && tiles[i - 1].Coordinates.Y == tiles[i].Coordinates.Y
-                 || (direction == Direction.Top || direction == Direction.Bottom) && tiles[i - 1].Coordinates.Y == tiles[i].Coordinates.Y + diff && tiles[i - 1].Coordinates.X == tiles[i].Coordinates.X)
-                    result.Add(tiles[i]);
-                else
-                    break;
-            }
-            return result;
-        }
-
-        public static bool AreRowByTileRespectsRules(this List<TileOnBoard> tiles)
-        {
-            for (int i = 0; i < tiles.Count; i++)
-                for (int j = i + 1; j < tiles.Count; j++)
-                    if (!tiles[i].HaveFormOrColorOnlyEqual(tiles[j])) return false;
-
-            return true;
-        }
-
     }
 }

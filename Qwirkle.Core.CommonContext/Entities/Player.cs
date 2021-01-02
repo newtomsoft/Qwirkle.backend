@@ -1,4 +1,5 @@
 ﻿using Qwirkle.Core.CommonContext.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,6 +33,28 @@ namespace Qwirkle.Core.CommonContext.Entities
         {
             var playerTilesId = Rack.Tiles.Select(t => t.Id);
             return tilesIds.All(id => playerTilesId.Contains(id));
+        }
+
+        public int TilesNumberCanBePlayedAtGameBeginning()
+        {
+            var tiles = Rack.Tiles;
+            int maxSameColor = 0;
+            int maxSameForm = 0;
+            for (int i = 0; i < tiles.Count; i++)
+            {
+                int sameColor = 0;
+                int sameForm = 0;
+                for (int j = i + 1; j < tiles.Count; j++)
+                {
+                    if (tiles[i].Color == tiles[j].Color && tiles[i].Form != tiles[j].Form)
+                        sameColor++;
+                    if (tiles[i].Color != tiles[j].Color && tiles[i].Form == tiles[j].Form)
+                        sameForm++;
+                }
+                maxSameColor = Math.Max(maxSameColor, sameColor);
+                maxSameForm = Math.Max(maxSameForm, sameForm);
+            }
+            return Math.Max(maxSameColor, maxSameForm) + 1;
         }
     }
 }
