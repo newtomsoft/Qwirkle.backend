@@ -150,7 +150,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return tilesOnPlayer;
         }
 
-        private Player GetPlayer(int playerId) => PersistenceAdapter.GetPlayer(playerId);
+        public Player GetPlayer(int playerId) => PersistenceAdapter.GetPlayer(playerId);
 
         public Game GetGame(int GameId) => PersistenceAdapter.GetGame(GameId);
 

@@ -24,10 +24,7 @@ namespace Qwirkle.Web.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<ICompliancePersistence, CompliancePersistenceAdapter>();
-            services.AddScoped<IPlayerPersistence, PlayerPersistenceAdapter>();
-
             services.AddScoped<IRequestCompliance, ComplianceService>();
-            services.AddScoped<IRequestPlayer, PlayerService>();
 
             services.AddControllers();
 

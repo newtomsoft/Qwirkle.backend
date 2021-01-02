@@ -12,13 +12,11 @@ namespace Qwirkle.Web.Api.Controllers
     {
         private ILogger<GamesController> Logger { get; }
         private IRequestCompliance RequestCompliance { get; }
-        private IRequestPlayer RequestPlayer { get; }
 
-        public GamesController(ILogger<GamesController> logger, IRequestCompliance requestCompliance, IRequestPlayer requestPlayerService)
+        public GamesController(ILogger<GamesController> logger, IRequestCompliance requestCompliance)
         {
             Logger = logger;
             RequestCompliance = requestCompliance;
-            RequestPlayer = requestPlayerService;
         }
 
         [HttpPost("")]
@@ -45,7 +43,7 @@ namespace Qwirkle.Web.Api.Controllers
         {
             Logger.LogInformation("controller call");
 
-            var player = RequestPlayer.GetPlayer(playerId);
+            var player = RequestCompliance.GetPlayer(playerId);
 
             return new ObjectResult(player);
         }

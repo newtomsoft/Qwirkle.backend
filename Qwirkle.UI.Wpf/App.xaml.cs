@@ -21,10 +21,7 @@ namespace Qwirkle.UI.Wpf
             ServiceCollection services = new ServiceCollection();
             services.AddScoped<MainWindow>();
             services.AddScoped<ICompliancePersistence, CompliancePersistenceAdapter>();
-            services.AddScoped<IPlayerPersistence, PlayerPersistenceAdapter>();
-
             services.AddScoped<IRequestCompliance, ComplianceService>();
-            services.AddScoped<IRequestPlayer, PlayerService>();
 
             EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, GetConfiguration());
 

@@ -7,10 +7,10 @@ namespace Qwirkle.UI.Wpf.Views
 {
     public partial class MainWindow : Window
     {
-        public MainWindow(IRequestCompliance requestCompliance, IRequestPlayer requestPlayerService)
+        public MainWindow(IRequestCompliance requestCompliance)
         {
             InitializeComponent();
-            DataContext = new MainViewModel(requestCompliance, requestPlayerService, Dispatcher);
+            DataContext = new MainViewModel(requestCompliance, Dispatcher);
         }
     }
 }
