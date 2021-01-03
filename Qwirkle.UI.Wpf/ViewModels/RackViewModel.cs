@@ -27,12 +27,12 @@ namespace Qwirkle.UI.Wpf.ViewModels
         {
             SelectedCells = new List<DataGridCellInfo>();
 
-            string string0 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Infra.Persistence\Images\Tiles\Png\BlueCircle.png";
-            string string1 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Infra.Persistence\Images\Tiles\Png\BlueClover.png";
-            string string2 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Infra.Persistence\Images\Tiles\Png\GreenFourPointStar.png";
-            string string3 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Infra.Persistence\Images\Tiles\Png\OrangeDiamond.png";
-            string string4 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Infra.Persistence\Images\Tiles\Png\OrangeSquare.png";
-            string string5 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Infra.Persistence\Images\Tiles\Png\RedEightPointStar.png";
+            string string0 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\BlueCircle.png";
+            string string1 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\BlueClover.png";
+            string string2 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\GreenFourPointStar.png";
+            string string3 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\OrangeDiamond.png";
+            string string4 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\OrangeSquare.png";
+            string string5 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\RedEightPointStar.png";
             Tiles = new List<TileViewModel>
             {
                 new TileViewModel { Id=0, Name = "Name0", Image = new System.Windows.Media.Imaging.BitmapImage(new Uri(string0)) },
