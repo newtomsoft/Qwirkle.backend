@@ -2,11 +2,11 @@
 {
     public enum TileForm
     {
-        Ring = 1,
+        Circle = 1,
         Square,
-        Shape,
-        Trefail,
-        Star4,
-        Star8,
+        Diamond,
+        Clover,
+        FourPointStar,
+        EightPointStar,
     }
 }

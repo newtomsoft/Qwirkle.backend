@@ -28,12 +28,12 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
         public GameViewModel(IRequestCompliance requestCompliance, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
-            var tile0 = new TileOnPlayer(0, 1, TileColor.Blue, TileForm.Ring);
+            var tile0 = new TileOnPlayer(0, 1, TileColor.Blue, TileForm.Circle);
             var tile1 = new TileOnPlayer(1, 2, TileColor.Red, TileForm.Square);
             var tile2 = new TileOnPlayer(2, 3, TileColor.Purple, TileForm.Square);
-            var tile3 = new TileOnPlayer(3, 4, TileColor.Purple, TileForm.Trefail);
-            var tile4 = new TileOnPlayer(4, 5, TileColor.Orange, TileForm.Trefail);
-            var tile5 = new TileOnPlayer(5, 6, TileColor.Orange, TileForm.Ring);
+            var tile3 = new TileOnPlayer(3, 4, TileColor.Purple, TileForm.Clover);
+            var tile4 = new TileOnPlayer(4, 5, TileColor.Orange, TileForm.Clover);
+            var tile5 = new TileOnPlayer(5, 6, TileColor.Orange, TileForm.Circle);
             Rack rack = new Rack(new List<TileOnPlayer> { tile0, tile1, tile2, tile3, tile4, tile5 });
 
             RequestCompliance = requestCompliance;
