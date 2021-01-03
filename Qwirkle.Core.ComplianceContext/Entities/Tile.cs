@@ -36,5 +36,11 @@ namespace Qwirkle.Core.ComplianceContext.Entities
                 return true;
             return false;
         }
+
+        public string GetNameImage()
+        {
+            string name = Color.ToString() + Form.ToString() + ".png";
+            return name;
+        }
     }
 }

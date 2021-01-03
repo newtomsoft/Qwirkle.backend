@@ -1,13 +1,8 @@
 ﻿using Qwirkle.Core.ComplianceContext.Entities;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using System.IO;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace Qwirkle.UI.Wpf.ViewModels
@@ -15,33 +10,32 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
     public class RackViewModel : ViewModelBase, IPageViewModel
     {
+        private const string PATH_IMAGE = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\";
+
         private IList<DataGridCellInfo> _selectedCells;
-        public IList<DataGridCellInfo> SelectedCells { get => _selectedCells; set { _selectedCells = value; OnPropertyChanged("SelectedCells"); } }
+        public IList<DataGridCellInfo> SelectedCells { get => _selectedCells; set { _selectedCells = value; OnPropertyChanged(nameof(SelectedCells)); } }
 
-        public List<TileViewModel> Tiles { get; set; }
+        public List<TileViewModel> TilesViewModel { get; set; }
 
-        public TileViewModel SelectedTile { get; set; }
+        public TileViewModel SelectedTileViewModel { get; set; }
 
 
         public RackViewModel(Rack rack, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
             SelectedCells = new List<DataGridCellInfo>();
 
-            string string0 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\BlueCircle.png";
-            string string1 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\BlueClover.png";
-            string string2 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\GreenFourPointStar.png";
-            string string3 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\OrangeDiamond.png";
-            string string4 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\OrangeSquare.png";
-            string string5 = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\RedEightPointStar.png";
-            Tiles = new List<TileViewModel>
+            var tilesViewModel = new List<TileViewModel>();
+            foreach (var tile in rack.Tiles)
             {
-                new TileViewModel { Id=0, Name = "Name0", Image = new System.Windows.Media.Imaging.BitmapImage(new Uri(string0)) },
-                new TileViewModel { Id=1, Name = "Name1", Image = new System.Windows.Media.Imaging.BitmapImage(new Uri(string1)) },
-                new TileViewModel { Id=2, Name = "Name2", Image = new System.Windows.Media.Imaging.BitmapImage(new Uri(string2)) },
-                new TileViewModel { Id=3, Name = "Name3", Image = new System.Windows.Media.Imaging.BitmapImage(new Uri(string3)) },
-                new TileViewModel { Id=4, Name = "Name4", Image = new System.Windows.Media.Imaging.BitmapImage(new Uri(string4)) },
-                new TileViewModel { Id=5, Name = "Name5", Image = new System.Windows.Media.Imaging.BitmapImage(new Uri(string5)) },
-            };
+                string fullName = GetFullNameImage(tile);
+                tilesViewModel.Add(new TileViewModel(fullName));
+            }
+            TilesViewModel = tilesViewModel;
+        }
+
+        private static string GetFullNameImage(TileOnPlayer tile)
+        {
+            return Path.Combine(PATH_IMAGE, tile.GetNameImage()); ;
         }
     }
 }

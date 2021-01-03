@@ -13,8 +13,8 @@
               Margin="10"
               AutoGenerateColumns="False"
               IsReadOnly="True"
-              ItemsSource="{Binding Path=Tiles}"
-              SelectedItem="{Binding SelectedTile}"
+              ItemsSource="{Binding Path=TilesViewModel}"
+              SelectedItem="{Binding SelectedTileViewModel}"
               themes:DataGridHelper.HorizontalMouseWheelScrollingEnabled="True"
               themes:DataGridHelper.SelectedCells="{Binding Path=SelectedCells, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 

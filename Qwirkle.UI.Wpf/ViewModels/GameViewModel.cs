@@ -18,44 +18,34 @@ namespace Qwirkle.UI.Wpf.ViewModels
     {
         private IRequestCompliance RequestCompliance { get; }
 
-        public RackViewModel Rack { get; private set; }
-        public BoardViewModel Board { get; private set; }
+        public RackViewModel RackViewModel { get; private set; }
+        public BoardViewModel BoardViewModel { get; private set; }
 
         public ICommand ChangeTiles { get; private set; }
         public ICommand Play { get; private set; }
         public ICommand Tips { get; private set; }
 
 
-        public GameViewModel(IRequestCompliance requestCompliance, Dispatcher uiDispatcher) : base(uiDispatcher)
+        public GameViewModel(IRequestCompliance requestCompliance, RackViewModel rack, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
-            var tile0 = new TileOnPlayer(0, 1, TileColor.Blue, TileForm.Circle);
-            var tile1 = new TileOnPlayer(1, 2, TileColor.Red, TileForm.Square);
-            var tile2 = new TileOnPlayer(2, 3, TileColor.Purple, TileForm.Square);
-            var tile3 = new TileOnPlayer(3, 4, TileColor.Purple, TileForm.Clover);
-            var tile4 = new TileOnPlayer(4, 5, TileColor.Orange, TileForm.Clover);
-            var tile5 = new TileOnPlayer(5, 6, TileColor.Orange, TileForm.Circle);
-            Rack rack = new Rack(new List<TileOnPlayer> { tile0, tile1, tile2, tile3, tile4, tile5 });
-
             RequestCompliance = requestCompliance;
 
             Play = new RelayCommand(OnPlay);
             Tips = new RelayCommand(OnTips);
             ChangeTiles = new RelayCommand(OnChangeTiles);
 
-            Rack = new RackViewModel(rack, uiDispatcher);
-            Board = new BoardViewModel(uiDispatcher);
+            RackViewModel = rack;
+            BoardViewModel = new BoardViewModel(uiDispatcher);
         }
 
         private void OnChangeTiles()
         {
-            if (Rack.SelectedCells.Count == 0) return;
+            if (RackViewModel.SelectedCells.Count == 0) return;
             List<int> tilesIds = new List<int>();
-            foreach (var cell in Rack.SelectedCells)
+            foreach (var cell in RackViewModel.SelectedCells)
             {
                 tilesIds.Add(((TileViewModel)cell.Item).Id);
             }
-
-
             RequestCompliance.SwapTiles(1, tilesIds);
         }
 
