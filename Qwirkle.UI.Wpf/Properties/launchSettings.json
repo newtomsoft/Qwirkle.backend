@@ -1,8 +1,5 @@
 {
   "profiles": {
-    "Qwirkle.UI.Wpf": {
-      "commandName": "Project"
-    },
     "Development InMemory": {
       "commandName": "Project",
       "environmentVariables": {
