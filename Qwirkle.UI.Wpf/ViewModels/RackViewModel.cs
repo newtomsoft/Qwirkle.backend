@@ -10,7 +10,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
     public class RackViewModel : ViewModelBase, IPageViewModel
     {
-        private const string PATH_IMAGE = @"D:\Boulot\projets info\Qwirkle\Qwirkle.Ressources\Images\Tiles\"; //todo
+        private const string RELATIVE_PATH_TILE_IMAGE = @"Resources\Images\Tiles\";
 
         private IList<DataGridCellInfo> _selectedCells;
         public IList<DataGridCellInfo> SelectedCells { get => _selectedCells; set { _selectedCells = value; OnPropertyChanged(nameof(SelectedCells)); } }
@@ -33,9 +33,6 @@ namespace Qwirkle.UI.Wpf.ViewModels
             TilesViewModel = tilesViewModel;
         }
 
-        private static string GetFullNameImage(TileOnPlayer tile)
-        {
-            return Path.Combine(PATH_IMAGE, tile.GetNameImage()); ;
-        }
+        private static string GetFullNameImage(TileOnPlayer tile) => Path.Combine(Directory.GetCurrentDirectory(), RELATIVE_PATH_TILE_IMAGE, tile.GetNameImage());
     }
 }

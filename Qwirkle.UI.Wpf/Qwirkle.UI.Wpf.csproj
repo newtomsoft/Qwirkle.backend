@@ -7,43 +7,117 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\BlueCircle.png" Link="Ressources\Images\Tiles\BlueCircle.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\BlueClover.png" Link="Ressources\Images\Tiles\BlueClover.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\BlueDiamond.png" Link="Ressources\Images\Tiles\BlueDiamond.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\BlueEightPointStar.png" Link="Ressources\Images\Tiles\BlueEightPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\BlueFourPointStar.png" Link="Ressources\Images\Tiles\BlueFourPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\BlueSquare.png" Link="Ressources\Images\Tiles\BlueSquare.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\GreenCircle.png" Link="Ressources\Images\Tiles\GreenCircle.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\GreenClover.png" Link="Ressources\Images\Tiles\GreenClover.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\GreenDiamond.png" Link="Ressources\Images\Tiles\GreenDiamond.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\GreenEightPointStar.png" Link="Ressources\Images\Tiles\GreenEightPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\GreenFourPointStar.png" Link="Ressources\Images\Tiles\GreenFourPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\GreenSquare.png" Link="Ressources\Images\Tiles\GreenSquare.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\OrangeCircle.png" Link="Ressources\Images\Tiles\OrangeCircle.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\OrangeClover.png" Link="Ressources\Images\Tiles\OrangeClover.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\OrangeDiamond.png" Link="Ressources\Images\Tiles\OrangeDiamond.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\OrangeEightPointStar.png" Link="Ressources\Images\Tiles\OrangeEightPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\OrangeFourPointStar.png" Link="Ressources\Images\Tiles\OrangeFourPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\OrangeSquare.png" Link="Ressources\Images\Tiles\OrangeSquare.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\PurpleCircle.png" Link="Ressources\Images\Tiles\PurpleCircle.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\PurpleClover.png" Link="Ressources\Images\Tiles\PurpleClover.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\PurpleDiamond.png" Link="Ressources\Images\Tiles\PurpleDiamond.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\PurpleEightPointStar.png" Link="Ressources\Images\Tiles\PurpleEightPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\PurpleFourPointStar.png" Link="Ressources\Images\Tiles\PurpleFourPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\PurpleSquare.png" Link="Ressources\Images\Tiles\PurpleSquare.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\RedCircle.png" Link="Ressources\Images\Tiles\RedCircle.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\RedClover.png" Link="Ressources\Images\Tiles\RedClover.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\RedDiamond.png" Link="Ressources\Images\Tiles\RedDiamond.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\RedEightPointStar.png" Link="Ressources\Images\Tiles\RedEightPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\RedFourPointStar.png" Link="Ressources\Images\Tiles\RedFourPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\RedSquare.png" Link="Ressources\Images\Tiles\RedSquare.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\YellowCircle.png" Link="Ressources\Images\Tiles\YellowCircle.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\YellowClover.png" Link="Ressources\Images\Tiles\YellowClover.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\YellowDiamond.png" Link="Ressources\Images\Tiles\YellowDiamond.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\YellowEightPointStar.png" Link="Ressources\Images\Tiles\YellowEightPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\YellowFourPointStar.png" Link="Ressources\Images\Tiles\YellowFourPointStar.png" />
-    <Content Include="..\Qwirkle.Ressources\Images\Tiles\YellowSquare.png" Link="Ressources\Images\Tiles\YellowSquare.png" />
-    <Content Include="..\sharesettings.Development.json" Link="sharesettings.Development.json" />
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\BlueCircle.png" Link="Resources\Images\Tiles\BlueCircle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\BlueClover.png" Link="Resources\Images\Tiles\BlueClover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\BlueDiamond.png" Link="Resources\Images\Tiles\BlueDiamond.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\BlueEightPointStar.png" Link="Resources\Images\Tiles\BlueEightPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\BlueFourPointStar.png" Link="Resources\Images\Tiles\BlueFourPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\BlueSquare.png" Link="Resources\Images\Tiles\BlueSquare.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\GreenCircle.png" Link="Resources\Images\Tiles\GreenCircle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\GreenClover.png" Link="Resources\Images\Tiles\GreenClover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\GreenDiamond.png" Link="Resources\Images\Tiles\GreenDiamond.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\GreenEightPointStar.png" Link="Resources\Images\Tiles\GreenEightPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\GreenFourPointStar.png" Link="Resources\Images\Tiles\GreenFourPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\GreenSquare.png" Link="Resources\Images\Tiles\GreenSquare.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\OrangeCircle.png" Link="Resources\Images\Tiles\OrangeCircle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\OrangeClover.png" Link="Resources\Images\Tiles\OrangeClover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\OrangeDiamond.png" Link="Resources\Images\Tiles\OrangeDiamond.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\OrangeEightPointStar.png" Link="Resources\Images\Tiles\OrangeEightPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\OrangeFourPointStar.png" Link="Resources\Images\Tiles\OrangeFourPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\OrangeSquare.png" Link="Resources\Images\Tiles\OrangeSquare.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\PurpleCircle.png" Link="Resources\Images\Tiles\PurpleCircle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\PurpleClover.png" Link="Resources\Images\Tiles\PurpleClover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\PurpleDiamond.png" Link="Resources\Images\Tiles\PurpleDiamond.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\PurpleEightPointStar.png" Link="Resources\Images\Tiles\PurpleEightPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\PurpleFourPointStar.png" Link="Resources\Images\Tiles\PurpleFourPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\PurpleSquare.png" Link="Resources\Images\Tiles\PurpleSquare.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\RedCircle.png" Link="Resources\Images\Tiles\RedCircle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\RedClover.png" Link="Resources\Images\Tiles\RedClover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\RedDiamond.png" Link="Resources\Images\Tiles\RedDiamond.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\RedEightPointStar.png" Link="Resources\Images\Tiles\RedEightPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\RedFourPointStar.png" Link="Resources\Images\Tiles\RedFourPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\RedSquare.png" Link="Resources\Images\Tiles\RedSquare.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\YellowCircle.png" Link="Resources\Images\Tiles\YellowCircle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\YellowClover.png" Link="Resources\Images\Tiles\YellowClover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\YellowDiamond.png" Link="Resources\Images\Tiles\YellowDiamond.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\YellowEightPointStar.png" Link="Resources\Images\Tiles\YellowEightPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\YellowFourPointStar.png" Link="Resources\Images\Tiles\YellowFourPointStar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Qwirkle.Resources\Images\Tiles\YellowSquare.png" Link="Resources\Images\Tiles\YellowSquare.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\sharesettings.Development.json" Link="sharesettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -58,8 +132,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Ressources\Images\Tiles\" />
-    <Folder Include="Ressources\" />
+    <Folder Include="Resources\Images\Tiles\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
 
 </Project>

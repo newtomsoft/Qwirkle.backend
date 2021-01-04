@@ -17,14 +17,11 @@ namespace Qwirkle.UI.Wpf
         protected override void OnStartup(StartupEventArgs startupEventArgs)
         {
             base.OnStartup(startupEventArgs);
-
             ServiceCollection services = new ServiceCollection();
             services.AddScoped<MainWindow>();
             services.AddScoped<ICompliancePersistence, CompliancePersistenceAdapter>();
             services.AddScoped<IRequestCompliance, ComplianceService>();
-
             EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, GetConfiguration());
-
             var mainWindow = services.BuildServiceProvider().GetService<MainWindow>();
             mainWindow.Show();
         }
@@ -32,10 +29,7 @@ namespace Qwirkle.UI.Wpf
         private static IConfigurationRoot GetConfiguration()
         {
             var builder = new ConfigurationBuilder()
-                        .SetBasePath(Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName) //todo not work!!!
-                        .AddJsonFile(@"..\sharesettings.Development.json", optional: true) //When dev //TODO not work!!!
-                        .AddJsonFile("sharesettings.Development.json", optional: true) //When published //TODO not work!!!
-                        .AddJsonFile(@"D:\Boulot\projets info\Qwirkle\sharesettings.Development.json", optional: true); //TODO!!!
+                        .AddJsonFile("sharesettings.Development.json", optional: true);
             var configuration = builder.Build();
             return configuration;
         }
