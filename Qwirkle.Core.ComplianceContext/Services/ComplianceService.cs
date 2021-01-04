@@ -40,9 +40,7 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
             List<int> tilesIds = new List<int>();
             foreach (var tiles in tilesToPlay)
-            {
                 tilesIds.Add(tiles.Id);
-            }
 
             Game = GetGame(player.GameId);
 
@@ -54,30 +52,27 @@ namespace Qwirkle.Core.ComplianceContext.Services
             return playReturn;
         }
 
-        public bool SwapTiles(int playerId, List<int> tilesIds)
+        public Rack SwapTiles(int playerId, List<int> tilesIds)
         {
             Player player = GetPlayer(playerId);
-            if (!player.IsTurn) return false;
-            if (!player.HasTiles(tilesIds)) return false;
+            if (!player.IsTurn) return null;
+            if (!player.HasTiles(tilesIds)) return null;
 
             List<TileOnPlayer> tilesToSwap = GetPlayerTiles(tilesIds);
             Game = GetGame(player.GameId);
 
             SwapTiles(player, tilesToSwap);
-            return true;
+            return player.Rack;
         }
 
         private void DealTilesToPlayers()
         {
-            foreach (var player in Game.Players)
-            {
-                var tiles = new List<TileOnPlayer>();
-                foreach (var tile in player.Rack.Tiles)
-                    tiles.Add(tile);
+            var rackPositions = new List<int>();
+            for (int i = 0; i < TILES_NUMBER_PER_PLAYER; i++)
+                rackPositions.Add(i);
 
-                PersistenceAdapter.TilesFromPlayerToBag(player, tiles);
-                PersistenceAdapter.TilesFromBagToPlayer(player, TILES_NUMBER_PER_PLAYER);
-            }
+            foreach (var player in Game.Players)
+                PersistenceAdapter.TilesFromBagToPlayer(player, rackPositions);
         }
 
         private void CreateTiles() => PersistenceAdapter.CreateTiles(Game.Id);
@@ -156,10 +151,25 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         private void SwapTiles(Player player, List<TileOnPlayer> tilesToSwap)
         {
+            List<int> rackPositions = RackPositions(tilesToSwap);
+
             SetPlayerTurn(player.Id, false);
             SetNextPlayerTurnToPlay(player.Id);
-            PersistenceAdapter.TilesFromBagToPlayer(player, tilesToSwap.Count);
+            PersistenceAdapter.TilesFromBagToPlayer(player, rackPositions);
             PersistenceAdapter.TilesFromPlayerToBag(player, tilesToSwap);
+            RefreshRack(player);
+        }
+
+        private void RefreshRack(Player player)
+        {
+            Rack rack = new Rack(PersistenceAdapter.GetTilesOnPlayerByPlayerId(player.Id));
+            player.Rack = rack;
+        }
+
+        private void RefreshPlayer(Player player)
+        {
+            for (int i = 0; i < Game.Players.Count; i++) //todo
+                Game.Players[i] = GetPlayer(Game.Players[i].Id);
         }
 
         private void PlayTiles(Player player, List<TileOnBoard> tilesToPlay, int points)
@@ -169,7 +179,18 @@ namespace Qwirkle.Core.ComplianceContext.Services
             Game.Board.Tiles.AddRange(tilesToPlay);
             PersistenceAdapter.UpdatePlayer(player);
             SetNextPlayerTurnToPlay(player.Id);
-            PersistenceAdapter.TilesFromBagToPlayer(player, tilesToPlay.Count);
+
+
+            // TODO !!!
+#warning todo !!!  
+            #region warning
+            var rackPositions = new List<int>();
+            for (int i = 0; i < tilesToPlay.Count; i++)
+                 rackPositions.Add(i);
+            #endregion
+
+
+            PersistenceAdapter.TilesFromBagToPlayer(player, rackPositions);
             PersistenceAdapter.TilesFromPlayerToGame(Game.Id, player.Id, tilesToPlay);
         }
 
@@ -268,6 +289,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
         {
             PersistenceAdapter.SetPlayerTurn(playerId, turn);
             Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(turn);
+        }
+
+        private static List<int> RackPositions(List<TileOnPlayer> tiles)
+        {
+            var rackPositions = new List<int>();
+            foreach (var tileToSwap in tiles)
+                rackPositions.Add(tileToSwap.RackPosition);
+            return rackPositions;
         }
     }
 }

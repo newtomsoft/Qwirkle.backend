@@ -1,13 +1,5 @@
-﻿using Qwirkle.Core.ComplianceContext;
-using Qwirkle.Core.ComplianceContext.Entities;
-using Qwirkle.Core.ComplianceContext.Enums;
-using Qwirkle.Core.ComplianceContext.Ports;
-using System;
+﻿using Qwirkle.Core.ComplianceContext.Ports;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -25,9 +17,16 @@ namespace Qwirkle.UI.Wpf.ViewModels
         public ICommand Play { get; private set; }
         public ICommand Tips { get; private set; }
 
+        private readonly Dispatcher _uiDispatcher;
 
-        public GameViewModel(IRequestCompliance requestCompliance, RackViewModel rack, Dispatcher uiDispatcher) : base(uiDispatcher)
+        public bool GameInProgress { get { return _gameInProgress; } private set { _gameInProgress = value; OnPropertyChanged(nameof(GameInProgress)); } }
+        private bool _gameInProgress;
+        public bool GameNotInProgress { get { return !_gameInProgress; } private set { _gameInProgress = !value; OnPropertyChanged(nameof(GameInProgress)); } }
+
+        public GameViewModel(bool newGame, IRequestCompliance requestCompliance, RackViewModel rack, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
+            GameInProgress = newGame;
+
             RequestCompliance = requestCompliance;
 
             Play = new RelayCommand(OnPlay);
@@ -36,6 +35,8 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
             RackViewModel = rack;
             BoardViewModel = new BoardViewModel(uiDispatcher);
+
+            _uiDispatcher = uiDispatcher;
         }
 
         private void OnChangeTiles()
@@ -43,10 +44,11 @@ namespace Qwirkle.UI.Wpf.ViewModels
             if (RackViewModel.SelectedCells.Count == 0) return;
             List<int> tilesIds = new List<int>();
             foreach (var cell in RackViewModel.SelectedCells)
-            {
-                tilesIds.Add(((TileViewModel)cell.Item).Id);
-            }
-            RequestCompliance.SwapTiles(1, tilesIds);
+                tilesIds.Add(((TileOnPlayerViewModel)cell.Item).Id);
+
+            var rack = RequestCompliance.SwapTiles(1, tilesIds); //todo playerId
+            if (rack != null)
+                RackViewModel = new RackViewModel(rack, _uiDispatcher);
         }
 
         private void OnTips()

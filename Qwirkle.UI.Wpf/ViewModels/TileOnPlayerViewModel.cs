@@ -8,17 +8,18 @@ using System.Windows.Threading;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {
-    public class TileViewModel
+    public class TileOnPlayerViewModel
     {
-        public TileViewModel(string fullNameImage)
+        public int Id { get; }
+        public int RackPosition { get; }
+        public string FullNameImage { get; }
+        public BitmapImage Image { get; }
+
+        public TileOnPlayerViewModel(int id, string fullNameImage)
         {
+            Id = id;
             FullNameImage = fullNameImage;
             Image = new BitmapImage(new Uri(FullNameImage));
         }
-
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string FullNameImage { get; set; }
-        public BitmapImage Image { get; set; }
     }
 }

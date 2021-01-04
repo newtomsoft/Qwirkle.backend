@@ -18,10 +18,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var propertyChanged = PropertyChanged;
-            if (propertyChanged == null)
-            {
-                return;
-            }
+            if (propertyChanged == null) return;
 
             _uiDispatcher.Invoke(() => propertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName)));
         }

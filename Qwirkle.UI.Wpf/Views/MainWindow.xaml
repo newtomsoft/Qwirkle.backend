@@ -8,29 +8,20 @@
         mc:Ignorable="d" 
         Title="Qwirkle" Height="800" Width="1200" WindowStartupLocation="CenterScreen"
         d:DataContext="{d:DesignInstance viewModels:NewGameViewModel}">
-    <!--<Window.Resources>
-        <DataTemplate DataType="{x:Type viewModels:GameViewModel}">
-            <views:GameView></views:GameView>
-        </DataTemplate>
-    </Window.Resources>-->
-    <!--<Grid>
-        <ContentPresenter Content="{Binding CurrentViewModel}"></ContentPresenter>
-    </Grid>-->
     <Window.Resources>
-        <DataTemplate DataType="{x:Type viewModels:GameViewModel}">
-            <views:GameView></views:GameView>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModels:NewGameViewModel}">
-            <views:NewGameView></views:NewGameView>
-        </DataTemplate>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
     </Window.Resources>
+ 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="0.2*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <views:NewGameView Grid.Column="1"/>
-        <views:GameView Grid.Column="0" DataContext="{Binding GameViewModel}" />
+        <views:NewGameView Grid.Column="1" />
+        <views:GameView Grid.Column="0" Grid.ColumnSpan="2" 
+                        DataContext="{Binding GameViewModel}"
+                        Visibility="{Binding GameInProgress , Converter={StaticResource BoolToVisibilityConverter}}" />
+
     </Grid>
 
 </Window>
