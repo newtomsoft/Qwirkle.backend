@@ -1,4 +1,5 @@
-﻿using Qwirkle.Core.ComplianceContext.Ports;
+﻿using Microsoft.Extensions.Configuration;
+using Qwirkle.Core.ComplianceContext.Ports;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
@@ -18,13 +19,15 @@ namespace Qwirkle.UI.Wpf.ViewModels
         public ICommand Tips { get; private set; }
 
         private readonly Dispatcher _uiDispatcher;
+        private  IConfiguration _configuration;
 
         public bool GameInProgress { get { return _gameInProgress; } private set { _gameInProgress = value; OnPropertyChanged(nameof(GameInProgress)); } }
         private bool _gameInProgress;
         public bool GameNotInProgress { get { return !_gameInProgress; } private set { _gameInProgress = !value; OnPropertyChanged(nameof(GameInProgress)); } }
 
-        public GameViewModel(bool newGame, IRequestCompliance requestCompliance, RackViewModel rack, Dispatcher uiDispatcher) : base(uiDispatcher)
+        public GameViewModel(bool newGame, IRequestCompliance requestCompliance, IConfiguration configuration, RackViewModel rack, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
+            _configuration = configuration;
             GameInProgress = newGame;
 
             RequestCompliance = requestCompliance;
@@ -34,7 +37,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
             ChangeTiles = new RelayCommand(OnChangeTiles);
 
             RackViewModel = rack;
-            BoardViewModel = new BoardViewModel(uiDispatcher);
+            BoardViewModel = new BoardViewModel(configuration, uiDispatcher);
 
             _uiDispatcher = uiDispatcher;
         }
@@ -48,7 +51,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
             var rack = RequestCompliance.SwapTiles(1, tilesIds); //todo playerId
             if (rack != null)
-                RackViewModel = new RackViewModel(rack, _uiDispatcher);
+                RackViewModel = new RackViewModel(rack, _configuration, _uiDispatcher);
         }
 
         private void OnTips()

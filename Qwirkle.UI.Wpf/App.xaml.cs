@@ -21,7 +21,11 @@ namespace Qwirkle.UI.Wpf
             services.AddScoped<MainWindow>();
             services.AddScoped<ICompliancePersistence, CompliancePersistenceAdapter>();
             services.AddScoped<IRequestCompliance, ComplianceService>();
-            EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, GetConfiguration());
+            var configuration = GetConfiguration();
+            var imagesTilePath = configuration.GetSection("ImagesPath:Tiles").Value;
+            services.AddSingleton<IConfiguration>(GetConfiguration());
+
+            EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, configuration);
             var mainWindow = services.BuildServiceProvider().GetService<MainWindow>();
             mainWindow.Show();
         }

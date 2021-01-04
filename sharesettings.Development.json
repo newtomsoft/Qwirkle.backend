@@ -4,5 +4,9 @@
     "Sqlite": "Data Source = #PATH#Qwirkle.dev.sqlite;",
     "MySql": "Server=localhost;Database=Qwirkle.dev;Uid=qwirkledev;Pwd=qwirkledev;",
     "PostgreSql": "Host=localhost;Port=5432;Database=Qwirkle.dev;User ID=qwirkledev;Password=qwirkledev;"
+  },
+
+  "ImagesPath": {
+    "Tiles": "Resources\\Images\\Tiles"
   }
 }

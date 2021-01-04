@@ -1,4 +1,5 @@
-﻿using Qwirkle.Core.ComplianceContext.Entities;
+﻿using Microsoft.Extensions.Configuration;
+using Qwirkle.Core.ComplianceContext.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,8 +11,6 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
     public class RackViewModel : ViewModelBase, IPageViewModel
     {
-        private const string RELATIVE_PATH_TILE_IMAGE = @"Resources\Images\Tiles\";
-
         private IList<DataGridCellInfo> _selectedCells;
         public IList<DataGridCellInfo> SelectedCells { get => _selectedCells; set { _selectedCells = value; OnPropertyChanged(nameof(SelectedCells)); } }
 
@@ -19,9 +18,11 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
         public TileOnPlayerViewModel SelectedTileViewModel { get; set; }
 
+        private IConfiguration _configuration;
 
-        public RackViewModel(Rack rack, Dispatcher uiDispatcher) : base(uiDispatcher)
+        public RackViewModel(Rack rack, IConfiguration configuration, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
+            _configuration = configuration;
             SelectedCells = new List<DataGridCellInfo>();
 
             var tilesViewModel = new List<TileOnPlayerViewModel>();
@@ -33,6 +34,6 @@ namespace Qwirkle.UI.Wpf.ViewModels
             TilesViewModel = tilesViewModel;
         }
 
-        private static string GetFullNameImage(TileOnPlayer tile) => Path.Combine(Directory.GetCurrentDirectory(), RELATIVE_PATH_TILE_IMAGE, tile.GetNameImage());
+        private string GetFullNameImage(TileOnPlayer tile) => Path.Combine(Directory.GetCurrentDirectory(), _configuration.GetSection("ImagesPath:Tiles").Value, tile.GetNameImage());
     }
 }

@@ -1,4 +1,5 @@
-﻿using Qwirkle.Core.ComplianceContext.Entities;
+﻿using Microsoft.Extensions.Configuration;
+using Qwirkle.Core.ComplianceContext.Entities;
 using Qwirkle.Core.ComplianceContext.Ports;
 using System;
 using System.Collections.Generic;
@@ -15,15 +16,16 @@ namespace Qwirkle.UI.Wpf.ViewModels
         private Dispatcher UiDispatcher { get; }
         public GameViewModel GameViewModel {get { return _gameViewModel; } private set { _gameViewModel = value; OnPropertyChanged(); } }
         private GameViewModel _gameViewModel;
-
+        private IConfiguration _configuration;
         public ICommand NewGame { get; private set; }
 
 
-        public MainViewModel(IRequestCompliance requestCompliance, Dispatcher uiDispatcher) : base(uiDispatcher)
+        public MainViewModel(IRequestCompliance requestCompliance, IConfiguration configuration, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
+            _configuration = configuration;
             UiDispatcher = uiDispatcher;
             RequestCompliance = requestCompliance;
-            GameViewModel = new GameViewModel(false, requestCompliance, null, uiDispatcher) ;
+            GameViewModel = new GameViewModel(false, requestCompliance, configuration, null, uiDispatcher) ;
             NewGame = new RelayCommand(OnNewGame);
         }
 
@@ -36,8 +38,8 @@ namespace Qwirkle.UI.Wpf.ViewModels
             var player = playersInGame.Where(p => p.Id == playerId).First();
 
             Rack rack = new Rack(player.Rack.Tiles); 
-            var rackViewModel = new RackViewModel(rack, UiDispatcher);
-            GameViewModel = new GameViewModel(true, RequestCompliance, rackViewModel, UiDispatcher);
+            var rackViewModel = new RackViewModel(rack, _configuration, UiDispatcher);
+            GameViewModel = new GameViewModel(true, RequestCompliance, _configuration, rackViewModel, UiDispatcher);
         }
     }
 }

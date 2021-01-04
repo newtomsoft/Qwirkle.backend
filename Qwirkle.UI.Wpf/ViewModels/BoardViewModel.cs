@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Threading;
@@ -12,7 +13,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
         public string square2 = "2";
         public string square3 = "3";
 
-        public BoardViewModel(Dispatcher uiDispatcher) : base(uiDispatcher)
+        public BoardViewModel(IConfiguration configuration, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
         }
     }
