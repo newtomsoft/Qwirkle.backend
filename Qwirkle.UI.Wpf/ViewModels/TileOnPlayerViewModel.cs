@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Qwirkle.Core.ComplianceContext.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,14 +11,13 @@ namespace Qwirkle.UI.Wpf.ViewModels
 {
     public class TileOnPlayerViewModel
     {
-        public int Id { get; }
-        public int RackPosition { get; }
+        public TileOnPlayer Tile { get; }
         public string FullNameImage { get; }
         public BitmapImage Image { get; }
 
-        public TileOnPlayerViewModel(int id, string fullNameImage)
+        public TileOnPlayerViewModel(TileOnPlayer tile, string fullNameImage)
         {
-            Id = id;
+            Tile = tile;
             FullNameImage = fullNameImage;
             Image = new BitmapImage(new Uri(FullNameImage));
         }

@@ -3,6 +3,7 @@ using Qwirkle.Core.ComplianceContext.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
@@ -18,7 +19,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
         public TileOnPlayerViewModel SelectedTileViewModel { get; set; }
 
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
         public RackViewModel(Rack rack, IConfiguration configuration, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
@@ -29,8 +30,9 @@ namespace Qwirkle.UI.Wpf.ViewModels
             foreach (var tile in rack.Tiles)
             {
                 string fullName = GetFullNameImage(tile);
-                tilesViewModel.Add(new TileOnPlayerViewModel(tile.Id, fullName));
+                tilesViewModel.Add(new TileOnPlayerViewModel(tile, fullName));
             }
+            tilesViewModel = tilesViewModel.OrderBy(t => t.Tile.RackPosition).ToList();
             TilesViewModel = tilesViewModel;
         }
 

@@ -61,14 +61,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
             List<TileOnPlayer> tilesToSwap = GetPlayerTiles(tilesIds);
             Game = GetGame(player.GameId);
 
-            SwapTiles(player, tilesToSwap);
+            SwapTiles(ref player, tilesToSwap);
             return player.Rack;
         }
 
         private void DealTilesToPlayers()
         {
-            var rackPositions = new List<int>();
-            for (int i = 0; i < TILES_NUMBER_PER_PLAYER; i++)
+            var rackPositions = new List<byte>();
+            for (byte i = 0; i < TILES_NUMBER_PER_PLAYER; i++)
                 rackPositions.Add(i);
 
             foreach (var player in Game.Players)
@@ -149,21 +149,13 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         public Game GetGame(int GameId) => PersistenceAdapter.GetGame(GameId);
 
-        private void SwapTiles(Player player, List<TileOnPlayer> tilesToSwap)
+        private void SwapTiles(ref Player player, List<TileOnPlayer> tilesToSwap)
         {
-            List<int> rackPositions = RackPositions(tilesToSwap);
-
-            SetPlayerTurn(player.Id, false);
+            List<byte> rackPositions = RackPositions(tilesToSwap);
             SetNextPlayerTurnToPlay(player.Id);
             PersistenceAdapter.TilesFromBagToPlayer(player, rackPositions);
             PersistenceAdapter.TilesFromPlayerToBag(player, tilesToSwap);
-            RefreshRack(player);
-        }
-
-        private void RefreshRack(Player player)
-        {
-            Rack rack = new Rack(PersistenceAdapter.GetTilesOnPlayerByPlayerId(player.Id));
-            player.Rack = rack;
+            player = GetPlayer(player.Id);
         }
 
         private void RefreshPlayer(Player player)
@@ -184,8 +176,8 @@ namespace Qwirkle.Core.ComplianceContext.Services
             // TODO !!!
 #warning todo !!!  
             #region warning
-            var rackPositions = new List<int>();
-            for (int i = 0; i < tilesToPlay.Count; i++)
+            var rackPositions = new List<byte>();
+            for (byte i = 0; i < tilesToPlay.Count; i++)
                  rackPositions.Add(i);
             #endregion
 
@@ -196,11 +188,14 @@ namespace Qwirkle.Core.ComplianceContext.Services
 
         private void SetNextPlayerTurnToPlay(int playerId)
         {
+            Player thisPlayer = GetPlayer(playerId); //todo : appel base peut être évité en stockant thisPlayer
             int position = Game.Players.FirstOrDefault(p => p.Id == playerId).GamePosition;
             int playersNumber = Game.Players.Count;
             int nextPlayerPosition = position < playersNumber ? position + 1 : 1;
             Player nexPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
+            thisPlayer.SetTurn(false);
             nexPlayer.SetTurn(true);
+            PersistenceAdapter.UpdatePlayer(thisPlayer);
             PersistenceAdapter.UpdatePlayer(nexPlayer);
         }
 
@@ -291,9 +286,9 @@ namespace Qwirkle.Core.ComplianceContext.Services
             Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(turn);
         }
 
-        private static List<int> RackPositions(List<TileOnPlayer> tiles)
+        private static List<byte> RackPositions(List<TileOnPlayer> tiles)
         {
-            var rackPositions = new List<int>();
+            var rackPositions = new List<byte>();
             foreach (var tileToSwap in tiles)
                 rackPositions.Add(tileToSwap.RackPosition);
             return rackPositions;

@@ -72,15 +72,15 @@ namespace Qwirkle.Infra.Persistence.Adapters
         public Player GetPlayer(int playerId)
             => PlayerModelToPlayer(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
 
-        public List<TileOnPlayer> GetTilesOnPlayerByPlayerId(int playerId)
-        {
-            var tilesOnPlayerModel = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerId).ToList();
-            var tilesOnPlayer = new List<TileOnPlayer>();
-            foreach (var tileOnPlayer in tilesOnPlayerModel)
-                tilesOnPlayer.Add(TileOnPlayerModelToEntity(tileOnPlayer));
+        //public List<TileOnPlayer> GetTilesOnPlayerByPlayerId(int playerId)
+        //{
+        //    var tilesOnPlayerModel = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerId).ToList();
+        //    var tilesOnPlayer = new List<TileOnPlayer>();
+        //    foreach (var tileOnPlayer in tilesOnPlayerModel)
+        //        tilesOnPlayer.Add(TileOnPlayerModelToEntity(tileOnPlayer));
 
-            return tilesOnPlayer;
-        }
+        //    return tilesOnPlayer;
+        //}
 
         public void UpdatePlayer(Player player)
         {
@@ -88,13 +88,17 @@ namespace Qwirkle.Infra.Persistence.Adapters
             DbContext.SaveChanges();
         }
 
-#warning todo à compléter rackposition !
-        public void TilesFromBagToPlayer(Player player, List<int> rackPositions)
+#warning todo à vérifier rackposition !
+        public void TilesFromBagToPlayer(Player player, List<byte> rackPositions)
         {
             int tilesNumber = rackPositions.Count;
             var tilesToGiveToPlayer = DbContext.TilesOnBag.Where(t => t.GameId == player.GameId).OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
             DbContext.TilesOnBag.RemoveRange(tilesToGiveToPlayer);
-            tilesToGiveToPlayer.ForEach(tb => DbContext.TilesOnPlayer.Add(TileOnBagToTileOnPlayer(tb, player.Id))); // faire avec forEach pour prendre en compte rackPositions[i]
+            for (int i = 0; i < tilesToGiveToPlayer.Count; i++)
+            {
+                DbContext.TilesOnPlayer.Add(new TileOnPlayerModel(tilesToGiveToPlayer[i], rackPositions[i], player.Id));
+            }
+            //tilesToGiveToPlayer.ForEach(tb => DbContext.TilesOnPlayer.Add(TileOnBagToTileOnPlayer(tb, player.Id))); // faire avec forEach pour prendre en compte rackPositions[i]
             DbContext.SaveChanges();
         }
         //todo rackPosition
@@ -165,7 +169,7 @@ namespace Qwirkle.Infra.Persistence.Adapters
         private Player PlayerModelToPlayer(PlayerModel playerModel)
         {
             var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerModel.Id).Include(t => t.Tile).ToList();
-            var tiles = new List<TileOnPlayer>();      
+            var tiles = new List<TileOnPlayer>();
             tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerModelToEntity(tp)));
             var player = new Player(playerModel.Id, playerModel.GameId, playerModel.GamePosition, playerModel.Points, tiles, playerModel.GameTurn);
             return player;

@@ -11,7 +11,7 @@ namespace Qwirkle.Core.ComplianceContext.Ports
         void SetPlayerTurn(int playerId, bool turn);
         void UpdatePlayer(Player player);
         void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles);
-        void TilesFromBagToPlayer(Player player, List<int> rackPositions);
+        void TilesFromBagToPlayer(Player player, List<byte> rackPositions);
         void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles);
         Game GetGame(int gameId);
         Player GetPlayer(int playerId);
@@ -19,6 +19,6 @@ namespace Qwirkle.Core.ComplianceContext.Ports
         TileOnPlayer GetTileOnPlayerById(int tileId);
         Player CreatePlayer(int userId, int gameId);
         void CreateTiles(int gameId);
-        List<TileOnPlayer> GetTilesOnPlayerByPlayerId(int playerId);
+        //List<TileOnPlayer> GetTilesOnPlayerByPlayerId(int playerId);
     }
 }

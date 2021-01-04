@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:viewmodels="clr-namespace:Qwirkle.UI.Wpf.ViewModels"
-             xmlns:themes="clr-namespace:DataGridThemes;assembly=DataGridThemes"
+             xmlns:themes="clr-namespace:DataGridThemes;assembly=DataGridThemes" xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d" 
              d:DesignHeight="60" d:DesignWidth="400"
              d:DataContext="{d:DesignInstance viewmodels:RackViewModel}">
@@ -17,7 +17,6 @@
               SelectedItem="{Binding SelectedTileViewModel}"
               themes:DataGridHelper.HorizontalMouseWheelScrollingEnabled="True"
               themes:DataGridHelper.SelectedCells="{Binding Path=SelectedCells, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-
         <DataGrid.Columns>
             <DataGridTemplateColumn Width="120">
                 <DataGridTemplateColumn.CellTemplate>

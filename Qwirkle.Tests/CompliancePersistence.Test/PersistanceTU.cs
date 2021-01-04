@@ -116,7 +116,7 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
         {
             var game = Persistence.CreateGame(DateTime.Today);
             var player = Persistence.CreatePlayer(USER1, game.Id);
-            Persistence.TilesFromBagToPlayer(player, 6);
+            Persistence.TilesFromBagToPlayer(player, new List<byte> { 0, 1, 2, 3, 4, 5 });
             var playerUpdate = Persistence.GetPlayer(player.Id);
             Assert.Empty(playerUpdate.Rack.Tiles);
             Assert.Empty(playerUpdate.Rack.Tiles);
@@ -126,10 +126,15 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
         public void TilesFromBagToPlayerShouldGiveTilesIfBagContainEnoughTiles()
         {
             int TilesNumberToAdd = 3;
+            var rackPositions = new List<byte>();
+            for (byte i = 0; i < TilesNumberToAdd; i++)
+            {
+                rackPositions.Add(i);
+            }
             var game = Persistence.CreateGame(DateTime.Today);
             AddTilesOnBag(game.Id, TilesNumberToAdd);
             var player = Persistence.CreatePlayer(USER1, game.Id);
-            Persistence.TilesFromBagToPlayer(player, TilesNumberToAdd);
+            Persistence.TilesFromBagToPlayer(player, rackPositions);
             var playerUpdate = Persistence.GetPlayer(player.Id);
             Assert.Equal(TilesNumberToAdd, playerUpdate.Rack.Tiles.Count);
         }
@@ -139,11 +144,16 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
         {
             int TilesNumberToAddInBag = 10;
             int TilesNumberToRequest = 2;
+            var rackPositions = new List<byte>();
+            for (byte i = 0; i < TilesNumberToRequest; i++)
+            {
+                rackPositions.Add(i);
+            }
             var game = Persistence.CreateGame(DateTime.Today);
             AddTilesOnBag(game.Id, TilesNumberToAddInBag);
             var player = Persistence.CreatePlayer(USER1, game.Id);
-            Persistence.TilesFromBagToPlayer(player, TilesNumberToRequest);
-            Persistence.TilesFromBagToPlayer(player, TilesNumberToRequest);
+            Persistence.TilesFromBagToPlayer(player, rackPositions);
+            Persistence.TilesFromBagToPlayer(player, rackPositions);
             var playerUpdate = Persistence.GetPlayer(player.Id);
             Assert.Equal(TilesNumberToRequest + TilesNumberToRequest, playerUpdate.Rack.Tiles.Count);
         }
@@ -153,10 +163,15 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
         {
             int TilesNumberToAddInBag = 10;
             int TilesNumberToRequestFromBag = 4;
+            var rackPositions = new List<byte>();
+            for (byte i = 0; i < TilesNumberToRequestFromBag; i++)
+            {
+                rackPositions.Add(i);
+            }
             var game = Persistence.CreateGame(DateTime.Today);
             AddTilesOnBag(game.Id, TilesNumberToAddInBag);
             var player = Persistence.CreatePlayer(USER1, game.Id);
-            Persistence.TilesFromBagToPlayer(player, TilesNumberToRequestFromBag);
+            Persistence.TilesFromBagToPlayer(player, rackPositions);
             var playerAfterDraw = Persistence.GetPlayer(player.Id);
             Persistence.TilesFromPlayerToBag(playerAfterDraw, playerAfterDraw.Rack.Tiles);
             var playerUpdate = Persistence.GetPlayer(player.Id);
@@ -197,10 +212,15 @@ namespace Qwirkle.Core.CompliancePersistence.Tests
         {
             int TilesNumberToAddInBag = 10;
             int TilesNumberToRequestFromBag = 4;
+            var rackPositions = new List<byte>();
+            for (byte i = 0; i < TilesNumberToRequestFromBag; i++)
+            {
+                rackPositions.Add(i);
+            }
             var game = Persistence.CreateGame(DateTime.Today);
             AddTilesOnBag(game.Id, TilesNumberToAddInBag);
             var player = Persistence.CreatePlayer(USER1, game.Id);
-            Persistence.TilesFromBagToPlayer(player, TilesNumberToRequestFromBag);
+            Persistence.TilesFromBagToPlayer(player, rackPositions);
             player = Persistence.GetPlayer(player.Id);
             var coordinates = new CoordinatesInGame(2, 5);
             var tile = new TileOnBoard(player.Rack.Tiles[0], coordinates);

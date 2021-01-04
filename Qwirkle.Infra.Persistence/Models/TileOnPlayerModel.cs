@@ -12,5 +12,15 @@ namespace Qwirkle.Infra.Persistence.Models
 
         public virtual TileModel Tile { get; set; }
         public virtual PlayerModel Player { get; set; }
+
+
+        public TileOnPlayerModel() { }
+
+        public TileOnPlayerModel(TileOnBagModel tb, byte rackPosition, int playerId)
+        {
+            TileId = tb.TileId;
+            PlayerId = playerId;
+            RackPosition = rackPosition;
+        }
     }
 }
