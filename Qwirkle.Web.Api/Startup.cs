@@ -23,7 +23,7 @@ namespace Qwirkle.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ICompliancePersistence, CompliancePersistenceAdapter>();
+            services.AddScoped<IRepositoryPort, RepositoryAdapter>();
             services.AddScoped<IRequestCompliance, ComplianceService>();
 
             services.AddControllers();

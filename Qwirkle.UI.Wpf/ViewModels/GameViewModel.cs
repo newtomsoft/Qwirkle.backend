@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Qwirkle.Core.ComplianceContext.Ports;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using GalaSoft.MvvmLight.Command;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {
@@ -37,10 +39,15 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
             Play = new RelayCommand(OnPlay);
             Tips = new RelayCommand(OnTips);
-            ChangeTiles = new RelayCommand(OnChangeTiles);
+            ChangeTiles = new RelayCommand(OnChangeTiles, CanExecuteChangeTiles);
 
             RackViewModel = rack;
             BoardViewModel = new BoardViewModel(configuration, uiDispatcher);
+        }
+
+        private bool CanExecuteChangeTiles()
+        {
+            return RackViewModel != null && RackViewModel.SelectedCells.Count != 0;
         }
 
         private void OnChangeTiles()
