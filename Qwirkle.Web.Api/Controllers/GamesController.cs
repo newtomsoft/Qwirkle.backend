@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Qwirkle.Core.ComplianceContext.Ports;
+using Qwirkle.Core.Ports;
 using Qwirkle.Web.Api.VueModels;
 using System.Collections.Generic;
 
@@ -11,19 +11,19 @@ namespace Qwirkle.Web.Api.Controllers
     public class GamesController : ControllerBase
     {
         private ILogger<GamesController> Logger { get; }
-        private IRequestCompliance RequestCompliance { get; }
+        private ICommonUseCasePort CommonUseCase { get; }
 
-        public GamesController(ILogger<GamesController> logger, IRequestCompliance requestCompliance)
+        public GamesController(ILogger<GamesController> logger, ICommonUseCasePort commonUseCase)
         {
             Logger = logger;
-            RequestCompliance = requestCompliance;
+            CommonUseCase = commonUseCase;
         }
 
         [HttpPost("")]
         public ActionResult<int> CreateGame(List<int> usersIds)
         {
             Logger.LogInformation($"CreateGame with {usersIds}");
-            var players = RequestCompliance.CreateGame(usersIds);
+            var players = CommonUseCase.CreateGame(usersIds);
             return new ObjectResult(players);
         }
 
@@ -33,7 +33,7 @@ namespace Qwirkle.Web.Api.Controllers
         {
             Logger.LogInformation("controller call");
 
-            var game = RequestCompliance.GetGame(gameId);
+            var game = CommonUseCase.GetGame(gameId);
 
             return new ObjectResult(game);
         }
@@ -43,7 +43,7 @@ namespace Qwirkle.Web.Api.Controllers
         {
             Logger.LogInformation("controller call");
 
-            var player = RequestCompliance.GetPlayer(playerId);
+            var player = CommonUseCase.GetPlayer(playerId);
 
             return new ObjectResult(player);
         }
@@ -55,7 +55,7 @@ namespace Qwirkle.Web.Api.Controllers
 
             var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)>();
             tiles.ForEach(t => tilesToPlay.Add((t.TileId, t.X, t.Y)));
-            var playreturn = RequestCompliance.PlayTiles(tiles[0].PlayerId, tilesToPlay);
+            var playreturn = CommonUseCase.PlayTiles(tiles[0].PlayerId, tilesToPlay);
 
             return new ObjectResult(playreturn);
         }

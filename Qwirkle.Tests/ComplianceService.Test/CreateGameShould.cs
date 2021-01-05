@@ -1,18 +1,18 @@
-﻿using Qwirkle.Core.ComplianceContext.Ports;
-using Qwirkle.Core.ComplianceContext.Services;
-using Qwirkle.Infra.Persistence;
-using Qwirkle.Infra.Persistence.Adapters;
-using Qwirkle.Infra.Persistence.Models;
+﻿using Qwirkle.Core.Ports;
+using Qwirkle.Core.UsesCases;
+using Qwirkle.Infra.Repository;
+using Qwirkle.Infra.Repository.Adapters;
+using Qwirkle.Infra.Repository.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace Qwirkle.Core.ComplianceContext.Tests
+namespace Qwirkle.Core.Tests
 {
     public class CreateGameShould
     {
-        private ComplianceService ComplianceService { get; set; }
-        private ICompliancePersistence Persistence { get; set; }
+        private CommonUseCase CommonUseCase { get; set; }
+        private IRepositoryPort Repository { get; set; }
         private DefaultDbContext DbContext { get; set; }
 
         private const int USER1 = 71;
@@ -25,8 +25,8 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         {
             var factory = new ConnectionFactory();
             DbContext = factory.CreateContextForInMemory();
-            Persistence = new CompliancePersistenceAdapter(DbContext);
-            ComplianceService = new ComplianceService(Persistence);
+            Repository = new RepositoryAdapter(DbContext);
+            CommonUseCase = new CommonUseCase(Repository);
             AddUsers();
         }
 
@@ -43,7 +43,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         public void CreateGoodPlayersWithOrder1234()
         {
             var userIds = new List<int> { USER1, USER2, USER3, USER4 };
-            var players = ComplianceService.CreateGame(userIds);
+            var players = CommonUseCase.CreateGame(userIds);
 
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
@@ -59,7 +59,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         public void CreateGoodPlayersWithOrder123()
         {
             var userIds = new List<int> { USER1, USER3, USER4 };
-            var players = ComplianceService.CreateGame(userIds);
+            var players = CommonUseCase.CreateGame(userIds);
 
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
@@ -73,7 +73,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         public void CreateGoodPlayersWithOrder12()
         {
             var userIds = new List<int> { USER3, USER4 };
-            var players = ComplianceService.CreateGame(userIds);
+            var players = CommonUseCase.CreateGame(userIds);
 
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
@@ -86,7 +86,7 @@ namespace Qwirkle.Core.ComplianceContext.Tests
         public void CreateGoodPlayerWithOrder1()
         {
             var userIds = new List<int> { USER3 };
-            var players = ComplianceService.CreateGame(userIds);
+            var players = CommonUseCase.CreateGame(userIds);
             Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
             Assert.Equal(1, players.Count(p => p.IsTurn));
             Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);

@@ -1,17 +1,16 @@
-﻿using Qwirkle.Core.ComplianceContext;
-using Qwirkle.Core.ComplianceContext.Entities;
-using Qwirkle.Core.ComplianceContext.Enums;
-using Qwirkle.Core.ComplianceContext.ValueObjects;
-using Qwirkle.Core.ComplianceContext.Services;
+﻿using Qwirkle.Core.Entities;
+using Qwirkle.Core.Enums;
+using Qwirkle.Core.UsesCases;
+using Qwirkle.Core.ValueObjects;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Qwirkle.Core.ComplianceContext.Tests
+namespace Qwirkle.Core.Tests
 {
     public class GetPlayPointsShould
     {
         private const int QWIRKLE_POINTS = 6;
-        private ComplianceService ComplianceService { get; } = new ComplianceService(null);
+        private CommonUseCase ComplianceService { get; } = new CommonUseCase(null);
 
         [Fact]
         public void ReturnNumberOfTilesWhenGameIsEmptyAndTilesMakeRow()

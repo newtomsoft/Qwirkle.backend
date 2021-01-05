@@ -128,8 +128,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
-    <ProjectReference Include="..\Qwirkle.Infra.Persistence\Qwirkle.Infra.Persistence.csproj" />
+    <ProjectReference Include="..\Qwirkle.Core.\Qwirkle.Core.csproj" />
+    <ProjectReference Include="..\Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,11 +1,6 @@
-﻿using Qwirkle.Core.ComplianceContext.Entities;
+﻿using Qwirkle.Core.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {

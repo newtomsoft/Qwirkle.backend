@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtomsoft.Tools;
-using Qwirkle.Core.ComplianceContext.Ports;
-using Qwirkle.Core.ComplianceContext.Services;
-using Qwirkle.Infra.Persistence;
-using Qwirkle.Infra.Persistence.Adapters;
-using Qwirkle.Infra.Persistence.Models;
+using Qwirkle.Core.Ports;
+using Qwirkle.Core.UsesCases;
+using Qwirkle.Infra.Repository;
+using Qwirkle.Infra.Repository.Adapters;
+using Qwirkle.Infra.Repository.Models;
 
 namespace Qwirkle.Web.Api
 {
@@ -24,11 +24,11 @@ namespace Qwirkle.Web.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IRepositoryPort, RepositoryAdapter>();
-            services.AddScoped<IRequestCompliance, ComplianceService>();
+            services.AddScoped<ICommonUseCasePort, CommonUseCase>();
 
             services.AddControllers();
 
-            EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, Configuration);         
+            EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, Configuration);
 
             services.AddIdentity<UserModel, IdentityRole<int>>(options =>
             {

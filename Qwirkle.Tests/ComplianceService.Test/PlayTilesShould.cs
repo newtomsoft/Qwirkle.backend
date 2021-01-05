@@ -1,21 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Qwirkle.Core.ComplianceContext;
-using Qwirkle.Core.ComplianceContext.Enums;
-using Qwirkle.Core.ComplianceContext.Ports;
-using Qwirkle.Core.ComplianceContext.Services;
-using Qwirkle.Infra.Persistence;
-using Qwirkle.Infra.Persistence.Adapters;
-using Qwirkle.Infra.Persistence.Models;
+using Qwirkle.Core.Enums;
+using Qwirkle.Core.Ports;
+using Qwirkle.Core.UsesCases;
+using Qwirkle.Infra.Repository;
+using Qwirkle.Infra.Repository.Adapters;
+using Qwirkle.Infra.Repository.Models;
 using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Qwirkle.Core.ComplianceContext.Tests
+namespace Qwirkle.Core.Tests
 {
     public class PlayTilesShould
     {
-        private ComplianceService ComplianceService { get; set; }
-        private ICompliancePersistence Persistence { get; set; }
+        private CommonUseCase ComplianceService { get; set; }
+        private IRepositoryPort Repository { get; set; }
 
         private const int TOTAL_TILES = 108;
         private const int GAME_ID = 7;
@@ -30,8 +29,8 @@ namespace Qwirkle.Core.ComplianceContext.Tests
 
         public PlayTilesShould()
         {
-            Persistence = new CompliancePersistenceAdapter(Context());
-            ComplianceService = new ComplianceService(Persistence);
+            Repository = new RepositoryAdapter(Context());
+            ComplianceService = new CommonUseCase(Repository);
         }
 
         private DefaultDbContext Context()

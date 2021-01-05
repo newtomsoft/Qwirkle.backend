@@ -1,17 +1,16 @@
-﻿using Microsoft.Extensions.Configuration;
-using Qwirkle.Core.ComplianceContext.Ports;
-using System;
+﻿using GalaSoft.MvvmLight.Command;
+using Microsoft.Extensions.Configuration;
+using Qwirkle.Core.Ports;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using GalaSoft.MvvmLight.Command;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {
     public class GameViewModel : ViewModelBase, IPageViewModel
     {
-        private IRequestCompliance RequestCompliance { get; }
+        private ICommonUseCasePort CommonUseCases { get; }
 
         public RackViewModel RackViewModel { get { return _rackViewModel; } private set { _rackViewModel = value; OnPropertyChanged(nameof(RackViewModel)); } }
         private RackViewModel _rackViewModel;
@@ -28,14 +27,14 @@ namespace Qwirkle.UI.Wpf.ViewModels
         private bool _gameInProgress;
         public bool GameNotInProgress { get { return !_gameInProgress; } private set { _gameInProgress = !value; OnPropertyChanged(nameof(GameInProgress)); } }
 
-        public GameViewModel(bool newGame, IRequestCompliance requestCompliance, IConfiguration configuration, RackViewModel rack, Dispatcher uiDispatcher) : base(uiDispatcher)
+        public GameViewModel(bool newGame, ICommonUseCasePort commonUseCases, IConfiguration configuration, RackViewModel rack, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
             _configuration = configuration;
             _uiDispatcher = uiDispatcher;
 
             GameInProgress = newGame;
 
-            RequestCompliance = requestCompliance;
+            CommonUseCases = commonUseCases;
 
             Play = new RelayCommand(OnPlay);
             Tips = new RelayCommand(OnTips);
@@ -61,7 +60,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
             foreach (var cell in RackViewModel.SelectedCells)
                 tilesIds.Add(((TileOnPlayerViewModel)cell.Item).Tile.Id);
 
-            var rack = RequestCompliance.SwapTiles(1, tilesIds); //todo playerId
+            var rack = CommonUseCases.SwapTiles(1, tilesIds); //todo playerId
             if (rack != null)
                 RackViewModel = new RackViewModel(rack, _configuration, _uiDispatcher);
             else

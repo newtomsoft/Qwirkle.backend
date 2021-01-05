@@ -5,9 +5,9 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>Qwirkle.Core.ComplianceContext.Tests</RootNamespace>
+    <RootNamespace>Qwirkle.Core.Tests</RootNamespace>
 
-    <AssemblyName>Qwirkle.Core.ComplianceContext.Tests</AssemblyName>
+    <AssemblyName>Qwirkle.Core.Tests</AssemblyName>
 
     <Configurations>Debug;Release;NoPersitance</Configurations>
   </PropertyGroup>
@@ -27,8 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Qwirkle.Core.ComplianceContext\Qwirkle.Core.ComplianceContext.csproj" />
-    <ProjectReference Include="..\..\Qwirkle.Infra.Persistence\Qwirkle.Infra.Persistence.csproj" />
+    <ProjectReference Include="..\..\Qwirkle.Core.\Qwirkle.Core.csproj" />
+    <ProjectReference Include="..\..\Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj" />
   </ItemGroup>
 
 </Project>
