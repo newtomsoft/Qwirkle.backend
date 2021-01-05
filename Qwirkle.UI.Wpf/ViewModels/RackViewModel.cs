@@ -24,15 +24,17 @@ namespace Qwirkle.UI.Wpf.ViewModels
         {
             _configuration = configuration;
             SelectedCells = new List<DataGridCellInfo>();
+            TilesViewModel = TilesViewModelFromRack(rack);
+        }
 
+        private List<TileOnPlayerViewModel> TilesViewModelFromRack(Rack rack)
+        {
             var tilesViewModel = new List<TileOnPlayerViewModel>();
             foreach (var tile in rack.Tiles)
-            {
-                string fullName = GetFullNameImage(tile);
-                tilesViewModel.Add(new TileOnPlayerViewModel(tile, fullName));
-            }
+                tilesViewModel.Add(new TileOnPlayerViewModel(tile, GetFullNameImage(tile)));
+
             tilesViewModel = tilesViewModel.OrderBy(t => t.Tile.RackPosition).ToList();
-            TilesViewModel = tilesViewModel;
+            return tilesViewModel;
         }
 
         private string GetFullNameImage(TileOnPlayer tile) => Path.Combine(Directory.GetCurrentDirectory(), _configuration.GetSection("ImagesPath:Tiles").Value, tile.GetNameImage());
