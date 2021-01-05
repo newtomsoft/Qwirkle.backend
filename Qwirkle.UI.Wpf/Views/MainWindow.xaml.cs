@@ -8,10 +8,10 @@ namespace Qwirkle.UI.Wpf.Views
 {
     public partial class MainWindow : Window
     {
-        public MainWindow(ICommonUseCasePort requestCompliance, IConfiguration configuration)
+        public MainWindow(ICommonUseCasePort commonUseCase, IConfiguration configuration)
         {
             InitializeComponent();
-            DataContext = new MainViewModel(requestCompliance, configuration, Dispatcher);
+            DataContext = new MainViewModel(commonUseCase, configuration, Dispatcher);
         }
     }
 }
