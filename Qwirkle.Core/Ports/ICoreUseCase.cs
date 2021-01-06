@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Qwirkle.Core.Ports
 {
-    public interface ICommonUseCasePort
+    public interface ICoreUseCase
     {
         List<Player> CreateGame(List<int> usersIds);
         PlayReturn PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay);

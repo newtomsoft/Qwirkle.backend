@@ -10,7 +10,7 @@ namespace Qwirkle.Core.Tests
     public class GetPlayPointsShould
     {
         private const int QWIRKLE_POINTS = 6;
-        private CommonUseCase ComplianceService { get; } = new CommonUseCase(null);
+        private CoreUseCase ComplianceService { get; } = new CoreUseCase(null);
 
         [Fact]
         public void ReturnNumberOfTilesWhenGameIsEmptyAndTilesMakeRow()

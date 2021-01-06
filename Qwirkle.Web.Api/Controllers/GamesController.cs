@@ -11,9 +11,9 @@ namespace Qwirkle.Web.Api.Controllers
     public class GamesController : ControllerBase
     {
         private ILogger<GamesController> Logger { get; }
-        private ICommonUseCasePort CommonUseCase { get; }
+        private ICoreUseCase CommonUseCase { get; }
 
-        public GamesController(ILogger<GamesController> logger, ICommonUseCasePort commonUseCase)
+        public GamesController(ILogger<GamesController> logger, ICoreUseCase commonUseCase)
         {
             Logger = logger;
             CommonUseCase = commonUseCase;

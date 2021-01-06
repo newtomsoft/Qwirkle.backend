@@ -9,17 +9,17 @@ using System.Linq;
 
 namespace Qwirkle.Core.UsesCases
 {
-    public class CommonUseCase : ICommonUseCasePort
+    public class CoreUseCase : ICoreUseCase
     {
         private const int TILES_NUMBER_PER_PLAYER = 6;
         private const int TILES_NUMBER_FOR_A_QWIRKLE = 6;
         private const int POINTS_FOR_A_QWIRKLE = 12;
 
-        private IRepositoryPort RepositoryAdapter { get; }
+        private IRepository RepositoryAdapter { get; }
 
         public Game Game { get; set; }
 
-        public CommonUseCase(IRepositoryPort repositoryAdapter) => RepositoryAdapter = repositoryAdapter;
+        public CoreUseCase(IRepository repositoryAdapter) => RepositoryAdapter = repositoryAdapter;
 
         public List<Player> CreateGame(List<int> usersIds)
         {

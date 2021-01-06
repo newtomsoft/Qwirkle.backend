@@ -10,13 +10,13 @@ using System.Linq;
 
 namespace Qwirkle.Infra.Repository.Adapters
 {
-    public class RepositoryAdapter : IRepositoryPort
+    public class Repository : IRepository
     {
         private DefaultDbContext DbContext { get; }
 
         private const int TOTAL_TILES = 108;
 
-        public RepositoryAdapter(DefaultDbContext defaultDbContext)
+        public Repository(DefaultDbContext defaultDbContext)
         {
             DbContext = defaultDbContext;
         }

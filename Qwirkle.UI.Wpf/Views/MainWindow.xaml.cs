@@ -1,17 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
-using Qwirkle.Core.Ports;
-using Qwirkle.UI.Wpf.ViewModels;
-using System.Windows;
+﻿using System.Windows;
 
-
-namespace Qwirkle.UI.Wpf.Views
+namespace Qwirkle.UI.Wpf
 {
     public partial class MainWindow : Window
     {
-        public MainWindow(ICommonUseCasePort commonUseCase, IConfiguration configuration)
+        public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainViewModel(commonUseCase, configuration, Dispatcher);
         }
     }
 }

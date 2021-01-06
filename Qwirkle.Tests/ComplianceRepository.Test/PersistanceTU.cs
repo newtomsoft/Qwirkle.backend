@@ -15,7 +15,7 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
     public class RepositoryTU
     {
         #region private attributs
-        private IRepositoryPort Repository { get; set; }
+        private IRepository Repository { get; set; }
         private DefaultDbContext DbContext { get; set; }
 
         private const int USER1 = 71;
@@ -28,7 +28,7 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
         {
             var factory = new ConnectionFactory();
             DbContext = factory.CreateContextForInMemory();
-            Repository = new RepositoryAdapter(DbContext);
+            Repository = new Repository(DbContext);
             AddUsers();
             AddGame();
             AddAllTiles();

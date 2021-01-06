@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.Configuration;
-using MvvmBindingPack;
 using Qwirkle.Core.Entities;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {
 
-    public class RackViewModel : NotifyChangesBase
+    public class RackViewModel : ViewModelBase, IPageViewModel
     {
         private IList<DataGridCellInfo> _selectedCells;
-        public IList<DataGridCellInfo> SelectedCells { get => _selectedCells; set { _selectedCells = value; NotifyPropertyChanged(); } }
+        public IList<DataGridCellInfo> SelectedCells { get => _selectedCells; set { _selectedCells = value; OnPropertyChanged(nameof(SelectedCells)); } }
 
         public List<TileOnPlayerViewModel> TilesViewModel { get; set; }
 
@@ -20,7 +20,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
         private readonly IConfiguration _configuration;
 
-        public RackViewModel(Rack rack, IConfiguration configuration)
+        public RackViewModel(Rack rack, IConfiguration configuration, Dispatcher uiDispatcher) : base(uiDispatcher)
         {
             _configuration = configuration;
             SelectedCells = new List<DataGridCellInfo>();

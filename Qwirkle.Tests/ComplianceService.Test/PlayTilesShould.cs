@@ -13,8 +13,8 @@ namespace Qwirkle.Core.Tests
 {
     public class PlayTilesShould
     {
-        private CommonUseCase ComplianceService { get; set; }
-        private IRepositoryPort Repository { get; set; }
+        private CoreUseCase ComplianceService { get; set; }
+        private IRepository Repository { get; set; }
 
         private const int TOTAL_TILES = 108;
         private const int GAME_ID = 7;
@@ -29,8 +29,8 @@ namespace Qwirkle.Core.Tests
 
         public PlayTilesShould()
         {
-            Repository = new RepositoryAdapter(Context());
-            ComplianceService = new CommonUseCase(Repository);
+            Repository = new Repository(Context());
+            ComplianceService = new CoreUseCase(Repository);
         }
 
         private DefaultDbContext Context()

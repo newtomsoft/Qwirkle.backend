@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Qwirkle.Core.Ports
 {
-    public interface IRepositoryPort
+    public interface IRepository
     {
         Game CreateGame(DateTime date);
         bool IsPlayerTurn(int playerId);

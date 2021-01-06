@@ -1,47 +1,35 @@
-﻿using GalaSoft.MvvmLight.Command;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using MvvmBindingPack;
 using Qwirkle.Core.Ports;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {
-    public class GameViewModel : ViewModelBase, IPageViewModel
+    public class GameViewModel : NotifyChangesBase
     {
-        private ICommonUseCasePort CommonUseCases { get; }
+        private ICoreUseCase CommonUseCases { get; }
 
-        public RackViewModel RackViewModel { get { return _rackViewModel; } private set { _rackViewModel = value; OnPropertyChanged(nameof(RackViewModel)); } }
+        public RackViewModel RackViewModel { get { return _rackViewModel; } private set { _rackViewModel = value; NotifyPropertyChanged(); } }
         private RackViewModel _rackViewModel;
         public BoardViewModel BoardViewModel { get; private set; }
 
-        public ICommand ChangeTiles { get; private set; }
-        public ICommand Play { get; private set; }
-        public ICommand Tips { get; private set; }
-
-        private readonly Dispatcher _uiDispatcher;
         private IConfiguration _configuration;
 
-        public bool GameInProgress { get { return _gameInProgress; } private set { _gameInProgress = value; OnPropertyChanged(nameof(GameInProgress)); } }
+        public bool GameInProgress { get { return _gameInProgress; } private set { _gameInProgress = value; NotifyPropertyChanged(); } }
         private bool _gameInProgress;
-        public bool GameNotInProgress { get { return !_gameInProgress; } private set { _gameInProgress = !value; OnPropertyChanged(nameof(GameInProgress)); } }
+        public bool GameNotInProgress { get { return !_gameInProgress; } private set { _gameInProgress = !value; NotifyPropertyChanged(); } }
 
-        public GameViewModel(bool newGame, ICommonUseCasePort commonUseCases, IConfiguration configuration, RackViewModel rack, Dispatcher uiDispatcher) : base(uiDispatcher)
+        public GameViewModel(bool newGame, ICoreUseCase commonUseCases, IConfiguration configuration, RackViewModel rack)
         {
             _configuration = configuration;
-            _uiDispatcher = uiDispatcher;
 
             GameInProgress = newGame;
 
             CommonUseCases = commonUseCases;
 
-            Play = new RelayCommand(OnPlay);
-            Tips = new RelayCommand(OnTips);
-            ChangeTiles = new RelayCommand(OnChangeTiles, CanExecuteChangeTiles);
-
             RackViewModel = rack;
-            BoardViewModel = new BoardViewModel(configuration, uiDispatcher);
+            BoardViewModel = new BoardViewModel(configuration);
         }
 
         private bool CanExecuteChangeTiles()
@@ -49,7 +37,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
             return RackViewModel != null && RackViewModel.SelectedCells.Count != 0;
         }
 
-        private void OnChangeTiles()
+        public void ChangeTiles(object o)
         {
             if (RackViewModel.SelectedCells.Count == 0)
             {
@@ -62,17 +50,17 @@ namespace Qwirkle.UI.Wpf.ViewModels
 
             var rack = CommonUseCases.SwapTiles(1, tilesIds); //todo playerId
             if (rack != null)
-                RackViewModel = new RackViewModel(rack, _configuration, _uiDispatcher);
+                RackViewModel = new RackViewModel(rack, _configuration);
             else
                 MessageBox.Show("aucune tuile ne peut être échangée");
         }
 
-        private void OnTips()
+        public void Tips(object o)
         {
             MessageBox.Show("Fonctionnalité Tips en cours de dev...");
         }
 
-        private void OnPlay()
+        public void Play(object o)
         {
             MessageBox.Show("Fonctionnalité Play en cours de dev...");
         }

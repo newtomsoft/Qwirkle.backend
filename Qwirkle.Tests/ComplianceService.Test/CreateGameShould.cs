@@ -11,8 +11,8 @@ namespace Qwirkle.Core.Tests
 {
     public class CreateGameShould
     {
-        private CommonUseCase CommonUseCase { get; set; }
-        private IRepositoryPort Repository { get; set; }
+        private CoreUseCase CommonUseCase { get; set; }
+        private IRepository Repository { get; set; }
         private DefaultDbContext DbContext { get; set; }
 
         private const int USER1 = 71;
@@ -25,8 +25,8 @@ namespace Qwirkle.Core.Tests
         {
             var factory = new ConnectionFactory();
             DbContext = factory.CreateContextForInMemory();
-            Repository = new RepositoryAdapter(DbContext);
-            CommonUseCase = new CommonUseCase(Repository);
+            Repository = new Repository(DbContext);
+            CommonUseCase = new CoreUseCase(Repository);
             AddUsers();
         }
 

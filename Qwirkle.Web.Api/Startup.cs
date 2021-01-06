@@ -23,8 +23,8 @@ namespace Qwirkle.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IRepositoryPort, RepositoryAdapter>();
-            services.AddScoped<ICommonUseCasePort, CommonUseCase>();
+            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<ICoreUseCase, CoreUseCase>();
 
             services.AddControllers();
 

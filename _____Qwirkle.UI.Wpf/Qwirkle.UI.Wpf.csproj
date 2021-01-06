@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -121,19 +121,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="DataGridThemes" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="MvvmBindingPack" Version="5.0.0" />
-	<PackageReference Include="Newtomsoft.Tools" Version="0.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="16.7.30329.38" />
+    <PackageReference Include="MvvmLightLibs" Version="5.4.1.1" />
   </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj" />
-		<ProjectReference Include="..\Qwirkle.Core\Qwirkle.Core.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Qwirkle.Core.\Qwirkle.Core.csproj" />
+    <ProjectReference Include="..\Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Resources\Images\Tiles\" />
-	</ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\Images\Tiles\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
 
 </Project>
