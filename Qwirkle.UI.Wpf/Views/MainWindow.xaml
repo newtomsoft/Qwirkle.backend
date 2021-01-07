@@ -9,6 +9,7 @@
     <Grid>
         <TabControl >
             <TabItem Header="Menu game" Content="{mark:IocBinding ServiceType=GameMenuView}" />
+            <TabItem Header="Rack" Content="{mark:IocBinding ServiceType=RackView}" />
         </TabControl>
     </Grid>
 </Window>

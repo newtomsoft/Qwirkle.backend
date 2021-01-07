@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="Qwirkle.UI.Wpf.Views.RackView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:themes="clr-namespace:DataGridThemes;assembly=DataGridThemes"
+             mc:Ignorable="d" 
+             xmlns:mvvm="Mvvm"
+             d:DesignHeight="60" d:DesignWidth="400"
+             DataContext="{mvvm:IocBinding ServiceType=RackViewModel}">
+
+    <DataGrid Name="Tiles"
+              Margin="10"
+              AutoGenerateColumns="False"
+              IsReadOnly="True"
+              ItemsSource="{Binding Path=TilesViewModel}"
+              SelectedItem="{Binding SelectedTileViewModel}"
+              themes:DataGridHelper.HorizontalMouseWheelScrollingEnabled="True"
+              themes:DataGridHelper.SelectedCells="{Binding Path=SelectedCells, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+        <DataGrid.Columns>
+            <DataGridTemplateColumn Width="120">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding Image}" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+        <DataGrid.LayoutTransform>
+            <TransformGroup>
+                <RotateTransform Angle="-90"/>
+                <ScaleTransform ScaleX="1" ScaleY="-1" />
+            </TransformGroup>
+        </DataGrid.LayoutTransform>
+    </DataGrid>
+</UserControl>

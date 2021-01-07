@@ -121,6 +121,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DataGridThemes" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="MvvmBindingPack" Version="5.0.0" />

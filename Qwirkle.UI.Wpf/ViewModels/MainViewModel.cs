@@ -9,19 +9,20 @@ namespace Qwirkle.UI.Wpf.ViewModels
 {
     public class MainViewModel : NotifyChangesBase
     {
-        private ICoreUseCase RequestCompliance { get; }
+        private ICoreUseCase CoreUseCase { get; }
+        private readonly IConfiguration _configuration;
 
         public GameViewModel GameViewModel { get { return _gameViewModel; } private set { _gameViewModel = value; NotifyPropertyChanged(); } }
         private GameViewModel _gameViewModel;
-        private IConfiguration _configuration;
+        
 
 
-        public MainViewModel(ICoreUseCase commonUseCase, IConfiguration configuration)
+        public MainViewModel(ICoreUseCase coreUseCase, IConfiguration configuration)
         {
             IsNewGameEnable = true;
             _configuration = configuration;
-            RequestCompliance = commonUseCase;
-            GameViewModel = new GameViewModel(false, commonUseCase, configuration, null);
+            CoreUseCase = coreUseCase;
+            GameViewModel = new GameViewModel(false, coreUseCase, configuration, null);
         }
 
         public bool IsNewGameEnable
@@ -36,12 +37,12 @@ namespace Qwirkle.UI.Wpf.ViewModels
             int playerId = 1; //todo
             int secondPlayerId = 2; //todo
 
-            var playersInGame = RequestCompliance.CreateGame(new List<int> { playerId, secondPlayerId }); //todo playerIds
+            var playersInGame = CoreUseCase.CreateGame(new List<int> { playerId, secondPlayerId }); //todo playerIds
             var player = playersInGame.Where(p => p.Id == playerId).First();
 
             Rack rack = new Rack(player.Rack.Tiles);
             var rackViewModel = new RackViewModel(rack, _configuration);
-            GameViewModel = new GameViewModel(true, RequestCompliance, _configuration, rackViewModel);
+            GameViewModel = new GameViewModel(true, CoreUseCase, _configuration, rackViewModel);
         }
     }
 }
