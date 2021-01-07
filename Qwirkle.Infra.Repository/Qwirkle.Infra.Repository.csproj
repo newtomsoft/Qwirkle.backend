@@ -23,7 +23,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="Newtomsoft.Tools" Version="0.1.0" />
+    <PackageReference Include="Newtomsoft.Tools" Version="0.1.1" />
   </ItemGroup>
 
   <ItemGroup>
