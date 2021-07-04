@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using MvvmBindingPack;
 using Qwirkle.Core.Entities;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +8,7 @@ using System.Windows.Controls;
 namespace Qwirkle.UI.Wpf.ViewModels
 {
 
-    public class RackViewModel : NotifyChangesBase
+    public class RackViewModel : NotifyPropertyChangedBase
     {
         private IList<DataGridCellInfo> _selectedCells;
         public IList<DataGridCellInfo> SelectedCells { get => _selectedCells; set { _selectedCells = value; NotifyPropertyChanged(); } }

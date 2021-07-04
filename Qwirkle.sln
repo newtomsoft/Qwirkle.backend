@@ -13,11 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Web.Api", "Qwirkle.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{44C8ADB6-E7A5-450E-8543-11A9EDFF0551}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{597C8BA8-5103-4AB2-9893-943DB8BABD64}"
-	ProjectSection(SolutionItems) = preProject
-		sharesettings.Development.json = sharesettings.Development.json
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{858DBA9A-5C9E-4EAF-B91A-04D9E8C72EE0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tiles", "Tiles", "{3A8C201F-7E69-4CC6-A2A6-EC061EDFAFE4}"
@@ -70,11 +65,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComplianceRepository.Test",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Core", "Qwirkle.Core\Qwirkle.Core.csproj", "{FBA5F822-5FD5-4275-BADB-C3D0CFADCFA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qwirkle.UI.Wpf", "Qwirkle.UI.Wpf\Qwirkle.UI.Wpf.csproj", "{ED6A28E0-3298-41BD-97AC-AB600EBD0256}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.UI.Wpf", "Qwirkle.UI.Wpf\Qwirkle.UI.Wpf.csproj", "{ED6A28E0-3298-41BD-97AC-AB600EBD0256}"
 	ProjectSection(ProjectDependencies) = postProject
 		{FBA5F822-5FD5-4275-BADB-C3D0CFADCFA7} = {FBA5F822-5FD5-4275-BADB-C3D0CFADCFA7}
 		{8419EFC2-8FF7-4E23-92DE-15CA3A6C6531} = {8419EFC2-8FF7-4E23-92DE-15CA3A6C6531}
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtomsoft.EntityFramework", "..\NewtomSoft.Libraries\Newtomsoft.EntityFramework\Newtomsoft.EntityFramework.csproj", "{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +129,14 @@ Global
 		{ED6A28E0-3298-41BD-97AC-AB600EBD0256}.NoPersitence|Any CPU.Build.0 = Debug|Any CPU
 		{ED6A28E0-3298-41BD-97AC-AB600EBD0256}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED6A28E0-3298-41BD-97AC-AB600EBD0256}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.NoPersitance|Any CPU.ActiveCfg = Debug|Any CPU
+		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.NoPersitance|Any CPU.Build.0 = Debug|Any CPU
+		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.NoPersitence|Any CPU.ActiveCfg = Debug|Any CPU
+		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.NoPersitence|Any CPU.Build.0 = Debug|Any CPU
+		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
-using Newtomsoft.Tools;
-using Qwirkle.Infra.Repository;
+using Newtomsoft.EntityFramework.Core;
 
-namespace Data
+namespace Qwirkle.Infra.Repository
 {
     public class DefaultDesignTimeDbContextFactory : IDesignTimeDbContextFactory<DefaultDbContext>
     {

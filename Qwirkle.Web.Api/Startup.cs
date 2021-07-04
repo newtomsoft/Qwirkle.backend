@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtomsoft.Tools;
+using Newtomsoft.EntityFramework.Core;
 using Qwirkle.Core.Ports;
 using Qwirkle.Core.UsesCases;
 using Qwirkle.Infra.Repository;

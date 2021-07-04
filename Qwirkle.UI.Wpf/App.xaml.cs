@@ -1,13 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MvvmBindingPack;
-using Newtomsoft.Tools;
+using Newtomsoft.EntityFramework.Core;
 using Qwirkle.Core.Ports;
 using Qwirkle.Core.UsesCases;
 using Qwirkle.Infra.Repository;
 using Qwirkle.Infra.Repository.Adapters;
-using Qwirkle.UI.Wpf.Fakes;
 using Qwirkle.UI.Wpf.ViewModels;
 using System.Windows;
 
@@ -26,7 +24,6 @@ namespace Qwirkle.UI.Wpf
             var configuration = GetConfiguration();
             EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, configuration);
             services.AddSingleton<MainViewModel>();
-            AutoWireVmDataContext.ServiceProvider = services.BuildServiceProvider();
         }
 
         private static ILogger GetLogger()

@@ -9,42 +9,10 @@
     "windowsAuthentication": false
   },
   "profiles": {
-    "Development InMemory": {
+    "Development": {
       "commandName": "Project",
       "environmentVariables": {
         "PERSISTENCE": "InMemory",
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "launchBrowser": true
-    },
-    "Development MySql": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "PERSISTENCE": "MySql",
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "launchBrowser": true
-    },
-    "Development PostgreSql": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "PERSISTENCE": "PostgreSql"
-      },
-      "launchBrowser": true
-    },
-    "Development Sqlite": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "PERSISTENCE": "Sqlite",
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "launchBrowser": true
-    },
-    "Development SqlServer": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "PERSISTENCE": "SqlServer",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "launchBrowser": true

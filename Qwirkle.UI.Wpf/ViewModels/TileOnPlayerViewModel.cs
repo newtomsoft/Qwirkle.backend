@@ -1,11 +1,10 @@
-﻿using MvvmBindingPack;
-using Qwirkle.Core.Entities;
+﻿using Qwirkle.Core.Entities;
 using System;
 using System.Windows.Media.Imaging;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {
-    public class TileOnPlayerViewModel : NotifyChangesBase
+    public class TileOnPlayerViewModel : NotifyPropertyChangedBase
     {
         public TileOnPlayer Tile { get; }
         public string FullNameImage { get; }

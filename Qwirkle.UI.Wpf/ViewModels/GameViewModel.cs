@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
-using MvvmBindingPack;
 using Qwirkle.Core.Ports;
 using System.Collections.Generic;
 using System.Windows;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {
-    public class GameViewModel : NotifyChangesBase
+    public class GameViewModel : NotifyPropertyChangedBase
     {
         private ICoreUseCase CommonUseCases { get; }
 

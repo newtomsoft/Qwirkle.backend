@@ -1,10 +1,9 @@
 {
   "profiles": {
-    "Development InMemory": {
+    "Development": {
       "commandName": "Project",
       "environmentVariables": {
-        "PERSISTENCE": "InMemory",
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "DOTNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

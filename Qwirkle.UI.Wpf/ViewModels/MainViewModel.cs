@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using MvvmBindingPack;
 using Qwirkle.Core.Entities;
 using Qwirkle.Core.Ports;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {
-    public class MainViewModel : NotifyChangesBase
+    public class MainViewModel : NotifyPropertyChangedBase
     {
         private ICoreUseCase CoreUseCase { get; }
         private readonly IConfiguration _configuration;

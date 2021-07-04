@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
-using MvvmBindingPack;
 
 namespace Qwirkle.UI.Wpf.ViewModels
 {
-    public class BoardViewModel : NotifyChangesBase
+    public class BoardViewModel : NotifyPropertyChangedBase
     {
         public string square0 = "0";
         public string square1 = "1";

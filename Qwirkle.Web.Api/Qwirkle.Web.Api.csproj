@@ -7,22 +7,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="..\sharesettings.Development.json" Link="sharesettings.Development.json" CopyToOutputDirectory="PreserveNewest" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1" />
-		<PackageReference Include="Newtomsoft.Tools" Version="0.1.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<ProjectReference Include="..\..\NewtomSoft.Libraries\Newtomsoft.EntityFramework\Newtomsoft.EntityFramework.csproj" />
 		<ProjectReference Include="..\Qwirkle.Core.\Qwirkle.Core.csproj" />
 		<ProjectReference Include="..\Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj" />
 	</ItemGroup>
-
-	<ProjectExtensions>
-		<VisualStudio><UserProperties appsettings_1json__JsonSchema="https://batect.dev/configSchema.json" properties_4launchsettings_1json__JsonSchema="" /></VisualStudio>
-	</ProjectExtensions>
 
 
 </Project>
