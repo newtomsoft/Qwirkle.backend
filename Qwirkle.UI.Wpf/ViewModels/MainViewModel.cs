@@ -12,8 +12,7 @@ namespace Qwirkle.UI.Wpf.ViewModels
         private readonly IConfiguration _configuration;
 
         public GameViewModel GameViewModel { get { return _gameViewModel; } private set { _gameViewModel = value; NotifyPropertyChanged(); } }
-        private GameViewModel _gameViewModel;
-        
+        private GameViewModel _gameViewModel;      
 
 
         public MainViewModel(ICoreUseCase coreUseCase, IConfiguration configuration)

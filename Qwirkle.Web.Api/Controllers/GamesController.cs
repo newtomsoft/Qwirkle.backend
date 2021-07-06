@@ -32,9 +32,7 @@ namespace Qwirkle.Web.Api.Controllers
         public ActionResult<int> GetGame(int gameId)
         {
             Logger.LogInformation("controller call");
-
             var game = CommonUseCase.GetGame(gameId);
-
             return new ObjectResult(game);
         }
 
@@ -42,9 +40,7 @@ namespace Qwirkle.Web.Api.Controllers
         public ActionResult<int> GetPlayer(int playerId)
         {
             Logger.LogInformation("controller call");
-
             var player = CommonUseCase.GetPlayer(playerId);
-
             return new ObjectResult(player);
         }
 
@@ -56,7 +52,6 @@ namespace Qwirkle.Web.Api.Controllers
             var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)>();
             tiles.ForEach(t => tilesToPlay.Add((t.TileId, t.X, t.Y)));
             var playreturn = CommonUseCase.PlayTiles(tiles[0].PlayerId, tilesToPlay);
-
             return new ObjectResult(playreturn);
         }
 

@@ -126,6 +126,7 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Newtomsoft.Libraries\Newtomsoft.Configuration\Newtomsoft.Configuration.csproj" />
 		<ProjectReference Include="..\..\NewtomSoft.Libraries\Newtomsoft.EntityFramework\Newtomsoft.EntityFramework.csproj" />
 		<ProjectReference Include="..\Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj" />
 		<ProjectReference Include="..\Qwirkle.Core\Qwirkle.Core.csproj" />
@@ -133,6 +134,12 @@
 
 	<ItemGroup>
 	  <Folder Include="Resources\Images\Tiles\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Page Update="Views\GameView.xaml">
+	    <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	  </Page>
 	</ItemGroup>
 
 </Project>
