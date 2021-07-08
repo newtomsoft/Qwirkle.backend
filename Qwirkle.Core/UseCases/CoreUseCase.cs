@@ -32,7 +32,7 @@ namespace Qwirkle.Core.UsesCases
             return Game.Players;
         }
 
-        public PlayReturn PlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
+        public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
             Player player = GetPlayer(playerId);
             if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn };
@@ -49,21 +49,20 @@ namespace Qwirkle.Core.UsesCases
 
             PlayReturn playReturn = GetPlayReturn(tilesToPlay);
             if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
-            PlayTiles(player, tilesToPlay, playReturn.Points);
+            playReturn.NewRack = PlayTiles(player, tilesToPlay, playReturn.Points);
             return playReturn;
         }
 
-        public Rack SwapTiles(int playerId, List<int> tilesIds)
+        public SwapTilesReturn TrySwapTiles(int playerId, List<int> tilesIds)
         {
             Player player = GetPlayer(playerId);
-            if (!player.IsTurn) return null;
-            if (!player.HasTiles(tilesIds)) return null;
+            Game = GetGame(player.GameId);
+            if (!player.IsTurn) return new SwapTilesReturn { Code = PlayReturnCode.NotPlayerTurn };
+            if (!player.HasTiles(tilesIds)) return new SwapTilesReturn { Code = PlayReturnCode.PlayerDontHaveThisTile };
 
             List<TileOnPlayer> tilesToSwap = GetPlayerTiles(tilesIds);
-            Game = GetGame(player.GameId);
-
-            SwapTiles(ref player, tilesToSwap);
-            return player.Rack;
+            var swapTilesReturn = SwapTiles(player, tilesToSwap);
+            return swapTilesReturn;
         }
 
         private void DealTilesToPlayers()
@@ -109,7 +108,7 @@ namespace Qwirkle.Core.UsesCases
 
         public PlayReturn GetPlayReturn(List<TileOnBoard> tiles)
         {
-            if (Game.Board.Tiles.Count == 0 && tiles.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, Tile = tiles[0] };
+            if (Game.Board.Tiles.Count == 0 && tiles.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, TilesPlayed = tiles };
 
             bool AreAllTilesIsolated = true;
             foreach (var tile in tiles)
@@ -150,13 +149,14 @@ namespace Qwirkle.Core.UsesCases
 
         public Game GetGame(int GameId) => RepositoryAdapter.GetGame(GameId);
 
-        private void SwapTiles(ref Player player, List<TileOnPlayer> tilesToSwap)
+        private SwapTilesReturn SwapTiles(Player player, List<TileOnPlayer> tilesToSwap)
         {
             List<byte> rackPositions = RackPositions(tilesToSwap);
             SetNextPlayerTurnToPlay(player.Id);
             RepositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
             RepositoryAdapter.TilesFromPlayerToBag(player, tilesToSwap);
-            player = GetPlayer(player.Id);
+            RepositoryAdapter.UpdatePlayer(player);
+            return new SwapTilesReturn { Code = PlayReturnCode.Ok, NewRack = GetPlayer(player.Id).Rack };
         }
 
         private void RefreshPlayer(Player player)
@@ -165,7 +165,7 @@ namespace Qwirkle.Core.UsesCases
                 Game.Players[i] = GetPlayer(Game.Players[i].Id);
         }
 
-        private void PlayTiles(Player player, List<TileOnBoard> tilesToPlay, int points)
+        private Rack PlayTiles(Player player, List<TileOnBoard> tilesToPlay, int points)
         {
             player.Points += points;
             player.SetTurn(false);
@@ -173,18 +173,17 @@ namespace Qwirkle.Core.UsesCases
             RepositoryAdapter.UpdatePlayer(player);
             SetNextPlayerTurnToPlay(player.Id);
 
-
-            // TODO !!!
-#warning todo !!!  
-            #region warning
+            // TODO
+            #warning todo
+            #region todo
             var rackPositions = new List<byte>();
             for (byte i = 0; i < tilesToPlay.Count; i++)
                 rackPositions.Add(i);
             #endregion
 
-
             RepositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
             RepositoryAdapter.TilesFromPlayerToGame(Game.Id, player.Id, tilesToPlay);
+            return RepositoryAdapter.GetPlayer(player.Id).Rack;
         }
 
         private void SetNextPlayerTurnToPlay(int playerId)

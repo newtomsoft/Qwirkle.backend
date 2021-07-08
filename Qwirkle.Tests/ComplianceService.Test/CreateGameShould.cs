@@ -2,7 +2,7 @@
 using Qwirkle.Core.UsesCases;
 using Qwirkle.Infra.Repository;
 using Qwirkle.Infra.Repository.Adapters;
-using Qwirkle.Infra.Repository.Models;
+using Qwirkle.Infra.Repository.Dao;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -32,10 +32,10 @@ namespace Qwirkle.Core.Tests
 
         private void AddUsers()
         {
-            DbContext.Users.Add(new UserModel { Id = USER1 });
-            DbContext.Users.Add(new UserModel { Id = USER2 });
-            DbContext.Users.Add(new UserModel { Id = USER3 });
-            DbContext.Users.Add(new UserModel { Id = USER4 });
+            DbContext.Users.Add(new UserDao { Id = USER1 });
+            DbContext.Users.Add(new UserDao { Id = USER2 });
+            DbContext.Users.Add(new UserDao { Id = USER3 });
+            DbContext.Users.Add(new UserDao { Id = USER4 });
             DbContext.SaveChanges();
         }
 

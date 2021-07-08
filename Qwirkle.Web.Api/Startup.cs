@@ -8,7 +8,7 @@ using Qwirkle.Core.Ports;
 using Qwirkle.Core.UsesCases;
 using Qwirkle.Infra.Repository;
 using Qwirkle.Infra.Repository.Adapters;
-using Qwirkle.Infra.Repository.Models;
+using Qwirkle.Infra.Repository.Dao;
 
 namespace Qwirkle.Web.Api
 {
@@ -27,7 +27,7 @@ namespace Qwirkle.Web.Api
 
             EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, Configuration);
 
-            services.AddIdentity<UserModel, IdentityRole<int>>(options =>
+            services.AddIdentity<UserDao, IdentityRole<int>>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;

@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Qwirkle.Infra.Repository.Models;
+using Qwirkle.Infra.Repository.Dao;
 
 namespace Qwirkle.Infra.Repository
 {
-    public class DefaultDbContext : IdentityDbContext<UserModel, IdentityRole<int>, int>
+    public class DefaultDbContext : IdentityDbContext<UserDao, IdentityRole<int>, int>
     {
-        public DbSet<TileModel> Tiles { get; set; }
-        public DbSet<TileOnBagModel> TilesOnBag { get; set; }
-        public DbSet<TileOnBoardModel> TilesOnBoard { get; set; }
-        public DbSet<TileOnPlayerModel> TilesOnPlayer { get; set; }
-        public DbSet<GameModel> Games { get; set; }
-        public override DbSet<UserModel> Users { get; set; } // todo override à vérifier
-        public DbSet<PlayerModel> Players { get; set; }
+        public DbSet<TileDao> Tiles { get; set; }
+        public DbSet<TileOnBagDao> TilesOnBag { get; set; }
+        public DbSet<TileOnBoardDao> TilesOnBoard { get; set; }
+        public DbSet<TileOnPlayerDao> TilesOnPlayer { get; set; }
+        public DbSet<GameDao> Games { get; set; }
+        public override DbSet<UserDao> Users { get; set; } // todo override à vérifier
+        public DbSet<PlayerDao> Players { get; set; }
 
 
         public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)

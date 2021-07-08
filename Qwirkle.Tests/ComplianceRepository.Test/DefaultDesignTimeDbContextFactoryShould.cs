@@ -4,7 +4,7 @@ using Qwirkle.Core.Ports;
 using Qwirkle.Core.ValueObjects;
 using Qwirkle.Infra.Repository;
 using Qwirkle.Infra.Repository.Adapters;
-using Qwirkle.Infra.Repository.Models;
+using Qwirkle.Infra.Repository.Dao;
 using System;
 using System.Collections.Generic;
 using System.Linq;

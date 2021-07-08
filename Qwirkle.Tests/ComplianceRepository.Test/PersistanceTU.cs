@@ -4,7 +4,7 @@ using Qwirkle.Core.Ports;
 using Qwirkle.Core.ValueObjects;
 using Qwirkle.Infra.Repository;
 using Qwirkle.Infra.Repository.Adapters;
-using Qwirkle.Infra.Repository.Models;
+using Qwirkle.Infra.Repository.Dao;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,16 +37,16 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
         #region private methods
         private void AddUsers()
         {
-            DbContext.Users.Add(new UserModel { Id = USER1 });
-            DbContext.Users.Add(new UserModel { Id = USER2 });
-            DbContext.Users.Add(new UserModel { Id = USER3 });
-            DbContext.Users.Add(new UserModel { Id = USER4 });
+            DbContext.Users.Add(new UserDao { Id = USER1 });
+            DbContext.Users.Add(new UserDao { Id = USER2 });
+            DbContext.Users.Add(new UserDao { Id = USER3 });
+            DbContext.Users.Add(new UserDao { Id = USER4 });
             DbContext.SaveChanges();
         }
 
         private void AddGame()
         {
-            DbContext.Games.Add(new GameModel { CreatDate = DateTime.Now });
+            DbContext.Games.Add(new GameDao { CreatDate = DateTime.Now });
             DbContext.SaveChanges();
         }
 
@@ -56,7 +56,7 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
             for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
                 foreach (TileColor color in (TileColor[])Enum.GetValues(typeof(TileColor)))
                     foreach (TileForm form in (TileForm[])Enum.GetValues(typeof(TileForm)))
-                        DbContext.Tiles.Add(new TileModel { Color = color, Form = form });
+                        DbContext.Tiles.Add(new TileDao { Color = color, Form = form });
 
             DbContext.SaveChanges();
         }
@@ -66,7 +66,7 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
             var tilesIds = DbContext.Tiles.Select(t => t.Id).ToList();
             for (int i = 1; i <= number; i++)
             {
-                DbContext.TilesOnBag.Add(new TileOnBagModel { GameId = gameId, TileId = tilesIds[i] });
+                DbContext.TilesOnBag.Add(new TileOnBagDao { GameId = gameId, TileId = tilesIds[i] });
             }
             DbContext.SaveChanges();
         }

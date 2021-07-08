@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Qwirkle.Infra.Repository.Models
+namespace Qwirkle.Infra.Repository.Dao
 {
     [Table("TileOnBoard")]
-    public class TileOnBoardModel
+    public class TileOnBoardDao
     {
         public int Id { get; set; }
         public int TileId { get; set; }
@@ -11,7 +11,7 @@ namespace Qwirkle.Infra.Repository.Models
         public sbyte PositionX { get; set; }
         public sbyte PositionY { get; set; }
 
-        public virtual TileModel Tile { get; set; }
-        public virtual GameModel Game { get; set; }
+        public virtual TileDao Tile { get; set; }
+        public virtual GameDao Game { get; set; }
     }
 }

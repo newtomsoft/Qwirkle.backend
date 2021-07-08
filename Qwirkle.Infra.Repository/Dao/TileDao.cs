@@ -1,10 +1,10 @@
 ﻿using Qwirkle.Core.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Qwirkle.Infra.Repository.Models
+namespace Qwirkle.Infra.Repository.Dao
 {
     [Table("Tile")]
-    public class TileModel
+    public class TileDao
     {
         public int Id { get; set; }
         public TileForm Form { get; set; }

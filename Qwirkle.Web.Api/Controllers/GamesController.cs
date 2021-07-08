@@ -11,49 +11,52 @@ namespace Qwirkle.Web.Api.Controllers
     public class GamesController : ControllerBase
     {
         private ILogger<GamesController> Logger { get; }
-        private ICoreUseCase CommonUseCase { get; }
+        private ICoreUseCase CoreUseCase { get; }
 
-        public GamesController(ILogger<GamesController> logger, ICoreUseCase commonUseCase)
+        public GamesController(ILogger<GamesController> logger, ICoreUseCase coreUseCase)
         {
             Logger = logger;
-            CommonUseCase = commonUseCase;
+            CoreUseCase = coreUseCase;
         }
 
         [HttpPost("")]
         public ActionResult<int> CreateGame(List<int> usersIds)
         {
             Logger.LogInformation($"CreateGame with {usersIds}");
-            var players = CommonUseCase.CreateGame(usersIds);
+            var players = CoreUseCase.CreateGame(usersIds);
             return new ObjectResult(players);
         }
 
-
-        [HttpGet("{gameId}")]
-        public ActionResult<int> GetGame(int gameId)
+        [HttpPost("Get")]
+        public ActionResult<int> GetGame(List<int> gameId)
         {
-            Logger.LogInformation("controller call");
-            var game = CommonUseCase.GetGame(gameId);
+            var game = CoreUseCase.GetGame(gameId[0]);
             return new ObjectResult(game);
         }
 
         [HttpGet("Players/{playerId}")]
         public ActionResult<int> GetPlayer(int playerId)
         {
-            Logger.LogInformation("controller call");
-            var player = CommonUseCase.GetPlayer(playerId);
+            var player = CoreUseCase.GetPlayer(playerId);
             return new ObjectResult(player);
         }
 
         [HttpPost("PlayTiles/")]
         public ActionResult<int> PlayTiles(List<TileViewModel> tiles)
         {
-            Logger.LogInformation("controller call");
-
             var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)>();
             tiles.ForEach(t => tilesToPlay.Add((t.TileId, t.X, t.Y)));
-            var playreturn = CommonUseCase.PlayTiles(tiles[0].PlayerId, tilesToPlay);
+            var playreturn = CoreUseCase.TryPlayTiles(tiles[0].PlayerId, tilesToPlay);
             return new ObjectResult(playreturn);
         }
 
+        [HttpPost("SwapTiles/")]
+        public ActionResult<int> SwapTiles(List<TileViewModel> tiles)
+        {
+            var tilesIdsToChange = new List<int>();
+            tiles.ForEach(t => tilesIdsToChange.Add(t.TileId));
+            var swapTilesReturn = CoreUseCase.TrySwapTiles(tiles[0].PlayerId, tilesIdsToChange);
+            return new ObjectResult(swapTilesReturn);
+        }
     }
 }

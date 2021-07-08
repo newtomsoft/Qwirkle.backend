@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Qwirkle.Infra.Repository.Models
+namespace Qwirkle.Infra.Repository.Dao
 {
     [Table("User")]
-    public class UserModel : IdentityUser<int>
+    public class UserDao : IdentityUser<int>
     {
         [Column("Pseudo")]
         override public string UserName { get; set; }
@@ -14,6 +14,5 @@ namespace Qwirkle.Infra.Repository.Models
         public int Points { get; set; }
         public int GamesPlayed { get; set; }
         public int GamesWon { get; set; }
-
     }
 }

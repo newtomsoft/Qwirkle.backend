@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Qwirkle.Infra.Repository.Models
+namespace Qwirkle.Infra.Repository.Dao
 {
     [Table("Player")]
-    public class PlayerModel
+    public class PlayerDao
     {
         public int Id { get; set; }
         public int GameId { get; set; }
@@ -12,7 +12,7 @@ namespace Qwirkle.Infra.Repository.Models
         public bool GameTurn { get; set; }
         public byte GamePosition { get; set; }
 
-        public GameModel Game { get; set; }
-        public UserModel User { get; set; }
+        public GameDao Game { get; set; }
+        public UserDao User { get; set; }
     }
 }
