@@ -22,11 +22,8 @@ namespace Qwirkle.Web.Api
         {
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<ICoreUseCase, CoreUseCase>();
-
             services.AddControllers();
-
-            EntityFrameworkTools<DefaultDbContext>.AddDbContext(services, Configuration);
-
+            services.AddDbContext<DefaultDbContext>(Configuration);
             services.AddIdentity<UserDao, IdentityRole<int>>(options =>
             {
                 options.Password.RequireDigit = false;
