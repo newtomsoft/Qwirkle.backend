@@ -90,7 +90,7 @@ namespace Qwirkle.Infra.Repository.Adapters
         public void TilesFromBagToPlayer(Player player, List<byte> rackPositions)
         {
             int tilesNumber = rackPositions.Count;
-            var tilesToGiveToPlayer = DbContext.TilesOnBag.Where(t => t.GameId == player.GameId).OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
+            var tilesToGiveToPlayer = DbContext.TilesOnBag.Where(t => t.GameId == player.GameId).ToList().OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
             DbContext.TilesOnBag.RemoveRange(tilesToGiveToPlayer);
             for (int i = 0; i < tilesToGiveToPlayer.Count; i++)
             {
