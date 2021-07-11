@@ -19,12 +19,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="..\Qwirkle.Infra.Repository\qwirkle.sqlite" Link="qwirkle.sqlite">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.7" />
@@ -39,7 +33,7 @@
 
 	<ItemGroup>
 	  <None Update="qwirkle.sqlite">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 
