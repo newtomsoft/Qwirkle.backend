@@ -16,11 +16,11 @@ namespace Qwirkle.Web.Api
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             var host = WebHost.CreateDefaultBuilder(args)
-                //.ConfigureAppConfiguration((hostContext, config) =>
-                //{
-                //    config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"sharesettings.{hostContext.HostingEnvironment.EnvironmentName}.json"), optional: true); //When dev
-                //    config.AddJsonFile($"sharesettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true); //When published
-                //})
+                .ConfigureAppConfiguration((hostContext, config) =>
+                {
+                    config.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json"), optional: false); //When dev
+                    //config.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: false); //When published
+                })
                 .UseStartup<Startup>();
             return host;
         }
