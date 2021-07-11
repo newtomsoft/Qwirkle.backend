@@ -2,50 +2,43 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Qwirkle.Infra.Repository;
 
-namespace Qwirkle.Infra.Repository.Migrations
+namespace Qwirkle.Infra.Repository.Migrations.Sqlite
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20210704114102_Init")]
-    partial class Init
+    partial class DefaultDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.7")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "5.0.7");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
+                        .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -54,17 +47,16 @@ namespace Qwirkle.Infra.Repository.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -77,17 +69,16 @@ namespace Qwirkle.Infra.Repository.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -99,16 +90,16 @@ namespace Qwirkle.Infra.Repository.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -120,10 +111,10 @@ namespace Qwirkle.Infra.Repository.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("RoleId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -135,61 +126,59 @@ namespace Qwirkle.Infra.Repository.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.GameModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.GameDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("LastPlayDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Game");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.PlayerModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.PlayerDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("GameId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte>("GamePosition")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("GameTurn")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte>("Points")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -200,36 +189,34 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.ToTable("Player");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.TileModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Color")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Form")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.ToTable("Tile");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.TileOnBagModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnBagDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("GameId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TileId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -240,24 +227,23 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.ToTable("TileOnBag");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.TileOnBoardModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnBoardDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("GameId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
-                    b.Property<short>("PositionX")
-                        .HasColumnType("smallint");
+                    b.Property<sbyte>("PositionX")
+                        .HasColumnType("INTEGER");
 
-                    b.Property<short>("PositionY")
-                        .HasColumnType("smallint");
+                    b.Property<sbyte>("PositionY")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TileId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -268,21 +254,20 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.ToTable("TileOnBoard");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.TileOnPlayerModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnPlayerDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("PlayerId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte>("RackPosition")
-                        .HasColumnType("tinyint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("TileId")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -293,77 +278,76 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.ToTable("TileOnPlayer");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.UserModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.UserDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("GamesPlayed")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("GamesWon")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Help")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Points")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)")
+                        .HasColumnType("TEXT")
                         .HasColumnName("Pseudo");
 
                     b.HasKey("Id");
@@ -373,8 +357,7 @@ namespace Qwirkle.Infra.Repository.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -390,7 +373,7 @@ namespace Qwirkle.Infra.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
-                    b.HasOne("Qwirkle.Infra.Repository.Models.UserModel", null)
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.UserDao", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -399,7 +382,7 @@ namespace Qwirkle.Infra.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
-                    b.HasOne("Qwirkle.Infra.Repository.Models.UserModel", null)
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.UserDao", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -414,7 +397,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Qwirkle.Infra.Repository.Models.UserModel", null)
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.UserDao", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -423,22 +406,22 @@ namespace Qwirkle.Infra.Repository.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.HasOne("Qwirkle.Infra.Repository.Models.UserModel", null)
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.UserDao", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.PlayerModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.PlayerDao", b =>
                 {
-                    b.HasOne("Qwirkle.Infra.Repository.Models.GameModel", "Game")
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.GameDao", "Game")
                         .WithMany()
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Qwirkle.Infra.Repository.Models.UserModel", "User")
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.UserDao", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -449,15 +432,15 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.TileOnBagModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnBagDao", b =>
                 {
-                    b.HasOne("Qwirkle.Infra.Repository.Models.GameModel", "Game")
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.GameDao", "Game")
                         .WithMany()
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Qwirkle.Infra.Repository.Models.TileModel", "Tile")
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.TileDao", "Tile")
                         .WithMany()
                         .HasForeignKey("TileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -468,15 +451,15 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.Navigation("Tile");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.TileOnBoardModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnBoardDao", b =>
                 {
-                    b.HasOne("Qwirkle.Infra.Repository.Models.GameModel", "Game")
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.GameDao", "Game")
                         .WithMany()
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Qwirkle.Infra.Repository.Models.TileModel", "Tile")
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.TileDao", "Tile")
                         .WithMany()
                         .HasForeignKey("TileId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -487,15 +470,15 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.Navigation("Tile");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Models.TileOnPlayerModel", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnPlayerDao", b =>
                 {
-                    b.HasOne("Qwirkle.Infra.Repository.Models.PlayerModel", "Player")
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.PlayerDao", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Qwirkle.Infra.Repository.Models.TileModel", "Tile")
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.TileDao", "Tile")
                         .WithMany()
                         .HasForeignKey("TileId")
                         .OnDelete(DeleteBehavior.Cascade)
