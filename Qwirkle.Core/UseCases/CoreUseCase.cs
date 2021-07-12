@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Qwirkle.Core.UsesCases
 {
-    public class CoreUseCase : ICoreUseCase
+    public class CoreUseCase
     {
         private const int TILES_NUMBER_PER_PLAYER = 6;
         private const int TILES_NUMBER_FOR_A_QWIRKLE = 6;

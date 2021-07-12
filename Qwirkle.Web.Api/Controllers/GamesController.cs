@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Qwirkle.Core.Ports;
+using Qwirkle.Core.UsesCases;
 using Qwirkle.Web.Api.VueModels;
 using System.Collections.Generic;
 
@@ -11,9 +11,9 @@ namespace Qwirkle.Web.Api.Controllers
     public class GamesController : ControllerBase
     {
         private ILogger<GamesController> Logger { get; }
-        private ICoreUseCase CoreUseCase { get; }
+        private CoreUseCase CoreUseCase { get; }
 
-        public GamesController(ILogger<GamesController> logger, ICoreUseCase coreUseCase)
+        public GamesController(ILogger<GamesController> logger, CoreUseCase coreUseCase)
         {
             Logger = logger;
             CoreUseCase = coreUseCase;

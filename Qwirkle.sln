@@ -63,18 +63,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComplianceRepository.Test",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Core", "Qwirkle.Core\Qwirkle.Core.csproj", "{FBA5F822-5FD5-4275-BADB-C3D0CFADCFA7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtomsoft.EntityFramework", "..\NewtomSoft.Libraries\Newtomsoft.EntityFramework\Newtomsoft.EntityFramework.csproj", "{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{991FDE2D-D8CE-4BF0-819C-8DA20DB1B267}"
 	ProjectSection(SolutionItems) = preProject
 		appsettings.Development.json = appsettings.Development.json
 		appsettings.json = appsettings.json
 		appsettings.Production.json = appsettings.Production.json
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtomsoft.Configuration", "..\Newtomsoft.Libraries\Newtomsoft.Configuration\Newtomsoft.Configuration.csproj", "{7829AD89-780B-4AAB-8CDC-6D8CEED70355}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{20AB5285-10BE-4780-9BC2-4EFD7276A012}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,22 +118,6 @@ Global
 		{FBA5F822-5FD5-4275-BADB-C3D0CFADCFA7}.NoPersitence|Any CPU.Build.0 = NoPersitance|Any CPU
 		{FBA5F822-5FD5-4275-BADB-C3D0CFADCFA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBA5F822-5FD5-4275-BADB-C3D0CFADCFA7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.NoPersitance|Any CPU.ActiveCfg = Debug|Any CPU
-		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.NoPersitance|Any CPU.Build.0 = Debug|Any CPU
-		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.NoPersitence|Any CPU.ActiveCfg = Debug|Any CPU
-		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.NoPersitence|Any CPU.Build.0 = Debug|Any CPU
-		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7829AD89-780B-4AAB-8CDC-6D8CEED70355}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7829AD89-780B-4AAB-8CDC-6D8CEED70355}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7829AD89-780B-4AAB-8CDC-6D8CEED70355}.NoPersitance|Any CPU.ActiveCfg = Debug|Any CPU
-		{7829AD89-780B-4AAB-8CDC-6D8CEED70355}.NoPersitance|Any CPU.Build.0 = Debug|Any CPU
-		{7829AD89-780B-4AAB-8CDC-6D8CEED70355}.NoPersitence|Any CPU.ActiveCfg = Debug|Any CPU
-		{7829AD89-780B-4AAB-8CDC-6D8CEED70355}.NoPersitence|Any CPU.Build.0 = Debug|Any CPU
-		{7829AD89-780B-4AAB-8CDC-6D8CEED70355}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7829AD89-780B-4AAB-8CDC-6D8CEED70355}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,8 +130,6 @@ Global
 		{8419EFC2-8FF7-4E23-92DE-15CA3A6C6531} = {1644DA54-649D-4969-8E41-F94DAD3897BF}
 		{D862C317-F38D-484E-8CF9-F22BBFAA7554} = {1B8ED7D0-5EC2-4184-A60E-ED93DE572802}
 		{FBA5F822-5FD5-4275-BADB-C3D0CFADCFA7} = {2094B01D-ED38-4071-9B68-636AE81C694B}
-		{0374D9E9-5E16-4423-A30A-6BB2F6FA1593} = {20AB5285-10BE-4780-9BC2-4EFD7276A012}
-		{7829AD89-780B-4AAB-8CDC-6D8CEED70355} = {20AB5285-10BE-4780-9BC2-4EFD7276A012}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {326A9AD2-C15D-4772-8BB7-E6B195208FDB}

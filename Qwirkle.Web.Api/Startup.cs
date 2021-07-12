@@ -21,7 +21,7 @@ namespace Qwirkle.Web.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IRepository, Repository>();
-            services.AddScoped<ICoreUseCase, CoreUseCase>();
+            services.AddScoped<CoreUseCase>();
             services.AddControllers();
             services.AddDbContext<DefaultDbContext>(Configuration);
             services.AddIdentity<UserDao, IdentityRole<int>>(options =>

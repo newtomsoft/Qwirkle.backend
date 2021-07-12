@@ -342,3 +342,4 @@ healthchecksdb
 /Qwirkle.Web.Api/database.sqlite
 /database.sqlite
 /kwirkleDevelopment.sqlite
+/.vscode/
