@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Qwirkle.Core.UsesCases;
 using Qwirkle.Web.Api.VueModels;
@@ -6,8 +7,10 @@ using System.Collections.Generic;
 
 namespace Qwirkle.Web.Api.Controllers
 {
+    
     [ApiController]
     [Route("Games")]
+    // with a named pocili
     public class GamesController : ControllerBase
     {
         private ILogger<GamesController> Logger { get; }
@@ -28,12 +31,13 @@ namespace Qwirkle.Web.Api.Controllers
         }
 
         [HttpPost("Get")]
+       
         public ActionResult<int> GetGame(List<int> gameId)
         {
             var game = CoreUseCase.GetGame(gameId[0]);
             return new ObjectResult(game);
         }
-
+         
         [HttpGet("Players/{playerId}")]
         public ActionResult<int> GetPlayer(int playerId)
         {

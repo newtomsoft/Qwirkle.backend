@@ -9,7 +9,6 @@ using Qwirkle.Core.UsesCases;
 using Qwirkle.Infra.Repository;
 using Qwirkle.Infra.Repository.Adapters;
 using Qwirkle.Infra.Repository.Dao;
-
 namespace Qwirkle.Web.Api
 {
     public class Startup
@@ -20,6 +19,12 @@ namespace Qwirkle.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // In general
+              services.AddCors(c =>
+            {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod()
+                .AllowAnyHeader());
+            });
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<CoreUseCase>();
             services.AddControllers();
@@ -44,15 +49,21 @@ namespace Qwirkle.Web.Api
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+        { 
+          // Shows UseCors with CorsPolicyBuilder.
+          app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 #if DEBUG
             app.UseDeveloperExceptionPage();
 #else
             app.UseExceptionHandler("/Home/Error");
 #endif
+           
             app.UseHttpsRedirection();
+            
             app.UseRouting();
+            
             app.UseSession();
+            
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
