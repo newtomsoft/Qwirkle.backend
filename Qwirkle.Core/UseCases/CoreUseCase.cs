@@ -34,6 +34,7 @@ namespace Qwirkle.Core.UsesCases
 
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
+             
             Player player = GetPlayer(playerId);
             if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn };
 
@@ -188,15 +189,25 @@ namespace Qwirkle.Core.UsesCases
 
         private void SetNextPlayerTurnToPlay(int playerId)
         {
-            Player thisPlayer = GetPlayer(playerId); //todo : appel base peut être évité en stockant thisPlayer
-            int position = Game.Players.FirstOrDefault(p => p.Id == playerId).GamePosition;
-            int playersNumber = Game.Players.Count;
-            int nextPlayerPosition = position < playersNumber ? position + 1 : 1;
-            Player nexPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
-            thisPlayer.SetTurn(false);
-            nexPlayer.SetTurn(true);
-            RepositoryAdapter.UpdatePlayer(thisPlayer);
-            RepositoryAdapter.UpdatePlayer(nexPlayer);
+            if (Game.Players.Count > 1)
+            {
+                Player thisPlayer = GetPlayer(playerId); //todo : appel base peut être évité en stockant thisPlayer
+                int position = Game.Players.FirstOrDefault(p => p.Id == playerId).GamePosition;
+                int playersNumber = Game.Players.Count;
+                int nextPlayerPosition = position < playersNumber ? position + 1 : 1;
+                Player nexPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
+                thisPlayer.SetTurn(false);
+                nexPlayer.SetTurn(true);
+                RepositoryAdapter.UpdatePlayer(thisPlayer);
+                RepositoryAdapter.UpdatePlayer(nexPlayer);
+            }
+            else
+            {
+                Player thisPlayer = GetPlayer(playerId);
+                thisPlayer.SetTurn(true);
+                RepositoryAdapter.UpdatePlayer(thisPlayer);
+            }
+            
         }
 
         private int CountTilesMakedValidRow(List<TileOnBoard> tiles)
