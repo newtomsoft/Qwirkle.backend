@@ -39,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Qwirkle.Core.\Qwirkle.Core.csproj" />
+    <ProjectReference Include="..\Qwirkle.Core\Qwirkle.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

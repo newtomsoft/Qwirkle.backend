@@ -26,7 +26,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <ProjectReference Include="..\..\Qwirkle.Core.\Qwirkle.Core.csproj" />
+    <ProjectReference Include="..\..\Qwirkle.Core\Qwirkle.Core.csproj" />
     <ProjectReference Include="..\..\Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj" />
   </ItemGroup>
   <ItemGroup Condition="$(VisualStudioVersion) == '16.0'">

@@ -27,7 +27,7 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Newtomsoft.EntityFramework" Version="0.4.1" />
-		<ProjectReference Include="..\Qwirkle.Core.\Qwirkle.Core.csproj" />
+		<ProjectReference Include="..\Qwirkle.Core\Qwirkle.Core.csproj" />
 		<ProjectReference Include="..\Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj" />
 	</ItemGroup>
 
