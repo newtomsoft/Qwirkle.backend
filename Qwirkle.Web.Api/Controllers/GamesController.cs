@@ -38,6 +38,20 @@ namespace Qwirkle.Web.Api.Controllers
             return new ObjectResult(game);
         }
          
+        [HttpGet("ListGameId")]
+       
+        public ActionResult<int> GetListGameIDWithPlayer()
+        {
+            var listGameId = CoreUseCase.GetListGameIDWithPlayer();
+            return new ObjectResult(listGameId);
+        }
+        [HttpPost("ListNamePlayer/{gameId}")]
+       
+        public ActionResult<int> GetListNamePlayer(int gameId)
+        {
+            var listName = CoreUseCase.GetListNamePlayer(gameId);
+            return new ObjectResult(listName);
+        }
         [HttpGet("Players/{playerId}")]
         public ActionResult<int> GetPlayer(int playerId)
         {

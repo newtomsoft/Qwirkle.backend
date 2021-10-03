@@ -31,7 +31,6 @@ namespace Qwirkle.Core.UsesCases
             SelectFirstPlayer();
             return Game.Players;
         }
-
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
              
@@ -147,7 +146,9 @@ namespace Qwirkle.Core.UsesCases
         }
 
         public Player GetPlayer(int playerId) => RepositoryAdapter.GetPlayer(playerId);
-
+       
+        public List<int> GetListGameIDWithPlayer() => RepositoryAdapter.GetListGameIDWithPlayer();
+        public List<string> GetListNamePlayer(int gameId) => RepositoryAdapter.GetListNamePlayer(gameId);
         public Game GetGame(int GameId) => RepositoryAdapter.GetGame(GameId);
 
         private SwapTilesReturn SwapTiles(Player player, List<TileOnPlayer> tilesToSwap)
