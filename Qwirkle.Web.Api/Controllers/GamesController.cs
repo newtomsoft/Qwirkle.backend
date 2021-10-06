@@ -31,7 +31,6 @@ namespace Qwirkle.Web.Api.Controllers
         }
 
         [HttpPost("Get")]
-       
         public ActionResult<int> GetGame(List<int> gameId)
         {
             var game = CoreUseCase.GetGame(gameId[0]);
@@ -39,14 +38,13 @@ namespace Qwirkle.Web.Api.Controllers
         }
          
         [HttpGet("ListGameId")]
-       
         public ActionResult<int> GetListGameIDWithPlayer()
         {
             var listGameId = CoreUseCase.GetListGameIDWithPlayer();
             return new ObjectResult(listGameId);
         }
-        [HttpPost("ListNamePlayer/{gameId}")]
-       
+
+        [HttpPost("ListNamePlayer/{gameId}")]      
         public ActionResult<int> GetListNamePlayer(int gameId)
         {
             var listName = CoreUseCase.GetListNamePlayer(gameId);
@@ -57,6 +55,13 @@ namespace Qwirkle.Web.Api.Controllers
         {
             var player = CoreUseCase.GetPlayer(playerId);
             return new ObjectResult(player);
+        }
+
+        [HttpGet("PlayerIdToPlay/{gameId}")]
+        public ActionResult<int> GetPlayerIdToPlay(int gameId)
+        {
+            var playerId = CoreUseCase.GetPlayerToPlay(gameId);
+            return new ObjectResult(playerId);
         }
 
         [HttpPost("PlayTiles/")]
