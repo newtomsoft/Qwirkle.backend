@@ -58,6 +58,9 @@ namespace Qwirkle.Infra.Repository.Adapters
             listGame.ForEach(player=>listName.Add(DbContext.Users.Where(p=>p.Id == player.UserId).Select(p=>p.FirstName).FirstOrDefault()));
             return listName;
         }
+
+        public int GetPlayerIdToPlay(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.UserId).FirstOrDefault();
+
         public Tile GetTileById(int tileId)
             => TileModelToTile(DbContext.Tiles.Where(t => t.Id == tileId).FirstOrDefault());
 
