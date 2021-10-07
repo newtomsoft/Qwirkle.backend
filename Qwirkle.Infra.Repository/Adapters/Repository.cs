@@ -59,8 +59,13 @@ namespace Qwirkle.Infra.Repository.Adapters
             return listName;
         }
 
-        public int GetPlayerIdToPlay(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.UserId).FirstOrDefault();
+        public string GetPlayerNameTurn(int gameId) 
+        {
+        var playerId= DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.UserId).FirstOrDefault();
+        var namePlayerTurn=DbContext.Users.Where(p=>p.Id == playerId).Select(p=>p.FirstName).FirstOrDefault();
 
+        return namePlayerTurn;
+        }
         public Tile GetTileById(int tileId)
             => TileModelToTile(DbContext.Tiles.Where(t => t.Id == tileId).FirstOrDefault());
 

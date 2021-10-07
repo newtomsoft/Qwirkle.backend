@@ -147,7 +147,7 @@ namespace Qwirkle.Core.UsesCases
 
         public Player GetPlayer(int playerId) => RepositoryAdapter.GetPlayer(playerId);
 
-        public int GetPlayerToPlay(int gameId) => RepositoryAdapter.GetPlayerIdToPlay(gameId);
+        public string GetPlayerNameTurn(int gameId) => RepositoryAdapter.GetPlayerNameTurn(gameId);
 
         public List<int> GetListGameIDWithPlayer() => RepositoryAdapter.GetListGameIDWithPlayer();
         public List<string> GetListNamePlayer(int gameId) => RepositoryAdapter.GetListNamePlayer(gameId);
