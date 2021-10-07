@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Qwikle.SignalR.Hubs;
 using Qwirkle.Core.UsesCases;
 using Qwirkle.Web.Api.VueModels;
 using System.Collections.Generic;
@@ -10,16 +12,21 @@ namespace Qwirkle.Web.Api.Controllers
     
     [ApiController]
     [Route("Games")]
-    // with a named pocili
+
     public class GamesController : ControllerBase
     {
         private ILogger<GamesController> Logger { get; }
         private CoreUseCase CoreUseCase { get; }
 
-        public GamesController(ILogger<GamesController> logger, CoreUseCase coreUseCase)
+        private readonly IHubContext<HubQwirkle> _hubQwirkle;
+
+        public GamesController(ILogger<GamesController> logger, CoreUseCase coreUseCase, IHubContext<HubQwirkle> hubQwirkle)
+        //public GamesController(ILogger<GamesController> logger, CoreUseCase coreUseCase)
         {
             Logger = logger;
             CoreUseCase = coreUseCase;
+            //CoreUseCase.AddHubQwirkle(hubQwirkle);
+            //_hubQwirkle = hubQwirkle;
         }
 
         [HttpPost("")]

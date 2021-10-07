@@ -15,15 +15,16 @@ namespace Qwirkle.Core.UsesCases
         private const int TILES_NUMBER_FOR_A_QWIRKLE = 6;
         private const int POINTS_FOR_A_QWIRKLE = 12;
 
-        private IRepository RepositoryAdapter { get; }
+        private IRepository _repositoryAdapter;
+        private IHubQwirkle _hubQwirkle;
 
         public Game Game { get; set; }
 
-        public CoreUseCase(IRepository repositoryAdapter) => RepositoryAdapter = repositoryAdapter;
+        public CoreUseCase(IRepository repositoryAdapter) => _repositoryAdapter = repositoryAdapter;
 
         public List<Player> CreateGame(List<int> usersIds)
         {
-            Game = RepositoryAdapter.CreateGame(DateTime.Now);
+            Game = _repositoryAdapter.CreateGame(DateTime.Now);
             CreatePlayers(usersIds);
             CreateTiles();
             DealTilesToPlayers();
@@ -31,25 +32,31 @@ namespace Qwirkle.Core.UsesCases
             SelectFirstPlayer();
             return Game.Players;
         }
+
+        public void AddHubQwirkle(IHubQwirkle hubQwirkle)
+        {
+            _hubQwirkle = hubQwirkle;
+        }
+
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
-             
             Player player = GetPlayer(playerId);
             if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn };
 
-            List<TileOnBoard> tilesToPlay = GetTiles(tilesTupleToPlay);
-
-            List<int> tilesIds = new List<int>();
+            var tilesToPlay = GetTiles(tilesTupleToPlay);
+            var tilesIds = new List<int>();
             foreach (var tiles in tilesToPlay)
                 tilesIds.Add(tiles.Id);
 
             Game = GetGame(player.GameId);
-
             if (!player.HasTiles(tilesIds)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile };
 
             PlayReturn playReturn = GetPlayReturn(tilesToPlay);
             if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
             playReturn.NewRack = PlayTiles(player, tilesToPlay, playReturn.Points);
+
+
+
             return playReturn;
         }
 
@@ -72,17 +79,17 @@ namespace Qwirkle.Core.UsesCases
                 rackPositions.Add(i);
 
             foreach (var player in Game.Players)
-                RepositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
+                _repositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
         }
 
-        private void CreateTiles() => RepositoryAdapter.CreateTiles(Game.Id);
+        private void CreateTiles() => _repositoryAdapter.CreateTiles(Game.Id);
 
         private void CreatePlayers(List<int> usersIds)
         {
             Game.Players = new List<Player>();
-            usersIds.ForEach(userId => Game.Players.Add(RepositoryAdapter.CreatePlayer(userId, Game.Id)));
+            usersIds.ForEach(userId => Game.Players.Add(_repositoryAdapter.CreatePlayer(userId, Game.Id)));
             SetPositionsPlayers();
-            Game.Players.ForEach(player => RepositoryAdapter.UpdatePlayer(player));
+            Game.Players.ForEach(player => _repositoryAdapter.UpdatePlayer(player));
         }
 
         private void SetPositionsPlayers()
@@ -126,7 +133,7 @@ namespace Qwirkle.Core.UsesCases
             var tilesOnBoard = new List<TileOnBoard>();
             foreach (var (TileId, X, Y) in tilesTupleToPlay)
             {
-                Tile tile = RepositoryAdapter.GetTileById(TileId);
+                Tile tile = _repositoryAdapter.GetTileById(TileId);
                 var coordinates = new CoordinatesInGame(X, Y);
                 TileOnBoard tileOnBoard = new TileOnBoard(tile, coordinates);
                 tilesOnBoard.Add(tileOnBoard);
@@ -139,27 +146,27 @@ namespace Qwirkle.Core.UsesCases
             var tilesOnPlayer = new List<TileOnPlayer>();
             foreach (var tileId in tilesIds)
             {
-                TileOnPlayer tile = RepositoryAdapter.GetTileOnPlayerById(tileId);
+                TileOnPlayer tile = _repositoryAdapter.GetTileOnPlayerById(tileId);
                 tilesOnPlayer.Add(tile);
             }
             return tilesOnPlayer;
         }
 
-        public Player GetPlayer(int playerId) => RepositoryAdapter.GetPlayer(playerId);
+        public Player GetPlayer(int playerId) => _repositoryAdapter.GetPlayer(playerId);
 
-        public int GetPlayerToPlay(int gameId) => RepositoryAdapter.GetPlayerIdToPlay(gameId);
+        public int GetPlayerToPlay(int gameId) => _repositoryAdapter.GetPlayerIdToPlay(gameId);
 
-        public List<int> GetListGameIDWithPlayer() => RepositoryAdapter.GetListGameIDWithPlayer();
-        public List<string> GetListNamePlayer(int gameId) => RepositoryAdapter.GetListNamePlayer(gameId);
-        public Game GetGame(int GameId) => RepositoryAdapter.GetGame(GameId);
+        public List<int> GetListGameIDWithPlayer() => _repositoryAdapter.GetListGameIDWithPlayer();
+        public List<string> GetListNamePlayer(int gameId) => _repositoryAdapter.GetListNamePlayer(gameId);
+        public Game GetGame(int GameId) => _repositoryAdapter.GetGame(GameId);
 
         private SwapTilesReturn SwapTiles(Player player, List<TileOnPlayer> tilesToSwap)
         {
             List<byte> rackPositions = RackPositions(tilesToSwap);
             SetNextPlayerTurnToPlay(player.Id);
-            RepositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
-            RepositoryAdapter.TilesFromPlayerToBag(player, tilesToSwap);
-            RepositoryAdapter.UpdatePlayer(player);
+            _repositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
+            _repositoryAdapter.TilesFromPlayerToBag(player, tilesToSwap);
+            _repositoryAdapter.UpdatePlayer(player);
             return new SwapTilesReturn { Code = PlayReturnCode.Ok, NewRack = GetPlayer(player.Id).Rack };
         }
 
@@ -174,7 +181,7 @@ namespace Qwirkle.Core.UsesCases
             player.Points += points;
             player.SetTurn(false);
             Game.Board.Tiles.AddRange(tilesToPlay);
-            RepositoryAdapter.UpdatePlayer(player);
+            _repositoryAdapter.UpdatePlayer(player);
             SetNextPlayerTurnToPlay(player.Id);
 
             // TODO
@@ -185,9 +192,9 @@ namespace Qwirkle.Core.UsesCases
                 rackPositions.Add(i);
             #endregion
 
-            RepositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
-            RepositoryAdapter.TilesFromPlayerToGame(Game.Id, player.Id, tilesToPlay);
-            return RepositoryAdapter.GetPlayer(player.Id).Rack;
+            _repositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
+            _repositoryAdapter.TilesFromPlayerToGame(Game.Id, player.Id, tilesToPlay);
+            return _repositoryAdapter.GetPlayer(player.Id).Rack;
         }
 
         private void SetNextPlayerTurnToPlay(int playerId)
@@ -201,14 +208,14 @@ namespace Qwirkle.Core.UsesCases
                 Player nexPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
                 thisPlayer.SetTurn(false);
                 nexPlayer.SetTurn(true);
-                RepositoryAdapter.UpdatePlayer(thisPlayer);
-                RepositoryAdapter.UpdatePlayer(nexPlayer);
+                _repositoryAdapter.UpdatePlayer(thisPlayer);
+                _repositoryAdapter.UpdatePlayer(nexPlayer);
             }
             else
             {
                 Player thisPlayer = GetPlayer(playerId);
                 thisPlayer.SetTurn(true);
-                RepositoryAdapter.UpdatePlayer(thisPlayer);
+                _repositoryAdapter.UpdatePlayer(thisPlayer);
             }
             
         }
@@ -296,7 +303,7 @@ namespace Qwirkle.Core.UsesCases
 
         private void SetPlayerTurn(int playerId, bool turn)
         {
-            RepositoryAdapter.SetPlayerTurn(playerId, turn);
+            _repositoryAdapter.SetPlayerTurn(playerId, turn);
             Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(turn);
         }
 
