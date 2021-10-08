@@ -14,50 +14,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Web.Api", "Qwirkle.
 		{9C7C489A-C73B-426E-83A5-E9CEA165DA22} = {9C7C489A-C73B-426E-83A5-E9CEA165DA22}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{858DBA9A-5C9E-4EAF-B91A-04D9E8C72EE0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tiles", "Tiles", "{3A8C201F-7E69-4CC6-A2A6-EC061EDFAFE4}"
-	ProjectSection(SolutionItems) = preProject
-		Qwirkle.Resources\Images\Tiles\BlueCircle.png = Qwirkle.Resources\Images\Tiles\BlueCircle.png
-		Qwirkle.Resources\Images\Tiles\BlueClover.png = Qwirkle.Resources\Images\Tiles\BlueClover.png
-		Qwirkle.Resources\Images\Tiles\BlueDiamond.png = Qwirkle.Resources\Images\Tiles\BlueDiamond.png
-		Qwirkle.Resources\Images\Tiles\BlueEightPointStar.png = Qwirkle.Resources\Images\Tiles\BlueEightPointStar.png
-		Qwirkle.Resources\Images\Tiles\BlueFourPointStar.png = Qwirkle.Resources\Images\Tiles\BlueFourPointStar.png
-		Qwirkle.Resources\Images\Tiles\BlueSquare.png = Qwirkle.Resources\Images\Tiles\BlueSquare.png
-		Qwirkle.Resources\Images\Tiles\GreenCircle.png = Qwirkle.Resources\Images\Tiles\GreenCircle.png
-		Qwirkle.Resources\Images\Tiles\GreenClover.png = Qwirkle.Resources\Images\Tiles\GreenClover.png
-		Qwirkle.Resources\Images\Tiles\GreenDiamond.png = Qwirkle.Resources\Images\Tiles\GreenDiamond.png
-		Qwirkle.Resources\Images\Tiles\GreenEightPointStar.png = Qwirkle.Resources\Images\Tiles\GreenEightPointStar.png
-		Qwirkle.Resources\Images\Tiles\GreenFourPointStar.png = Qwirkle.Resources\Images\Tiles\GreenFourPointStar.png
-		Qwirkle.Resources\Images\Tiles\GreenSquare.png = Qwirkle.Resources\Images\Tiles\GreenSquare.png
-		Qwirkle.Resources\Images\Tiles\OrangeCircle.png = Qwirkle.Resources\Images\Tiles\OrangeCircle.png
-		Qwirkle.Resources\Images\Tiles\OrangeClover.png = Qwirkle.Resources\Images\Tiles\OrangeClover.png
-		Qwirkle.Resources\Images\Tiles\OrangeDiamond.png = Qwirkle.Resources\Images\Tiles\OrangeDiamond.png
-		Qwirkle.Resources\Images\Tiles\OrangeEightPointStar.png = Qwirkle.Resources\Images\Tiles\OrangeEightPointStar.png
-		Qwirkle.Resources\Images\Tiles\OrangeFourPointStar.png = Qwirkle.Resources\Images\Tiles\OrangeFourPointStar.png
-		Qwirkle.Resources\Images\Tiles\OrangeSquare.png = Qwirkle.Resources\Images\Tiles\OrangeSquare.png
-		Qwirkle.Resources\Images\Tiles\PurpleCircle.png = Qwirkle.Resources\Images\Tiles\PurpleCircle.png
-		Qwirkle.Resources\Images\Tiles\PurpleClover.png = Qwirkle.Resources\Images\Tiles\PurpleClover.png
-		Qwirkle.Resources\Images\Tiles\PurpleDiamond.png = Qwirkle.Resources\Images\Tiles\PurpleDiamond.png
-		Qwirkle.Resources\Images\Tiles\PurpleEightPointStar.png = Qwirkle.Resources\Images\Tiles\PurpleEightPointStar.png
-		Qwirkle.Resources\Images\Tiles\PurpleFourPointStar.png = Qwirkle.Resources\Images\Tiles\PurpleFourPointStar.png
-		Qwirkle.Resources\Images\Tiles\PurpleSquare.png = Qwirkle.Resources\Images\Tiles\PurpleSquare.png
-		Qwirkle.Resources\Images\Tiles\RedCircle.png = Qwirkle.Resources\Images\Tiles\RedCircle.png
-		Qwirkle.Resources\Images\Tiles\RedClover.png = Qwirkle.Resources\Images\Tiles\RedClover.png
-		Qwirkle.Resources\Images\Tiles\RedDiamond.png = Qwirkle.Resources\Images\Tiles\RedDiamond.png
-		Qwirkle.Resources\Images\Tiles\RedEightPointStar.png = Qwirkle.Resources\Images\Tiles\RedEightPointStar.png
-		Qwirkle.Resources\Images\Tiles\RedFourPointStar.png = Qwirkle.Resources\Images\Tiles\RedFourPointStar.png
-		Qwirkle.Resources\Images\Tiles\RedSquare.png = Qwirkle.Resources\Images\Tiles\RedSquare.png
-		Qwirkle.Resources\Images\Tiles\YellowCircle.png = Qwirkle.Resources\Images\Tiles\YellowCircle.png
-		Qwirkle.Resources\Images\Tiles\YellowClover.png = Qwirkle.Resources\Images\Tiles\YellowClover.png
-		Qwirkle.Resources\Images\Tiles\YellowDiamond.png = Qwirkle.Resources\Images\Tiles\YellowDiamond.png
-		Qwirkle.Resources\Images\Tiles\YellowEightPointStar.png = Qwirkle.Resources\Images\Tiles\YellowEightPointStar.png
-		Qwirkle.Resources\Images\Tiles\YellowFourPointStar.png = Qwirkle.Resources\Images\Tiles\YellowFourPointStar.png
-		Qwirkle.Resources\Images\Tiles\YellowSquare.png = Qwirkle.Resources\Images\Tiles\YellowSquare.png
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Images", "Images", "{BD6CF1D4-82DB-4072-9264-910B6EE42530}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComplianceService.Test", "Qwirkle.Tests\ComplianceService.Test\ComplianceService.Test.csproj", "{61D3FCD7-08CC-4930-89B7-88B7C777A605}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Infra.Repository", "Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj", "{8419EFC2-8FF7-4E23-92DE-15CA3A6C6531}"
@@ -73,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{99
 		appsettings.Production.json = appsettings.Production.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qwirkle.SignalR", "Qwirkle.SignalR\Qwirkle.SignalR.csproj", "{9C7C489A-C73B-426E-83A5-E9CEA165DA22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.SignalR", "Qwirkle.SignalR\Qwirkle.SignalR.csproj", "{9C7C489A-C73B-426E-83A5-E9CEA165DA22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -137,8 +93,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D0CA86A4-4DB3-4A85-B366-B9782D98DA96} = {2094B01D-ED38-4071-9B68-636AE81C694B}
-		{3A8C201F-7E69-4CC6-A2A6-EC061EDFAFE4} = {BD6CF1D4-82DB-4072-9264-910B6EE42530}
-		{BD6CF1D4-82DB-4072-9264-910B6EE42530} = {858DBA9A-5C9E-4EAF-B91A-04D9E8C72EE0}
 		{61D3FCD7-08CC-4930-89B7-88B7C777A605} = {1B8ED7D0-5EC2-4184-A60E-ED93DE572802}
 		{8419EFC2-8FF7-4E23-92DE-15CA3A6C6531} = {1644DA54-649D-4969-8E41-F94DAD3897BF}
 		{D862C317-F38D-484E-8CF9-F22BBFAA7554} = {1B8ED7D0-5EC2-4184-A60E-ED93DE572802}
