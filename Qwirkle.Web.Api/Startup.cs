@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtomsoft.EntityFramework.Core;
-using Qwikle.SignalR.Hubs;
+using Qwikle.SignalR;
 using Qwirkle.Core.Ports;
 using Qwirkle.Core.UsesCases;
 using Qwirkle.Infra.Repository;
@@ -28,6 +28,7 @@ namespace Qwirkle.Web.Api
                 .AllowAnyHeader());
             });
             services.AddSignalR();
+            services.AddScoped<IHubQwirkle, HubQwirkle>();
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<CoreUseCase>();
             services.AddControllers();

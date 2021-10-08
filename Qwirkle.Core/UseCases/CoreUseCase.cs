@@ -20,7 +20,11 @@ namespace Qwirkle.Core.UsesCases
 
         public Game Game { get; set; }
 
-        public CoreUseCase(IRepository repositoryAdapter) => _repositoryAdapter = repositoryAdapter;
+        public CoreUseCase(IRepository repositoryAdapter, IHubQwirkle hubQwirkle)
+        {
+            _repositoryAdapter = repositoryAdapter;
+            _hubQwirkle = hubQwirkle;
+        }
 
         public List<Player> CreateGame(List<int> usersIds)
         {
@@ -31,11 +35,6 @@ namespace Qwirkle.Core.UsesCases
             RefreshPlayers();
             SelectFirstPlayer();
             return Game.Players;
-        }
-
-        public void AddHubQwirkle(IHubQwirkle hubQwirkle)
-        {
-            _hubQwirkle = hubQwirkle;
         }
 
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
@@ -53,10 +52,9 @@ namespace Qwirkle.Core.UsesCases
 
             PlayReturn playReturn = GetPlayReturn(tilesToPlay);
             if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
+            
             playReturn.NewRack = PlayTiles(player, tilesToPlay, playReturn.Points);
-
-
-
+            _hubQwirkle.SendTilesPlayed(Game.Id.ToString(), tilesToPlay);
             return playReturn;
         }
 

@@ -7,59 +7,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Qwikle.SignalR.Hubs
+namespace Qwikle.SignalR
 {
     [Authorize]
     public class HubQwirkle : Hub, IHubQwirkle
     {
-        static public List<int> LoggedPlayersId { get; set; }
-        static private Dictionary<string, List<int>> GameGuid_PlayersId { get; set; }
-        static private Dictionary<string, string> ContextId_GameGuid { get; set; }
+        static private Dictionary<string, List<Player>> GameId_Players { get; set; } = new Dictionary<string, List<Player>>();
 
         public override Task OnConnectedAsync()
         {
-            (LoggedPlayersId ??= new List<int>()).Add(int.Parse(Context.UserIdentifier));
-            Clients.All.SendAsync("ReceivePlayersLogged", LoggedPlayersId.ToHashSet());
+            var gameId = GameId_Players.Where(item => item.Value.Count(p => p.ConnectionId == Context.ConnectionId) == 1).Select(item => item.Key).FirstOrDefault();
+            if (gameId is not null)
+            {
+                var player = GameId_Players[gameId].FirstOrDefault(player => player.ConnectionId == Context.ConnectionId);
+                player.Connected = true;
+            }
             return base.OnConnectedAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            int playerId = int.Parse(Context.UserIdentifier);
-            LoggedPlayersId.Remove(playerId);
-            Clients.All.SendAsync("ReceivePlayersLogged", LoggedPlayersId.ToHashSet());
-
-            if (GameGuid_PlayersId is not null)
-            {
-                string guid = ContextId_GameGuid[Context.ConnectionId];
-                GameGuid_PlayersId[guid].Remove(playerId);
-                Clients.Group(guid).SendAsync("ReceivePlayersInGame", GameGuid_PlayersId[guid].ToHashSet());
-
-            }
-            if (ContextId_GameGuid is not null)
-                ContextId_GameGuid.Remove(Context.ConnectionId);
-
+            var gameId = GameId_Players.Where(item => item.Value.Count(p => p.ConnectionId == Context.ConnectionId) == 1).Select(item => item.Key).FirstOrDefault();
+            var player = GameId_Players[gameId].FirstOrDefault(player => player.ConnectionId == Context.ConnectionId);
+            player.Connected = false;
             return base.OnDisconnectedAsync(exception);
         }
 
-        /// <summary>
-        /// Envoie l'information que le joueur a une page ouverte sur le jeu
-        /// </summary>
-        /// <param name="guid">Guid du jeu</param>
-        /// <returns></returns>
-        public async Task SendAddToGame(string guid)
-        {
-            GameGuid_PlayersId ??= new Dictionary<string, List<int>>();
-            GameGuid_PlayersId.TryAdd(guid, new List<int>());
-            GameGuid_PlayersId[guid].Add(int.Parse(Context.UserIdentifier));
-
-            ContextId_GameGuid ??= new Dictionary<string, string>();
-            ContextId_GameGuid[Context.ConnectionId] = guid;
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, guid);
-            await Clients.Group(guid).SendAsync("ReceivePlayersInGame", GameGuid_PlayersId[guid].ToHashSet());
-        }
-
-        public async Task SendTilesPlayed(string guid, List<string> playersId, List<Tile> tilesPlayed) => await Clients.Users(playersId).SendAsync("ReceiveTilesPlayed", guid, tilesPlayed);
+        public async Task SendTilesPlayed(string gameId, List<TileOnBoard> tilesPlayed) => await Clients.Group(gameId).SendAsync("ReceiveTilesPlayed", tilesPlayed);
     }
 }

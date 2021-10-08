@@ -6,6 +6,6 @@ namespace Qwirkle.Core.Ports
 {
     public interface IHubQwirkle
     {
-        Task SendTilesPlayed(string guid, List<string> playersId, List<Tile> tilesPlayed);
+        Task SendTilesPlayed(string gameId, List<TileOnBoard> tilesPlayed);
     }
 }
