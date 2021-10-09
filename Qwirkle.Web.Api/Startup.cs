@@ -21,14 +21,15 @@ namespace Qwirkle.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // In general
-            services.AddCors(c =>
+            services.AddCors(options =>
             {
-                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin().AllowAnyMethod()
-                .AllowAnyHeader());
+                options.AddPolicy("CorsPolicy", builder => builder
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
             });
             services.AddSignalR();
-            services.AddScoped<IHubQwirkle, HubQwirkle>();
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<CoreUseCase>();
             services.AddControllers();
@@ -53,9 +54,8 @@ namespace Qwirkle.Web.Api
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        { 
-          // Shows UseCors with CorsPolicyBuilder.
-          app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        {
+            app.UseCors("CorsPolicy");
 #if DEBUG
             app.UseDeveloperExceptionPage();
 #else

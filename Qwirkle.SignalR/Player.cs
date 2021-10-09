@@ -2,21 +2,15 @@
 
 namespace Qwikle.SignalR
 {
-    public struct Player
+    public record Player
     {
+        public int PlayerId { get; set; }
         public string ConnectionId { get; set; }
-        public string Pseudo { get; set; }
-        public bool Connected { get; set; }
 
-        public Player(string connectionId, string pseudo, bool connected = true)
+        public Player(string connectionId, int id)
         {
+            PlayerId = id;
             ConnectionId = connectionId;
-            Pseudo = pseudo;
-            Connected = connected;
         }
-
-        public bool Equals(Player player) => ConnectionId == player.ConnectionId;
-
-        public override int GetHashCode() => HashCode.Combine(ConnectionId);
     }
 }
