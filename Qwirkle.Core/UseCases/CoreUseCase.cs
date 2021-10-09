@@ -38,7 +38,7 @@ namespace Qwirkle.Core.UsesCases
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
             Player player = GetPlayer(playerId);
-            if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn, GameId = Game.Id };
+            if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn, GameId = player.GameId };
 
             var tilesToPlay = GetTiles(tilesTupleToPlay);
             var tilesIds = new List<int>();
