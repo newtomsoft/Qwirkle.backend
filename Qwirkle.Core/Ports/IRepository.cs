@@ -15,8 +15,12 @@ namespace Qwirkle.Core.Ports
         void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles);
         Game GetGame(int gameId);
         Player GetPlayer(int playerId);
+        string GetPlayerNameTurn(int gameId);
+        int GetPlayerIdToPlay(int gameId);
         Tile GetTileById(int tileId);
         TileOnPlayer GetTileOnPlayerById(int tileId);
+        List<int> GetListGameIDWithPlayer();
+        List<string> GetListNamePlayer(int gameId);
         Player CreatePlayer(int userId, int gameId);
         void CreateTiles(int gameId);
     }

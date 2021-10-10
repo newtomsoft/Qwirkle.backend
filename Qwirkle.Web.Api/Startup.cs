@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtomsoft.EntityFramework.Core;
+using Qwikle.SignalR;
 using Qwirkle.Core.Ports;
 using Qwirkle.Core.UsesCases;
 using Qwirkle.Infra.Repository;
@@ -20,6 +21,15 @@ namespace Qwirkle.Web.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder => builder
+                .SetIsOriginAllowed((host) => true)
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
+            });
+            services.AddSignalR();
             services.AddScoped<IRepository, Repository>();
             services.AddScoped<CoreUseCase>();
             services.AddControllers();
@@ -45,19 +55,25 @@ namespace Qwirkle.Web.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("CorsPolicy");
 #if DEBUG
             app.UseDeveloperExceptionPage();
 #else
             app.UseExceptionHandler("/Home/Error");
 #endif
+           
             app.UseHttpsRedirection();
+            
             app.UseRouting();
+            
             app.UseSession();
+            
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<HubQwirkle>("/hubGame");
             });
         }
     }

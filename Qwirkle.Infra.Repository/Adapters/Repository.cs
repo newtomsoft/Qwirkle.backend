@@ -46,6 +46,32 @@ namespace Qwirkle.Infra.Repository.Adapters
             DbContext.SaveChanges();
             return GameModelToGame(game);
         }
+        public List<int> GetListGameIDWithPlayer()
+        {
+            var listGame = DbContext.Players.Select(p => p.GameId).Distinct().ToList();
+            return listGame;
+        }
+        public List<string> GetListNamePlayer(int gameId)
+        {
+            var listName = new List<string>();
+            var listGame = DbContext.Players.Where(p => p.GameId == gameId).ToList();
+            listGame.ForEach(player => listName.Add(DbContext.Users.Where(p => p.Id == player.UserId).Select(p => p.FirstName).FirstOrDefault()));
+            return listName;
+        }
+
+        public string GetPlayerNameTurn(int gameId)
+        {
+            var userId = DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.UserId).FirstOrDefault();
+            var namePlayerTurn = DbContext.Users.Where(p => p.Id == userId).Select(p => p.FirstName).FirstOrDefault();
+            return namePlayerTurn;
+        }
+
+        public int GetPlayerIdToPlay(int gameId)
+        {
+            var playerId = DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.Id).FirstOrDefault();
+            return playerId;
+        }
+
 
         public Tile GetTileById(int tileId)
             => TileModelToTile(DbContext.Tiles.Where(t => t.Id == tileId).FirstOrDefault());
