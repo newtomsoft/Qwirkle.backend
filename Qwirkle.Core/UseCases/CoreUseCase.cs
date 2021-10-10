@@ -38,14 +38,14 @@ namespace Qwirkle.Core.UsesCases
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
             Player player = GetPlayer(playerId);
-            Game = GetGame(player.GameId);
-            if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn, GameId = Game.Id };
+            if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn, GameId = player.GameId };
 
             var tilesToPlay = GetTiles(tilesTupleToPlay);
             var tilesIds = new List<int>();
             foreach (var tiles in tilesToPlay)
                 tilesIds.Add(tiles.Id);
-
+            
+            Game = GetGame(player.GameId);
             if (!player.HasTiles(tilesIds)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile, GameId = Game.Id };
 
             PlayReturn playReturn = GetPlayReturn(tilesToPlay);
