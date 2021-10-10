@@ -14,9 +14,9 @@ namespace Qwirkle.Core.Entities
         public int GamePosition { get; set; }
         public int Points { get; set; }
         public Rack Rack { get; set; }
+        public bool LastTurnSkipped { get; set; }
 
-
-        public Player(int id, int gameId, int gamePosition, int points, List<TileOnPlayer> tiles, bool turn) // todo remplacer tiles par rack
+        public Player(int id, int gameId, int gamePosition, int points, List<TileOnPlayer> tiles, bool turn, bool lastTurnSkipped) // todo remplacer tiles par rack
         {
             Id = id;
             GameId = gameId;
@@ -24,6 +24,7 @@ namespace Qwirkle.Core.Entities
             Points = points;
             Rack = new Rack(tiles);
             _gameTurn = turn;
+            LastTurnSkipped = lastTurnSkipped;
         }
 
         public bool IsTurn => _gameTurn;

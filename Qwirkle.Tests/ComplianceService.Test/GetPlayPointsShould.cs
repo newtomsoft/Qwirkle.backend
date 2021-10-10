@@ -15,32 +15,32 @@ namespace Qwirkle.Core.Tests
         [Fact]
         public void ReturnNumberOfTilesWhenGameIsEmptyAndTilesMakeRow()
         {
-            CoreUseCase.Game = new Game(1, new List<TileOnBoard>(), new List<Player>());
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(1, 5)) }).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(13, 69)), new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(12, 69)) }).Points);
-            Assert.Equal(1, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(1, 5)) }).Points);
-            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(13, 69)), new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(12, 69)) }).Points);
+            CoreUseCase.Game = new Game(1, new List<TileOnBoard>(), new List<Player>(), false);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(1, 5)) }, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(13, 69)), new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(12, 69)) }, null).Points);
+            Assert.Equal(1, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(1, 5)) }, null).Points);
+            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(13, 69)), new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(12, 69)) }, null).Points);
         }
 
         [Fact]
         public void Return0WhenGameIsEmptyAndTilesNotInRow()
         {
-            CoreUseCase.Game = new Game(1, new List<TileOnBoard>(), new List<Player>());
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(1, 5)), new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(2, 4)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(8, 12)), new TileOnBoard(TileColor.Yellow, TileForm.Circle, new CoordinatesInGame(9, 12)), new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(6, 12)) }).Points);
+            CoreUseCase.Game = new Game(1, new List<TileOnBoard>(), new List<Player>(), false);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(1, 5)), new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(2, 4)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(8, 12)), new TileOnBoard(TileColor.Yellow, TileForm.Circle, new CoordinatesInGame(9, 12)), new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(6, 12)) }, null).Points);
         }
 
         [Fact]
         public void Return0WhenTilesAreInTheSamePlace()
         {
-            CoreUseCase.Game = new Game(1, new List<TileOnBoard>(), new List<Player>());
+            CoreUseCase.Game = new Game(1, new List<TileOnBoard>(), new List<Player>(), false);
 
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.FourPointStar, new CoordinatesInGame(6, -3)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.FourPointStar, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.Diamond, new CoordinatesInGame(5, -3)) }).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.FourPointStar, new CoordinatesInGame(6, -3)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.FourPointStar, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.Diamond, new CoordinatesInGame(5, -3)) }, null).Points);
 
-            CoreUseCase.Game = new Game(1, new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)), }, new List<Player>());
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.FourPointStar, new CoordinatesInGame(6, -3)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.FourPointStar, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.Diamond, new CoordinatesInGame(5, -3)) }).Points);
+            CoreUseCase.Game = new Game(1, new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)), }, new List<Player>(), false);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.FourPointStar, new CoordinatesInGame(6, -3)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.FourPointStar, new CoordinatesInGame(6, -3)), new TileOnBoard(TileColor.Green, TileForm.Diamond, new CoordinatesInGame(5, -3)) }, null).Points);
         }
 
         [Fact]
@@ -48,15 +48,15 @@ namespace Qwirkle.Core.Tests
         {
             CoreUseCase.Game = new Game(1, new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)),
-            }, new List<Player>());
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(8, -3)) }).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -3)) }).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -4)) }).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -2)) }).Points);
-            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(8, -3)) }).Points);
-            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -3)) }).Points);
-            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -4)) }).Points);
-            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -2)) }).Points);
+            }, new List<Player>(), false);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(8, -3)) }, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -3)) }, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -4)) }, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -2)) }, null).Points);
+            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(8, -3)) }, null).Points);
+            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -3)) }, null).Points);
+            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -4)) }, null).Points);
+            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -2)) }, null).Points);
         }
 
         [Fact]
@@ -71,11 +71,11 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Blue, TileForm.Circle, coordinatesNotFree2),
                 new TileOnBoard(TileColor.Blue, TileForm.Circle, coordinatesNotFree3),
                 new TileOnBoard(TileColor.Blue, TileForm.Circle, coordinatesNotFree4),
-            }, new List<Player>());
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, coordinatesNotFree1) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, coordinatesNotFree2) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, coordinatesNotFree3) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, coordinatesNotFree4) }).Points);
+            }, new List<Player>(), false);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, coordinatesNotFree1) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, coordinatesNotFree2) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, coordinatesNotFree3) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, coordinatesNotFree4) }, null).Points);
         }
 
         [Fact]
@@ -84,15 +84,15 @@ namespace Qwirkle.Core.Tests
             CoreUseCase.Game = new Game(1, new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(0, 0)),
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)),
-            }, new List<Player>());
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(1, 7)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(-1, 9)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(0, 2)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(0, -2)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(9, -3)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(3, -3)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(1, -4)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(2, -2)) }).Points);
+            }, new List<Player>(), false);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(1, 7)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(-1, 9)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(0, 2)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(0, -2)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(9, -3)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(3, -3)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(1, -4)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(2, -2)) }, null).Points);
         }
 
         [Fact]
@@ -105,15 +105,15 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -5)),
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -3)),
-            }, new List<Player>());
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(0, 3)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(0, -1)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.EightPointStar, new CoordinatesInGame(0, 3)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(0, -1)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -6)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -2)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Circle, new CoordinatesInGame(7, -6)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.FourPointStar, new CoordinatesInGame(7, -2)) }).Points);
+            }, new List<Player>(), false);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(0, 3)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(0, -1)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.EightPointStar, new CoordinatesInGame(0, 3)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(0, -1)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -6)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -2)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Circle, new CoordinatesInGame(7, -6)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.FourPointStar, new CoordinatesInGame(7, -2)) }, null).Points);
         }
 
         [Fact]
@@ -123,13 +123,13 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -5)),
                 new TileOnBoard(TileColor.Blue, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new TileOnBoard(TileColor.Orange, TileForm.Square, new CoordinatesInGame(7, -3)),
-            }, new List<Player>());
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -6)) }).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Square, new CoordinatesInGame(7, -2)) }).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -2)) }).Points);
-            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -6)) }).Points);
-            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Square, new CoordinatesInGame(7, -2)) }).Points);
-            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -2)) }).Points);
+            }, new List<Player>(), false);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -6)) }, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Square, new CoordinatesInGame(7, -2)) }, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -2)) }, null).Points);
+            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -6)) }, null).Points);
+            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Square, new CoordinatesInGame(7, -2)) }, null).Points);
+            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -2)) }, null).Points);
         }
 
         [Fact]
@@ -142,15 +142,15 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(9, -4)),
-            }, new List<Player>());
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(-1, 0)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(3, 0)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.EightPointStar, new CoordinatesInGame(-1, 0)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(3, 0)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(6, -4)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(10, -4)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Circle, new CoordinatesInGame(6, -4)) }).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.FourPointStar, new CoordinatesInGame(10, -4)) }).Points);
+            }, new List<Player>(), false);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(-1, 0)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(3, 0)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.EightPointStar, new CoordinatesInGame(-1, 0)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(3, 0)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(6, -4)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(10, -4)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Circle, new CoordinatesInGame(6, -4)) }, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.FourPointStar, new CoordinatesInGame(10, -4)) }, null).Points);
         }
 
         [Fact]
@@ -160,13 +160,13 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new TileOnBoard(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new TileOnBoard(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            }, new List<Player>());
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -4)) }).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Square, new CoordinatesInGame(10, -4)) }).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }).Points);
-            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -4)) }).Points);
-            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Square, new CoordinatesInGame(10, -4)) }).Points);
-            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }).Points);
+            }, new List<Player>(), false);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -4)) }, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Square, new CoordinatesInGame(10, -4)) }, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }, null).Points);
+            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(6, -4)) }, null).Points);
+            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Red, TileForm.Square, new CoordinatesInGame(10, -4)) }, null).Points);
+            Assert.Equal(4, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }, null).Points);
 
         }
 
@@ -177,9 +177,9 @@ namespace Qwirkle.Core.Tests
             new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new TileOnBoard(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new TileOnBoard(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            }, new List<Player>());
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(9, -5)) }).Points);
-            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(9, -5)) }).Points);
+            }, new List<Player>(), false);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(9, -5)) }, null).Points);
+            Assert.Equal(2, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(9, -5)) }, null).Points);
         }
 
         [Fact]
@@ -189,9 +189,9 @@ namespace Qwirkle.Core.Tests
             new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new TileOnBoard(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new TileOnBoard(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            }, new List<Player>());
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(10, -4)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(11, -4)) }).Points);
-            Assert.Equal(5, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(10, -4)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(11, -4)) }).Points);
+            }, new List<Player>(), false);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(10, -4)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(11, -4)) }, null).Points);
+            Assert.Equal(5, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(10, -4)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(11, -4)) }, null).Points);
         }
 
         [Fact]
@@ -201,9 +201,9 @@ namespace Qwirkle.Core.Tests
             new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new TileOnBoard(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new TileOnBoard(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            }, new List<Player>());
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(11, -4)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }).Points);
-            Assert.Equal(5, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(11, -4)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }).Points);
+            }, new List<Player>(), false);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(11, -4)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }, null).Points);
+            Assert.Equal(5, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(11, -4)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)) }, null).Points);
         }
 
         [Fact]
@@ -213,9 +213,9 @@ namespace Qwirkle.Core.Tests
             new TileOnBoard(TileColor.Green, TileForm.Square, new CoordinatesInGame(7, -4)),
                 new TileOnBoard(TileColor.Blue, TileForm.Square, new CoordinatesInGame(8, -4)),
                 new TileOnBoard(TileColor.Orange, TileForm.Square, new CoordinatesInGame(9, -4)),
-            }, new List<Player>());
-            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(10, -5)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)), new TileOnBoard(TileColor.Yellow, TileForm.EightPointStar, new CoordinatesInGame(10, -3)) }).Points);
-            Assert.Equal(7, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(10, -5)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)), new TileOnBoard(TileColor.Yellow, TileForm.EightPointStar, new CoordinatesInGame(10, -3)) }).Points);
+            }, new List<Player>(), false);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(10, -5)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)), new TileOnBoard(TileColor.Yellow, TileForm.EightPointStar, new CoordinatesInGame(10, -3)) }, null).Points);
+            Assert.Equal(7, CoreUseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(10, -5)), new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(10, -4)), new TileOnBoard(TileColor.Yellow, TileForm.EightPointStar, new CoordinatesInGame(10, -3)) }, null).Points);
         }
 
         [Fact]
@@ -228,7 +228,7 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Purple, TileForm.FourPointStar, new CoordinatesInGame(10, -4)),
                 new TileOnBoard(TileColor.Purple, TileForm.EightPointStar, new CoordinatesInGame(11, -4)),
                 new TileOnBoard(TileColor.Purple, TileForm.Clover, new CoordinatesInGame(12, -4)),
-            }, new List<Player>());
+            }, new List<Player>(), false);
             var tilesTested = new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -3)),
                 new TileOnBoard(TileColor.Yellow, TileForm.Circle, new CoordinatesInGame(8, -3)),
@@ -237,8 +237,8 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Yellow, TileForm.EightPointStar, new CoordinatesInGame(11, -3)),
                 new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(12, -3)),
             };
-            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested).Points);
-            Assert.Equal(6 + 6 + 2 * QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested, null).Points);
+            Assert.Equal(6 + 6 + 2 * QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested, null).Points);
         }
 
         [Fact]
@@ -251,7 +251,7 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Purple, TileForm.FourPointStar, new CoordinatesInGame(10, -4)),
                 new TileOnBoard(TileColor.Purple, TileForm.EightPointStar, new CoordinatesInGame(11, -4)),
                 new TileOnBoard(TileColor.Purple, TileForm.Clover, new CoordinatesInGame(12, -4)),
-            }, new List<Player>());
+            }, new List<Player>(), false);
             var tilesTested = new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -3)),
                 new TileOnBoard(TileColor.Yellow, TileForm.Circle, new CoordinatesInGame(8, -3)),
@@ -260,7 +260,7 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Yellow, TileForm.EightPointStar, new CoordinatesInGame(11, -3)),
                 new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(12, -3)),
             };
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested, null).Points);
         }
 
         [Fact]
@@ -268,12 +268,12 @@ namespace Qwirkle.Core.Tests
         {
             CoreUseCase.Game = new Game(1, new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -4)),
-            }, new List<Player>());
+            }, new List<Player>(), false);
             var tilesTested = new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Yellow, TileForm.Square, new CoordinatesInGame(7, -3)),
                 new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(8, -4)),
             };
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested, null).Points);
         }
 
         [Fact]
@@ -284,12 +284,12 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Purple, TileForm.FourPointStar, new CoordinatesInGame(7, -4)),
                 new TileOnBoard(TileColor.Purple, TileForm.Clover, new CoordinatesInGame(7, -1)),
                 new TileOnBoard(TileColor.Purple, TileForm.Diamond, new CoordinatesInGame(7, 0)),
-            }, new List<Player>());
+            }, new List<Player>(), false);
             var tilesTested = new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Purple, TileForm.EightPointStar, new CoordinatesInGame(7, 1)),
                 new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(7, -5)),
             };
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested, null).Points);
         }
 
         [Fact]
@@ -300,7 +300,7 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Purple, TileForm.FourPointStar, new CoordinatesInGame(-4, 7)),
                 new TileOnBoard(TileColor.Purple, TileForm.Clover, new CoordinatesInGame(-1,7)),
                 new TileOnBoard(TileColor.Purple, TileForm.Diamond, new CoordinatesInGame(0, 7)),
-            }, new List<Player>());
+            }, new List<Player>(), false);
             var tilesTested = new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Purple, TileForm.EightPointStar, new CoordinatesInGame(1, 7)),
                 new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(-5, 7)),
@@ -309,31 +309,31 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Purple, TileForm.EightPointStar, new CoordinatesInGame(-5, 7)),
                 new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(1, 7)),
             };
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested).Points);
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested2).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested, null).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested2, null).Points);
         }
 
         [Fact]
         public void Return12When2TilesAreInTheSame4GameTilesColumn()
         {
             CoreUseCase.Game = new Game(1, new List<TileOnBoard> {
-                new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -3)),
                 new TileOnBoard(TileColor.Purple, TileForm.FourPointStar, new CoordinatesInGame(7, -4)),
+                new TileOnBoard(TileColor.Purple, TileForm.Square, new CoordinatesInGame(7, -3)),
                 new TileOnBoard(TileColor.Purple, TileForm.Clover, new CoordinatesInGame(7, -1)),
                 new TileOnBoard(TileColor.Purple, TileForm.Diamond, new CoordinatesInGame(7, 0)),
-            }, new List<Player>());
+            }, new List<Player>(), false);
             var tilesTested = new List<TileOnBoard> {
-                new TileOnBoard(TileColor.Purple, TileForm.EightPointStar, new CoordinatesInGame(7, -2)),
                 new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(7, -5)),
+                new TileOnBoard(TileColor.Purple, TileForm.EightPointStar, new CoordinatesInGame(7, -2)),
             };
             var tilesTested2 = new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Purple, TileForm.EightPointStar, new CoordinatesInGame(7, -5)),
                 new TileOnBoard(TileColor.Purple, TileForm.Circle, new CoordinatesInGame(7, -2)),
             };
-            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested2).Points);
-            Assert.Equal(6 + QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested).Points);
-            Assert.Equal(6 + QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested2).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested2, null).Points);
+            Assert.Equal(6 + QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested, null).Points);
+            Assert.Equal(6 + QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested2, null).Points);
         }
 
         [Fact]
@@ -344,7 +344,7 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Yellow, TileForm.Clover, new CoordinatesInGame(16, 3)),
                 new TileOnBoard(TileColor.Yellow, TileForm.EightPointStar, new CoordinatesInGame(13, 3)),
                 new TileOnBoard(TileColor.Yellow, TileForm.FourPointStar, new CoordinatesInGame(17, 3)),
-            }, new List<Player>());
+            }, new List<Player>(), false);
             var tilesTested = new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Yellow, TileForm.Diamond, new CoordinatesInGame(15, 3)),
                 new TileOnBoard(TileColor.Yellow, TileForm.Circle, new CoordinatesInGame(18, 3)),
@@ -353,10 +353,10 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Yellow, TileForm.Diamond, new CoordinatesInGame(18, 3)),
                 new TileOnBoard(TileColor.Yellow, TileForm.Circle, new CoordinatesInGame(15, 3)),
             };
-            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested).Points);
-            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested2).Points);
-            Assert.Equal(6 + QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested).Points);
-            Assert.Equal(6 + QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested2).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested, null).Points);
+            Assert.True(0 < CoreUseCase.GetPlayReturn(tilesTested2, null).Points);
+            Assert.Equal(6 + QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested, null).Points);
+            Assert.Equal(6 + QWIRKLE_POINTS, CoreUseCase.GetPlayReturn(tilesTested2, null).Points);
         }
 
         [Fact]
@@ -366,11 +366,11 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Blue, TileForm.FourPointStar, new CoordinatesInGame(7, 2)),
                 new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(7, 1)),
                 new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(7, -1)),
-            }, new List<Player>());
+            }, new List<Player>(), false);
             var tilesTested = new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(7, 0)),
             };
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested, null).Points);
         }
 
         [Fact]
@@ -380,11 +380,11 @@ namespace Qwirkle.Core.Tests
                 new TileOnBoard(TileColor.Blue, TileForm.FourPointStar, new CoordinatesInGame(2, 7)),
                 new TileOnBoard(TileColor.Blue, TileForm.Diamond, new CoordinatesInGame(1, 7)),
                 new TileOnBoard(TileColor.Green, TileForm.Circle, new CoordinatesInGame(-1, 7)),
-            }, new List<Player>());
+            }, new List<Player>(), false);
             var tilesTested = new List<TileOnBoard> {
                 new TileOnBoard(TileColor.Blue, TileForm.Circle, new CoordinatesInGame(0, 7)),
             };
-            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested).Points);
+            Assert.Equal(0, CoreUseCase.GetPlayReturn(tilesTested, null).Points);
         }
     }
 }

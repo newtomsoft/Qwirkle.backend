@@ -27,7 +27,7 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
         [Fact]
         public void Prout()
         {
-            DefaultDesignTimeDbContextFactory designDbContextFactory = new DefaultDesignTimeDbContextFactory();
+            DefaultDesignTimeDbContextFactory designDbContextFactory = new();
             designDbContextFactory.CreateDbContext(null);
         }
     }

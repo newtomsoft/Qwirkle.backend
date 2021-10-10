@@ -23,5 +23,6 @@ namespace Qwirkle.Core.Ports
         List<string> GetListNamePlayer(int gameId);
         Player CreatePlayer(int userId, int gameId);
         void CreateTiles(int gameId);
+        void SetGameOver(int gameId);
     }
 }

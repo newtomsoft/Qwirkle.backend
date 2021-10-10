@@ -84,17 +84,14 @@ namespace Qwirkle.Web.Api.Controllers
             tiles.ForEach(t => tilesToPlay.Add((t.TileId, t.X, t.Y)));
             var playerId = tiles[0].PlayerId;
             var playReturn = CoreUseCase.TryPlayTiles(playerId, tilesToPlay);
-
             if (playReturn.Code == PlayReturnCode.Ok)
             {
                 int gameId = playReturn.GameId;
                 SendTilesPlayed(gameId, playerId, playReturn.TilesPlayed);
                 SendPlayerIdTurn(gameId, CoreUseCase.GetPlayerIdToPlay(gameId));
             }
-
             return new ObjectResult(playReturn);
         }
-
 
         [HttpPost("SwapTiles/")]
         public ActionResult<int> SwapTiles(List<TileViewModel> tiles)
@@ -102,20 +99,32 @@ namespace Qwirkle.Web.Api.Controllers
             var tilesIdsToChange = new List<int>();
             tiles.ForEach(t => tilesIdsToChange.Add(t.TileId));
             var swapTilesReturn = CoreUseCase.TrySwapTiles(tiles[0].PlayerId, tilesIdsToChange);
-
             if (swapTilesReturn.Code == PlayReturnCode.Ok)
             {
                 int gameId = swapTilesReturn.GameId;
                 SendTilesSwaped(gameId, tiles[0].PlayerId);
                 SendPlayerIdTurn(gameId, CoreUseCase.GetPlayerIdToPlay(gameId));
             }
-
             return new ObjectResult(swapTilesReturn);
+        }
+
+        [HttpPost("PassTurn/")]
+        public ActionResult<int> SkipTurn(int playerId)
+        {
+            var skipTurnReturn = CoreUseCase.TrySkipTurn(playerId);
+            if (skipTurnReturn.Code == PlayReturnCode.Ok)
+            {
+                int gameId = skipTurnReturn.GameId;
+                SendTurnSkipped(gameId, playerId);
+                SendPlayerIdTurn(gameId, CoreUseCase.GetPlayerIdToPlay(gameId));
+            }
+            return new ObjectResult(skipTurnReturn);
         }
 
 
         private void SendTilesPlayed(int gameId, int playerId, List<TileOnBoard> tilesOnBoardPlayed) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesPlayed", playerId, tilesOnBoardPlayed);
         private void SendTilesSwaped(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesSwaped", playerId);
+        private void SendTurnSkipped(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTurnSkipped", playerId);
         private void SendPlayerIdTurn(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceivePlayerIdTurn", playerId);
     }
 }

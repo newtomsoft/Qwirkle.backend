@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Qwirkle.Infra.Repository;
 
 namespace Qwirkle.Infra.Repository.Migrations.Sqlite
 {
     [DbContext(typeof(DefaultDbContext))]
-    partial class DefaultDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211010163822_AddGameOver")]
+    partial class AddGameOver
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,9 +177,6 @@ namespace Qwirkle.Infra.Repository.Migrations.Sqlite
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("GameTurn")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("LastTurnSkipped")
                         .HasColumnType("INTEGER");
 
                     b.Property<byte>("Points")

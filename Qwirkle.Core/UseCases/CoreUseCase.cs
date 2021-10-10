@@ -48,7 +48,7 @@ namespace Qwirkle.Core.UsesCases
             Game = GetGame(player.GameId);
             if (!player.HasTiles(tilesIds)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile, GameId = Game.Id };
 
-            PlayReturn playReturn = GetPlayReturn(tilesToPlay);
+            PlayReturn playReturn = GetPlayReturn(tilesToPlay, player);
             if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
             
             playReturn.NewRack = PlayTiles(player, tilesToPlay, playReturn.Points);
@@ -65,6 +65,16 @@ namespace Qwirkle.Core.UsesCases
             List<TileOnPlayer> tilesToSwap = GetPlayerTiles(tilesIds);
             var swapTilesReturn = SwapTiles(player, tilesToSwap);
             return swapTilesReturn;
+        }
+
+        public SkipTurnReturn TrySkipTurn(int playerId)
+        {
+            Player player = GetPlayer(playerId);
+            Game = GetGame(player.GameId);
+            if (!player.IsTurn) return new SkipTurnReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
+
+            SkipTurnReturn SkipTurnReturn = SkipTurn(player);
+            return SkipTurnReturn;
         }
 
         private void DealTilesToPlayers()
@@ -108,7 +118,7 @@ namespace Qwirkle.Core.UsesCases
             SetPlayerTurn(playerIdToPlay, true);
         }
 
-        public PlayReturn GetPlayReturn(List<TileOnBoard> tiles)
+        public PlayReturn GetPlayReturn(List<TileOnBoard> tiles, Player player)
         {
             if (Game.Board.Tiles.Count == 0 && tiles.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, TilesPlayed = tiles, GameId = Game.Id, };
 
@@ -118,9 +128,17 @@ namespace Qwirkle.Core.UsesCases
                     AreAllTilesIsolated = false;
             if (Game.Board.Tiles.Count > 0 && AreAllTilesIsolated) return new PlayReturn { Code = PlayReturnCode.TileIsolated, Points = 0, GameId = Game.Id };
 
-            int totalPoints;
-            if ((totalPoints = CountTilesMakedValidRow(tiles)) == 0) return new PlayReturn { Code = PlayReturnCode.TilesDontMakedValidRow, GameId = Game.Id };
-            return new PlayReturn { Code = PlayReturnCode.Ok, Points = totalPoints, GameId = Game.Id, TilesPlayed = tiles };
+            int wonPoints = CountTilesMakedValidRow(tiles);
+            if (wonPoints == 0) return new PlayReturn { Code = PlayReturnCode.TilesDontMakedValidRow, GameId = Game.Id };
+            
+            if (Game.Bag.Tiles.Count == 0 && tiles.Count == player.Rack.Tiles.Count)
+            {
+                var pointsWonWhenPlayerFinishTheGame = 6;
+                wonPoints += pointsWonWhenPlayerFinishTheGame;
+                SetGameOver(Game.Id);
+            }
+            
+            return new PlayReturn { Code = PlayReturnCode.Ok, Points = wonPoints, GameId = Game.Id, TilesPlayed = tiles };
         }
 
         private List<TileOnBoard> GetTiles(List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
@@ -130,7 +148,7 @@ namespace Qwirkle.Core.UsesCases
             {
                 Tile tile = _repositoryAdapter.GetTileById(TileId);
                 var coordinates = new CoordinatesInGame(X, Y);
-                TileOnBoard tileOnBoard = new TileOnBoard(tile, coordinates);
+                var tileOnBoard = new TileOnBoard(tile, coordinates);
                 tilesOnBoard.Add(tileOnBoard);
             }
             return tilesOnBoard;
@@ -155,30 +173,29 @@ namespace Qwirkle.Core.UsesCases
         public List<int> GetListGameIDWithPlayer() => _repositoryAdapter.GetListGameIDWithPlayer();
         public List<string> GetListNamePlayer(int gameId) => _repositoryAdapter.GetListNamePlayer(gameId);
         public Game GetGame(int GameId) => _repositoryAdapter.GetGame(GameId);
+        private void SetGameOver(int gameId) => _repositoryAdapter.SetGameOver(gameId);
+
+        private SkipTurnReturn SkipTurn(Player player)
+        {
+            SetNextPlayerTurnToPlay(player);
+            return new SkipTurnReturn { GameId = player.GameId, Code = PlayReturnCode.Ok };
+        }
 
         private SwapTilesReturn SwapTiles(Player player, List<TileOnPlayer> tilesToSwap)
         {
             List<byte> rackPositions = RackPositions(tilesToSwap);
-            SetNextPlayerTurnToPlay(player.Id);
+            SetNextPlayerTurnToPlay(player);
             _repositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
             _repositoryAdapter.TilesFromPlayerToBag(player, tilesToSwap);
             _repositoryAdapter.UpdatePlayer(player);
             return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = GetPlayer(player.Id).Rack };
         }
 
-        private void RefreshPlayer(Player player)
-        {
-            for (int i = 0; i < Game.Players.Count; i++) //todo
-                Game.Players[i] = GetPlayer(Game.Players[i].Id);
-        }
-
         private Rack PlayTiles(Player player, List<TileOnBoard> tilesToPlay, int points)
         {
             player.Points += points;
-            player.SetTurn(false);
             Game.Board.Tiles.AddRange(tilesToPlay);
-            _repositoryAdapter.UpdatePlayer(player);
-            SetNextPlayerTurnToPlay(player.Id);
+            SetNextPlayerTurnToPlay(player);
 
             // TODO
             #warning todo
@@ -193,27 +210,26 @@ namespace Qwirkle.Core.UsesCases
             return _repositoryAdapter.GetPlayer(player.Id).Rack;
         }
 
-        private void SetNextPlayerTurnToPlay(int playerId)
+        private void SetNextPlayerTurnToPlay(Player player)
         {
-            if (Game.Players.Count > 1)
+            if (Game.GameOver) return;
+
+            if (Game.Players.Count == 1)
             {
-                Player thisPlayer = GetPlayer(playerId); //todo : appel base peut être évité en stockant thisPlayer
-                int position = Game.Players.FirstOrDefault(p => p.Id == playerId).GamePosition;
-                int playersNumber = Game.Players.Count;
-                int nextPlayerPosition = position < playersNumber ? position + 1 : 1;
-                Player nexPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
-                thisPlayer.SetTurn(false);
-                nexPlayer.SetTurn(true);
-                _repositoryAdapter.UpdatePlayer(thisPlayer);
-                _repositoryAdapter.UpdatePlayer(nexPlayer);
+                player.SetTurn(true);
+                _repositoryAdapter.UpdatePlayer(player);
             }
             else
             {
-                Player thisPlayer = GetPlayer(playerId);
-                thisPlayer.SetTurn(true);
-                _repositoryAdapter.UpdatePlayer(thisPlayer);
+                int position = Game.Players.FirstOrDefault(p => p.Id == player.Id).GamePosition;
+                int playersNumber = Game.Players.Count;
+                int nextPlayerPosition = position < playersNumber ? position + 1 : 1;
+                Player nextPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
+                player.SetTurn(false);
+                nextPlayer.SetTurn(true);
+                _repositoryAdapter.UpdatePlayer(player);
+                _repositoryAdapter.UpdatePlayer(nextPlayer);
             }
-            
         }
 
         private int CountTilesMakedValidRow(List<TileOnBoard> tiles)

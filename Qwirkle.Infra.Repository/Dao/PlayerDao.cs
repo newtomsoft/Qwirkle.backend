@@ -11,6 +11,7 @@ namespace Qwirkle.Infra.Repository.Dao
         public byte Points { get; set; }
         public bool GameTurn { get; set; }
         public byte GamePosition { get; set; }
+        public bool LastTurnSkipped { get; set; }
 
         public GameDao Game { get; set; }
         public UserDao User { get; set; }

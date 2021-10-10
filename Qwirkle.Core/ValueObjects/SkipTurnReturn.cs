@@ -1,10 +1,12 @@
-﻿using Qwirkle.Core.Enums;
+﻿using Qwirkle.Core.Entities;
+using Qwirkle.Core.Enums;
 
 namespace Qwirkle.Core.ValueObjects
 {
-    public struct SkipTurnReturn
+    public struct SwapTilesReturn
     {
         public int GameId { get; set; }
         public PlayReturnCode Code { get; set; }
+        public Rack NewRack { get; set; }
     }
 }

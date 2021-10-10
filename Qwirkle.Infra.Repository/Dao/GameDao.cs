@@ -9,5 +9,6 @@ namespace Qwirkle.Infra.Repository.Dao
         public int Id { get; set; }
         public DateTime CreatDate { get; set; }
         public DateTime LastPlayDate { get; set; }
+        public bool GameOver { get; set; }
     }
 }
