@@ -15,7 +15,7 @@ namespace Qwirkle.Core.UsesCases
         private const int TILES_NUMBER_FOR_A_QWIRKLE = 6;
         private const int POINTS_FOR_A_QWIRKLE = 12;
 
-        private IRepository _repositoryAdapter;
+        private readonly IRepository _repositoryAdapter;
 
         public Game Game { get; set; }
 
@@ -38,6 +38,7 @@ namespace Qwirkle.Core.UsesCases
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
             Player player = GetPlayer(playerId);
+            Game = GetGame(player.GameId);
             if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn, GameId = Game.Id };
 
             var tilesToPlay = GetTiles(tilesTupleToPlay);
@@ -45,7 +46,6 @@ namespace Qwirkle.Core.UsesCases
             foreach (var tiles in tilesToPlay)
                 tilesIds.Add(tiles.Id);
 
-            Game = GetGame(player.GameId);
             if (!player.HasTiles(tilesIds)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile, GameId = Game.Id };
 
             PlayReturn playReturn = GetPlayReturn(tilesToPlay);
