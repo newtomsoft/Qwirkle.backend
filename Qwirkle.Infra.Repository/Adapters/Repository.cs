@@ -96,16 +96,6 @@ namespace Qwirkle.Infra.Repository.Adapters
         public Player GetPlayer(int playerId)
             => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
 
-        //public List<TileOnPlayer> GetTilesOnPlayerByPlayerId(int playerId)
-        //{
-        //    var tilesOnPlayerModel = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerId).ToList();
-        //    var tilesOnPlayer = new List<TileOnPlayer>();
-        //    foreach (var tileOnPlayer in tilesOnPlayerModel)
-        //        tilesOnPlayer.Add(TileOnPlayerModelToEntity(tileOnPlayer));
-
-        //    return tilesOnPlayer;
-        //}
-
         public void UpdatePlayer(Player player)
         {
             DbContext.Players.Update(PlayerToPlayerDao(player));
@@ -146,10 +136,10 @@ namespace Qwirkle.Infra.Repository.Adapters
             DbContext.SaveChanges();
         }
 
-        public void SetPlayerTurn(int playerId, bool turn)
+        public void SetPlayerTurn(int playerId)
         {
             var player = DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault();
-            player.GameTurn = turn;
+            player.GameTurn = true;
             DbContext.SaveChanges();
         }
 

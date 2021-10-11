@@ -8,7 +8,7 @@ namespace Qwirkle.Core.Ports
     {
         Game CreateGame(DateTime date);
         bool IsPlayerTurn(int playerId);
-        void SetPlayerTurn(int playerId, bool turn);
+        void SetPlayerTurn(int playerId);
         void UpdatePlayer(Player player);
         void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles);
         void TilesFromBagToPlayer(Player player, List<byte> rackPositions);

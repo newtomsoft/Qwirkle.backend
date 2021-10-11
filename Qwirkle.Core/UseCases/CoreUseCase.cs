@@ -115,30 +115,30 @@ namespace Qwirkle.Core.UsesCases
             var playersWithNumberCanBePlayedTiles = new Dictionary<int, int>();
             Game.Players.ForEach(p => playersWithNumberCanBePlayedTiles[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
             var playerIdToPlay = playersWithNumberCanBePlayedTiles.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
-            SetPlayerTurn(playerIdToPlay, true);
+            SetPlayerTurn(playerIdToPlay);
         }
 
-        public PlayReturn GetPlayReturn(List<TileOnBoard> tiles, Player player)
+        public PlayReturn GetPlayReturn(List<TileOnBoard> tilesPlayed, Player player)
         {
-            if (Game.Board.Tiles.Count == 0 && tiles.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, TilesPlayed = tiles, GameId = Game.Id, };
+            if (Game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, TilesPlayed = tilesPlayed, GameId = Game.Id, };
 
-            bool AreAllTilesIsolated = true;
-            foreach (var tile in tiles)
+            bool allTilesIsolated = true;
+            foreach (var tile in tilesPlayed)
                 if (Game.Board.IsIsolatedTile(tile))
-                    AreAllTilesIsolated = false;
-            if (Game.Board.Tiles.Count > 0 && AreAllTilesIsolated) return new PlayReturn { Code = PlayReturnCode.TileIsolated, Points = 0, GameId = Game.Id };
+                    allTilesIsolated = false;
+            if (Game.Board.Tiles.Count > 0 && allTilesIsolated) return new PlayReturn { Code = PlayReturnCode.TileIsolated, Points = 0, GameId = Game.Id };
 
-            int wonPoints = CountTilesMakedValidRow(tiles);
+            int wonPoints = CountTilesMakedValidRow(tilesPlayed);
             if (wonPoints == 0) return new PlayReturn { Code = PlayReturnCode.TilesDontMakedValidRow, GameId = Game.Id };
 
-            if (Game.Bag.Tiles.Count == 0 && tiles.Count == player.Rack.Tiles.Count)
+            if (Game.Bag.Tiles.Count == 0 && tilesPlayed.Count == player.Rack.Tiles.Count)
             {
                 var pointsWonWhenPlayerFinishTheGame = 6;
                 wonPoints += pointsWonWhenPlayerFinishTheGame;
                 _repositoryAdapter.SetGameOver(Game.Id);
             }
 
-            return new PlayReturn { Code = PlayReturnCode.Ok, Points = wonPoints, GameId = Game.Id, TilesPlayed = tiles };
+            return new PlayReturn { Code = PlayReturnCode.Ok, Points = wonPoints, GameId = Game.Id, TilesPlayed = tilesPlayed };
         }
 
         private List<TileOnBoard> GetTiles(List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
@@ -175,8 +175,7 @@ namespace Qwirkle.Core.UsesCases
         private SkipTurnReturn SkipTurn(Player player)
         {
             player.LastTurnSkipped = true;
-            var game = GetGame(player.GameId);
-            if (game.Bag.Tiles.Count == 0 && game.Players.Count(p => p.LastTurnSkipped) == game.Players.Count)
+            if (Game.Bag.Tiles.Count == 0 && Game.Players.Count(p => p.LastTurnSkipped) == Game.Players.Count)
             {
                 _repositoryAdapter.UpdatePlayer(player);
                 _repositoryAdapter.SetGameOver(player.GameId);
@@ -319,10 +318,10 @@ namespace Qwirkle.Core.UsesCases
 
         private static bool AreNumbersConsecutive(List<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
 
-        private void SetPlayerTurn(int playerId, bool turn)
+        private void SetPlayerTurn(int playerId)
         {
-            _repositoryAdapter.SetPlayerTurn(playerId, turn);
-            Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(turn);
+            _repositoryAdapter.SetPlayerTurn(playerId);
+            Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(true);
         }
 
         private static List<byte> RackPositions(List<TileOnPlayer> tiles)
