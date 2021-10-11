@@ -108,9 +108,10 @@ namespace Qwirkle.Web.Api.Controllers
             return new ObjectResult(swapTilesReturn);
         }
 
-        [HttpPost("PassTurn/")]
-        public ActionResult<int> SkipTurn(int playerId)
+        [HttpPost("SkipTurn/")]
+        public ActionResult<int> SkipTurn(PlayerViewModel player)
         {
+            var playerId = player.Id;
             var skipTurnReturn = CoreUseCase.TrySkipTurn(playerId);
             if (skipTurnReturn.Code == PlayReturnCode.Ok)
             {
@@ -120,7 +121,6 @@ namespace Qwirkle.Web.Api.Controllers
             }
             return new ObjectResult(skipTurnReturn);
         }
-
 
         private void SendTilesPlayed(int gameId, int playerId, List<TileOnBoard> tilesOnBoardPlayed) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesPlayed", playerId, tilesOnBoardPlayed);
         private void SendTilesSwaped(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesSwaped", playerId);
