@@ -152,8 +152,18 @@ namespace Qwirkle.Infra.Repository.Adapters
             DbContext.SaveChanges();
         }
 
-        public bool IsPlayerTurn(int playerId)
-            => DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault().GameTurn;
+        public List<int> GetLeadersPlayersId(int gameId)
+        {
+            var playersInGame = DbContext.Players.Where(p => p.GameId == gameId).ToList();
+            var maxPoints = playersInGame.Max(p => p.Points);
+            
+            var maxPoints2 = DbContext.Players.Where(p => p.GameId == gameId).Max(p => p.Points);
+            var result = DbContext.Players.Where(p => p.GameId == gameId && p.Points == maxPoints2).Select(p => p.Id).ToList();
+            
+            return playersInGame.Where(p => p.Points == maxPoints).Select(p => p.Id).ToList();
+        }
+
+        public bool IsGameOver(int gameId) => DbContext.Games.Where(g => g.Id == gameId && g.GameOver).Any();
 
         private void AddAllTilesInDataBase()
         {

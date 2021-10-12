@@ -7,7 +7,6 @@ namespace Qwirkle.Core.Ports
     public interface IRepository
     {
         Game CreateGame(DateTime date);
-        bool IsPlayerTurn(int playerId);
         void SetPlayerTurn(int playerId);
         void UpdatePlayer(Player player);
         void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles);
@@ -24,5 +23,7 @@ namespace Qwirkle.Core.Ports
         Player CreatePlayer(int userId, int gameId);
         void CreateTiles(int gameId);
         void SetGameOver(int gameId);
+        List<int> GetLeadersPlayersId(int gameId);
+        bool IsGameOver(int gameId);
     }
 }

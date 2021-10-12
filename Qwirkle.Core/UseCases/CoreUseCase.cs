@@ -169,8 +169,17 @@ namespace Qwirkle.Core.UsesCases
         public string GetPlayerNameTurn(int gameId) => _repositoryAdapter.GetPlayerNameTurn(gameId);
         public int GetPlayerIdToPlay(int gameId) => _repositoryAdapter.GetPlayerIdToPlay(gameId);
         public List<int> GetListGameIDWithPlayer() => _repositoryAdapter.GetListGameIDWithPlayer();
+
         public List<string> GetListNamePlayer(int gameId) => _repositoryAdapter.GetListNamePlayer(gameId);
         public Game GetGame(int GameId) => _repositoryAdapter.GetGame(GameId);
+
+        public List<int> GetWinnersPlayersId(int gameId)
+        {
+            if (!_repositoryAdapter.IsGameOver(gameId))
+                return null;
+
+            return _repositoryAdapter.GetLeadersPlayersId(gameId);
+        }
 
         private SkipTurnReturn SkipTurn(Player player)
         {
