@@ -1,15 +1,9 @@
-﻿using Qwirkle.Core.Entities;
-using Qwirkle.Core.Enums;
-using System.Collections.Generic;
+﻿using Qwirkle.Core.Enums;
 
 namespace Qwirkle.Core.ValueObjects
 {
-    public struct PlayReturn
+    public struct ArrangeRackReturn
     {
-        public int GameId { get; set; }
         public PlayReturnCode Code { get; set; }
-        public List<TileOnBoard> TilesPlayed { get; set; }
-        public Rack NewRack { get; set; }
-        public int Points { get; set; }
     }
 }

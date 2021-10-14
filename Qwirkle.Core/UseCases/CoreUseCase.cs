@@ -35,6 +35,22 @@ namespace Qwirkle.Core.UsesCases
             return Game.Players;
         }
 
+        public ArrangeRackReturn TryArrangeRack(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesToArrangeTuple)
+        {
+            Player player = GetPlayer(playerId);
+            var tilesIds = new List<int>();
+            foreach (var tiles in GetTiles(tilesToArrangeTuple))
+                tilesIds.Add(tiles.Id);
+
+            if (!player.HasTiles(tilesIds)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDontHaveThisTile};
+
+            var tilesToArrange = GetPlayerTiles(tilesIds);
+            ArrangeRack(player, tilesToArrange);
+            return new ArrangeRackReturn() { Code = PlayReturnCode.Ok};
+        }
+
+        private void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange) => _repositoryAdapter.ArrangeRack(player, tilesToArrange);
+
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
             Player player = GetPlayer(playerId);
@@ -197,9 +213,9 @@ namespace Qwirkle.Core.UsesCases
 
         private SwapTilesReturn SwapTiles(Player player, List<TileOnPlayer> tilesToSwap)
         {
-            List<byte> rackPositions = RackPositions(tilesToSwap);
+            var positionsInRack = PositionsInRack(tilesToSwap);
             SetNextPlayerTurnToPlay(player);
-            _repositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
+            _repositoryAdapter.TilesFromBagToPlayer(player, positionsInRack);
             _repositoryAdapter.TilesFromPlayerToBag(player, tilesToSwap);
             _repositoryAdapter.UpdatePlayer(player);
             return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = GetPlayer(player.Id).Rack };
@@ -333,12 +349,12 @@ namespace Qwirkle.Core.UsesCases
             Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(true);
         }
 
-        private static List<byte> RackPositions(List<TileOnPlayer> tiles)
+        private static List<byte> PositionsInRack(List<TileOnPlayer> tiles)
         {
-            var rackPositions = new List<byte>();
-            foreach (var tileToSwap in tiles)
-                rackPositions.Add(tileToSwap.RackPosition);
-            return rackPositions;
+            var positionsInRack = new List<byte>();
+            foreach (var tile in tiles)
+                positionsInRack.Add(tile.RackPosition);
+            return positionsInRack;
         }
     }
 }

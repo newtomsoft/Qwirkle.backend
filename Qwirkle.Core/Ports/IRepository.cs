@@ -1,4 +1,5 @@
 ﻿using Qwirkle.Core.Entities;
+using Qwirkle.Core.ValueObjects;
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +11,7 @@ namespace Qwirkle.Core.Ports
         void SetPlayerTurn(int playerId);
         void UpdatePlayer(Player player);
         void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles);
-        void TilesFromBagToPlayer(Player player, List<byte> rackPositions);
+        void TilesFromBagToPlayer(Player player, List<byte> positionsInRack);
         void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles);
         Game GetGame(int gameId);
         Player GetPlayer(int playerId);
@@ -25,5 +26,6 @@ namespace Qwirkle.Core.Ports
         void SetGameOver(int gameId);
         List<int> GetLeadersPlayersId(int gameId);
         bool IsGameOver(int gameId);
+        void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange);
     }
 }

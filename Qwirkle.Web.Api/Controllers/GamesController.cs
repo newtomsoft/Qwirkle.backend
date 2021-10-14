@@ -108,6 +108,16 @@ namespace Qwirkle.Web.Api.Controllers
             return new ObjectResult(swapTilesReturn);
         }
 
+        [HttpPost("ArrangeRack/")]
+        public ActionResult<int> ArrangeRack(List<TileViewModel> tiles)
+        {
+            var tilesToArrange = new List<(int tileId, sbyte x, sbyte y)>();
+            tiles.ForEach(t => tilesToArrange.Add((t.TileId, t.X, t.Y)));
+            var playerId = tiles[0].PlayerId;
+            var arrangeRackReturn = CoreUseCase.TryArrangeRack(playerId, tilesToArrange);
+            return new ObjectResult(arrangeRackReturn);
+        }
+
         [HttpPost("SkipTurn/")]
         public ActionResult<int> SkipTurn(PlayerViewModel player)
         {

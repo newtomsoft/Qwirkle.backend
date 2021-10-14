@@ -102,20 +102,27 @@ namespace Qwirkle.Infra.Repository.Adapters
             DbContext.SaveChanges();
         }
 
-#warning todo à vérifier rackposition !
-        public void TilesFromBagToPlayer(Player player, List<byte> rackPositions)
+        public void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange)
         {
-            int tilesNumber = rackPositions.Count;
+            for (byte i = 0; i < tilesToArrange.Count; i++)
+            {
+                var tile = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == player.Id && tp.TileId == tilesToArrange[i].Id).FirstOrDefault();
+                tile.RackPosition = i;
+            }
+            DbContext.SaveChanges();
+        }
+
+        public void TilesFromBagToPlayer(Player player, List<byte> positionsInRack)
+        {
+            int tilesNumber = positionsInRack.Count;
             var tilesToGiveToPlayer = DbContext.TilesOnBag.Where(t => t.GameId == player.GameId).ToList().OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
             DbContext.TilesOnBag.RemoveRange(tilesToGiveToPlayer);
             for (int i = 0; i < tilesToGiveToPlayer.Count; i++)
             {
-                DbContext.TilesOnPlayer.Add(new TileOnPlayerDao(tilesToGiveToPlayer[i], rackPositions[i], player.Id));
+                DbContext.TilesOnPlayer.Add(new TileOnPlayerDao(tilesToGiveToPlayer[i], positionsInRack[i], player.Id));
             }
-            //tilesToGiveToPlayer.ForEach(tb => DbContext.TilesOnPlayer.Add(TileOnBagToTileOnPlayer(tb, player.Id))); // faire avec forEach pour prendre en compte rackPositions[i]
             DbContext.SaveChanges();
         }
-        //todo rackPosition
 
         public void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles)
         {
