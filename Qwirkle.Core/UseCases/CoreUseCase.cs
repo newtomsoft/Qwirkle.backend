@@ -49,8 +49,6 @@ namespace Qwirkle.Core.UsesCases
             return new ArrangeRackReturn() { Code = PlayReturnCode.Ok};
         }
 
-        private void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange) => _repositoryAdapter.ArrangeRack(player, tilesToArrange);
-
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
         {
             Player player = GetPlayer(playerId);
@@ -69,6 +67,17 @@ namespace Qwirkle.Core.UsesCases
 
             playReturn.NewRack = PlayTiles(player, tilesToPlay, playReturn.Points);
             return playReturn;
+        }
+        public PlayReturn TryPlayTilesSimulation(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
+        {
+            Player player = GetPlayer(playerId);
+            var tilesToPlay = GetTiles(tilesTupleToPlay);
+            var tilesIds = new List<int>();
+            foreach (var tiles in tilesToPlay)
+                tilesIds.Add(tiles.Id);
+
+            Game = GetGame(player.GameId);
+            return GetPlayReturn(tilesToPlay, player, true);
         }
 
         public SwapTilesReturn TrySwapTiles(int playerId, List<int> tilesIds)
@@ -92,6 +101,8 @@ namespace Qwirkle.Core.UsesCases
             SkipTurnReturn SkipTurnReturn = SkipTurn(player);
             return SkipTurnReturn;
         }
+
+        private void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange) => _repositoryAdapter.ArrangeRack(player, tilesToArrange);
 
         private void DealTilesToPlayers()
         {
@@ -134,7 +145,7 @@ namespace Qwirkle.Core.UsesCases
             SetPlayerTurn(playerIdToPlay);
         }
 
-        public PlayReturn GetPlayReturn(List<TileOnBoard> tilesPlayed, Player player)
+        public PlayReturn GetPlayReturn(List<TileOnBoard> tilesPlayed, Player player, bool simulationMode = false)
         {
             if (Game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn { Code = PlayReturnCode.Ok, Points = 1, TilesPlayed = tilesPlayed, GameId = Game.Id, };
 
@@ -151,7 +162,7 @@ namespace Qwirkle.Core.UsesCases
             {
                 var pointsWonWhenPlayerFinishTheGame = 6;
                 wonPoints += pointsWonWhenPlayerFinishTheGame;
-                _repositoryAdapter.SetGameOver(Game.Id);
+                if(!simulationMode) _repositoryAdapter.SetGameOver(Game.Id);
             }
 
             return new PlayReturn { Code = PlayReturnCode.Ok, Points = wonPoints, GameId = Game.Id, TilesPlayed = tilesPlayed };

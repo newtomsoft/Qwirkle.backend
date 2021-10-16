@@ -93,6 +93,16 @@ namespace Qwirkle.Web.Api.Controllers
             return new ObjectResult(playReturn);
         }
 
+        [HttpPost("PlayTilesSimulation/")]
+        public ActionResult<int> PlayTilesSimulation(List<TileViewModel> tiles)
+        {
+            var tilesToPlay = new List<(int tileId, sbyte x, sbyte y)>();
+            tiles.ForEach(t => tilesToPlay.Add((t.TileId, t.X, t.Y)));
+            var playerId = tiles[0].PlayerId;
+            var playReturn = CoreUseCase.TryPlayTilesSimulation(playerId, tilesToPlay);
+            return new ObjectResult(playReturn);
+        }
+
         [HttpPost("SwapTiles/")]
         public ActionResult<int> SwapTiles(List<TileViewModel> tiles)
         {
