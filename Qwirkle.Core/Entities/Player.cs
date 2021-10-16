@@ -16,10 +16,11 @@ namespace Qwirkle.Core.Entities
         public Rack Rack { get; set; }
         public bool LastTurnSkipped { get; set; }
 
-        public Player(int id, int gameId, int gamePosition, int points, List<TileOnPlayer> tiles, bool turn, bool lastTurnSkipped) // todo remplacer tiles par rack
+        public Player(int id, int gameId, string pseudo, int gamePosition, int points, List<TileOnPlayer> tiles, bool turn, bool lastTurnSkipped) // todo remplacer tiles par rack
         {
             Id = id;
             GameId = gameId;
+            Pseudo = pseudo;
             GamePosition = gamePosition;
             Points = points;
             Rack = new Rack(tiles);

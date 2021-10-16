@@ -84,7 +84,7 @@ namespace Qwirkle.Infra.Repository.Adapters
             var gameDao = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
             var tilesOnGameDao = DbContext.TilesOnBoard.Where(tb => tb.GameId == gameId).ToList();
             var tiles = TilesOnBoardDaoToEntity(tilesOnGameDao);
-            var playersDao = DbContext.Players.Where(p => p.GameId == gameId).ToList();
+            var playersDao = DbContext.Players.Where(p => p.GameId == gameId).Include(p=>p.User).ToList();
             var players = new List<Player>();
             playersDao.ForEach(player => players.Add(PlayerDaoToPlayer(player)));
             var tilesOnBagDao = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
@@ -94,7 +94,7 @@ namespace Qwirkle.Infra.Repository.Adapters
         }
 
         public Player GetPlayer(int playerId)
-            => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault());
+            => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).Include(p=>p.User).FirstOrDefault());
 
         public void UpdatePlayer(Player player)
         {
@@ -209,10 +209,10 @@ namespace Qwirkle.Infra.Repository.Adapters
 
         private Player PlayerDaoToPlayer(PlayerDao playerDao)
         {
-            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).Include(t => t.Tile).ToList();
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).Include(t => t.Tile).Include(t=>t.Player).ToList();
             var tiles = new List<TileOnPlayer>();
             tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerDaoToEntity(tp)));
-            var player = new Player(playerDao.Id, playerDao.GameId, playerDao.GamePosition, playerDao.Points, tiles, playerDao.GameTurn, playerDao.LastTurnSkipped);
+            var player = new Player(playerDao.Id, playerDao.GameId, playerDao.User.UserName, playerDao.GamePosition, playerDao.Points, tiles, playerDao.GameTurn, playerDao.LastTurnSkipped);
             return player;
         }
 
