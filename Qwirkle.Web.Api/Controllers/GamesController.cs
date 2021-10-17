@@ -87,7 +87,7 @@ namespace Qwirkle.Web.Api.Controllers
             if (playReturn.Code == PlayReturnCode.Ok)
             {
                 int gameId = playReturn.GameId;
-                SendTilesPlayed(gameId, playerId, playReturn.TilesPlayed);
+                SendTilesPlayed(gameId, playerId, playReturn.Points, playReturn.TilesPlayed);
                 SendPlayerIdTurn(gameId, CoreUseCase.GetPlayerIdToPlay(gameId));
             }
             return new ObjectResult(playReturn);
@@ -154,7 +154,7 @@ namespace Qwirkle.Web.Api.Controllers
             return new ObjectResult(winnersPlayersIds);
         }
 
-        private void SendTilesPlayed(int gameId, int playerId, List<TileOnBoard> tilesOnBoardPlayed) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesPlayed", playerId, tilesOnBoardPlayed);
+        private void SendTilesPlayed(int gameId, int playerId, int scoredPoints, List<TileOnBoard> tilesOnBoardPlayed) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesPlayed", playerId, scoredPoints, tilesOnBoardPlayed);
         private void SendTilesSwaped(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesSwaped", playerId);
         private void SendTurnSkipped(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTurnSkipped", playerId);
         private void SendPlayerIdTurn(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceivePlayerIdTurn", playerId);
