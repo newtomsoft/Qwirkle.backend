@@ -42,11 +42,11 @@ namespace Qwirkle.Core.UsesCases
             foreach (var tiles in GetTiles(tilesToArrangeTuple))
                 tilesIds.Add(tiles.Id);
 
-            if (!player.HasTiles(tilesIds)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDontHaveThisTile};
+            if (!player.HasTiles(tilesIds)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDontHaveThisTile };
 
             var tilesToArrange = GetPlayerTiles(tilesIds);
             ArrangeRack(player, tilesToArrange);
-            return new ArrangeRackReturn() { Code = PlayReturnCode.Ok};
+            return new ArrangeRackReturn() { Code = PlayReturnCode.Ok };
         }
 
         public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
@@ -162,7 +162,7 @@ namespace Qwirkle.Core.UsesCases
             {
                 var pointsWonWhenPlayerFinishTheGame = 6;
                 wonPoints += pointsWonWhenPlayerFinishTheGame;
-                if(!simulationMode) _repositoryAdapter.SetGameOver(Game.Id);
+                if (!simulationMode) _repositoryAdapter.SetGameOver(Game.Id);
             }
 
             return new PlayReturn { Code = PlayReturnCode.Ok, Points = wonPoints, GameId = Game.Id, TilesPlayed = tilesPlayed };
@@ -234,19 +234,14 @@ namespace Qwirkle.Core.UsesCases
 
         private Rack PlayTiles(Player player, List<TileOnBoard> tilesToPlay, int points)
         {
+            player.LastTurnPoints = points;
             player.Points += points;
             Game.Board.Tiles.AddRange(tilesToPlay);
             SetNextPlayerTurnToPlay(player);
 
-            // TODO
-#warning todo
-            #region todo
-            var rackPositions = new List<byte>();
-            for (byte i = 0; i < tilesToPlay.Count; i++)
-                rackPositions.Add(i);
-            #endregion
-
-            _repositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
+            var positionsInRack = new List<byte>();
+            for (byte i = 0; i < tilesToPlay.Count; i++) positionsInRack.Add(i);
+            _repositoryAdapter.TilesFromBagToPlayer(player, positionsInRack);
             _repositoryAdapter.TilesFromPlayerToGame(Game.Id, player.Id, tilesToPlay);
             return _repositoryAdapter.GetPlayer(player.Id).Rack;
         }
