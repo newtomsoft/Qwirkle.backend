@@ -9,6 +9,7 @@ namespace Qwirkle.Infra.Repository.Dao
         public int GameId { get; set; }
         public int UserId { get; set; }
         public byte Points { get; set; }
+        public byte LastTurnPoints { get; set; }
         public bool GameTurn { get; set; }
         public byte GamePosition { get; set; }
         public bool LastTurnSkipped { get; set; }

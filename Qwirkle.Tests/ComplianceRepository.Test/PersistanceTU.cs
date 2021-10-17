@@ -81,6 +81,7 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
             Assert.Equal(0, player.GamePosition);
             Assert.False(player.IsTurn);
             Assert.Equal(0, player.Points);
+            Assert.Equal(0, player.LastTurnPoints);
             Assert.Empty(player.Rack.Tiles);
         }
 
@@ -97,15 +98,18 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
         {
             byte points = 10;
             byte position = 2;
+            byte lastTurnPoints = 3;
             var game = Repository.CreateGame(DateTime.Today);
             var player1 = Repository.CreatePlayer(USER1, game.Id);
             player1.Points = points;
+            player1.LastTurnPoints = lastTurnPoints;
             player1.SetTurn(true);
             player1.GamePosition = position;
             Repository.UpdatePlayer(player1);
 
             var playerUpdate = Repository.GetPlayer(player1.Id);
             Assert.Equal(points, playerUpdate.Points);
+            Assert.Equal(lastTurnPoints, playerUpdate.LastTurnPoints);
             Assert.True(playerUpdate.IsTurn);
             Assert.Equal(position, playerUpdate.GamePosition);
         }

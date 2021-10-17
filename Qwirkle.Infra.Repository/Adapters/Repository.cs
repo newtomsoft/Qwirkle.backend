@@ -118,9 +118,7 @@ namespace Qwirkle.Infra.Repository.Adapters
             var tilesToGiveToPlayer = DbContext.TilesOnBag.Where(t => t.GameId == player.GameId).ToList().OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
             DbContext.TilesOnBag.RemoveRange(tilesToGiveToPlayer);
             for (int i = 0; i < tilesToGiveToPlayer.Count; i++)
-            {
                 DbContext.TilesOnPlayer.Add(new TileOnPlayerDao(tilesToGiveToPlayer[i], positionsInRack[i], player.Id));
-            }
             DbContext.SaveChanges();
         }
 
@@ -201,6 +199,7 @@ namespace Qwirkle.Infra.Repository.Adapters
         {
             var playerDao = DbContext.Players.Where(gp => gp.Id == player.Id).FirstOrDefault();
             playerDao.Points = (byte)player.Points;
+            playerDao.LastTurnPoints = (byte) player.LastTurnPoints;
             playerDao.GameTurn = player.IsTurn;
             playerDao.GamePosition = (byte)player.GamePosition;
             playerDao.LastTurnSkipped = player.LastTurnSkipped;
@@ -212,7 +211,7 @@ namespace Qwirkle.Infra.Repository.Adapters
             var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).Include(t => t.Tile).Include(t=>t.Player).ToList();
             var tiles = new List<TileOnPlayer>();
             tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerDaoToEntity(tp)));
-            var player = new Player(playerDao.Id, playerDao.GameId, playerDao.User.UserName, playerDao.GamePosition, playerDao.Points, tiles, playerDao.GameTurn, playerDao.LastTurnSkipped);
+            var player = new Player(playerDao.Id, playerDao.GameId, playerDao.User.UserName, playerDao.GamePosition, playerDao.Points, playerDao.LastTurnPoints, tiles, playerDao.GameTurn, playerDao.LastTurnSkipped);
             return player;
         }
 
