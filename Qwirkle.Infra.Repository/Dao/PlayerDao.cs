@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Qwirkle.Infra.Repository.Dao
 {
@@ -14,7 +15,8 @@ namespace Qwirkle.Infra.Repository.Dao
         public byte GamePosition { get; set; }
         public bool LastTurnSkipped { get; set; }
 
-        public GameDao Game { get; set; }
-        public UserDao User { get; set; }
+        public virtual GameDao Game { get; set; }
+        public virtual UserDao User { get; set; }
+        public virtual List<TileOnPlayerDao> Tiles { get; set; }
     }
 }

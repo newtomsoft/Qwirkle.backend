@@ -81,20 +81,17 @@ namespace Qwirkle.Infra.Repository.Adapters
 
         public Game GetGame(int gameId)
         {
-            var gameDao = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
-            var tilesOnGameDao = DbContext.TilesOnBoard.Where(tb => tb.GameId == gameId).ToList();
-            var tiles = TilesOnBoardDaoToEntity(tilesOnGameDao);
-            var playersDao = DbContext.Players.Where(p => p.GameId == gameId).Include(p=>p.User).ToList();
+            var gameDao = DbContext.Games.Where(g => g.Id == gameId).Include(g => g.Players).ThenInclude(p => p.User).Include(g => g.Players).ThenInclude(p => p.Tiles).ThenInclude(t => t.Tile).Include(g => g.TilesOnBoard).ThenInclude(t => t.Tile).Include(g => g.TilesOnBag).ThenInclude(t => t.Tile).FirstOrDefault();
+            var tilesOnBoard = TilesOnBoardDaoToEntity(gameDao.TilesOnBoard);
             var players = new List<Player>();
-            playersDao.ForEach(player => players.Add(PlayerDaoToPlayer(player)));
-            var tilesOnBagDao = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
+            gameDao.Players.ForEach(player => players.Add(PlayerDaoToPlayerFork(player)));
             var bag = new Bag(gameId);
-            tilesOnBagDao.ForEach(t => bag.Tiles.Add(TileOnBagDaoToEntity(t)));
-            return new Game(gameDao.Id, tiles, players, gameDao.GameOver, bag);
+            gameDao.TilesOnBag.ForEach(t => bag.Tiles.Add(TileOnBagDaoToEntity(t)));
+            return new Game(gameDao.Id, tilesOnBoard, players, gameDao.GameOver, bag);
         }
 
         public Player GetPlayer(int playerId)
-            => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).Include(p=>p.User).FirstOrDefault());
+            => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).FirstOrDefault());
 
         public void UpdatePlayer(Player player)
         {
@@ -150,23 +147,12 @@ namespace Qwirkle.Infra.Repository.Adapters
 
         public void SetGameOver(int gameId)
         {
-            foreach (var player in DbContext.Players.Where(p => p.GameId == gameId))
-                player.GameTurn = false;
-
+            foreach (var player in DbContext.Players.Where(p => p.GameId == gameId)) player.GameTurn = false;
             DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault().GameOver = true;
             DbContext.SaveChanges();
         }
 
-        public List<int> GetLeadersPlayersId(int gameId)
-        {
-            var playersInGame = DbContext.Players.Where(p => p.GameId == gameId).ToList();
-            var maxPoints = playersInGame.Max(p => p.Points);
-            
-            var maxPoints2 = DbContext.Players.Where(p => p.GameId == gameId).Max(p => p.Points);
-            var result = DbContext.Players.Where(p => p.GameId == gameId && p.Points == maxPoints2).Select(p => p.Id).ToList();
-            
-            return playersInGame.Where(p => p.Points == maxPoints).Select(p => p.Id).ToList();
-        }
+        public List<int> GetLeadersPlayersId(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.Points == DbContext.Players.Where(p => p.GameId == gameId).Max(p => p.Points)).Select(p => p.Id).ToList();
 
         public bool IsGameOver(int gameId) => DbContext.Games.Where(g => g.Id == gameId && g.GameOver).Any();
 
@@ -199,7 +185,7 @@ namespace Qwirkle.Infra.Repository.Adapters
         {
             var playerDao = DbContext.Players.Where(gp => gp.Id == player.Id).FirstOrDefault();
             playerDao.Points = (byte)player.Points;
-            playerDao.LastTurnPoints = (byte) player.LastTurnPoints;
+            playerDao.LastTurnPoints = (byte)player.LastTurnPoints;
             playerDao.GameTurn = player.IsTurn;
             playerDao.GamePosition = (byte)player.GamePosition;
             playerDao.LastTurnSkipped = player.LastTurnSkipped;
@@ -208,7 +194,15 @@ namespace Qwirkle.Infra.Repository.Adapters
 
         private Player PlayerDaoToPlayer(PlayerDao playerDao)
         {
-            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).Include(t => t.Tile).Include(t=>t.Player).ToList();
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).Include(t => t.Tile).Include(t => t.Player.User).ToList();
+            var tiles = new List<TileOnPlayer>();
+            tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerDaoToEntity(tp)));
+            var player = new Player(playerDao.Id, playerDao.GameId, playerDao.User?.UserName, playerDao.GamePosition, playerDao.Points, playerDao.LastTurnPoints, tiles, playerDao.GameTurn, playerDao.LastTurnSkipped);
+            return player;
+        }
+        private Player PlayerDaoToPlayerFork(PlayerDao playerDao)
+        {
+            var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).ToList();
             var tiles = new List<TileOnPlayer>();
             tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerDaoToEntity(tp)));
             var player = new Player(playerDao.Id, playerDao.GameId, playerDao.User.UserName, playerDao.GamePosition, playerDao.Points, playerDao.LastTurnPoints, tiles, playerDao.GameTurn, playerDao.LastTurnSkipped);
