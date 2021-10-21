@@ -93,7 +93,7 @@ namespace Qwirkle.Infra.Repository.Adapters
 
         public void UpdatePlayer(Player player)
         {
-            DbContext.Players.Update(PlayerToPlayerDao(player));
+            DbContext.Players.Update(PlayerToPlayerDaoWithoutTile(player));
             DbContext.SaveChanges();
         }
 
@@ -179,7 +179,7 @@ namespace Qwirkle.Infra.Repository.Adapters
             return tiles;
         }
 
-        private PlayerDao PlayerToPlayerDao(Player player) // ! Ne retourne pas les Tiles
+        private PlayerDao PlayerToPlayerDaoWithoutTile(Player player)
         {
             var playerDao = DbContext.Players.Single(gp => gp.Id == player.Id);
             playerDao.Points = (byte)player.Points;
