@@ -54,30 +54,29 @@ namespace Qwirkle.Infra.Repository.Adapters
         public List<string> GetListNamePlayer(int gameId)
         {
             var listName = new List<string>();
-            var listGame = DbContext.Players.Where(p => p.GameId == gameId).ToList();
-            listGame.ForEach(player => listName.Add(DbContext.Users.Where(p => p.Id == player.UserId).Select(p => p.FirstName).FirstOrDefault()));
+            var players = DbContext.Players.Where(p => p.GameId == gameId).ToList();
+            players.ForEach(player => listName.Add(DbContext.Users.Where(u => u.Id == player.UserId).Select(u => u.UserName).FirstOrDefault()));
             return listName;
         }
 
         public string GetPlayerNameTurn(int gameId)
         {
+            var userId2 = DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Include(p => p.User).FirstOrDefault().User.UserName;
+
+            System.Threading.Tasks.Task.Delay(5000);
+
             var userId = DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.UserId).FirstOrDefault();
-            var namePlayerTurn = DbContext.Users.Where(p => p.Id == userId).Select(p => p.FirstName).FirstOrDefault();
+            System.Threading.Tasks.Task.Delay(5000);
+
+            var namePlayerTurn = DbContext.Users.Where(u => u.Id == userId).Select(u => u.UserName).FirstOrDefault();
             return namePlayerTurn;
         }
 
-        public int GetPlayerIdToPlay(int gameId)
-        {
-            var playerId = DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.Id).FirstOrDefault();
-            return playerId;
-        }
+        public int GetPlayerIdToPlay(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.Id).FirstOrDefault();
 
+        public Tile GetTileById(int tileId) => TileDaoToTile(DbContext.Tiles.Single(t => t.Id == tileId));
 
-        public Tile GetTileById(int tileId)
-            => TileDaoToTile(DbContext.Tiles.Where(t => t.Id == tileId).FirstOrDefault());
-
-        public TileOnPlayer GetTileOnPlayerById(int tileId)
-            => TileOnPlayerDaoToEntity(DbContext.TilesOnPlayer.Where(t => t.TileId == tileId).FirstOrDefault());
+        public TileOnPlayer GetTileOnPlayerById(int tileId) => TileOnPlayerDaoToEntity(DbContext.TilesOnPlayer.Single(t => t.TileId == tileId));
 
         public Game GetGame(int gameId)
         {
@@ -90,8 +89,7 @@ namespace Qwirkle.Infra.Repository.Adapters
             return new Game(gameDao.Id, tilesOnBoard, players, gameDao.GameOver, bag);
         }
 
-        public Player GetPlayer(int playerId)
-            => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).FirstOrDefault());
+        public Player GetPlayer(int playerId) => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).FirstOrDefault());
 
         public void UpdatePlayer(Player player)
         {
@@ -103,7 +101,7 @@ namespace Qwirkle.Infra.Repository.Adapters
         {
             for (byte i = 0; i < tilesToArrange.Count; i++)
             {
-                var tile = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == player.Id && tp.TileId == tilesToArrange[i].Id).FirstOrDefault();
+                var tile = DbContext.TilesOnPlayer.Single(tp => tp.PlayerId == player.Id && tp.TileId == tilesToArrange[i].Id);
                 tile.RackPosition = i;
             }
             DbContext.SaveChanges();
@@ -121,7 +119,7 @@ namespace Qwirkle.Infra.Repository.Adapters
 
         public void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles)
         {
-            var game = DbContext.Games.Where(g => g.Id == player.GameId).FirstOrDefault();
+            var game = DbContext.Games.Single(g => g.Id == player.GameId);
             game.LastPlayDate = DateTime.Now;
             var tilesOnPlayer = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(t => t.Id).Contains(t.TileId)).ToList();
             DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayer);
@@ -131,16 +129,16 @@ namespace Qwirkle.Infra.Repository.Adapters
 
         public void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles)
         {
-            var game = DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault();
+            var game = DbContext.Games.Single(g => g.Id == gameId);
             game.LastPlayDate = DateTime.Now;
             tiles.ForEach(t => DbContext.TilesOnBoard.Add(TileToTileOnBoardDao(t, gameId)));
-            tiles.ForEach(t => DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.FirstOrDefault(tp => tp.TileId == t.Id && tp.PlayerId == playerId)));
+            tiles.ForEach(t => DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.Single(tp => tp.TileId == t.Id && tp.PlayerId == playerId)));
             DbContext.SaveChanges();
         }
 
         public void SetPlayerTurn(int playerId)
         {
-            var player = DbContext.Players.Where(p => p.Id == playerId).FirstOrDefault();
+            var player = DbContext.Players.Single(p => p.Id == playerId);
             player.GameTurn = true;
             DbContext.SaveChanges();
         }
@@ -148,7 +146,7 @@ namespace Qwirkle.Infra.Repository.Adapters
         public void SetGameOver(int gameId)
         {
             foreach (var player in DbContext.Players.Where(p => p.GameId == gameId)) player.GameTurn = false;
-            DbContext.Games.Where(g => g.Id == gameId).FirstOrDefault().GameOver = true;
+            DbContext.Games.Single(g => g.Id == gameId).GameOver = true;
             DbContext.SaveChanges();
         }
 
@@ -175,7 +173,7 @@ namespace Qwirkle.Infra.Repository.Adapters
             var tilesModel = DbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
             foreach (var tileModel in tilesModel)
             {
-                var tileOnGame = tilesOnBoard.FirstOrDefault(tb => tb.TileId == tileModel.Id);
+                var tileOnGame = tilesOnBoard.Single(tb => tb.TileId == tileModel.Id);
                 tiles.Add(new TileOnBoard(tileModel.Id, tileModel.Color, tileModel.Form, new CoordinatesInGame(tileOnGame.PositionX, tileOnGame.PositionY)));
             }
             return tiles;
@@ -183,7 +181,7 @@ namespace Qwirkle.Infra.Repository.Adapters
 
         private PlayerDao PlayerToPlayerDao(Player player) // ! Ne retourne pas les Tiles
         {
-            var playerDao = DbContext.Players.Where(gp => gp.Id == player.Id).FirstOrDefault();
+            var playerDao = DbContext.Players.Single(gp => gp.Id == player.Id);
             playerDao.Points = (byte)player.Points;
             playerDao.LastTurnPoints = (byte)player.LastTurnPoints;
             playerDao.GameTurn = player.IsTurn;
