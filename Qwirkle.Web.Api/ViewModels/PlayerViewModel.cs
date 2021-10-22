@@ -1,7 +1,6 @@
-﻿namespace Qwirkle.Web.Api.VueModels
+﻿namespace Qwirkle.Web.Api.ViewModels;
+
+public class PlayerViewModel
 {
-    public class PlayerViewModel
-    {
-        public int Id { get; set; }
-    }
+    public int Id { get; set; }
 }

@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Design;
 using Newtomsoft.EntityFramework.Core;
 
-namespace Qwirkle.Infra.Repository
+namespace Qwirkle.Infra.Repository;
+
+public class DefaultDesignTimeDbContextFactory : IDesignTimeDbContextFactory<DefaultDbContext>
 {
-    public class DefaultDesignTimeDbContextFactory : IDesignTimeDbContextFactory<DefaultDbContext>
-    {
-        public DefaultDbContext CreateDbContext(string[] args) => EntityFrameworkTools<DefaultDbContext>.CreateDbContext();
-    }
+    public DefaultDbContext CreateDbContext(string[] args) => EntityFrameworkTools<DefaultDbContext>.CreateDbContext();
 }

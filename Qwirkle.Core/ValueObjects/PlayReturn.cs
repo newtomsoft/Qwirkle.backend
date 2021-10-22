@@ -1,9 +1,8 @@
 ﻿using Qwirkle.Core.Enums;
 
-namespace Qwirkle.Core.ValueObjects
+namespace Qwirkle.Core.ValueObjects;
+
+public struct ArrangeRackReturn
 {
-    public struct ArrangeRackReturn
-    {
-        public PlayReturnCode Code { get; set; }
-    }
+    public PlayReturnCode Code { get; set; }
 }

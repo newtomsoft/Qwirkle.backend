@@ -1,12 +1,11 @@
-﻿namespace Qwirkle.Core.Enums
+﻿namespace Qwirkle.Core.Enums;
+
+public enum TileForm
 {
-    public enum TileForm
-    {
-        Circle = 1,
-        Square,
-        Diamond,
-        Clover,
-        FourPointStar,
-        EightPointStar,
-    }
+    Circle = 1,
+    Square,
+    Diamond,
+    Clover,
+    FourPointStar,
+    EightPointStar,
 }

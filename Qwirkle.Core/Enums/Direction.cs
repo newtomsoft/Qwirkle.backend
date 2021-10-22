@@ -1,10 +1,9 @@
-﻿namespace Qwirkle.Core.Enums
+﻿namespace Qwirkle.Core.Enums;
+
+public enum Direction
 {
-    public enum Direction
-    {
-        Right = 1,
-        Bottom,
-        Left,
-        Top,
-    }
+    Right = 1,
+    Bottom,
+    Left,
+    Top,
 }

@@ -35,10 +35,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0-rc.2.21480.5" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0-rc.2.21480.5" />
-    <PackageReference Include="Newtomsoft.EntityFramework" Version="0.4.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Newtomsoft.Libraries\Newtomsoft.EntityFramework\Newtomsoft.EntityFramework.csproj" />
     <ProjectReference Include="..\Qwirkle.Core\Qwirkle.Core.csproj" />
   </ItemGroup>
 

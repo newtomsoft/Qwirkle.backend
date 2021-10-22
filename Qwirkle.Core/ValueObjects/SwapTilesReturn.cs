@@ -1,10 +1,9 @@
 ﻿using Qwirkle.Core.Enums;
 
-namespace Qwirkle.Core.ValueObjects
+namespace Qwirkle.Core.ValueObjects;
+
+public struct SkipTurnReturn
 {
-    public struct SkipTurnReturn
-    {
-        public int GameId { get; set; }
-        public PlayReturnCode Code { get; set; }
-    }
+    public int GameId { get; set; }
+    public PlayReturnCode Code { get; set; }
 }

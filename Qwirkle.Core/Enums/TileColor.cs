@@ -1,12 +1,11 @@
-﻿namespace Qwirkle.Core.Enums
+﻿namespace Qwirkle.Core.Enums;
+
+public enum TileColor
 {
-    public enum TileColor
-    {
-        Green = 1,
-        Blue,
-        Purple,
-        Red,
-        Orange,
-        Yellow,
-    }
+    Green = 1,
+    Blue,
+    Purple,
+    Red,
+    Orange,
+    Yellow,
 }

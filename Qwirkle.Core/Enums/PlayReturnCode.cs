@@ -1,11 +1,10 @@
-﻿namespace Qwirkle.Core.Enums
+﻿namespace Qwirkle.Core.Enums;
+
+public enum PlayReturnCode
 {
-    public enum PlayReturnCode
-    {
-        Ok = 1,
-        NotPlayerTurn,
-        PlayerDontHaveThisTile,
-        TileIsolated,
-        TilesDontMakedValidRow,
-    }
+    Ok = 1,
+    NotPlayerTurn,
+    PlayerDontHaveThisTile,
+    TileIsolated,
+    TilesDontMakedValidRow,
 }
