@@ -68,6 +68,7 @@ public class CoreUseCase
         playReturn.NewRack = PlayTiles(player, tilesToPlay, playReturn.Points);
         return playReturn;
     }
+
     public PlayReturn TryPlayTilesSimulation(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
     {
         Player player = GetPlayer(playerId);
@@ -196,6 +197,7 @@ public class CoreUseCase
     public string GetPlayerNameTurn(int gameId) => _repositoryAdapter.GetPlayerNameTurn(gameId);
     public int GetPlayerIdToPlay(int gameId) => _repositoryAdapter.GetPlayerIdToPlay(gameId);
     public List<int> GetListGameIDWithPlayer() => _repositoryAdapter.GetListGameIDWithPlayer();
+    public List<int> GetUsersId() => _repositoryAdapter.GetUsersId();
 
     public List<string> GetListNamePlayer(int gameId) => _repositoryAdapter.GetListNamePlayer(gameId);
     public Game GetGame(int GameId) => _repositoryAdapter.GetGame(GameId);

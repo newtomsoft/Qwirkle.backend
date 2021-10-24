@@ -45,11 +45,12 @@ public class Repository : IRepository
         DbContext.SaveChanges();
         return GameDaoToGame(game);
     }
-    public List<int> GetListGameIDWithPlayer()
-    {
-        var listGame = DbContext.Players.Select(p => p.GameId).Distinct().ToList();
-        return listGame;
-    }
+    public List<int> GetListGameIDWithPlayer() => DbContext.Players.Select(p => p.GameId).Distinct().ToList();
+
+    public List<int> GetUsersId() => DbContext.Users.Select(u => u.Id).ToList();
+
+    public List<int> GetUserGames(int userId) => DbContext.Players.Where(p=> p.UserId == userId).Select(p => p.GameId).ToList();
+
     public List<string> GetListNamePlayer(int gameId)
     {
         var listName = new List<string>();
