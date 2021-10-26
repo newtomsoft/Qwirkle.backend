@@ -79,6 +79,7 @@ public class Repository : IRepository
     }
 
     public Player GetPlayer(int playerId) => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).FirstOrDefault());
+    public Player GetPlayer(int gameId, int userId) => PlayerDaoToPlayer(DbContext.Players.Where(p => p.GameId == gameId && p.UserId == userId).FirstOrDefault());
 
     public void UpdatePlayer(Player player)
     {
@@ -211,5 +212,7 @@ public class Repository : IRepository
     private static TileOnBag TileOnBagDaoToEntity(TileOnBagDao tb) => new(tb.Id, tb.Tile.Color, tb.Tile.Form);
 
     private TileOnPlayerDao TileToTileOnPlayerModel(TileOnBag tile, int playerId) => new() { Id = tile.Id, TileId = tile.Id, PlayerId = playerId };
+
+
 }
 

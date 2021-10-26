@@ -42,6 +42,13 @@ public class GamesController : ControllerBase
         return new ObjectResult(game);
     }
 
+    [HttpPost("ListGamesByUserId/{userId}")]
+    public ActionResult<int> GetGamesByUserId(int userId)
+    {
+        var gamesId = CoreUseCase.GetUserGames(userId);
+        return new ObjectResult(gamesId);
+    }
+
     [HttpGet("ListGameId")]
     public ActionResult<int> GetListGameIDWithPlayer()
     {
@@ -63,10 +70,18 @@ public class GamesController : ControllerBase
         var listName = CoreUseCase.GetListNamePlayer(gameId);
         return new ObjectResult(listName);
     }
+
     [HttpGet("Players/{playerId}")]
     public ActionResult<int> GetPlayer(int playerId)
     {
         var player = CoreUseCase.GetPlayer(playerId);
+        return new ObjectResult(player);
+    }
+
+    [HttpGet("Players/{gameId}/{userId}")]
+    public ActionResult<int> GetPlayer(int gameId, int userId)
+    {
+        var player = CoreUseCase.GetPlayer(gameId, userId);
         return new ObjectResult(player);
     }
 

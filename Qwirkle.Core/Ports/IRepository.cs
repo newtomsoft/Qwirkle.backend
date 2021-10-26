@@ -13,6 +13,7 @@ public interface IRepository
     void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles);
     Game GetGame(int gameId);
     Player GetPlayer(int playerId);
+    Player GetPlayer(int gameId, int userId);
     string GetPlayerNameTurn(int gameId);
     int GetPlayerIdToPlay(int gameId);
     Tile GetTileById(int tileId);
@@ -26,4 +27,5 @@ public interface IRepository
     bool IsGameOver(int gameId);
     void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange);
     List<int> GetUsersId();
+    List<int> GetUserGames(int userId);
 }

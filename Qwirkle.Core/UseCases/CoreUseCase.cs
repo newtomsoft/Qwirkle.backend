@@ -81,6 +81,8 @@ public class CoreUseCase
         return GetPlayReturn(tilesToPlay, player, true);
     }
 
+
+
     public SwapTilesReturn TrySwapTiles(int playerId, List<int> tilesIds)
     {
         Player player = GetPlayer(playerId);
@@ -194,10 +196,13 @@ public class CoreUseCase
     }
 
     public Player GetPlayer(int playerId) => _repositoryAdapter.GetPlayer(playerId);
+    public Player GetPlayer(int gameId, int userId) => _repositoryAdapter.GetPlayer(gameId, userId);
+
     public string GetPlayerNameTurn(int gameId) => _repositoryAdapter.GetPlayerNameTurn(gameId);
     public int GetPlayerIdToPlay(int gameId) => _repositoryAdapter.GetPlayerIdToPlay(gameId);
     public List<int> GetListGameIDWithPlayer() => _repositoryAdapter.GetListGameIDWithPlayer();
     public List<int> GetUsersId() => _repositoryAdapter.GetUsersId();
+    public List<int> GetUserGames(int userId) => _repositoryAdapter.GetUserGames(userId);
 
     public List<string> GetListNamePlayer(int gameId) => _repositoryAdapter.GetListNamePlayer(gameId);
     public Game GetGame(int GameId) => _repositoryAdapter.GetGame(GameId);
