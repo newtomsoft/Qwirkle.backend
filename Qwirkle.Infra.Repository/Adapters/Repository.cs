@@ -65,7 +65,7 @@ public class Repository : IRepository
 
     public Tile GetTileById(int tileId) => TileDaoToTile(DbContext.Tiles.Single(t => t.Id == tileId));
 
-    public TileOnPlayer GetTileOnPlayerById(int tileId) => TileOnPlayerDaoToEntity(DbContext.TilesOnPlayer.Single(t => t.TileId == tileId));
+    public TileOnPlayer GetTileOnPlayerById(int playerId, int tileId) => TileOnPlayerDaoToEntity(DbContext.TilesOnPlayer.Single(t => t.PlayerId == playerId && t.TileId == tileId));
 
     public Game GetGame(int gameId)
     {

@@ -44,7 +44,7 @@ public class CoreUseCase
 
         if (!player.HasTiles(tilesIds)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDontHaveThisTile };
 
-        var tilesToArrange = GetPlayerTiles(tilesIds);
+        var tilesToArrange = GetPlayerTiles(playerId, tilesIds);
         ArrangeRack(player, tilesToArrange);
         return new ArrangeRackReturn() { Code = PlayReturnCode.Ok };
     }
@@ -90,7 +90,7 @@ public class CoreUseCase
         if (!player.IsTurn) return new SwapTilesReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
         if (!player.HasTiles(tilesIds)) return new SwapTilesReturn { GameId = Game.Id, Code = PlayReturnCode.PlayerDontHaveThisTile };
 
-        List<TileOnPlayer> tilesToSwap = GetPlayerTiles(tilesIds);
+        List<TileOnPlayer> tilesToSwap = GetPlayerTiles(playerId, tilesIds);
         var swapTilesReturn = SwapTiles(player, tilesToSwap);
         return swapTilesReturn;
     }
@@ -184,12 +184,12 @@ public class CoreUseCase
         return tilesOnBoard;
     }
 
-    private List<TileOnPlayer> GetPlayerTiles(List<int> tilesIds)
+    private List<TileOnPlayer> GetPlayerTiles(int playerId, List<int> tilesIds)
     {
         var tilesOnPlayer = new List<TileOnPlayer>();
         foreach (var tileId in tilesIds)
         {
-            TileOnPlayer tile = _repositoryAdapter.GetTileOnPlayerById(tileId);
+            TileOnPlayer tile = _repositoryAdapter.GetTileOnPlayerById(playerId, tileId);
             tilesOnPlayer.Add(tile);
         }
         return tilesOnPlayer;
