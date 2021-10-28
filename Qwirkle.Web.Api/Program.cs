@@ -14,16 +14,16 @@ using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.{environmentName}.json"), optional: true); //When start with debugging
-builder.Configuration.AddJsonFile($"appsettings.{environmentName}.json", optional: true); //When start without debugging
+builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.json"), optional: true);
+builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.{environmentName}.json"), optional: true);
 builder.Services.AddCors(options =>
-    {
-        options.AddPolicy("CorsPolicy", builder => builder
-        .SetIsOriginAllowed((host) => true)
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials());
-    });
+{
+    options.AddPolicy("CorsPolicy", builder => builder
+    .SetIsOriginAllowed((host) => true)
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
+});
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddScoped<CoreUseCase>();
@@ -53,7 +53,7 @@ app.UseCors("CorsPolicy");
 #if DEBUG
 app.UseDeveloperExceptionPage();
 #else
-                    app.UseExceptionHandler("/Home/Error");
+app.UseExceptionHandler("/Home/Error");
 #endif
 
 app.UseHttpsRedirection();
@@ -68,5 +68,3 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
-
-
