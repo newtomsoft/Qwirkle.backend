@@ -1,8 +1,4 @@
-﻿using Qwirkle.Core.Entities;
-using System;
-using System.Collections.Generic;
-
-namespace Qwirkle.Core.Ports;
+﻿namespace Qwirkle.Core.Ports;
 public interface IRepository
 {
     Game CreateGame(DateTime date);

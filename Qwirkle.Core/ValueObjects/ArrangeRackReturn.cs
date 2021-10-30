@@ -1,8 +1,4 @@
-﻿using Qwirkle.Core.Entities;
-using Qwirkle.Core.Enums;
-using System.Collections.Generic;
-
-namespace Qwirkle.Core.ValueObjects;
+﻿namespace Qwirkle.Core.ValueObjects;
 
 public struct PlayReturn
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Qwirkle.Core.Entities;
+﻿namespace Qwirkle.Core.Entities;
 public class Player
 {
     private bool _gameTurn;
@@ -43,21 +39,21 @@ public class Player
     {
         var tiles = Rack.Tiles;
         int maxSameColor = 0;
-        int maxSameForm = 0;
+        int maxSameShape = 0;
         for (int i = 0; i < tiles.Count; i++)
         {
             int sameColor = 0;
-            int sameForm = 0;
+            int sameShape = 0;
             for (int j = i + 1; j < tiles.Count; j++)
             {
-                if (tiles[i].Color == tiles[j].Color && tiles[i].Form != tiles[j].Form)
+                if (tiles[i].Color == tiles[j].Color && tiles[i].Shape != tiles[j].Shape)
                     sameColor++;
-                if (tiles[i].Color != tiles[j].Color && tiles[i].Form == tiles[j].Form)
-                    sameForm++;
+                if (tiles[i].Color != tiles[j].Color && tiles[i].Shape == tiles[j].Shape)
+                    sameShape++;
             }
             maxSameColor = Math.Max(maxSameColor, sameColor);
-            maxSameForm = Math.Max(maxSameForm, sameForm);
+            maxSameShape = Math.Max(maxSameShape, sameShape);
         }
-        return Math.Max(maxSameColor, maxSameForm) + 1;
+        return Math.Max(maxSameColor, maxSameShape) + 1;
     }
 }

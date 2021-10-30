@@ -54,9 +54,9 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
         {
             const int NUMBER_OF_SAME_TILE = 3;
             for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
-                foreach (TileColor color in (TileColor[])Enum.GetValues(typeof(TileColor)))
-                    foreach (TileForm form in (TileForm[])Enum.GetValues(typeof(TileForm)))
-                        DbContext.Tiles.Add(new TileDao { Color = color, Form = form });
+                foreach (var color in (TileColor[])Enum.GetValues(typeof(TileColor)))
+                    foreach (var shape in (TileShape[])Enum.GetValues(typeof(TileShape)))
+                        DbContext.Tiles.Add(new TileDao { Color = color, Shape = shape });
 
             DbContext.SaveChanges();
         }

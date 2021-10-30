@@ -1,28 +1,26 @@
-﻿using Qwirkle.Core.Enums;
-
-namespace Qwirkle.Core.Entities;
+﻿namespace Qwirkle.Core.Entities;
 
 public class Tile
 {
     public int Id { get; }
     public TileColor Color { get; }
-    public TileForm Form { get; }
+    public TileShape Shape { get; }
 
     public Tile(Tile tile)
     {
         Id = tile.Id;
         Color = tile.Color;
-        Form = tile.Form;
+        Shape = tile.Shape;
     }
 
-    public Tile(int id, TileColor color, TileForm form)
+    public Tile(int id, TileColor color, TileShape shape)
     {
         Id = id;
         Color = color;
-        Form = form;
+        Shape = shape;
     }
 
-    public Tile(TileColor color, TileForm form) : this(0, color, form)
+    public Tile(TileColor color, TileShape shape) : this(0, color, shape)
     { }
 
     public Tile(int id)
@@ -30,16 +28,16 @@ public class Tile
         Id = id;
     }
 
-    public bool HaveFormOrColorOnlyEqual(Tile tile)
+    public bool OnlyShapeOrColorEqual(Tile tile)
     {
-        if (Color == tile.Color && Form != tile.Form || Color != tile.Color && Form == tile.Form)
+        if (Color == tile.Color && Shape != tile.Shape || Color != tile.Color && Shape == tile.Shape)
             return true;
         return false;
     }
 
     public string GetNameImage()
     {
-        string name = Color.ToString() + Form.ToString() + ".png";
+        string name = Color.ToString() + Shape.ToString() + ".png";
         return name;
     }
 }

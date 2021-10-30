@@ -1,13 +1,11 @@
 ﻿namespace Qwirkle.Core.ValueObjects;
 
-using Abscissa = System.SByte;
-using Ordinate = System.SByte;
 public record CoordinatesInGame
 {
     public Abscissa X { get; }
     public Ordinate Y { get; }
 
-    public CoordinatesInGame(sbyte x, sbyte y)
+    public CoordinatesInGame(Abscissa x, Ordinate y)
     {
         X = x;
         Y = y;

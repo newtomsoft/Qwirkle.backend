@@ -1,8 +1,4 @@
-﻿using Qwirkle.Core.Entities;
-using Qwirkle.Core.Enums;
-using System.Collections.Generic;
-
-namespace Qwirkle.Core.ExtensionMethods;
+﻿namespace Qwirkle.Core.ExtensionMethods;
 
 public static class TilesOnBoardExtensionsMethods
 {
@@ -26,11 +22,11 @@ public static class TilesOnBoardExtensionsMethods
         return result;
     }
 
-    public static bool AreRowByTileRespectsRules(this List<TileOnBoard> tiles)
+    public static bool FormCompliantRow(this List<TileOnBoard> tiles)
     {
         for (int i = 0; i < tiles.Count; i++)
             for (int j = i + 1; j < tiles.Count; j++)
-                if (!tiles[i].HaveFormOrColorOnlyEqual(tiles[j])) return false;
+                if (!tiles[i].OnlyShapeOrColorEqual(tiles[j])) return false;
 
         return true;
     }

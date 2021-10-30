@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Qwirkle.Core.Entities;
+﻿namespace Qwirkle.Core.Entities;
 
 public class Bag
 {

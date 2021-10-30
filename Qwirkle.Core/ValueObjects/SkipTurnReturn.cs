@@ -1,7 +1,4 @@
-﻿using Qwirkle.Core.Entities;
-using Qwirkle.Core.Enums;
-
-namespace Qwirkle.Core.ValueObjects;
+﻿namespace Qwirkle.Core.ValueObjects;
 
 public struct SwapTilesReturn
 {

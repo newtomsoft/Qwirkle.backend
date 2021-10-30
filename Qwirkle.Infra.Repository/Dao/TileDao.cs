@@ -7,6 +7,6 @@ namespace Qwirkle.Infra.Repository.Dao;
 public class TileDao
 {
     public int Id { get; set; }
-    public TileForm Form { get; set; }
+    public TileShape Shape { get; set; }
     public TileColor Color { get; set; }
 }

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Qwirkle.Core.Entities;
+﻿namespace Qwirkle.Core.Entities;
 
 public class Board
 {

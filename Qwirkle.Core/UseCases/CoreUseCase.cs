@@ -1,13 +1,4 @@
-﻿using Qwirkle.Core.Entities;
-using Qwirkle.Core.Enums;
-using Qwirkle.Core.ExtensionMethods;
-using Qwirkle.Core.Ports;
-using Qwirkle.Core.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Qwirkle.Core.UsesCases;
+﻿namespace Qwirkle.Core.UsesCases;
 
 public class CoreUseCase
 {
@@ -35,7 +26,7 @@ public class CoreUseCase
         return Game.Players;
     }
 
-    public ArrangeRackReturn TryArrangeRack(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesToArrangeTuple)
+    public ArrangeRackReturn TryArrangeRack(int playerId, List<(int tileId, Abscissa x, Ordinate y)> tilesToArrangeTuple)
     {
         Player player = GetPlayer(playerId);
         var tilesIds = new List<int>();
@@ -49,7 +40,7 @@ public class CoreUseCase
         return new ArrangeRackReturn() { Code = PlayReturnCode.Ok };
     }
 
-    public PlayReturn TryPlayTiles(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
+    public PlayReturn TryPlayTiles(int playerId, List<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay)
     {
         Player player = GetPlayer(playerId);
         if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn, GameId = player.GameId };
@@ -69,7 +60,7 @@ public class CoreUseCase
         return playReturn;
     }
 
-    public PlayReturn TryPlayTilesSimulation(int playerId, List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
+    public PlayReturn TryPlayTilesSimulation(int playerId, List<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay)
     {
         Player player = GetPlayer(playerId);
         var tilesToPlay = GetTiles(tilesTupleToPlay);
@@ -80,8 +71,6 @@ public class CoreUseCase
         Game = GetGame(player.GameId);
         return GetPlayReturn(tilesToPlay, player, true);
     }
-
-
 
     public SwapTilesReturn TrySwapTiles(int playerId, List<int> tilesIds)
     {
@@ -171,7 +160,7 @@ public class CoreUseCase
         return new PlayReturn { Code = PlayReturnCode.Ok, Points = wonPoints, GameId = Game.Id, TilesPlayed = tilesPlayed };
     }
 
-    private List<TileOnBoard> GetTiles(List<(int tileId, sbyte x, sbyte y)> tilesTupleToPlay)
+    private List<TileOnBoard> GetTiles(List<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay)
     {
         var tilesOnBoard = new List<TileOnBoard>();
         foreach (var (TileId, X, Y) in tilesTupleToPlay)
@@ -327,7 +316,7 @@ public class CoreUseCase
         var tilesLeftConsecutive = tilesLeft.FirstConsecutives(Direction.Left, min);
         allTilesAlongReferenceTiles.AddRange(tilesLeftConsecutive);
 
-        if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
+        if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.FormCompliantRow())
             return 0;
 
         return allTilesAlongReferenceTiles.Count != TILES_NUMBER_FOR_A_QWIRKLE ? allTilesAlongReferenceTiles.Count : POINTS_FOR_A_QWIRKLE;
@@ -348,7 +337,7 @@ public class CoreUseCase
         var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
         allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
 
-        if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.AreRowByTileRespectsRules())
+        if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.FormCompliantRow())
             return 0;
 
         return allTilesAlongReferenceTiles.Count != TILES_NUMBER_FOR_A_QWIRKLE ? allTilesAlongReferenceTiles.Count : POINTS_FOR_A_QWIRKLE;

@@ -1,6 +1,6 @@
 ﻿namespace Qwirkle.Core.Enums;
 
-public enum TileForm
+public enum TileShape
 {
     Circle = 1,
     Square,

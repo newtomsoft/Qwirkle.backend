@@ -54,9 +54,9 @@ namespace Qwirkle.Core.Tests
             const int NUMBER_OF_SAME_TILE = 3;
             int id = 0;
             for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
-                foreach (TileColor color in (TileColor[])Enum.GetValues(typeof(TileColor)))
-                    foreach (TileForm form in (TileForm[])Enum.GetValues(typeof(TileForm)))
-                        dbContext.Tiles.Add(new TileDao { Id = ++id, Color = color, Form = form });
+                foreach (var color in (TileColor[])Enum.GetValues(typeof(TileColor)))
+                    foreach (var shape in (TileShape[])Enum.GetValues(typeof(TileShape)))
+                        dbContext.Tiles.Add(new TileDao { Id = ++id, Color = color, Shape = shape });
 
             dbContext.SaveChanges();
         }
