@@ -1,14 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
-using Qwirkle.Core.Entities;
-using Qwirkle.Core.Enums;
-using Qwirkle.Core.UsesCases;
-using Qwirkle.SignalR;
-using Qwirkle.Web.Api.ViewModels;
-using System.Collections.Generic;
-
-namespace Qwirkle.Web.Api.Controllers;
+﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Route("Games")]

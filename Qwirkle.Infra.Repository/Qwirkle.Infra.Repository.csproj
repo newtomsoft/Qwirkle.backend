@@ -9,8 +9,11 @@
 
   <ItemGroup>
     <Compile Remove="Images\**" />
+    <Compile Remove="Migrations\Sqlite\**" />
     <EmbeddedResource Remove="Images\**" />
+    <EmbeddedResource Remove="Migrations\Sqlite\**" />
     <None Remove="Images\**" />
+    <None Remove="Migrations\Sqlite\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,7 +57,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Migrations\Sqlite\" />
   </ItemGroup>
 
 </Project>

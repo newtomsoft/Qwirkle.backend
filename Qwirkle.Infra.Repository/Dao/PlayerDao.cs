@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Qwirkle.Infra.Repository.Dao;
+﻿namespace Qwirkle.Infra.Repository.Dao;
 
 [Table("Player")]
 public class PlayerDao

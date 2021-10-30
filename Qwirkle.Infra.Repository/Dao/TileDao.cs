@@ -1,7 +1,4 @@
-﻿using Qwirkle.Core.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Qwirkle.Infra.Repository.Dao;
+﻿namespace Qwirkle.Infra.Repository.Dao;
 
 [Table("Tile")]
 public class TileDao
