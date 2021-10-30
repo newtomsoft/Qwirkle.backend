@@ -1,9 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Qwirkle.Infra.Repository;
-using System;
-
-namespace Qwirkle.Core.ComplianceRepository.Tests
+﻿namespace ComplianceRepository.Test
 {
     public class ConnectionFactory : IDisposable
     {
