@@ -150,7 +150,7 @@ public class CoreUseCase
         int wonPoints = CountTilesMakedValidRow(tilesPlayed);
         if (wonPoints == 0) return new PlayReturn { Code = PlayReturnCode.TilesDontMakedValidRow, GameId = Game.Id };
 
-        if (Game.Bag.Tiles.Count == 0 && tilesPlayed.Count == player.Rack.Tiles.Count)
+        if (Game.Bag?.Tiles.Count == 0 && tilesPlayed.Count == player.Rack.Tiles.Count)
         {
             var pointsWonWhenPlayerFinishTheGame = 6;
             wonPoints += pointsWonWhenPlayerFinishTheGame;
