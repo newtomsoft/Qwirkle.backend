@@ -12,10 +12,8 @@ public class GetPlayPointsShould
     public void ReturnNumberOfTilesWhenGameIsEmptyAndTilesMakeRow()
     {
         UseCase.Game = new Game(1, new List<TileOnBoard>(), new List<Player>(), false);
-        UseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileShape.Circle, new CoordinatesInGame(1, 5)) }, null).Points.ShouldBeGreaterThan(0);
-        UseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileShape.Circle, new CoordinatesInGame(13, 69)), new TileOnBoard(TileColor.Purple, TileShape.Circle, new CoordinatesInGame(12, 69)) }, null).Points.ShouldBeGreaterThan(0);
         UseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileShape.Circle, new CoordinatesInGame(1, 5)) }, null).Points.ShouldBe(1);
-        UseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileShape.Circle, new CoordinatesInGame(13, 69)), new TileOnBoard(TileColor.Purple, TileShape.Circle, new CoordinatesInGame(12, 69)) }, null).Points.ShouldBeGreaterThan(2);
+        UseCase.GetPlayReturn(new List<TileOnBoard> { new TileOnBoard(TileColor.Blue, TileShape.Circle, new CoordinatesInGame(13, 69)), new TileOnBoard(TileColor.Purple, TileShape.Circle, new CoordinatesInGame(12, 69)) }, null).Points.ShouldBe(2);
     }
 
     [Fact]
