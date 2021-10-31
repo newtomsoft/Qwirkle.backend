@@ -30,7 +30,7 @@ public class Repository : IRepository
 
     public Game CreateGame(DateTime date)
     {
-        var game = new GameDao { CreatDate = date.ToUniversalTime() };
+        var game = new GameDao { CreatDate = date };
         DbContext.Games.Add(game);
         DbContext.SaveChanges();
         return GameDaoToGame(game);
@@ -101,7 +101,7 @@ public class Repository : IRepository
     {
         var game = DbContext.Games.Single(g => g.Id == player.GameId);
 
-        game.LastPlayDate = DateTime.Now.ToUniversalTime();
+        game.LastPlayDate = DateTime.UtcNow;
 
         var tilesOnPlayer = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(t => t.Id).Contains(t.TileId)).ToList();
         DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayer);
@@ -112,7 +112,7 @@ public class Repository : IRepository
     public void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles)
     {
         var game = DbContext.Games.Single(g => g.Id == gameId);
-        game.LastPlayDate = DateTime.Now.ToUniversalTime();
+        game.LastPlayDate = DateTime.UtcNow;
         tiles.ForEach(t => DbContext.TilesOnBoard.Add(TileToTileOnBoardDao(t, gameId)));
         tiles.ForEach(t => DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.Single(tp => tp.TileId == t.Id && tp.PlayerId == playerId)));
         DbContext.SaveChanges();
