@@ -17,7 +17,7 @@ public class CoreUseCase
 
     public List<Player> CreateGame(List<int> usersIds)
     {
-        Game = _repositoryAdapter.CreateGame(DateTime.Now);
+        Game = _repositoryAdapter.CreateGame(DateTime.UtcNow);
         CreatePlayers(usersIds);
         CreateTiles();
         DealTilesToPlayers();

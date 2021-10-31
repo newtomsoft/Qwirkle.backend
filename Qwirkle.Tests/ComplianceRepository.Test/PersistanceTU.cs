@@ -46,7 +46,7 @@ namespace Qwirkle.Core.ComplianceRepository.Tests
 
         private void AddGame()
         {
-            DbContext.Games.Add(new GameDao { CreatDate = DateTime.Now });
+            DbContext.Games.Add(new GameDao { CreatDate = DateTime.UtcNow});
             DbContext.SaveChanges();
         }
 
