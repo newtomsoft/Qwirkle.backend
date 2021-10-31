@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Qwirkle.Infra.Repository.Dao;
+﻿namespace Qwirkle.Infra.Repository.Dao;
 
 [Table("TileOnBoard")]
 public class TileOnBoardDao

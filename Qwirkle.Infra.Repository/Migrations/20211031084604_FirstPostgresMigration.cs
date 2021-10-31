@@ -1,6 +1,10 @@
+<<<<<<< HEAD:Qwirkle.Infra.Repository/Migrations/20211031084604_FirstPostgresMigration.cs
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+=======
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+>>>>>>> 7667b4821d1ddc82f50431964dabe6af2b0173be:Qwirkle.Infra.Repository/Migrations/20211022122951_FirstMigration.cs
 
 #nullable disable
 

@@ -1,14 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Qwirkle.Core.Entities;
-using Qwirkle.Core.Enums;
-using Qwirkle.Core.Ports;
-using Qwirkle.Core.ValueObjects;
-using Qwirkle.Infra.Repository.Dao;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Qwirkle.Infra.Repository.Adapters;
+﻿namespace Qwirkle.Infra.Repository.Adapters;
 public class Repository : IRepository
 {
     private DefaultDbContext DbContext { get; }
@@ -40,7 +30,7 @@ public class Repository : IRepository
 
     public Game CreateGame(DateTime date)
     {
-        var game = new GameDao { CreatDate = date };
+        var game = new GameDao { CreatDate = date.ToUniversalTime() };
         DbContext.Games.Add(game);
         DbContext.SaveChanges();
         return GameDaoToGame(game);
@@ -110,7 +100,11 @@ public class Repository : IRepository
     public void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles)
     {
         var game = DbContext.Games.Single(g => g.Id == player.GameId);
+<<<<<<< HEAD
         game.LastPlayDate = DateTime.UtcNow;
+=======
+        game.LastPlayDate = DateTime.Now.ToUniversalTime();
+>>>>>>> 7667b4821d1ddc82f50431964dabe6af2b0173be
         var tilesOnPlayer = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(t => t.Id).Contains(t.TileId)).ToList();
         DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayer);
         tilesOnPlayer.ForEach(tp => DbContext.TilesOnBag.Add(TileOnPlayerDaoToTileOnBagDao(tp, player.GameId)));
@@ -120,7 +114,11 @@ public class Repository : IRepository
     public void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles)
     {
         var game = DbContext.Games.Single(g => g.Id == gameId);
+<<<<<<< HEAD
         game.LastPlayDate = DateTime.UtcNow;
+=======
+        game.LastPlayDate = DateTime.Now.ToUniversalTime();
+>>>>>>> 7667b4821d1ddc82f50431964dabe6af2b0173be
         tiles.ForEach(t => DbContext.TilesOnBoard.Add(TileToTileOnBoardDao(t, gameId)));
         tiles.ForEach(t => DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.Single(tp => tp.TileId == t.Id && tp.PlayerId == playerId)));
         DbContext.SaveChanges();
