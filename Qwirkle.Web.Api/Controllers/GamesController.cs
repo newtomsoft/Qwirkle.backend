@@ -2,7 +2,6 @@
 
 [ApiController]
 [Route("Games")]
-
 public class GamesController : ControllerBase
 {
     private readonly IHubContext<HubQwirkle> _hubContextQwirkle;
