@@ -153,7 +153,7 @@ public class GamesController : ControllerBase
         return new ObjectResult(skipTurnReturn);
     }
 
-    [HttpPost("Winners")]
+    [HttpPost("Winners/")]
     public ActionResult<int> Winners(List<int> gamesId)
     {
         int gameId = gamesId[0];

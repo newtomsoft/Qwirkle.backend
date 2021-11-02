@@ -45,8 +45,8 @@ public class Repository : IRepository
     public List<string> GetListNamePlayer(int gameId)
     {
         var listName = new List<string>();
-        var players = DbContext.Players.Where(p => p.GameId == gameId).ToList();
-        players.ForEach(player => listName.Add(DbContext.Users.Where(u => u.Id == player.UserId).Select(u => u.UserName).FirstOrDefault()));
+        var players = DbContext.Players.Where(p => p.GameId == gameId).OrderBy(u => u.UserId).ToList();
+        players.ForEach(player => listName.Add(DbContext.Users.Where(u => u.Id == player.UserId).OrderBy(u => u.Id).Select(u => u.UserName).FirstOrDefault()));
         return listName;
     }
 
