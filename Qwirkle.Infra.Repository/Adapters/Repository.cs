@@ -22,6 +22,7 @@ public class Repository : IRepository
 
     public Player CreatePlayer(int userId, int gameId)
     {
+        if (!DbContext.Users.Any()) CreateFirstUsersCreatorOnlineGame();
         var playerDao = new PlayerDao { GameId = gameId, UserId = userId, LastTurnSkipped = false };
         DbContext.Players.Add(playerDao);
         DbContext.SaveChanges();
@@ -146,6 +147,17 @@ public class Repository : IRepository
                 foreach (var shape in (TileShape[])Enum.GetValues(typeof(TileShape)))
                     DbContext.Tiles.Add(new TileDao { Color = color, Shape = shape });
 
+        DbContext.SaveChanges();
+    }
+
+    private void CreateFirstUsersCreatorOnlineGame()
+    {
+        var tomJc = new List<UserDao>
+        {
+            new UserDao { Id=1, UserName = "Tom", FirstName = "Thomas", LastName = "Vuille" },
+            new UserDao { Id=2, UserName = "JC", FirstName = "Jean Charles", LastName = "Gouleau" },
+        };
+        DbContext.Users.AddRange(tomJc);
         DbContext.SaveChanges();
     }
 
