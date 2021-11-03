@@ -60,13 +60,16 @@ public class Repository : IRepository
 
     public Game GetGame(int gameId)
     {
-        var gameDao = DbContext.Games.Where(g => g.Id == gameId).Include(g => g.Players).ThenInclude(p => p.User).Include(g => g.Players).ThenInclude(p => p.Tiles).ThenInclude(t => t.Tile).Include(g => g.TilesOnBoard).ThenInclude(t => t.Tile).Include(g => g.TilesOnBag).ThenInclude(t => t.Tile).FirstOrDefault();
-        var tilesOnBoard = TilesOnBoardDaoToEntity(gameDao.TilesOnBoard);
+        var gameOver = DbContext.Games.Where(g => g.Id == gameId).Select(g => g.GameOver).FirstOrDefault();
+        var tilesOnBoardDao = DbContext.TilesOnBoard.Where(tb => tb.GameId == gameId).ToList();
+        var tiles = TilesOnBoardDaoToEntity(tilesOnBoardDao);
+        var playersDao = DbContext.Players.Where(p => p.GameId == gameId).Include(p => p.User).ToList();
         var players = new List<Player>();
-        gameDao.Players.ForEach(player => players.Add(PlayerDaoToPlayerFork(player)));
+        playersDao.ForEach(player => players.Add(PlayerDaoToPlayer(player)));
+        var tilesOnBagDao = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
         var bag = new Bag(gameId);
-        gameDao.TilesOnBag.ForEach(t => bag.Tiles.Add(TileOnBagDaoToEntity(t)));
-        return new Game(gameDao.Id, tilesOnBoard, players, gameDao.GameOver, bag);
+        tilesOnBagDao.ForEach(t => bag.Tiles.Add(TileOnBagDaoToEntity(t)));
+        return new Game(gameId, tiles, players, gameOver, bag);
     }
 
     public Player GetPlayer(int playerId) => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).FirstOrDefault());
@@ -186,18 +189,10 @@ public class Repository : IRepository
 
     private Player PlayerDaoToPlayer(PlayerDao playerDao)
     {
-        var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).Include(t => t.Tile).Include(t => t.Player.User).ToList();
-        var tiles = new List<TileOnPlayer>();
-        tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerDaoToEntity(tp)));
-        var player = new Player(playerDao.Id, playerDao.GameId, playerDao.User?.UserName, playerDao.GamePosition, playerDao.Points, playerDao.LastTurnPoints, tiles, playerDao.GameTurn, playerDao.LastTurnSkipped);
-        return player;
-    }
-    private Player PlayerDaoToPlayerFork(PlayerDao playerDao)
-    {
-        var tilesOnPlayer = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).ToList();
-        var tiles = new List<TileOnPlayer>();
-        tilesOnPlayer.ForEach(tp => tiles.Add(TileOnPlayerDaoToEntity(tp)));
-        var player = new Player(playerDao.Id, playerDao.GameId, playerDao.User.UserName, playerDao.GamePosition, playerDao.Points, playerDao.LastTurnPoints, tiles, playerDao.GameTurn, playerDao.LastTurnSkipped);
+        if (playerDao.Tiles is null) playerDao.Tiles = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).Include(t => t.Tile).ToList();
+        var tilesOnPlayer = new List<TileOnPlayer>();
+        playerDao.Tiles.ForEach(tp => tilesOnPlayer.Add(TileOnPlayerDaoToEntity(tp)));
+        var player = new Player(playerDao.Id, playerDao.GameId, playerDao.User?.UserName, playerDao.GamePosition, playerDao.Points, playerDao.LastTurnPoints, tilesOnPlayer, playerDao.GameTurn, playerDao.LastTurnSkipped);
         return player;
     }
 
