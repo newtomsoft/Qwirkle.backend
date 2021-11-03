@@ -4,7 +4,7 @@ public interface IRepository
     Game CreateGame(DateTime date);
     void SetPlayerTurn(int playerId);
     void UpdatePlayer(Player player);
-    void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles);
+    void TilesFromPlayerToBoard(int gameId, int playerId, List<TileOnBoard> tiles);
     void TilesFromBagToPlayer(Player player, List<byte> positionsInRack);
     void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles);
     Game GetGame(int gameId);

@@ -6,18 +6,18 @@ public class CoreUseCase
     private const int TILES_NUMBER_FOR_A_QWIRKLE = 6;
     private const int POINTS_FOR_A_QWIRKLE = 12;
 
-    private readonly IRepository _repositoryAdapter;
+    private readonly IRepository _repository;
 
     public Game Game { get; set; }
 
-    public CoreUseCase(IRepository repositoryAdapter)
+    public CoreUseCase(IRepository repository)
     {
-        _repositoryAdapter = repositoryAdapter;
+        _repository = repository;
     }
 
     public List<Player> CreateGame(List<int> usersIds)
     {
-        Game = _repositoryAdapter.CreateGame(DateTime.UtcNow);
+        Game = _repository.CreateGame(DateTime.UtcNow);
         CreatePlayers(usersIds);
         CreateTiles();
         DealTilesToPlayers();
@@ -94,7 +94,7 @@ public class CoreUseCase
         return SkipTurnReturn;
     }
 
-    private void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange) => _repositoryAdapter.ArrangeRack(player, tilesToArrange);
+    private void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange) => _repository.ArrangeRack(player, tilesToArrange);
 
     private void DealTilesToPlayers()
     {
@@ -103,17 +103,17 @@ public class CoreUseCase
             rackPositions.Add(i);
 
         foreach (var player in Game.Players)
-            _repositoryAdapter.TilesFromBagToPlayer(player, rackPositions);
+            _repository.TilesFromBagToPlayer(player, rackPositions);
     }
 
-    private void CreateTiles() => _repositoryAdapter.CreateTiles(Game.Id);
+    private void CreateTiles() => _repository.CreateTiles(Game.Id);
 
     private void CreatePlayers(List<int> usersIds)
     {
         Game.Players = new List<Player>();
-        usersIds.ForEach(userId => Game.Players.Add(_repositoryAdapter.CreatePlayer(userId, Game.Id)));
+        usersIds.ForEach(userId => Game.Players.Add(_repository.CreatePlayer(userId, Game.Id)));
         SetPositionsPlayers();
-        Game.Players.ForEach(player => _repositoryAdapter.UpdatePlayer(player));
+        Game.Players.ForEach(player => _repository.UpdatePlayer(player));
     }
 
     private void SetPositionsPlayers()
@@ -154,7 +154,7 @@ public class CoreUseCase
         {
             var pointsWonWhenPlayerFinishTheGame = 6;
             wonPoints += pointsWonWhenPlayerFinishTheGame;
-            if (!simulationMode) _repositoryAdapter.SetGameOver(Game.Id);
+            if (!simulationMode) _repository.SetGameOver(Game.Id);
         }
 
         return new PlayReturn { Code = PlayReturnCode.Ok, Points = wonPoints, GameId = Game.Id, TilesPlayed = tilesPlayed };
@@ -165,7 +165,7 @@ public class CoreUseCase
         var tilesOnBoard = new List<TileOnBoard>();
         foreach (var (TileId, X, Y) in tilesTupleToPlay)
         {
-            Tile tile = _repositoryAdapter.GetTileById(TileId);
+            Tile tile = _repository.GetTileById(TileId);
             var coordinates = new CoordinatesInGame(X, Y);
             var tileOnBoard = new TileOnBoard(tile, coordinates);
             tilesOnBoard.Add(tileOnBoard);
@@ -178,30 +178,30 @@ public class CoreUseCase
         var tilesOnPlayer = new List<TileOnPlayer>();
         foreach (var tileId in tilesIds)
         {
-            TileOnPlayer tile = _repositoryAdapter.GetTileOnPlayerById(playerId, tileId);
+            TileOnPlayer tile = _repository.GetTileOnPlayerById(playerId, tileId);
             tilesOnPlayer.Add(tile);
         }
         return tilesOnPlayer;
     }
 
-    public Player GetPlayer(int playerId) => _repositoryAdapter.GetPlayer(playerId);
-    public Player GetPlayer(int gameId, int userId) => _repositoryAdapter.GetPlayer(gameId, userId);
+    public Player GetPlayer(int playerId) => _repository.GetPlayer(playerId);
+    public Player GetPlayer(int gameId, int userId) => _repository.GetPlayer(gameId, userId);
 
-    public string GetPlayerNameTurn(int gameId) => _repositoryAdapter.GetPlayerNameTurn(gameId);
-    public int GetPlayerIdToPlay(int gameId) => _repositoryAdapter.GetPlayerIdToPlay(gameId);
-    public List<int> GetListGameIDWithPlayer() => _repositoryAdapter.GetListGameIDWithPlayer();
-    public List<int> GetUsersId() => _repositoryAdapter.GetUsersId();
-    public List<int> GetUserGames(int userId) => _repositoryAdapter.GetUserGames(userId);
+    public string GetPlayerNameTurn(int gameId) => _repository.GetPlayerNameTurn(gameId);
+    public int GetPlayerIdToPlay(int gameId) => _repository.GetPlayerIdToPlay(gameId);
+    public List<int> GetListGameIDWithPlayer() => _repository.GetListGameIDWithPlayer();
+    public List<int> GetUsersId() => _repository.GetUsersId();
+    public List<int> GetUserGames(int userId) => _repository.GetUserGames(userId);
 
-    public List<string> GetListNamePlayer(int gameId) => _repositoryAdapter.GetListNamePlayer(gameId);
-    public Game GetGame(int GameId) => _repositoryAdapter.GetGame(GameId);
+    public List<string> GetListNamePlayer(int gameId) => _repository.GetListNamePlayer(gameId);
+    public Game GetGame(int GameId) => _repository.GetGame(GameId);
 
     public List<int> GetWinnersPlayersId(int gameId)
     {
-        if (!_repositoryAdapter.IsGameOver(gameId))
+        if (!_repository.IsGameOver(gameId))
             return null;
 
-        return _repositoryAdapter.GetLeadersPlayersId(gameId);
+        return _repository.GetLeadersPlayersId(gameId);
     }
 
     private SkipTurnReturn SkipTurn(Player player)
@@ -209,8 +209,8 @@ public class CoreUseCase
         player.LastTurnSkipped = true;
         if (Game.Bag.Tiles.Count == 0 && Game.Players.Count(p => p.LastTurnSkipped) == Game.Players.Count)
         {
-            _repositoryAdapter.UpdatePlayer(player);
-            _repositoryAdapter.SetGameOver(player.GameId);
+            _repository.UpdatePlayer(player);
+            _repository.SetGameOver(player.GameId);
         }
         else
             SetNextPlayerTurnToPlay(player);
@@ -222,9 +222,9 @@ public class CoreUseCase
     {
         var positionsInRack = PositionsInRack(tilesToSwap);
         SetNextPlayerTurnToPlay(player);
-        _repositoryAdapter.TilesFromBagToPlayer(player, positionsInRack);
-        _repositoryAdapter.TilesFromPlayerToBag(player, tilesToSwap);
-        _repositoryAdapter.UpdatePlayer(player);
+        _repository.TilesFromBagToPlayer(player, positionsInRack);
+        _repository.TilesFromPlayerToBag(player, tilesToSwap);
+        _repository.UpdatePlayer(player);
         return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = GetPlayer(player.Id).Rack };
     }
 
@@ -237,9 +237,9 @@ public class CoreUseCase
 
         var positionsInRack = new List<byte>();
         for (byte i = 0; i < tilesToPlay.Count; i++) positionsInRack.Add(i);
-        _repositoryAdapter.TilesFromBagToPlayer(player, positionsInRack);
-        _repositoryAdapter.TilesFromPlayerToGame(Game.Id, player.Id, tilesToPlay);
-        return _repositoryAdapter.GetPlayer(player.Id).Rack;
+        _repository.TilesFromBagToPlayer(player, positionsInRack);
+        _repository.TilesFromPlayerToBoard(Game.Id, player.Id, tilesToPlay);
+        return _repository.GetPlayer(player.Id).Rack;
     }
 
     private void SetNextPlayerTurnToPlay(Player player)
@@ -249,7 +249,7 @@ public class CoreUseCase
         if (Game.Players.Count == 1)
         {
             player.SetTurn(true);
-            _repositoryAdapter.UpdatePlayer(player);
+            _repository.UpdatePlayer(player);
         }
         else
         {
@@ -259,8 +259,8 @@ public class CoreUseCase
             Player nextPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
             player.SetTurn(false);
             nextPlayer.SetTurn(true);
-            _repositoryAdapter.UpdatePlayer(player);
-            _repositoryAdapter.UpdatePlayer(nextPlayer);
+            _repository.UpdatePlayer(player);
+            _repository.UpdatePlayer(nextPlayer);
         }
     }
 
@@ -347,7 +347,7 @@ public class CoreUseCase
 
     private void SetPlayerTurn(int playerId)
     {
-        _repositoryAdapter.SetPlayerTurn(playerId);
+        _repository.SetPlayerTurn(playerId);
         Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(true);
     }
 

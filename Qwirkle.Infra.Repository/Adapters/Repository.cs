@@ -113,7 +113,7 @@ public class Repository : IRepository
         DbContext.SaveChanges();
     }
 
-    public void TilesFromPlayerToGame(int gameId, int playerId, List<TileOnBoard> tiles)
+    public void TilesFromPlayerToBoard(int gameId, int playerId, List<TileOnBoard> tiles)
     {
         var game = DbContext.Games.Single(g => g.Id == gameId);
         game.LastPlayDate = DateTime.UtcNow;
