@@ -15,4 +15,13 @@ public class PlayerDao
     public virtual GameDao Game { get; set; }
     public virtual UserDao User { get; set; }
     public virtual List<TileOnPlayerDao> Tiles { get; set; }
+
+    public Player ToPlayer(DefaultDbContext dbContext)
+    {
+        if (Tiles is null) Tiles = dbContext.TilesOnPlayer.Where(tp => tp.PlayerId == Id).Include(t => t.Tile).ToList();
+        var tilesOnPlayer = new List<TileOnPlayer>();
+        Tiles.ForEach(tileOnPlayerDao => tilesOnPlayer.Add(tileOnPlayerDao.ToTileOnPlayer()));
+        var player = new Player(Id, GameId, User?.UserName, GamePosition, Points, LastTurnPoints, tilesOnPlayer, GameTurn, LastTurnSkipped);
+        return player;
+    }
 }

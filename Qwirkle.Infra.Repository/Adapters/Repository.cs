@@ -26,15 +26,15 @@ public class Repository : IRepository
         var playerDao = new PlayerDao { GameId = gameId, UserId = userId, LastTurnSkipped = false };
         DbContext.Players.Add(playerDao);
         DbContext.SaveChanges();
-        return PlayerDaoToPlayer(playerDao);
+        return playerDao.ToPlayer(DbContext);
     }
 
     public Game CreateGame(DateTime date)
     {
-        var game = new GameDao { CreatDate = date };
-        DbContext.Games.Add(game);
+        var gameDao = new GameDao { CreatDate = date };
+        DbContext.Games.Add(gameDao);
         DbContext.SaveChanges();
-        return GameDaoToGame(game);
+        return gameDao.ToNotFillGame();
     }
     public List<int> GetListGameIDWithPlayer() => DbContext.Players.Select(p => p.GameId).Distinct().ToList();
 
@@ -54,9 +54,9 @@ public class Repository : IRepository
 
     public int GetPlayerIdToPlay(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.Id).FirstOrDefault();
 
-    public Tile GetTileById(int tileId) => TileDaoToTile(DbContext.Tiles.Single(t => t.Id == tileId));
+    public Tile GetTileById(int tileId) => DbContext.Tiles.Single(t => t.Id == tileId).ToTile();
 
-    public TileOnPlayer GetTileOnPlayerById(int playerId, int tileId) => TileOnPlayerDaoToEntity(DbContext.TilesOnPlayer.Single(t => t.PlayerId == playerId && t.TileId == tileId));
+    public TileOnPlayer GetTileOnPlayerById(int playerId, int tileId) => DbContext.TilesOnPlayer.Single(t => t.PlayerId == playerId && t.TileId == tileId).ToTileOnPlayer();
 
     public Game GetGame(int gameId)
     {
@@ -65,15 +65,15 @@ public class Repository : IRepository
         var tiles = TilesOnBoardDaoToEntity(tilesOnBoardDao);
         var playersDao = DbContext.Players.Where(p => p.GameId == gameId).Include(p => p.User).ToList();
         var players = new List<Player>();
-        playersDao.ForEach(player => players.Add(PlayerDaoToPlayer(player)));
+        playersDao.ForEach(playerDao => players.Add(playerDao.ToPlayer(DbContext)));
         var tilesOnBagDao = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
         var bag = new Bag(gameId);
-        tilesOnBagDao.ForEach(t => bag.Tiles.Add(TileOnBagDaoToEntity(t)));
+        tilesOnBagDao.ForEach(tileOnBagDao => bag.Tiles.Add(tileOnBagDao.ToTileOnBag()));
         return new Game(gameId, tiles, players, gameOver, bag);
     }
 
-    public Player GetPlayer(int playerId) => PlayerDaoToPlayer(DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).FirstOrDefault());
-    public Player GetPlayer(int gameId, int userId) => PlayerDaoToPlayer(DbContext.Players.Where(p => p.GameId == gameId && p.UserId == userId).FirstOrDefault());
+    public Player GetPlayer(int playerId) => DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).FirstOrDefault().ToPlayer(DbContext);
+    public Player GetPlayer(int gameId, int userId) => DbContext.Players.Where(p => p.GameId == gameId && p.UserId == userId).FirstOrDefault().ToPlayer(DbContext);
 
     public void UpdatePlayer(Player player)
     {
@@ -104,12 +104,10 @@ public class Repository : IRepository
     public void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles)
     {
         var game = DbContext.Games.Single(g => g.Id == player.GameId);
-
         game.LastPlayDate = DateTime.UtcNow;
-
-        var tilesOnPlayer = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(t => t.Id).Contains(t.TileId)).ToList();
-        DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayer);
-        tilesOnPlayer.ForEach(tp => DbContext.TilesOnBag.Add(TileOnPlayerDaoToTileOnBagDao(tp, player.GameId)));
+        var tilesOnPlayerDao = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(t => t.Id).Contains(t.TileId)).ToList();
+        DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayerDao);
+        tilesOnPlayerDao.ForEach(tileOnPlayerDao => DbContext.TilesOnBag.Add(tileOnPlayerDao.ToTileOnBagDao(player.GameId)));
         DbContext.SaveChanges();
     }
 
@@ -117,8 +115,8 @@ public class Repository : IRepository
     {
         var game = DbContext.Games.Single(g => g.Id == gameId);
         game.LastPlayDate = DateTime.UtcNow;
-        tiles.ForEach(t => DbContext.TilesOnBoard.Add(TileToTileOnBoardDao(t, gameId)));
-        tiles.ForEach(t => DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.Single(tp => tp.TileId == t.Id && tp.PlayerId == playerId)));
+        tiles.ForEach(tile => DbContext.TilesOnBoard.Add(tile.ToTileOnBoardDao(gameId)));
+        tiles.ForEach(tile => DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.Single(tp => tp.TileId == tile.Id && tp.PlayerId == playerId)));
         DbContext.SaveChanges();
     }
 
@@ -167,11 +165,11 @@ public class Repository : IRepository
     private List<TileOnBoard> TilesOnBoardDaoToEntity(List<TileOnBoardDao> tilesOnBoard)
     {
         var tiles = new List<TileOnBoard>();
-        var tilesModel = DbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
-        foreach (var tileModel in tilesModel)
+        var tilesDao = DbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
+        foreach (var tileDao in tilesDao)
         {
-            var tileOnGame = tilesOnBoard.Single(tb => tb.TileId == tileModel.Id);
-            tiles.Add(new TileOnBoard(tileModel.Id, tileModel.Color, tileModel.Shape, new CoordinatesInGame(tileOnGame.PositionX, tileOnGame.PositionY)));
+            var tileOnGame = tilesOnBoard.Single(tb => tb.TileId == tileDao.Id);
+            tiles.Add(new TileOnBoard(tileDao.Id, tileDao.Color, tileDao.Shape, new CoordinatesInGame(tileOnGame.PositionX, tileOnGame.PositionY)));
         }
         return tiles;
     }
@@ -186,32 +184,5 @@ public class Repository : IRepository
         playerDao.LastTurnSkipped = player.LastTurnSkipped;
         return playerDao;
     }
-
-    private Player PlayerDaoToPlayer(PlayerDao playerDao)
-    {
-        if (playerDao.Tiles is null) playerDao.Tiles = DbContext.TilesOnPlayer.Where(tp => tp.PlayerId == playerDao.Id).Include(t => t.Tile).ToList();
-        var tilesOnPlayer = new List<TileOnPlayer>();
-        playerDao.Tiles.ForEach(tp => tilesOnPlayer.Add(TileOnPlayerDaoToEntity(tp)));
-        var player = new Player(playerDao.Id, playerDao.GameId, playerDao.User?.UserName, playerDao.GamePosition, playerDao.Points, playerDao.LastTurnPoints, tilesOnPlayer, playerDao.GameTurn, playerDao.LastTurnSkipped);
-        return player;
-    }
-
-    private static TileOnBoardDao TileToTileOnBoardDao(TileOnBoard tile, int gameId) => new() { TileId = tile.Id, GameId = gameId, PositionX = tile.Coordinates.X, PositionY = tile.Coordinates.Y };
-
-    private TileOnPlayerDao TileOnBagToTileOnPlayer(TileOnBagDao tileOnBag, int playerId) => new() { TileId = tileOnBag.TileId, PlayerId = playerId };
-
-    private static TileOnBagDao TileOnPlayerDaoToTileOnBagDao(TileOnPlayerDao tileOnPlayer, int gameId) => new() { TileId = tileOnPlayer.TileId, GameId = gameId };
-
-    private static TileOnPlayer TileOnPlayerDaoToEntity(TileOnPlayerDao tileOnPlayer) => new(tileOnPlayer.RackPosition, tileOnPlayer.TileId, tileOnPlayer.Tile.Color, tileOnPlayer.Tile.Shape);
-
-    private static Tile TileDaoToTile(TileDao tileModel) => new(tileModel.Id, tileModel.Color, tileModel.Shape);
-
-    private Game GameDaoToGame(GameDao game) => new(game.Id, TilesOnBoardDaoToEntity(DbContext.TilesOnBoard.Where(tb => tb.GameId == game.Id).ToList()), new List<Player>(), game.GameOver);
-
-    private static TileOnBag TileOnBagDaoToEntity(TileOnBagDao tb) => new(tb.Id, tb.Tile.Color, tb.Tile.Shape);
-
-    private TileOnPlayerDao TileToTileOnPlayerModel(TileOnBag tile, int playerId) => new() { Id = tile.Id, TileId = tile.Id, PlayerId = playerId };
-
-
 }
 

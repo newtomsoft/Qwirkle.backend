@@ -21,7 +21,6 @@ public class CoreUseCase
         CreatePlayers(usersIds);
         CreateTiles();
         DealTilesToPlayers();
-        RefreshPlayers();
         SelectFirstPlayer();
         return Game.Players;
     }
@@ -121,12 +120,6 @@ public class CoreUseCase
         Game.Players = Game.Players.OrderBy(_ => Guid.NewGuid()).ToList();
         for (int i = 0; i < Game.Players.Count; i++)
             Game.Players[i].GamePosition = (byte)(i + 1);
-    }
-
-    private void RefreshPlayers()
-    {
-        for (int i = 0; i < Game.Players.Count; i++)
-            Game.Players[i] = GetPlayer(Game.Players[i].Id);
     }
 
     private void SelectFirstPlayer()

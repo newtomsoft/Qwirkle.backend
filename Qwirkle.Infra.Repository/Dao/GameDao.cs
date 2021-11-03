@@ -11,4 +11,8 @@ public class GameDao
     public virtual List<PlayerDao> Players { get; set; }
     public virtual List<TileOnBoardDao> TilesOnBoard { get; set; }
     public virtual List<TileOnBagDao> TilesOnBag { get; set; }
+
+
+    public Game ToNotFillGame() => new(Id, new List<TileOnBoard>(), new List<Player>(), GameOver);
+
 }
