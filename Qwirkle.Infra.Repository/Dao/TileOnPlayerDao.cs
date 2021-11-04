@@ -21,5 +21,5 @@ public class TileOnPlayerDao
         RackPosition = rackPosition;
     }
 
-    public  TileOnPlayer ToTileOnPlayer() => new(RackPosition, TileId, Tile.Color, Tile.Shape);
+    public TileOnPlayer ToTileOnPlayer() => new(RackPosition, TileId, Tile.Color, Tile.Shape);
 }

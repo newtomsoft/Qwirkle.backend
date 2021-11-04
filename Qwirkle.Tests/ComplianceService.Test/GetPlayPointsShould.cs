@@ -1,11 +1,12 @@
 ﻿using Qwirkle.Core.Entities;
+using Qwirkle.Core.UseCases;
 using Qwirkle.Core.ValueObjects;
 
 namespace Qwirkle.Core.Tests;
 
 public class GetPlayPointsShould
 {
-    private const int QWIRKLE_POINTS = 6;
+    private const int QwirklePoints = 6;
     private CoreUseCase UseCase { get; } = new CoreUseCase(null);
 
     [Fact]
@@ -227,7 +228,7 @@ public class GetPlayPointsShould
                 new TileOnBoard(TileColor.Yellow, TileShape.Clover, new CoordinatesInGame(12, -3)),
             };
         Assert.True(0 < UseCase.GetPlayReturn(tilesTested, null).Points);
-        Assert.Equal(6 + 6 + 2 * QWIRKLE_POINTS, UseCase.GetPlayReturn(tilesTested, null).Points);
+        Assert.Equal(6 + 6 + 2 * QwirklePoints, UseCase.GetPlayReturn(tilesTested, null).Points);
     }
 
     [Fact]
@@ -321,8 +322,8 @@ public class GetPlayPointsShould
             };
         Assert.True(0 < UseCase.GetPlayReturn(tilesTested, null).Points);
         Assert.True(0 < UseCase.GetPlayReturn(tilesTested2, null).Points);
-        Assert.Equal(6 + QWIRKLE_POINTS, UseCase.GetPlayReturn(tilesTested, null).Points);
-        Assert.Equal(6 + QWIRKLE_POINTS, UseCase.GetPlayReturn(tilesTested2, null).Points);
+        Assert.Equal(6 + QwirklePoints, UseCase.GetPlayReturn(tilesTested, null).Points);
+        Assert.Equal(6 + QwirklePoints, UseCase.GetPlayReturn(tilesTested2, null).Points);
     }
 
     [Fact]
@@ -344,8 +345,8 @@ public class GetPlayPointsShould
             };
         Assert.True(0 < UseCase.GetPlayReturn(tilesTested, null).Points);
         Assert.True(0 < UseCase.GetPlayReturn(tilesTested2, null).Points);
-        Assert.Equal(6 + QWIRKLE_POINTS, UseCase.GetPlayReturn(tilesTested, null).Points);
-        Assert.Equal(6 + QWIRKLE_POINTS, UseCase.GetPlayReturn(tilesTested2, null).Points);
+        Assert.Equal(6 + QwirklePoints, UseCase.GetPlayReturn(tilesTested, null).Points);
+        Assert.Equal(6 + QwirklePoints, UseCase.GetPlayReturn(tilesTested2, null).Points);
     }
 
     [Fact]

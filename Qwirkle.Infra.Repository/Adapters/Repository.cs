@@ -3,7 +3,7 @@ public class Repository : IRepository
 {
     private DefaultDbContext DbContext { get; }
 
-    private const int TOTAL_TILES = 108;
+    private const int TotalTiles = 108;
 
     public Repository(DefaultDbContext defaultDbContext)
     {
@@ -14,7 +14,7 @@ public class Repository : IRepository
     {
         AddAllTilesInDataBase();
         var tilesIds = DbContext.Tiles.Select(t => t.Id).ToList();
-        for (int i = 0; i < TOTAL_TILES; i++)
+        for (int i = 0; i < TotalTiles; i++)
             DbContext.TilesOnBag.Add(new TileOnBagDao { GameId = gameId, TileId = tilesIds[i] });
 
         DbContext.SaveChanges();
@@ -36,13 +36,13 @@ public class Repository : IRepository
         DbContext.SaveChanges();
         return gameDao.ToNotFillGame();
     }
-    public List<int> GetListGameIDWithPlayer() => DbContext.Players.Select(p => p.GameId).Distinct().ToList();
+    public List<int> GetGamesIdsContainingPlayers() => DbContext.Players.Select(p => p.GameId).Distinct().ToList();
 
     public List<int> GetUsersId() => DbContext.Users.Select(u => u.Id).ToList();
 
     public List<int> GetUserGames(int userId) => DbContext.Players.Where(p => p.UserId == userId).Select(p => p.GameId).ToList();
 
-    public List<string> GetListNamePlayer(int gameId)
+    public List<string> GetPlayersNames(int gameId)
     {
         var listName = new List<string>();
         var players = DbContext.Players.Where(p => p.GameId == gameId).OrderBy(u => u.UserId).ToList();
@@ -72,8 +72,8 @@ public class Repository : IRepository
         return new Game(gameId, tiles, players, gameOver, bag);
     }
 
-    public Player GetPlayer(int playerId) => DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).FirstOrDefault().ToPlayer(DbContext);
-    public Player GetPlayer(int gameId, int userId) => DbContext.Players.Where(p => p.GameId == gameId && p.UserId == userId).FirstOrDefault().ToPlayer(DbContext);
+    public Player GetPlayer(int playerId) => DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).First().ToPlayer(DbContext);
+    public Player GetPlayer(int gameId, int userId) => DbContext.Players.First(p => p.GameId == gameId && p.UserId == userId).ToPlayer(DbContext);
 
     public void UpdatePlayer(Player player)
     {
@@ -105,7 +105,7 @@ public class Repository : IRepository
     {
         var game = DbContext.Games.Single(g => g.Id == player.GameId);
         game.LastPlayDate = DateTime.UtcNow;
-        var tilesOnPlayerDao = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(t => t.Id).Contains(t.TileId)).ToList();
+        var tilesOnPlayerDao = DbContext.TilesOnPlayer.Where(t => t.PlayerId == player.Id && tiles.Select(tile => tile.Id).Contains(t.TileId)).ToList();
         DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayerDao);
         tilesOnPlayerDao.ForEach(tileOnPlayerDao => DbContext.TilesOnBag.Add(tileOnPlayerDao.ToTileOnBagDao(player.GameId)));
         DbContext.SaveChanges();
@@ -134,16 +134,16 @@ public class Repository : IRepository
         DbContext.SaveChanges();
     }
 
-    public List<int> GetLeadersPlayersId(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.Points == DbContext.Players.Where(p => p.GameId == gameId).Max(p => p.Points)).Select(p => p.Id).ToList();
+    public List<int> GetLeadersPlayersId(int gameId) => DbContext.Players.Where(player => player.GameId == gameId).OrderByDescending(player => player.Points).GroupBy(player => player.Points).First().Select(player => player.Id).ToList();
 
-    public bool IsGameOver(int gameId) => DbContext.Games.Where(g => g.Id == gameId && g.GameOver).Any();
+    public bool IsGameOver(int gameId) => DbContext.Games.Any(g => g.Id == gameId && g.GameOver);
 
     private void AddAllTilesInDataBase()
     {
-        if (DbContext.Tiles.Count() == TOTAL_TILES) return;
+        if (DbContext.Tiles.Count() == TotalTiles) return;
 
-        const int NUMBER_OF_SAME_TILE = 3;
-        for (int i = 0; i < NUMBER_OF_SAME_TILE; i++)
+        const int numberOfSameTile = 3;
+        for (var i = 0; i < numberOfSameTile; i++)
             foreach (var color in (TileColor[])Enum.GetValues(typeof(TileColor)))
                 foreach (var shape in (TileShape[])Enum.GetValues(typeof(TileShape)))
                     DbContext.Tiles.Add(new TileDao { Color = color, Shape = shape });

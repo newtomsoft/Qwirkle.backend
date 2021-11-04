@@ -1,3 +1,5 @@
+using Qwirkle.Core.UseCases;
+
 var builder = WebApplication.CreateBuilder(args);
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.json"), optional: true);
@@ -5,7 +7,7 @@ builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => builder
-    .SetIsOriginAllowed((host) => true)
+    .SetIsOriginAllowed(_ => true)
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials());

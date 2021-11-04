@@ -1,4 +1,6 @@
-﻿namespace Qwirkle.Web.Api.Controllers;
+﻿using Qwirkle.Core.UseCases;
+
+namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Route("Games")]
@@ -41,7 +43,7 @@ public class GamesController : ControllerBase
     [HttpGet("ListGameId")]
     public ActionResult<int> GetListGameIDWithPlayer()
     {
-        var listGameId = CoreUseCase.GetListGameIDWithPlayer();
+        var listGameId = CoreUseCase.GetGamesIdsContainingPlayers();
         return new ObjectResult(listGameId);
     }
 
@@ -74,7 +76,7 @@ public class GamesController : ControllerBase
         return new ObjectResult(player);
     }
 
-    [HttpGet("GetPlayerNameTurn/{gameId}")]
+    [HttpGet("GetPlayerNameTurn/{gameId:int}")]
     public ActionResult<int> GetPlayerNameTurn(int gameId)
     {
         var playerNameTurn = CoreUseCase.GetPlayerNameTurn(gameId);

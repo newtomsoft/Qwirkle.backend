@@ -14,8 +14,8 @@ public interface IRepository
     int GetPlayerIdToPlay(int gameId);
     Tile GetTileById(int tileId);
     TileOnPlayer GetTileOnPlayerById(int playerId, int tileId);
-    List<int> GetListGameIDWithPlayer();
-    List<string> GetListNamePlayer(int gameId);
+    List<int> GetGamesIdsContainingPlayers();
+    List<string> GetPlayersNames(int gameId);
     Player CreatePlayer(int userId, int gameId);
     void CreateTiles(int gameId);
     void SetGameOver(int gameId);

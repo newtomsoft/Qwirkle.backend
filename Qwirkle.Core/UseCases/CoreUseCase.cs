@@ -1,10 +1,10 @@
-﻿namespace Qwirkle.Core.UsesCases;
+﻿namespace Qwirkle.Core.UseCases;
 
 public class CoreUseCase
 {
-    private const int TILES_NUMBER_PER_PLAYER = 6;
-    private const int TILES_NUMBER_FOR_A_QWIRKLE = 6;
-    private const int POINTS_FOR_A_QWIRKLE = 12;
+    private const int TilesNumberPerPlayer = 6;
+    private const int TilesNumberForAQwirkle = 6;
+    private const int PointsForAQwirkle = 12;
 
     private readonly IRepository _repository;
 
@@ -61,12 +61,8 @@ public class CoreUseCase
 
     public PlayReturn TryPlayTilesSimulation(int playerId, List<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay)
     {
-        Player player = GetPlayer(playerId);
+        var player = GetPlayer(playerId);
         var tilesToPlay = GetTiles(tilesTupleToPlay);
-        var tilesIds = new List<int>();
-        foreach (var tiles in tilesToPlay)
-            tilesIds.Add(tiles.Id);
-
         Game = GetGame(player.GameId);
         return GetPlayReturn(tilesToPlay, player, true);
     }
@@ -85,12 +81,9 @@ public class CoreUseCase
 
     public SkipTurnReturn TrySkipTurn(int playerId)
     {
-        Player player = GetPlayer(playerId);
+        var player = GetPlayer(playerId);
         Game = GetGame(player.GameId);
-        if (!player.IsTurn) return new SkipTurnReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
-
-        SkipTurnReturn SkipTurnReturn = SkipTurn(player);
-        return SkipTurnReturn;
+        return player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
     }
 
     private void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange) => _repository.ArrangeRack(player, tilesToArrange);
@@ -98,7 +91,7 @@ public class CoreUseCase
     private void DealTilesToPlayers()
     {
         var rackPositions = new List<byte>();
-        for (byte i = 0; i < TILES_NUMBER_PER_PLAYER; i++)
+        for (byte i = 0; i < TilesNumberPerPlayer; i++)
             rackPositions.Add(i);
 
         foreach (var player in Game.Players)
@@ -140,7 +133,7 @@ public class CoreUseCase
                 allTilesIsolated = false;
         if (Game.Board.Tiles.Count > 0 && allTilesIsolated) return new PlayReturn { Code = PlayReturnCode.TileIsolated, Points = 0, GameId = Game.Id };
 
-        int wonPoints = CountTilesMakedValidRow(tilesPlayed);
+        int wonPoints = CountTilesMakeValidRow(tilesPlayed);
         if (wonPoints == 0) return new PlayReturn { Code = PlayReturnCode.TilesDontMakedValidRow, GameId = Game.Id };
 
         if (Game.Bag?.Tiles.Count == 0 && tilesPlayed.Count == player.Rack.Tiles.Count)
@@ -156,10 +149,10 @@ public class CoreUseCase
     private List<TileOnBoard> GetTiles(List<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay)
     {
         var tilesOnBoard = new List<TileOnBoard>();
-        foreach (var (TileId, X, Y) in tilesTupleToPlay)
+        foreach (var (tileId, x, y) in tilesTupleToPlay)
         {
-            Tile tile = _repository.GetTileById(TileId);
-            var coordinates = new CoordinatesInGame(X, Y);
+            var tile = _repository.GetTileById(tileId);
+            var coordinates = new CoordinatesInGame(x, y);
             var tileOnBoard = new TileOnBoard(tile, coordinates);
             tilesOnBoard.Add(tileOnBoard);
         }
@@ -182,12 +175,12 @@ public class CoreUseCase
 
     public string GetPlayerNameTurn(int gameId) => _repository.GetPlayerNameTurn(gameId);
     public int GetPlayerIdToPlay(int gameId) => _repository.GetPlayerIdToPlay(gameId);
-    public List<int> GetListGameIDWithPlayer() => _repository.GetListGameIDWithPlayer();
+    public List<int> GetGamesIdsContainingPlayers() => _repository.GetGamesIdsContainingPlayers();
     public List<int> GetUsersId() => _repository.GetUsersId();
     public List<int> GetUserGames(int userId) => _repository.GetUserGames(userId);
 
-    public List<string> GetListNamePlayer(int gameId) => _repository.GetListNamePlayer(gameId);
-    public Game GetGame(int GameId) => _repository.GetGame(GameId);
+    public List<string> GetListNamePlayer(int gameId) => _repository.GetPlayersNames(gameId);
+    public Game GetGame(int gameId) => _repository.GetGame(gameId);
 
     public List<int> GetWinnersPlayersId(int gameId)
     {
@@ -246,55 +239,51 @@ public class CoreUseCase
         }
         else
         {
-            int position = Game.Players.FirstOrDefault(p => p.Id == player.Id).GamePosition;
-            int playersNumber = Game.Players.Count;
-            int nextPlayerPosition = position < playersNumber ? position + 1 : 1;
-            Player nextPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
+            var position = Game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
+            var playersNumber = Game.Players.Count;
+            var nextPlayerPosition = position < playersNumber ? position + 1 : 1;
+            var nextPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
             player.SetTurn(false);
-            nextPlayer.SetTurn(true);
+            nextPlayer!.SetTurn(true);
             _repository.UpdatePlayer(player);
             _repository.UpdatePlayer(nextPlayer);
         }
     }
 
-    private int CountTilesMakedValidRow(List<TileOnBoard> tiles)
+    private int CountTilesMakeValidRow(List<TileOnBoard> tiles)
     {
         if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
             return 0;
 
-        int tatalPoints = 0;
-        int points = 0;
+        var totalPoints = 0;
+        int points;
         if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) == tiles.Count)
         {
-            if ((points = CountTilesMakedValidLine(tiles)) == 0) return 0;
-            if (points != 1) tatalPoints += points;
+            if ((points = CountTilesMakeValidLine(tiles)) == 0) return 0;
+            if (points != 1) totalPoints += points;
             if (tiles.Count > 1)
             {
                 foreach (var tile in tiles)
                 {
-                    if ((points = CountTilesMakedValidColumn(new List<TileOnBoard> { tile })) == 0) return 0;
-                    if (points != 1) tatalPoints += points;
+                    if ((points = CountTilesMakeValidColumn(new List<TileOnBoard> { tile })) == 0) return 0;
+                    if (points != 1) totalPoints += points;
                 }
             }
         }
-        if (tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) == tiles.Count)
-        {
-            if ((points = CountTilesMakedValidColumn(tiles)) == 0) return 0;
-            if (points != 1) tatalPoints += points;
 
-            if (tiles.Count > 1)
-            {
-                foreach (var tile in tiles)
-                {
-                    if ((points = CountTilesMakedValidLine(new List<TileOnBoard> { tile })) == 0) return 0;
-                    if (points != 1) tatalPoints += points;
-                }
-            }
+        if (tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count) return totalPoints;
+        if ((points = CountTilesMakeValidColumn(tiles)) == 0) return 0;
+        if (points != 1) totalPoints += points;
+        if (tiles.Count <= 1) return totalPoints;
+        foreach (var tile in tiles)
+        {
+            if ((points = CountTilesMakeValidLine(new List<TileOnBoard> {tile})) == 0) return 0;
+            if (points != 1) totalPoints += points;
         }
-        return tatalPoints;
+        return totalPoints;
     }
 
-    private int CountTilesMakedValidLine(List<TileOnBoard> tiles)
+    private int CountTilesMakeValidLine(IReadOnlyList<TileOnBoard> tiles)
     {
         var allTilesAlongReferenceTiles = tiles.ToList();
         var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
@@ -312,10 +301,10 @@ public class CoreUseCase
         if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.FormCompliantRow())
             return 0;
 
-        return allTilesAlongReferenceTiles.Count != TILES_NUMBER_FOR_A_QWIRKLE ? allTilesAlongReferenceTiles.Count : POINTS_FOR_A_QWIRKLE;
+        return allTilesAlongReferenceTiles.Count != TilesNumberForAQwirkle ? allTilesAlongReferenceTiles.Count : PointsForAQwirkle;
     }
 
-    private int CountTilesMakedValidColumn(List<TileOnBoard> tiles)
+    private int CountTilesMakeValidColumn(IReadOnlyList<TileOnBoard> tiles)
     {
         var allTilesAlongReferenceTiles = tiles.ToList();
         var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
@@ -333,22 +322,16 @@ public class CoreUseCase
         if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.FormCompliantRow())
             return 0;
 
-        return allTilesAlongReferenceTiles.Count != TILES_NUMBER_FOR_A_QWIRKLE ? allTilesAlongReferenceTiles.Count : POINTS_FOR_A_QWIRKLE;
+        return allTilesAlongReferenceTiles.Count != TilesNumberForAQwirkle ? allTilesAlongReferenceTiles.Count : PointsForAQwirkle;
     }
 
-    private static bool AreNumbersConsecutive(List<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
+    private static bool AreNumbersConsecutive(IReadOnlyCollection<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
 
     private void SetPlayerTurn(int playerId)
     {
         _repository.SetPlayerTurn(playerId);
-        Game.Players.FirstOrDefault(p => p.Id == playerId).SetTurn(true);
+        Game.Players.First(p => p.Id == playerId).SetTurn(true);
     }
 
-    private static List<byte> PositionsInRack(List<TileOnPlayer> tiles)
-    {
-        var positionsInRack = new List<byte>();
-        foreach (var tile in tiles)
-            positionsInRack.Add(tile.RackPosition);
-        return positionsInRack;
-    }
+    private static List<byte> PositionsInRack(IEnumerable<TileOnPlayer> tiles) => tiles.Select(tile => tile.RackPosition).ToList();
 }
