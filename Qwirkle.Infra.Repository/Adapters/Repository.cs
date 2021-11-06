@@ -41,13 +41,7 @@ public class Repository : IRepository
     public List<int> GetUsersId() => DbContext.Users.Select(u => u.Id).ToList();
 
     public List<int> GetUserGames(int userId) => DbContext.Players.Where(p => p.UserId == userId).Select(p => p.GameId).ToList();
-
-    public List<string> GetPlayersNames(int gameId)
-    {
-        var players = DbContext.Players.Where(p => p.GameId == gameId).OrderBy(u => u.UserId).ToList();
-        return players.Select(player => DbContext.Users.Where(u => u.Id == player.UserId).OrderBy(u => u.Id).Select(u => u.UserName).FirstOrDefault()).ToList();
-    }
-
+    
     public string GetPlayerNameTurn(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Include(p => p.User).FirstOrDefault()?.User.UserName;
 
     public int GetPlayerIdToPlay(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.Id).FirstOrDefault();

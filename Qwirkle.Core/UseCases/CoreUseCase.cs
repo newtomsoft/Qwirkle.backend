@@ -178,8 +178,6 @@ public class CoreUseCase
     public List<int> GetGamesIdsContainingPlayers() => _repository.GetGamesIdsContainingPlayers();
     public List<int> GetUsersId() => _repository.GetUsersId();
     public List<int> GetUserGames(int userId) => _repository.GetUserGames(userId);
-
-    public List<string> GetListNamePlayer(int gameId) => _repository.GetPlayersNames(gameId);
     public Game GetGame(int gameId) => _repository.GetGame(gameId);
 
     public List<int> GetWinnersPlayersId(int gameId)
