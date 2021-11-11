@@ -1,8 +1,6 @@
 ﻿namespace Qwirkle.Core.Entities;
 public class Player
 {
-    private bool _gameTurn;
-
     public int Id { get; set; }
     public string Pseudo { get; set; }
     public int GameId { get; set; }
@@ -11,8 +9,9 @@ public class Player
     public int LastTurnPoints { get; set; }
     public Rack Rack { get; set; }
     public bool LastTurnSkipped { get; set; }
+    public bool IsTurn { get; private set; }
 
-    public Player(int id, int gameId, string pseudo, int gamePosition, int points, int lastTurnPoints, List<TileOnPlayer> tiles, bool turn, bool lastTurnSkipped) // todo remplacer tiles par rack
+    public Player(int id, int gameId, string pseudo, int gamePosition, int points, int lastTurnPoints, List<TileOnPlayer> tiles, bool isTurn, bool lastTurnSkipped) // todo remplacer tiles par rack
     {
         Id = id;
         GameId = gameId;
@@ -21,14 +20,12 @@ public class Player
         Points = points;
         LastTurnPoints = lastTurnPoints;
         Rack = new Rack(tiles);
-        _gameTurn = turn;
+        IsTurn = isTurn;
         LastTurnSkipped = lastTurnSkipped;
     }
 
-    public bool IsTurn => _gameTurn;
 
-
-    public void SetTurn(bool turn) => _gameTurn = turn;
+    public void SetTurn(bool turn) => IsTurn = turn;
     public bool HasTiles(IEnumerable<int> tilesIds)
     {
         var playerTilesId = Rack.Tiles.Select(t => t.Id);
