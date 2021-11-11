@@ -16,12 +16,10 @@ public class HubQwirkle : Hub
     public override Task OnDisconnectedAsync(Exception exception)
     {
         var gameId = GameIdWithPlayers.Where(item => item.Value.Count(p => p.ConnectionId == Context.ConnectionId) == 1).Select(item => item.Key).FirstOrDefault();
-        if (gameId != 0)
-        {
-            var player = GameIdWithPlayers[gameId].FirstOrDefault(player => player.ConnectionId == Context.ConnectionId);
-            GameIdWithPlayers[gameId].Remove(player);
-            SendPlayersInGame(gameId);
-        }
+        if (gameId == 0) return base.OnDisconnectedAsync(exception);
+        var player = GameIdWithPlayers[gameId].FirstOrDefault(player => player.ConnectionId == Context.ConnectionId);
+        GameIdWithPlayers[gameId].Remove(player);
+        SendPlayersInGame(gameId);
         return base.OnDisconnectedAsync(exception);
     }
 
