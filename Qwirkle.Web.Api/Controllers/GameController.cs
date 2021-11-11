@@ -6,11 +6,13 @@ public class GameController : ControllerBase
 {
     private readonly ILogger<GameController> _logger;
     private readonly CoreUseCase _coreUseCase;
+    private readonly UserManager<UserDao> _userManager;
 
-    public GameController(ILogger<GameController> logger, CoreUseCase coreUseCase)
+    public GameController(ILogger<GameController> logger, CoreUseCase coreUseCase, UserManager<UserDao> userManager)
     {
         _logger = logger;
         _coreUseCase = coreUseCase;
+        _userManager = userManager;
     }
 
 
@@ -28,6 +30,10 @@ public class GameController : ControllerBase
 
     [HttpPost("GamesByUserId/{userId:int}")]
     public ActionResult<int> GetGamesByUserId(int userId) => new ObjectResult(_coreUseCase.GetUserGames(userId));
+
+
+    [HttpGet("UserGames")]
+    public ActionResult<int> GetUserGames() => new ObjectResult(_coreUseCase.GetUserGames(int.Parse(_userManager.GetUserId(User) ?? "0")));
 
 
     [HttpGet("GamesIds")]

@@ -8,9 +8,6 @@ public class PlayerController : ControllerBase
     public PlayerController(CoreUseCase useCase) => _useCase = useCase;
 
 
-    [HttpGet("AllUsersIds")]
-    public ActionResult<int> GetAllUsersId() => new ObjectResult(_useCase.GetAllUsersId());
-
     [HttpGet("Players/{playerId:int}")]
     public ActionResult<int> GetById(int playerId) => new ObjectResult(_useCase.GetPlayer(playerId));
 
