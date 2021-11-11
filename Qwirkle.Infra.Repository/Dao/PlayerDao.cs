@@ -9,7 +9,7 @@ public class PlayerDao
     public byte Points { get; set; }
     public byte LastTurnPoints { get; set; }
     public bool GameTurn { get; set; }
-    public byte GamePosition { get; init; }
+    public byte GamePosition { get; set; }
     public bool LastTurnSkipped { get; set; }
 
     public virtual GameDao Game { get; set; }

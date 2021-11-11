@@ -73,6 +73,7 @@ public class Repository : IRepository
         playerDao.LastTurnPoints = (byte)player.LastTurnPoints;
         playerDao.GameTurn = player.IsTurn;
         playerDao.LastTurnSkipped = player.LastTurnSkipped;
+        playerDao.GamePosition = (byte)player.GamePosition;
         DbContext.SaveChanges();
     }
 
