@@ -1,6 +1,3 @@
-using Newtomsoft.EntityFramework.Core;
-using Qwirkle.Core.UseCases;
-
 var builder = WebApplication.CreateBuilder(args);
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.json"), optional: true);

@@ -1,6 +1,4 @@
-﻿using Qwirkle.Core.UseCases;
-
-namespace Qwirkle.Web.Api.Controllers;
+﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Route("Game")]
