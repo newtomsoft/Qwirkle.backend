@@ -1,13 +1,3 @@
 ﻿namespace Qwirkle.SignalR;
 
-public record Player
-{
-    public int PlayerId { get; set; }
-    public string ConnectionId { get; set; }
-
-    public Player(string connectionId, int id)
-    {
-        PlayerId = id;
-        ConnectionId = connectionId;
-    }
-}
+public record Player(string ConnectionId, int PlayerId);

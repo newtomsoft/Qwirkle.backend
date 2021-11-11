@@ -4,7 +4,7 @@ public enum PlayReturnCode
 {
     Ok = 1,
     NotPlayerTurn,
-    PlayerDontHaveThisTile,
+    PlayerDoesntHaveThisTile,
     TileIsolated,
-    TilesDontMakedValidRow,
+    TilesDoesntMakedValidRow,
 }

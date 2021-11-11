@@ -34,7 +34,7 @@ public class CoreUseCase
         foreach (var tiles in GetTiles(tilesToArrangeTuple))
             tilesIds.Add(tiles.Id);
 
-        if (!player.HasTiles(tilesIds)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDontHaveThisTile };
+        if (!player.HasTiles(tilesIds)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
 
         var tilesToArrange = GetPlayerTiles(playerId, tilesIds);
         ArrangeRack(player, tilesToArrange);
@@ -52,7 +52,7 @@ public class CoreUseCase
             tilesIds.Add(tiles.Id);
 
         Game = GetGame(player.GameId);
-        if (!player.HasTiles(tilesIds)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile, GameId = Game.Id };
+        if (!player.HasTiles(tilesIds)) return new PlayReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile, GameId = Game.Id };
 
         var playReturn = GetPlayReturn(tilesToPlay, player);
         if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
@@ -75,7 +75,7 @@ public class CoreUseCase
         var player = GetPlayer(playerId);
         Game = GetGame(player.GameId);
         if (!player.IsTurn) return new SwapTilesReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
-        if (!player.HasTiles(tilesIds)) return new SwapTilesReturn { GameId = Game.Id, Code = PlayReturnCode.PlayerDontHaveThisTile };
+        if (!player.HasTiles(tilesIds)) return new SwapTilesReturn { GameId = Game.Id, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
         var tilesToSwap = GetPlayerTiles(playerId, tilesIds);
         var swapTilesReturn = SwapTiles(player, tilesToSwap);
         _signal.SendTilesSwapped(Game.Id, playerId);
@@ -145,7 +145,7 @@ public class CoreUseCase
         if (Game.Board.Tiles.Count > 0 && allTilesIsolated) return new PlayReturn { Code = PlayReturnCode.TileIsolated, Points = 0, GameId = Game.Id };
 
         int wonPoints = CountTilesMakeValidRow(tilesPlayed);
-        if (wonPoints == 0) return new PlayReturn { Code = PlayReturnCode.TilesDontMakedValidRow, GameId = Game.Id };
+        if (wonPoints == 0) return new PlayReturn { Code = PlayReturnCode.TilesDoesntMakedValidRow, GameId = Game.Id };
 
         if (Game.Bag?.Tiles.Count == 0 && tilesPlayed.Count == player.Rack.Tiles.Count)
         {
