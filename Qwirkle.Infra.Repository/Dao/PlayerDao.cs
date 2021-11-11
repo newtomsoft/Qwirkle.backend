@@ -19,8 +19,9 @@ public class PlayerDao
     public Player ToPlayer(DefaultDbContext dbContext)
     {
         Tiles ??= dbContext.TilesOnPlayer.Where(tp => tp.PlayerId == Id).Include(t => t.Tile).ToList();
-        User ??= dbContext.Users.First(u => u.Id == UserId);
+        var userName = User is null ? dbContext.Users.Where(u => u.Id == UserId).Select(u => u.UserName).First() : User.UserName;
         var tilesOnPlayer = Tiles.Select(tileOnPlayerDao => tileOnPlayerDao.ToTileOnPlayer()).ToList();
-        return new Player(Id, User.Id, GameId, User.UserName, GamePosition, Points, LastTurnPoints, new Rack(tilesOnPlayer), GameTurn, LastTurnSkipped);
+        var player = new Player(Id, GameId, userName, GamePosition, Points, LastTurnPoints, tilesOnPlayer, GameTurn, LastTurnSkipped);
+        return player;
     }
 }

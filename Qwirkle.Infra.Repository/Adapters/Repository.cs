@@ -159,16 +159,15 @@ public class Repository : IRepository
         return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.Single(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Id, tileDao.Color, tileDao.Shape, new CoordinatesInGame(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
     }
 
-    private static PlayerDao PlayerToPlayerDaoWithoutTile(Player player) =>
-        new()
-        {
-            GameId = player.GameId,
-            UserId = player.UserId,
-            Points = (byte)player.Points,
-            LastTurnPoints = (byte)player.LastTurnPoints,
-            GameTurn = player.IsTurn,
-            GamePosition = (byte)player.GamePosition,
-            LastTurnSkipped = player.LastTurnSkipped
-        };
+    private PlayerDao PlayerToPlayerDaoWithoutTile(Player player)
+    {
+        var playerDao = DbContext.Players.Single(p => p.Id == player.Id);
+        playerDao.Points = (byte)player.Points;
+        playerDao.LastTurnPoints = (byte)player.LastTurnPoints;
+        playerDao.GameTurn = player.IsTurn;
+        playerDao.GamePosition = (byte)player.GamePosition;
+        playerDao.LastTurnSkipped = player.LastTurnSkipped;
+        return playerDao;
+    }
 }
 
