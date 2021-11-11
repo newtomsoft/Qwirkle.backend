@@ -68,7 +68,11 @@ public class Repository : IRepository
 
     public void UpdatePlayer(Player player)
     {
-        DbContext.Players.Update(PlayerToPlayerDaoWithoutTile(player));
+        var playerDao = DbContext.Players.First(p => p.Id == player.Id);
+        playerDao.Points = (byte)player.Points;
+        playerDao.LastTurnPoints = (byte)player.LastTurnPoints;
+        playerDao.GameTurn = player.IsTurn;
+        playerDao.LastTurnSkipped = player.LastTurnSkipped;
         DbContext.SaveChanges();
     }
 
@@ -157,17 +161,6 @@ public class Repository : IRepository
     {
         var tilesDao = DbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
         return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.Single(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Id, tileDao.Color, tileDao.Shape, new CoordinatesInGame(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
-    }
-
-    private PlayerDao PlayerToPlayerDaoWithoutTile(Player player)
-    {
-        var playerDao = DbContext.Players.Single(p => p.Id == player.Id);
-        playerDao.Points = (byte)player.Points;
-        playerDao.LastTurnPoints = (byte)player.LastTurnPoints;
-        playerDao.GameTurn = player.IsTurn;
-        playerDao.GamePosition = (byte)player.GamePosition;
-        playerDao.LastTurnSkipped = player.LastTurnSkipped;
-        return playerDao;
     }
 }
 
