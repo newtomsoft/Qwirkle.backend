@@ -12,7 +12,7 @@ public class Player
     public bool LastTurnSkipped { get; set; }
     public bool IsTurn { get; private set; }
 
-    public Player(int id, int userId, int gameId, string pseudo, int gamePosition, int points, int lastTurnPoints, List<TileOnPlayer> tiles, bool isTurn, bool lastTurnSkipped) // todo remplacer tiles par rack
+    public Player(int id, int userId, int gameId, string pseudo, int gamePosition, int points, int lastTurnPoints, Rack rack, bool isTurn, bool lastTurnSkipped)
     {
         Id = id;
         UserId = userId;
@@ -21,7 +21,7 @@ public class Player
         GamePosition = gamePosition;
         Points = points;
         LastTurnPoints = lastTurnPoints;
-        Rack = new Rack(tiles);
+        Rack = rack;
         IsTurn = isTurn;
         LastTurnSkipped = lastTurnSkipped;
     }
