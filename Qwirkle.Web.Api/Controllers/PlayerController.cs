@@ -4,15 +4,13 @@
 [Route("Player")]
 public class PlayerController : ControllerBase
 {
-    private readonly IHubContext<HubQwirkle> _hubContextQwirkle;
     private readonly ILogger<PlayerController> _logger;
     private readonly CoreUseCase _coreUseCase;
 
-    public PlayerController(ILogger<PlayerController> logger, CoreUseCase coreUseCase, IHubContext<HubQwirkle> hubContextQwirkle)
+    public PlayerController(ILogger<PlayerController> logger, CoreUseCase coreUseCase)
     {
         _logger = logger;
         _coreUseCase = coreUseCase;
-        _hubContextQwirkle = hubContextQwirkle;
     }
 
     [HttpGet("UsersIds")]
@@ -53,14 +51,8 @@ public class PlayerController : ControllerBase
     [HttpPost("Winners/")]
     public ActionResult<int> Winners(List<int> gamesId)
     {
-        int gameId = gamesId[0];
+        var gameId = gamesId[0];
         var winnersPlayersIds = _coreUseCase.GetWinnersPlayersId(gameId);
-        if (winnersPlayersIds is null)
-            return null;
-
-        SendGameOver(gameId, winnersPlayersIds);
         return new ObjectResult(winnersPlayersIds);
     }
-
-    private void SendGameOver(int gameId, List<int> winnersPlayersIds) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveGameOver", winnersPlayersIds);
 }

@@ -7,12 +7,14 @@ public class CoreUseCase
     private const int PointsForAQwirkle = 12;
 
     private readonly IRepository _repository;
+    private readonly ISignal _signal;
 
     public Game Game { get; set; }
 
-    public CoreUseCase(IRepository repository)
+    public CoreUseCase(IRepository repository, ISignal signal)
     {
         _repository = repository;
+        _signal = signal;
     }
 
     public List<Player> CreateGame(List<int> usersIds)
@@ -52,9 +54,10 @@ public class CoreUseCase
         Game = GetGame(player.GameId);
         if (!player.HasTiles(tilesIds)) return new PlayReturn { Code = PlayReturnCode.PlayerDontHaveThisTile, GameId = Game.Id };
 
-        PlayReturn playReturn = GetPlayReturn(tilesToPlay, player);
+        var playReturn = GetPlayReturn(tilesToPlay, player);
         if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
-
+        _signal.SendTilesPlayed(Game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
+        _signal.SendPlayerIdTurn(Game.Id, GetPlayerIdToPlay(Game.Id));
         playReturn.NewRack = PlayTiles(player, tilesToPlay, playReturn.Points);
         return playReturn;
     }
@@ -69,13 +72,14 @@ public class CoreUseCase
 
     public SwapTilesReturn TrySwapTiles(int playerId, List<int> tilesIds)
     {
-        Player player = GetPlayer(playerId);
+        var player = GetPlayer(playerId);
         Game = GetGame(player.GameId);
         if (!player.IsTurn) return new SwapTilesReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
         if (!player.HasTiles(tilesIds)) return new SwapTilesReturn { GameId = Game.Id, Code = PlayReturnCode.PlayerDontHaveThisTile };
-
-        List<TileOnPlayer> tilesToSwap = GetPlayerTiles(playerId, tilesIds);
+        var tilesToSwap = GetPlayerTiles(playerId, tilesIds);
         var swapTilesReturn = SwapTiles(player, tilesToSwap);
+        _signal.SendTilesSwapped(Game.Id, playerId);
+        _signal.SendPlayerIdTurn(Game.Id, GetPlayerIdToPlay(Game.Id));
         return swapTilesReturn;
     }
 
@@ -83,7 +87,14 @@ public class CoreUseCase
     {
         var player = GetPlayer(playerId);
         Game = GetGame(player.GameId);
-        return player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
+        var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
+        if (skipTurnReturn.Code == PlayReturnCode.Ok)
+        {
+            var gameId = skipTurnReturn.GameId;
+            _signal.SendTurnSkipped(gameId, playerId);
+            _signal.SendPlayerIdTurn(gameId, GetPlayerIdToPlay(gameId));
+        }
+        return skipTurnReturn;
     }
 
     private void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange) => _repository.ArrangeRack(player, tilesToArrange);
@@ -182,10 +193,10 @@ public class CoreUseCase
 
     public List<int> GetWinnersPlayersId(int gameId)
     {
-        if (!_repository.IsGameOver(gameId))
-            return null;
-
-        return _repository.GetLeadersPlayersId(gameId);
+        if (!_repository.IsGameOver(gameId)) return null;
+        var winnersPlayersIds = _repository.GetLeadersPlayersId(gameId);
+        _signal.SendGameOver(gameId, winnersPlayersIds);
+        return winnersPlayersIds;
     }
 
     private SkipTurnReturn SkipTurn(Player player)

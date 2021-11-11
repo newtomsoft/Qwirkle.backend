@@ -1,8 +1,8 @@
-var builder = WebApplication.CreateBuilder(args);
+var appBuilder = WebApplication.CreateBuilder(args);
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.json"), optional: true);
-builder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.{environmentName}.json"), optional: true);
-builder.Services.AddCors(options =>
+appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.json"), optional: true);
+appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.{environmentName}.json"), optional: true);
+appBuilder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => builder
     .SetIsOriginAllowed(_ => true)
@@ -10,12 +10,13 @@ builder.Services.AddCors(options =>
     .AllowAnyHeader()
     .AllowCredentials());
 });
-builder.Services.AddSignalR();
-builder.Services.AddScoped<IRepository, Repository>();
-builder.Services.AddScoped<CoreUseCase>();
-builder.Services.AddControllers();
-builder.Services.AddDbContext<DefaultDbContext>(builder.Configuration);
-builder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
+appBuilder.Services.AddSignalR();
+appBuilder.Services.AddScoped<IRepository, Repository>();
+appBuilder.Services.AddSingleton<ISignal, Signal>();
+appBuilder.Services.AddScoped<CoreUseCase>();
+appBuilder.Services.AddControllers();
+appBuilder.Services.AddDbContext<DefaultDbContext>(appBuilder.Configuration);
+appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
 {
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
@@ -28,11 +29,11 @@ builder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
   .AddEntityFrameworkStores<DefaultDbContext>()
   .AddDefaultTokenProviders()
   .AddDefaultUI();
-builder.Services.AddOptions();
-builder.Services.ConfigureApplicationCookie(options => options.LoginPath = "/Identity/Account/Login");
-builder.Services.AddSession();
+appBuilder.Services.AddOptions();
+appBuilder.Services.ConfigureApplicationCookie(options => options.LoginPath = "/Identity/Account/Login");
+appBuilder.Services.AddSession();
 
-var app = builder.Build();
+var app = appBuilder.Build();
 app.UseCors("CorsPolicy");
 #if DEBUG
 app.UseDeveloperExceptionPage();

@@ -4,15 +4,13 @@
 [Route("Action")]
 public class ActionController : ControllerBase
 {
-    private readonly IHubContext<HubQwirkle> _hubContextQwirkle;
     private readonly ILogger<ActionController> _logger;
     private readonly CoreUseCase _coreUseCase;
 
-    public ActionController(ILogger<ActionController> logger, CoreUseCase coreUseCase, IHubContext<HubQwirkle> hubContextQwirkle)
+    public ActionController(ILogger<ActionController> logger, CoreUseCase coreUseCase)
     {
         _logger = logger;
         _coreUseCase = coreUseCase;
-        _hubContextQwirkle = hubContextQwirkle;
     }
 
     [HttpPost("PlayTiles/")]
@@ -22,12 +20,6 @@ public class ActionController : ControllerBase
         tiles.ForEach(t => tilesToPlay.Add((t.TileId, t.X, t.Y)));
         var playerId = tiles[0].PlayerId;
         var playReturn = _coreUseCase.TryPlayTiles(playerId, tilesToPlay);
-        if (playReturn.Code == PlayReturnCode.Ok)
-        {
-            int gameId = playReturn.GameId;
-            SendTilesPlayed(gameId, playerId, playReturn.Points, playReturn.TilesPlayed);
-            SendPlayerIdTurn(gameId, _coreUseCase.GetPlayerIdToPlay(gameId));
-        }
         return new ObjectResult(playReturn);
     }
 
@@ -47,12 +39,6 @@ public class ActionController : ControllerBase
         var tilesIdsToChange = new List<int>();
         tiles.ForEach(t => tilesIdsToChange.Add(t.TileId));
         var swapTilesReturn = _coreUseCase.TrySwapTiles(tiles[0].PlayerId, tilesIdsToChange);
-        if (swapTilesReturn.Code == PlayReturnCode.Ok)
-        {
-            int gameId = swapTilesReturn.GameId;
-            SendTilesSwapped(gameId, tiles[0].PlayerId);
-            SendPlayerIdTurn(gameId, _coreUseCase.GetPlayerIdToPlay(gameId));
-        }
         return new ObjectResult(swapTilesReturn);
     }
 
@@ -61,12 +47,6 @@ public class ActionController : ControllerBase
     {
         var playerId = player.Id;
         var skipTurnReturn = _coreUseCase.TrySkipTurn(playerId);
-        if (skipTurnReturn.Code == PlayReturnCode.Ok)
-        {
-            int gameId = skipTurnReturn.GameId;
-            SendTurnSkipped(gameId, playerId);
-            SendPlayerIdTurn(gameId, _coreUseCase.GetPlayerIdToPlay(gameId));
-        }
         return new ObjectResult(skipTurnReturn);
     }
 
@@ -79,9 +59,4 @@ public class ActionController : ControllerBase
         var arrangeRackReturn = _coreUseCase.TryArrangeRack(playerId, tilesToArrange);
         return new ObjectResult(arrangeRackReturn);
     }
-
-    private void SendTilesPlayed(int gameId, int playerId, int scoredPoints, List<TileOnBoard> tilesOnBoardPlayed) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesPlayed", playerId, scoredPoints, tilesOnBoardPlayed);
-    private void SendTilesSwapped(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesSwapped", playerId);
-    private void SendTurnSkipped(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTurnSkipped", playerId);
-    private void SendPlayerIdTurn(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceivePlayerIdTurn", playerId);
 }

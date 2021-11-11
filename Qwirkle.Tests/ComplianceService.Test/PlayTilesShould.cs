@@ -21,7 +21,7 @@ public class PlayTilesShould
     public PlayTilesShould()
     {
         IRepository repository = new Repository(Context());
-        _complianceService = new CoreUseCase(repository);
+        _complianceService = new CoreUseCase(repository, null);
     }
 
     #region private methods
