@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.SignalR;
-using Qwirkle.Core.Entities;
-using Qwirkle.Core.Ports;
-
-namespace Qwirkle.SignalR;
+﻿namespace Qwirkle.SignalR.Adapters;
 
 public class Signal : ISignal
 {
