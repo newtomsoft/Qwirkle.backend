@@ -1,3 +1,4 @@
+using Newtomsoft.EntityFramework.Core;
 using Qwirkle.Core.UseCases;
 
 var builder = WebApplication.CreateBuilder(args);

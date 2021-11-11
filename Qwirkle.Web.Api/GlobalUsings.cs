@@ -5,7 +5,6 @@ global using Microsoft.AspNetCore.SignalR;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
-global using Newtomsoft.EntityFramework.Core;
 global using Qwirkle.Core.Entities;
 global using Qwirkle.Core.Enums;
 global using Qwirkle.Core.Ports;

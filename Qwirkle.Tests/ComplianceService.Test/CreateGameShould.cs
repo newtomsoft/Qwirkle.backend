@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Qwirkle.Core.UseCases;
+﻿using Qwirkle.Core.UseCases;
+using System.Linq;
 
 namespace Qwirkle.Core.Tests;
 

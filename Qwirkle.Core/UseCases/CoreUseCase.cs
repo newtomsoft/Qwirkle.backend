@@ -275,7 +275,7 @@ public class CoreUseCase
         if (tiles.Count <= 1) return totalPoints;
         foreach (var tile in tiles)
         {
-            if ((points = CountTilesMakeValidLine(new List<TileOnBoard> {tile})) == 0) return 0;
+            if ((points = CountTilesMakeValidLine(new List<TileOnBoard> { tile })) == 0) return 0;
             if (points != 1) totalPoints += points;
         }
         return totalPoints;
