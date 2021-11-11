@@ -21,6 +21,6 @@ public interface IRepository
     List<int> GetLeadersPlayersId(int gameId);
     bool IsGameOver(int gameId);
     void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange);
-    List<int> GetUsersId();
+    List<int> GetAllUsersId();
     List<int> GetUserGames(int userId);
 }

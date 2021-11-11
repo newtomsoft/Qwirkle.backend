@@ -29,7 +29,7 @@ public class Player
 
 
     public void SetTurn(bool turn) => _gameTurn = turn;
-    public bool HasTiles(List<int> tilesIds)
+    public bool HasTiles(IEnumerable<int> tilesIds)
     {
         var playerTilesId = Rack.Tiles.Select(t => t.Id);
         return tilesIds.All(id => playerTilesId.Contains(id));

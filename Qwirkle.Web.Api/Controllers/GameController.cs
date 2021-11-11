@@ -13,32 +13,23 @@ public class GameController : ControllerBase
         _coreUseCase = coreUseCase;
     }
 
+
     [HttpPost("New")]
     public ActionResult<int> CreateGame(List<int> usersIds)
     {
         _logger.LogInformation($"CreateGame with {usersIds}");
-        var players = _coreUseCase.CreateGame(usersIds);
-        return new ObjectResult(players);
+        return new ObjectResult(_coreUseCase.CreateGame(usersIds));
     }
 
-    [HttpPost("")]
-    public ActionResult<int> GetGame(List<int> gameId)
-    {
-        var game = _coreUseCase.GetGame(gameId[0]);
-        return new ObjectResult(game);
-    }
 
-    [HttpPost("GamesByUserId/{userId}")]
-    public ActionResult<int> GetGamesByUserId(int userId)
-    {
-        var gamesId = _coreUseCase.GetUserGames(userId);
-        return new ObjectResult(gamesId);
-    }
+    [HttpGet("{gameId:int}")]
+    public ActionResult<int> GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGame(gameId));
+
+
+    [HttpPost("GamesByUserId/{userId:int}")]
+    public ActionResult<int> GetGamesByUserId(int userId) => new ObjectResult(_coreUseCase.GetUserGames(userId));
+
 
     [HttpGet("GamesIds")]
-    public ActionResult<int> GetGamesIdsContainingPlayers()
-    {
-        var listGameId = _coreUseCase.GetGamesIdsContainingPlayers();
-        return new ObjectResult(listGameId);
-    }
+    public ActionResult<int> GetGamesIdsContainingPlayers() => new ObjectResult(_coreUseCase.GetGamesIdsContainingPlayers());
 }

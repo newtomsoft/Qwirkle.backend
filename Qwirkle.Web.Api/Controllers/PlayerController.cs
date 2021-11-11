@@ -4,55 +4,25 @@
 [Route("Player")]
 public class PlayerController : ControllerBase
 {
-    private readonly ILogger<PlayerController> _logger;
-    private readonly CoreUseCase _coreUseCase;
+    private readonly CoreUseCase _useCase;
+    public PlayerController(CoreUseCase useCase) => _useCase = useCase;
 
-    public PlayerController(ILogger<PlayerController> logger, CoreUseCase coreUseCase)
-    {
-        _logger = logger;
-        _coreUseCase = coreUseCase;
-    }
 
-    [HttpGet("UsersIds")]
-    public ActionResult<int> GetUsersId()
-    {
-        var usersId = _coreUseCase.GetUsersId();
-        return new ObjectResult(usersId);
-    }
+    [HttpGet("AllUsersIds")]
+    public ActionResult<int> GetAllUsersId() => new ObjectResult(_useCase.GetAllUsersId());
 
-    [HttpGet("Players/{playerId}")]
-    public ActionResult<int> GetPlayer(int playerId)
-    {
-        var player = _coreUseCase.GetPlayer(playerId);
-        return new ObjectResult(player);
-    }
+    [HttpGet("Players/{playerId:int}")]
+    public ActionResult<int> GetById(int playerId) => new ObjectResult(_useCase.GetPlayer(playerId));
 
-    [HttpGet("{gameId}/{userId}")]
-    public ActionResult<int> GetPlayer(int gameId, int userId)
-    {
-        var player = _coreUseCase.GetPlayer(gameId, userId);
-        return new ObjectResult(player);
-    }
+    [HttpGet("{gameId}/{userId:int}")]
+    public ActionResult<int> GetByGameIdUserId(int gameId, int userId) => new ObjectResult(_useCase.GetPlayer(gameId, userId));
 
     [HttpGet("GetPlayerNameTurn/{gameId:int}")]
-    public ActionResult<int> GetPlayerNameTurn(int gameId)
-    {
-        var playerNameTurn = _coreUseCase.GetPlayerNameTurn(gameId);
-        return new ObjectResult(playerNameTurn);
-    }
+    public ActionResult<int> GetNameTurn(int gameId) => new ObjectResult(_useCase.GetPlayerNameTurn(gameId));
 
-    [HttpGet("PlayerIdToPlay/{gameId}")]
-    public ActionResult<int> GetPlayerIdToPlay(int gameId)
-    {
-        var playerId = _coreUseCase.GetPlayerIdToPlay(gameId);
-        return new ObjectResult(playerId);
-    }
+    [HttpGet("PlayerIdToPlay/{gameId:int}")]
+    public ActionResult<int> GetIdTurn(int gameId) => new ObjectResult(_useCase.GetPlayerIdTurn(gameId));
 
-    [HttpPost("Winners/")]
-    public ActionResult<int> Winners(List<int> gamesId)
-    {
-        var gameId = gamesId[0];
-        var winnersPlayersIds = _coreUseCase.GetWinnersPlayersId(gameId);
-        return new ObjectResult(winnersPlayersIds);
-    }
+    [HttpGet("Winners/{gameId:int}")]
+    public ActionResult<int> Winners(int gameId) => new ObjectResult(_useCase.GetWinnersPlayersId(gameId));
 }

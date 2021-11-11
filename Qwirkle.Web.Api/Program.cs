@@ -1,6 +1,6 @@
 var appBuilder = WebApplication.CreateBuilder(args);
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.json"), optional: true);
+appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", "appsettings.json"), optional: true);
 appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.{environmentName}.json"), optional: true);
 appBuilder.Services.AddCors(options =>
 {
