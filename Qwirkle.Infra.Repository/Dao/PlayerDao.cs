@@ -3,13 +3,13 @@
 [Table("Player")]
 public class PlayerDao
 {
-    public int Id { get; set; }
-    public int GameId { get; set; }
-    public int UserId { get; set; }
+    public int Id { get; init; }
+    public int GameId { get; init; }
+    public int UserId { get; init; }
     public byte Points { get; set; }
     public byte LastTurnPoints { get; set; }
     public bool GameTurn { get; set; }
-    public byte GamePosition { get; set; }
+    public byte GamePosition { get; init; }
     public bool LastTurnSkipped { get; set; }
 
     public virtual GameDao Game { get; set; }
