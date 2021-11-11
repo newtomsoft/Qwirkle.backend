@@ -1,6 +1,4 @@
-﻿using Qwirkle.Core.UseCases;
-
-namespace Qwirkle.Core.Tests;
+﻿namespace Qwirkle.Core.Tests;
 
 [Collection("Sequential")]
 public class PlayTilesShould

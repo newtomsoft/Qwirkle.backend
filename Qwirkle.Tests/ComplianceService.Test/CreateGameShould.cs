@@ -1,7 +1,4 @@
-﻿using Qwirkle.Core.UseCases;
-using System.Linq;
-
-namespace Qwirkle.Core.Tests;
+﻿namespace Qwirkle.Core.Tests;
 
 public class CreateGameShould
 {

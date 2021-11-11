@@ -1,8 +1,4 @@
-﻿using Qwirkle.Core.Entities;
-using Qwirkle.Core.UseCases;
-using Qwirkle.Core.ValueObjects;
-
-namespace Qwirkle.Core.Tests;
+﻿namespace Qwirkle.Core.Tests;
 
 public class GetPlayPointsShould
 {
