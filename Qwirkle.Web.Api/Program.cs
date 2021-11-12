@@ -1,3 +1,5 @@
+using Qwirkle.Authentication.Adapters;
+
 var appBuilder = WebApplication.CreateBuilder(args);
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", "appsettings.json"), optional: true);
@@ -13,6 +15,8 @@ appBuilder.Services.AddCors(options =>
 appBuilder.Services.AddSignalR();
 appBuilder.Services.AddScoped<IRepository, Repository>();
 appBuilder.Services.AddSingleton<ISignal, Signal>();
+appBuilder.Services.AddScoped<IAuthentication, Authentication>();
+appBuilder.Services.AddScoped<AuthenticationUseCase>();
 appBuilder.Services.AddScoped<CoreUseCase>();
 appBuilder.Services.AddControllers();
 appBuilder.Services.AddDbContext<DefaultDbContext>(appBuilder.Configuration);

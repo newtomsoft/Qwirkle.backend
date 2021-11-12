@@ -1,4 +1,6 @@
-﻿namespace Qwirkle.Web.Api.ViewModels;
+﻿using Qwirkle.Core.Entities;
+
+namespace Qwirkle.Web.Api.ViewModels;
 
 public class UserViewModel
 {
@@ -25,6 +27,16 @@ public class UserViewModel
             Pseudo = Pseudo,
             Password = Password,
             IsRemember = IsRemember,
+        };
+    }
+
+    public User ToUser()
+    {
+        return new()
+        {
+            Pseudo = Pseudo,
+            FirstName = Firstname,
+            LastName = Lastname,
         };
     }
 }

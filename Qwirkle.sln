@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.SignalR", "Qwirkle.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtomsoft.EntityFramework", "..\Newtomsoft.Libraries\Newtomsoft.EntityFramework\Newtomsoft.EntityFramework.csproj", "{2930B02D-CC4B-467D-8A8E-FBBD54CA569F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qwirkle.Authentication", "Qwirkle.Authentication\Qwirkle.Authentication.csproj", "{754EEC74-46CB-4382-8572-5F92238A9860}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,14 @@ Global
 		{2930B02D-CC4B-467D-8A8E-FBBD54CA569F}.NoPersitence|Any CPU.Build.0 = Debug|Any CPU
 		{2930B02D-CC4B-467D-8A8E-FBBD54CA569F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2930B02D-CC4B-467D-8A8E-FBBD54CA569F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{754EEC74-46CB-4382-8572-5F92238A9860}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{754EEC74-46CB-4382-8572-5F92238A9860}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{754EEC74-46CB-4382-8572-5F92238A9860}.NoPersitance|Any CPU.ActiveCfg = Debug|Any CPU
+		{754EEC74-46CB-4382-8572-5F92238A9860}.NoPersitance|Any CPU.Build.0 = Debug|Any CPU
+		{754EEC74-46CB-4382-8572-5F92238A9860}.NoPersitence|Any CPU.ActiveCfg = Debug|Any CPU
+		{754EEC74-46CB-4382-8572-5F92238A9860}.NoPersitence|Any CPU.Build.0 = Debug|Any CPU
+		{754EEC74-46CB-4382-8572-5F92238A9860}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{754EEC74-46CB-4382-8572-5F92238A9860}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +111,7 @@ Global
 		{8419EFC2-8FF7-4E23-92DE-15CA3A6C6531} = {1644DA54-649D-4969-8E41-F94DAD3897BF}
 		{FBA5F822-5FD5-4275-BADB-C3D0CFADCFA7} = {2094B01D-ED38-4071-9B68-636AE81C694B}
 		{9C7C489A-C73B-426E-83A5-E9CEA165DA22} = {1644DA54-649D-4969-8E41-F94DAD3897BF}
+		{754EEC74-46CB-4382-8572-5F92238A9860} = {1644DA54-649D-4969-8E41-F94DAD3897BF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {326A9AD2-C15D-4772-8BB7-E6B195208FDB}
