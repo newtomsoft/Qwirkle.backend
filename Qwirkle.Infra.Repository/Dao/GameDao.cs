@@ -4,7 +4,9 @@
 public class GameDao
 {
     public int Id { get; set; }
-    public DateTime CreatDate { get; set; }
+
+    [Column("CreatDate")] //todo rename table and do migration
+    public DateTime CreateDate { get; set; }
     public DateTime LastPlayDate { get; set; }
     public bool GameOver { get; set; }
 

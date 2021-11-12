@@ -31,7 +31,7 @@ public class Repository : IRepository
 
     public Game CreateGame(DateTime date)
     {
-        var gameDao = new GameDao { CreatDate = date };
+        var gameDao = new GameDao { CreateDate = date };
         DbContext.Games.Add(gameDao);
         DbContext.SaveChanges();
         return gameDao.ToNotFillGame();
