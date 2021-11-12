@@ -1,24 +1,12 @@
-﻿using Qwirkle.Core.Entities;
-
-namespace Qwirkle.Web.Api.ViewModels;
+﻿namespace Qwirkle.Web.Api.ViewModels;
 
 public class UserViewModel
 {
     public string Pseudo { get; set; }
+    public string Password { get; set; }
     public string Firstname { get; set; }
     public string Lastname { get; set; }
-    public string Password { get; set; }
-    public bool IsRemember { get; set; }
-
-    public UserDao ToUserDao()
-    {
-        return new ()
-        {
-            UserName = Pseudo,
-            FirstName = Firstname,
-            LastName = Lastname,
-        };
-    }
+    public string Email { get; set; }
 
     public LoginViewModel ToLoginViewModel()
     {
@@ -26,7 +14,6 @@ public class UserViewModel
         {
             Pseudo = Pseudo,
             Password = Password,
-            IsRemember = IsRemember,
         };
     }
 
@@ -37,6 +24,7 @@ public class UserViewModel
             Pseudo = Pseudo,
             FirstName = Firstname,
             LastName = Lastname,
+
         };
     }
 }

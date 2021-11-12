@@ -1,13 +1,14 @@
 ﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("Game")]
 public class GameController : ControllerBase
 {
     private readonly ILogger<GameController> _logger;
     private readonly CoreUseCase _coreUseCase;
     private readonly UserManager<UserDao> _userManager;
-    private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
+    private int _userId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
     public GameController(ILogger<GameController> logger, CoreUseCase coreUseCase, UserManager<UserDao> userManager)
     {
@@ -16,12 +17,10 @@ public class GameController : ControllerBase
         _userManager = userManager;
     }
 
-
     [HttpPost("New")]
     public ActionResult<int> CreateGame(List<int> usersIds)
     {
-        if (UserId == 0) return NotFound();
-        usersIds.Add(UserId);
+        usersIds.Add(_userId);
         _logger.LogInformation($"CreateGame with {usersIds}");
         return new ObjectResult(_coreUseCase.CreateGame(usersIds));
     }
@@ -32,5 +31,5 @@ public class GameController : ControllerBase
 
 
     [HttpGet("UserGames")]
-    public ActionResult<int> GetUserGames() => new ObjectResult(_coreUseCase.GetUserGames(UserId));
+    public ActionResult<int> GetUserGames() => new ObjectResult(_coreUseCase.GetUserGames(_userId));
 }

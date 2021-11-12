@@ -3,6 +3,7 @@ using Qwirkle.Core.Entities;
 using Qwirkle.Core.Ports;
 using Qwirkle.Infra.Repository.Dao;
 using Qwirkle.Infra.Repository.DomainExtensionMethods;
+using System.Security.Claims;
 
 namespace Qwirkle.Authentication.Adapters;
 
@@ -24,6 +25,16 @@ public class Authentication : IAuthentication
         var userDao = user.ToUserDao();
         await _userStore.SetUserNameAsync(userDao, user.Pseudo, CancellationToken.None);
         var result = await _userManager.CreateAsync(userDao, password);
+        return result.Succeeded;
+    }
+
+    public int GetUserId(object user) => int.Parse(_userManager.GetUserId(user as ClaimsPrincipal) ?? "0");
+
+    public Task LogoutOutAsync() => _signInManager.SignOutAsync();
+
+    public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember)
+    {
+        var result = await _signInManager.PasswordSignInAsync(pseudo, password, isRemember, lockoutOnFailure: false);
         return result.Succeeded;
     }
 }

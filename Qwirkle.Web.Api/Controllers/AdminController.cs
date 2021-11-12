@@ -1,20 +1,19 @@
 ﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
+[Authorize] //todo Role = "Admin"
 [Route("Admin")]
 public class AdminController : ControllerBase
 {
-    private readonly ILogger<GameController> _logger;
     private readonly CoreUseCase _coreUseCase;
-    private readonly UserManager<UserDao> _userManager;
-    private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
-
-    public AdminController(ILogger<GameController> logger, CoreUseCase coreUseCase, UserManager<UserDao> userManager)
+    public AdminController(CoreUseCase coreUseCase)
     {
-        _logger = logger;
         _coreUseCase = coreUseCase;
-        _userManager = userManager;
     }
+
+    [HttpGet("AllUsersIds")]
+    public ActionResult<int> GetAllUsersId() => new ObjectResult(_coreUseCase.GetAllUsersId());
+
 
     [HttpPost("GamesByUserId/{userId:int}")]
     public ActionResult<int> GetGamesByUserId(int userId) => new ObjectResult(_coreUseCase.GetUserGames(userId));
