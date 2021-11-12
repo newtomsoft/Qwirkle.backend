@@ -1,6 +1,4 @@
-﻿
-
-namespace Qwirkle.Web.Api.Controllers;
+﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Route("User")]
@@ -29,21 +27,27 @@ public class UserController : ControllerBase
 
 
     [HttpPost("Register")]
-    public async Task<ActionResult<int>> RegisterAsync(LoginViewModel login)
+    public async Task<ActionResult<int>> RegisterAsync(UserViewModel user)
     {
-        var userDao = login.ToUserDao();
-        await _userStore.SetUserNameAsync(userDao, login.UserName, CancellationToken.None);
-        var result = await _userManager.CreateAsync(userDao, login.Password);
-        if (!result.Succeeded) return new ObjectResult(0);
-        return await LoginAsync(login);
+        var userDao = user.ToUserDao();
+        await _userStore.SetUserNameAsync(userDao, user.Pseudo, CancellationToken.None);
+        var result = await _userManager.CreateAsync(userDao, user.Password);
+        return new ObjectResult(result);
     }
+
 
     [HttpPost("Login")]
     public async Task<ActionResult<int>> LoginAsync(LoginViewModel login)
     {
-        var result = await _signInManager.PasswordSignInAsync(login.UserName, login.Password, login.IsRemember, lockoutOnFailure: false);
-        return result.Succeeded ? new ObjectResult(_userManager.GetUserId(User)) : new ObjectResult(0);
+        if (User.Identity is { IsAuthenticated: true }) return new ObjectResult(0);
+        var result = await _signInManager.PasswordSignInAsync(login.Pseudo, login.Password, login.IsRemember, lockoutOnFailure: false);
+        return new ObjectResult(result);
     }
+
+
+    [HttpGet("WhoAmI")]
+    public ActionResult<int> WhoAmI() => new ObjectResult(_userManager.GetUserId(User));
+
 
     [HttpGet("Logout")]
     public async Task<ActionResult<int>> LogoutAsync()
@@ -51,6 +55,4 @@ public class UserController : ControllerBase
         await _signInManager.SignOutAsync();
         return new ObjectResult(true);
     }
-
-
 }
