@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Qwirkle.Core.Entities;
-using Qwirkle.Core.Ports;
-using Qwirkle.Infra.Repository.Dao;
-using Qwirkle.Infra.Repository.DomainExtensionMethods;
-using System.Security.Claims;
-
-namespace Qwirkle.Authentication.Adapters;
+﻿namespace Qwirkle.Authentication.Adapters;
 
 public class Authentication : IAuthentication
 {

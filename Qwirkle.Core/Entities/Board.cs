@@ -9,7 +9,7 @@ public class Board
         Tiles = tiles;
     }
 
-    public bool IsIsolatedTile(TileOnBoard tile)
+    public bool IsTileIsolated(TileOnBoard tile)
     {
         var tileRight = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Right());
         var tileLeft = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Left());

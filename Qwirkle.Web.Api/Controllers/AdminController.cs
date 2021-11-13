@@ -12,13 +12,13 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("AllUsersIds")]
-    public ActionResult<int> GetAllUsersId() => new ObjectResult(_coreUseCase.GetAllUsersId());
+    public ActionResult GetAllUsersId() => new ObjectResult(_coreUseCase.GetAllUsersId());
 
 
-    [HttpPost("GamesByUserId/{userId:int}")]
-    public ActionResult<int> GetGamesByUserId(int userId) => new ObjectResult(_coreUseCase.GetUserGames(userId));
+    [HttpGet("GamesByUserId/{userId:int}")]
+    public ActionResult GetGamesByUserId(int userId) => new ObjectResult(_coreUseCase.GetUserGames(userId));
 
 
     [HttpGet("GamesIds")]
-    public ActionResult<int> GetGamesIdsContainingPlayers() => new ObjectResult(_coreUseCase.GetGamesIdsContainingPlayers());
+    public ActionResult GetGamesIdsContainingPlayers() => new ObjectResult(_coreUseCase.GetGamesIdsContainingPlayers());
 }

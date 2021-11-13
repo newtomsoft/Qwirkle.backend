@@ -17,8 +17,9 @@ public class GameController : ControllerBase
         _userManager = userManager;
     }
 
+
     [HttpPost("New")]
-    public ActionResult<int> CreateGame(List<int> usersIds)
+    public ActionResult CreateGame(List<int> usersIds)
     {
         usersIds.Add(_userId);
         _logger.LogInformation($"CreateGame with {usersIds}");
@@ -27,9 +28,9 @@ public class GameController : ControllerBase
 
 
     [HttpGet("{gameId:int}")]
-    public ActionResult<int> GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGame(gameId));
+    public ActionResult GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGame(gameId));
 
 
     [HttpGet("UserGames")]
-    public ActionResult<int> GetUserGames() => new ObjectResult(_coreUseCase.GetUserGames(_userId));
+    public ActionResult GetUserGames() => new ObjectResult(_coreUseCase.GetUserGames(_userId));
 }

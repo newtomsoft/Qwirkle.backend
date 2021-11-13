@@ -1,6 +1,6 @@
 ﻿namespace Qwirkle.Core.Ports;
 
-public interface ISignal
+public interface INotification
 {
     void SendTurnSkipped(int gameId, int playerId);
     void SendPlayerIdTurn(int gameId, int getPlayerIdToPlay);

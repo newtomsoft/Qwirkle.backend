@@ -3,9 +3,7 @@
 public class AuthenticationUseCase
 {
     private readonly IAuthentication _authentication;
-
-    public Game Game { get; set; }
-
+    
     public AuthenticationUseCase(IAuthentication authentication)
     {
         _authentication = authentication;

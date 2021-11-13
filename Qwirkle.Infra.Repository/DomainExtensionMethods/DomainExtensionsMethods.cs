@@ -12,6 +12,7 @@ public static class DomainExtensionsMethods
             UserName = user.Pseudo,
             FirstName = user.FirstName,
             LastName = user.LastName,
+            Email = user.Email,
         };
     }
 }

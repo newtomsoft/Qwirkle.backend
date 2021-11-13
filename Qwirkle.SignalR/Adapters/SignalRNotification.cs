@@ -1,10 +1,10 @@
 ﻿namespace Qwirkle.SignalR.Adapters;
 
-public class Signal : ISignal
+public class SignalRNotification : INotification
 {
     private readonly IHubContext<HubQwirkle> _hubContextQwirkle;
 
-    public Signal(IHubContext<HubQwirkle> hubContextQwirkle)
+    public SignalRNotification(IHubContext<HubQwirkle> hubContextQwirkle)
     {
         _hubContextQwirkle = hubContextQwirkle;
     }

@@ -1,6 +1,7 @@
 ﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("User")]
 public class UserController : ControllerBase
 {
@@ -11,21 +12,25 @@ public class UserController : ControllerBase
         _authenticationUseCase = authenticationUseCase;
     }
 
+    [AllowAnonymous]
     [HttpPost("Register")]
-    public async Task<ActionResult<int>> RegisterAsync(UserViewModel userViewModel) => new ObjectResult(await _authenticationUseCase.Register(userViewModel.ToUser(), userViewModel.Password));
+    public async Task<ActionResult> RegisterAsync(UserViewModel userViewModel) => IsAuthenticated() ? AlreadyAuthenticated() : new ObjectResult(await _authenticationUseCase.Register(userViewModel.ToUser(), userViewModel.Password));
 
 
+    [AllowAnonymous]
     [HttpPost("Login")]
-    public async Task<ActionResult<int>> LoginAsync(LoginViewModel login) => IsAuthenticated() ? new ObjectResult(0) : new ObjectResult(await _authenticationUseCase.LoginAsync(login.Pseudo, login.Password, login.IsRemember));
+    public async Task<ActionResult> LoginAsync(LoginViewModel login) => IsAuthenticated() ? AlreadyAuthenticated() : new ObjectResult(await _authenticationUseCase.LoginAsync(login.Pseudo, login.Password, login.IsRemember));
 
-    [Authorize]
+
+    [Obsolete]
     [HttpGet("WhoAmI")]
-    public ActionResult<int> WhoAmI() => new ObjectResult(_authenticationUseCase.GetUserId(User));
+    public ActionResult WhoAmI() => new ObjectResult(_authenticationUseCase.GetUserId(User));
 
-    [Authorize]
+
     [HttpGet("Logout")]
     public async void LogoutAsync() => await _authenticationUseCase.LogOutAsync();
 
 
     private bool IsAuthenticated() => User.Identity is { IsAuthenticated: true };
+    private static BadRequestObjectResult AlreadyAuthenticated() => new("user already authenticated");
 }

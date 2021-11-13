@@ -5,6 +5,7 @@ public class User
     public string Pseudo { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
+    public string Email { get; set; }
     public int Help { get; set; }
     public int Points { get; set; }
     public int GamesPlayed { get; set; }

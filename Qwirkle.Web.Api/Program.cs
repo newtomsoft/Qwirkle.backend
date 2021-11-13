@@ -14,7 +14,7 @@ appBuilder.Services.AddCors(options =>
 });
 appBuilder.Services.AddSignalR();
 appBuilder.Services.AddScoped<IRepository, Repository>();
-appBuilder.Services.AddSingleton<ISignal, Signal>();
+appBuilder.Services.AddSingleton<INotification, SignalRNotification>();
 appBuilder.Services.AddScoped<IAuthentication, Authentication>();
 appBuilder.Services.AddScoped<AuthenticationUseCase>();
 appBuilder.Services.AddScoped<CoreUseCase>();
@@ -28,6 +28,7 @@ appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 2;
+    options.User.RequireUniqueEmail = true;
 })
   .AddRoleManager<RoleManager<IdentityRole<int>>>()
   .AddEntityFrameworkStores<DefaultDbContext>()
