@@ -35,7 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.SignalR", "Qwirkle.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Newtomsoft.EntityFramework", "..\Newtomsoft.Libraries\Newtomsoft.EntityFramework\Newtomsoft.EntityFramework.csproj", "{2930B02D-CC4B-467D-8A8E-FBBD54CA569F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qwirkle.Authentication", "Qwirkle.Authentication\Qwirkle.Authentication.csproj", "{754EEC74-46CB-4382-8572-5F92238A9860}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Authentication", "Qwirkle.Authentication\Qwirkle.Authentication.csproj", "{754EEC74-46CB-4382-8572-5F92238A9860}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Qwirkle.AI", "Qwirkle.AI\Qwirkle.AI.pyproj", "{7D3608E7-9797-412A-9E8C-1C9791D21286}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,10 @@ Global
 		{754EEC74-46CB-4382-8572-5F92238A9860}.NoPersitence|Any CPU.Build.0 = Debug|Any CPU
 		{754EEC74-46CB-4382-8572-5F92238A9860}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{754EEC74-46CB-4382-8572-5F92238A9860}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D3608E7-9797-412A-9E8C-1C9791D21286}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D3608E7-9797-412A-9E8C-1C9791D21286}.NoPersitance|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D3608E7-9797-412A-9E8C-1C9791D21286}.NoPersitence|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D3608E7-9797-412A-9E8C-1C9791D21286}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
