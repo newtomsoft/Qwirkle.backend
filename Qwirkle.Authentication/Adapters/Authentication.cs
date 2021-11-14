@@ -21,13 +21,10 @@ public class Authentication : IAuthentication
         return result.Succeeded;
     }
 
+    [Obsolete]
     public int GetUserId(object user) => int.Parse(_userManager.GetUserId(user as ClaimsPrincipal) ?? "0");
 
     public Task LogoutOutAsync() => _signInManager.SignOutAsync();
 
-    public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember)
-    {
-        var result = await _signInManager.PasswordSignInAsync(pseudo, password, isRemember, lockoutOnFailure: false);
-        return result.Succeeded;
-    }
+    public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => (await _signInManager.PasswordSignInAsync(pseudo, password, isRemember, false)).Succeeded;
 }
