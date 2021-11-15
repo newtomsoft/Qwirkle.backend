@@ -22,8 +22,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Tile.py" />
+    <Compile Include="Board.py" />
+    <Compile Include="TileOnBoard.py" />
+    <Compile Include="Color.py" />
     <Compile Include="Qwirkle.AI.py" />
+    <Compile Include="Shape.py" />
+    <Compile Include="Coordinates.py" />
+    <Compile Include="Tile.py" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
