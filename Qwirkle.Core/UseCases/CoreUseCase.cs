@@ -38,7 +38,7 @@ public class CoreUseCase
         ArrangeRack(player, tilesToArrange);
         return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
     }
-
+    
     public PlayReturn TryPlayTiles(int playerId, IEnumerable<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay)
     {
         var player = GetPlayer(playerId);
@@ -155,6 +155,15 @@ public class CoreUseCase
     public List<int> GetAllUsersId() => _repository.GetAllUsersId();
     public List<int> GetUserGames(int userId) => _repository.GetUserGames(userId);
     public Game GetGame(int gameId) => _repository.GetGame(gameId);
+    public Game GetGame(int gameId, int userId)
+    {
+        var game = _repository.GetGame(gameId);
+        var isUserInGame = game.Players.Any(p => p.UserId == userId);
+        if (!isUserInGame) return null;
+        var otherPlayers = game.Players.Where(p => p.UserId != userId);
+        foreach (var player in otherPlayers) player.Rack = new Rack(null);
+        return game;
+    }
 
     public List<int> GetWinnersPlayersId(int gameId)
     {
