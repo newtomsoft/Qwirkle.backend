@@ -36,6 +36,8 @@ if response_gamesIds.status_code != 200 :
 
 gamesNumbers = json.loads(response_gamesIds.text)
 
+
+#todo foreach sur gamesNumbers
 gameNumber = gamesNumbers[0]
 print(f'game number : {gameNumber}')
 response_game = requests.get(f'{url_game}{gameNumber}', cookies=cookies, verify=False)
@@ -44,5 +46,21 @@ if response_game.status_code != 200 :
 
 game = json.loads(response_game.text)
 
+gameOver = game['gameOver']
+if gameOver == True :
+    quit()
+
 board = game['board']
+tilesOnBoard = board['tiles']
+
+bag = game['bag']
+tilesOnBag = bag['tiles']
+
+#todo best get tilesOnPlayer
+for player in game['players']:
+    if player['rack']['tiles'] != None:
+        tilesOnPlayer = player['rack']['tiles']
+
+#todo call api to play a tile in tilesOnPlayer to board
+
 breakpoint=0
