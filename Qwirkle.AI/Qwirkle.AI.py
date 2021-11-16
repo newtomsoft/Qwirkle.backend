@@ -35,8 +35,6 @@ if response_gamesIds.status_code != 200 :
     quit()
 
 gamesNumbers = json.loads(response_gamesIds.text)
-
-
 #todo foreach sur gamesNumbers
 gameNumber = gamesNumbers[0]
 print(f'game number : {gameNumber}')
@@ -50,8 +48,8 @@ gameOver = game['gameOver']
 if gameOver == True :
     quit()
 
-board = game['board']
-tilesOnBoard = board['tiles']
+board = Board(game['board']['tiles'])
+tilesOnBoard = (game['board'])['tiles']
 
 bag = game['bag']
 tilesOnBag = bag['tiles']
@@ -62,5 +60,8 @@ for player in game['players']:
         tilesOnPlayer = player['rack']['tiles']
 
 #todo call api to play a tile in tilesOnPlayer to board
+
+
+xmin = board.xMin()
 
 breakpoint=0
