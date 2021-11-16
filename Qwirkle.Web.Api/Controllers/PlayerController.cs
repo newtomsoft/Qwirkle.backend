@@ -8,7 +8,7 @@ public class PlayerController : ControllerBase
     private readonly CoreUseCase _useCase;
     public PlayerController(CoreUseCase useCase) => _useCase = useCase;
 
-
+    [Obsolete]
     [HttpGet("{playerId:int}")]
     public ActionResult GetById(int playerId) => new ObjectResult(_useCase.GetPlayer(playerId));
 

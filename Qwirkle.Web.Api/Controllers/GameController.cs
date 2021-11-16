@@ -28,7 +28,7 @@ public class GameController : ControllerBase
 
 
     [HttpGet("{gameId:int}")]
-    public ActionResult GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGame(gameId));
+    public ActionResult GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGame(gameId, _userId));
 
 
     [HttpGet("UserGames")]

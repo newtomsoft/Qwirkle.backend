@@ -11,6 +11,10 @@ public class AdminController : ControllerBase
         _coreUseCase = coreUseCase;
     }
 
+    [HttpGet("Player/{playerId:int}")]
+    public ActionResult GetPlayerById(int playerId) => new ObjectResult(_coreUseCase.GetPlayer(playerId));
+
+
     [HttpGet("AllUsersIds")]
     public ActionResult GetAllUsersId() => new ObjectResult(_coreUseCase.GetAllUsersId());
 
@@ -21,4 +25,8 @@ public class AdminController : ControllerBase
 
     [HttpGet("GamesIds")]
     public ActionResult GetGamesIdsContainingPlayers() => new ObjectResult(_coreUseCase.GetGamesIdsContainingPlayers());
+
+
+    [HttpGet("Game/{gameId:int}")]
+    public ActionResult GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGame(gameId));
 }
