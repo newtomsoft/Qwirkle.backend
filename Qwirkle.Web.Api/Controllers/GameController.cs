@@ -31,6 +31,6 @@ public class GameController : ControllerBase
     public ActionResult GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGame(gameId, _userId));
 
 
-    [HttpGet("UserGames")]
-    public ActionResult GetUserGames() => new ObjectResult(_coreUseCase.GetUserGames(_userId));
+    [HttpGet("UserGamesIds")]
+    public ActionResult GetUserGamesIds() => new ObjectResult(_coreUseCase.GetUserGames(_userId));
 }
