@@ -1,21 +1,15 @@
 ﻿from Color import Color
+from Bag import Bag
 from Shape import Shape
 from Tile import Tile
 from Coordinates import Coordinates
+from TileOnBag import TileOnBag
 from TileOnBoard import TileOnBoard
+from TileOnPlayer import TileOnPlayer
 from Board import Board
 import requests
 import json
-
-#tileOnBoard1 = TileOnBoard(Tile(1, Shape.Circle, Color.Purple), Coordinates(0, 0))
-#tileOnBoard2 = TileOnBoard(Tile(2, Shape.Circle, Color.Purple), Coordinates(0, 1))
-#tileOnBoard3 = TileOnBoard(Tile(3, Shape.EightPointStar, Color.Green), Coordinates(1, 0))
-#tilesOnBoard = [tileOnBoard1, tileOnBoard2, tileOnBoard3]
-#board = Board(tilesOnBoard)
-
-#for tile in board.Tiles:
-#    print(f'{tile.Color} {tile.Shape} {tile.Coordinates.X} {tile.Coordinates.Y}')
-
+from types import SimpleNamespace
 
 url_logout = 'https://localhost:5001/User/Loginout'
 url_login = 'https://localhost:5001/User/Login'
@@ -35,6 +29,7 @@ if response_gamesIds.status_code != 200 :
     quit()
 
 gamesNumbers = json.loads(response_gamesIds.text)
+
 #todo foreach sur gamesNumbers
 gameNumber = gamesNumbers[0]
 print(f'game number : {gameNumber}')
@@ -42,26 +37,24 @@ response_game = requests.get(f'{url_game}{gameNumber}', cookies=cookies, verify=
 if response_game.status_code != 200 :
     quit()
 
-game = json.loads(response_game.text)
+game = json.loads(response_game.text, object_hook=lambda d: SimpleNamespace(**d))
+tilesOnBoard = [TileOnBoard(tile) for tile in game.board.tiles]
+tilesOnBag = [TileOnBag(tile) for tile in game.bag.tiles]
 
-gameOver = game['gameOver']
+gameOver = game.gameOver
 if gameOver == True :
     quit()
 
-board = Board(game['board']['tiles'])
-tilesOnBoard = (game['board'])['tiles']
-
-bag = game['bag']
-tilesOnBag = bag['tiles']
-
 #todo best get tilesOnPlayer
-for player in game['players']:
-    if player['rack']['tiles'] != None:
-        tilesOnPlayer = player['rack']['tiles']
+for player in game.players:
+    if player.rack.tiles != None:
+        goodTilesOnPlayer =   [TileOnPlayer(tile) for tile in player.rack.tiles]
 
-#todo call api to play a tile in tilesOnPlayer to board
-
+board = Board(tilesOnBoard)
 
 xmin = board.xMin()
+xmax = board.xMax()
+ymin = board.yMin()
+ymax = board.yMax()
 
 breakpoint=0

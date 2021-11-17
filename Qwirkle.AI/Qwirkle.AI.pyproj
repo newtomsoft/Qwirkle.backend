@@ -22,7 +22,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Bag.py" />
     <Compile Include="Board.py" />
+    <Compile Include="TileOnBag.py" />
+    <Compile Include="TileOnPlayer.py" />
     <Compile Include="TileOnBoard.py" />
     <Compile Include="Color.py" />
     <Compile Include="Qwirkle.AI.py" />
