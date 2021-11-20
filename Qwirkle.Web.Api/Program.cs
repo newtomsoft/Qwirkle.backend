@@ -35,7 +35,7 @@ appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
   .AddDefaultTokenProviders()
   .AddDefaultUI();
 appBuilder.Services.AddOptions();
-appBuilder.Services.ConfigureApplicationCookie(options => options.LoginPath = "/Identity/Account/Login");
+appBuilder.Services.ConfigureApplicationCookie(options => options.LoginPath = "");
 appBuilder.Services.AddSession();
 
 var app = appBuilder.Build();
