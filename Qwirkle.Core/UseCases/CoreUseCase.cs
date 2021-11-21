@@ -173,6 +173,16 @@ public class CoreUseCase
         return winnersPlayersIds;
     }
 
+    public object GetPossiblesMoves(int gameId, int userId)
+    {
+        var player = _repository.GetPlayer(gameId, userId);
+        var board = _repository.GetGame(gameId).Board;
+
+
+
+        return null;
+    }
+
     private SkipTurnReturn SkipTurn(Player player)
     {
         player.LastTurnSkipped = true;
@@ -316,7 +326,7 @@ public class CoreUseCase
         Game.Players.First(p => p.Id == playerId).SetTurn(true);
     }
 
-    private List<TileOnBoard> GetTiles(IEnumerable<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(_repository.GetTileById(tileTupleToPlay.tileId), new CoordinatesInGame(tileTupleToPlay.x, tileTupleToPlay.y))).ToList();
+    private List<TileOnBoard> GetTiles(IEnumerable<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(_repository.GetTileById(tileTupleToPlay.tileId), new Coordinates(tileTupleToPlay.x, tileTupleToPlay.y))).ToList();
     private List<TileOnPlayer> GetPlayerTiles(int playerId, IEnumerable<int> tilesIds) => tilesIds.Select(tileId => _repository.GetTileOnPlayerById(playerId, tileId)).ToList();
 
 

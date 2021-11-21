@@ -34,10 +34,4 @@ public class Tile
             return true;
         return false;
     }
-
-    public string GetNameImage()
-    {
-        string name = Color.ToString() + Shape.ToString() + ".png";
-        return name;
-    }
 }

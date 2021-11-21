@@ -8,4 +8,6 @@ public class TileOnPlayer : Tile
     {
         RackPosition = rackPosition;
     }
+
+    public TileOnBoard ToTileOnBoard(Coordinates coordinates) => new TileOnBoard(this, coordinates);
 }

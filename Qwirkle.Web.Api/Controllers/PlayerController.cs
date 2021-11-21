@@ -6,7 +6,15 @@
 public class PlayerController : ControllerBase
 {
     private readonly CoreUseCase _useCase;
-    public PlayerController(CoreUseCase useCase) => _useCase = useCase;
+    private readonly UserManager<UserDao> _userManager;
+    private int _userId => int.Parse(_userManager.GetUserId(User) ?? "0");
+    
+    public PlayerController(CoreUseCase useCase, UserManager<UserDao> userManager)
+    {
+        _useCase = useCase;
+        _userManager = userManager;
+    }
+
 
     [Obsolete]
     [HttpGet("{playerId:int}")]
@@ -14,6 +22,11 @@ public class PlayerController : ControllerBase
 
     [HttpGet("{gameId}/{userId:int}")]
     public ActionResult GetByGameIdUserId(int gameId, int userId) => new ObjectResult(_useCase.GetPlayer(gameId, userId));
+
+
+    [HttpGet("PlayerIdByGameId/{gameId:int}")]
+    public ActionResult GetByGameId(int gameId) => new ObjectResult(_useCase.GetPlayer(gameId, _userId).Id);
+
 
     [HttpGet("NameTurn/{gameId:int}")]
     public ActionResult GetNameTurn(int gameId) => new ObjectResult(_useCase.GetPlayerNameTurn(gameId));

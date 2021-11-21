@@ -161,7 +161,7 @@ public class Repository : IRepository
     private List<TileOnBoard> TilesOnBoardDaoToEntity(IReadOnlyCollection<TileOnBoardDao> tilesOnBoard)
     {
         var tilesDao = DbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
-        return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.Single(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Id, tileDao.Color, tileDao.Shape, new CoordinatesInGame(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
+        return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.Single(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Id, tileDao.Color, tileDao.Shape, new Coordinates(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
     }
 }
 
