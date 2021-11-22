@@ -24,6 +24,8 @@ class Board:
         return max([tile.Coordinates.Y for tile in self.Tiles])
     
     def searchCoordinates(self):
+        if self.__xMax() - self.__xMin() == 0:
+            return [Coordinates(0, 0)]
         coordinates = []
         for x in range(self.__xMin()-1, self.__xMax()+1+1):
             for y in range(self.__yMin()-1, self.__yMax()+1+1):
