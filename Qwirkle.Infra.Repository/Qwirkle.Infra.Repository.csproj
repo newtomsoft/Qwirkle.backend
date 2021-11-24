@@ -28,7 +28,6 @@
 		</Content>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\Newtomsoft.Libraries\Newtomsoft.EntityFramework\Newtomsoft.EntityFramework.csproj" />
 		<ProjectReference Include="..\Qwirkle.Core\Qwirkle.Core.csproj" />
 	</ItemGroup>
 
@@ -52,6 +51,7 @@
 	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 	  <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.0" />
+	  <PackageReference Include="Newtomsoft.EntityFramework" Version="6.0.0" />
 	</ItemGroup>
 
 

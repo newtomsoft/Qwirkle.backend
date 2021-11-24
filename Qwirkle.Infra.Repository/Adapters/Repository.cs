@@ -10,6 +10,8 @@ public class Repository : IRepository
         DbContext = defaultDbContext;
     }
 
+    public int GetUserId(int playerId) => DbContext.Players.First(p => p.Id == playerId).UserId;
+
     public void CreateTiles(int gameId)
     {
         AddAllTilesInDataBase();

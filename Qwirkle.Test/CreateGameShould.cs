@@ -1,8 +1,8 @@
-﻿namespace Qwirkle.Core.Tests;
+﻿namespace Qwirkle.Test;
 
 public class CreateGameShould
 {
-    private readonly CoreUseCase _commonUseCase;
+    private readonly CoreUseCase _coreUseCase;
     private readonly DefaultDbContext _dbContext;
 
     private const int User1 = 71;
@@ -15,7 +15,7 @@ public class CreateGameShould
     {
         _dbContext = ConnectionFactory.CreateContextForInMemory();
         IRepository repository = new Repository(_dbContext);
-        _commonUseCase = new CoreUseCase(repository, null);
+        _coreUseCase = new CoreUseCase(repository, null);
         AddUsers();
     }
 
@@ -32,7 +32,7 @@ public class CreateGameShould
     public void CreateGoodPlayersWithOrder1234()
     {
         var userIds = new List<int> { User1, User2, User3, User4 };
-        var players = _commonUseCase.CreateGame(userIds);
+        var players = _coreUseCase.CreateGame(userIds);
 
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
@@ -48,7 +48,7 @@ public class CreateGameShould
     public void CreateGoodPlayersWithOrder123()
     {
         var userIds = new List<int> { User1, User3, User4 };
-        var players = _commonUseCase.CreateGame(userIds);
+        var players = _coreUseCase.CreateGame(userIds);
 
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
@@ -62,7 +62,7 @@ public class CreateGameShould
     public void CreateGoodPlayersWithOrder12()
     {
         var userIds = new List<int> { User3, User4 };
-        var players = _commonUseCase.CreateGame(userIds);
+        var players = _coreUseCase.CreateGame(userIds);
 
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
@@ -75,7 +75,7 @@ public class CreateGameShould
     public void CreateGoodPlayerWithOrder1()
     {
         var userIds = new List<int> { User3 };
-        var players = _commonUseCase.CreateGame(userIds);
+        var players = _coreUseCase.CreateGame(userIds);
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
         Assert.Equal(1, players.Count(p => p.IsTurn));
         Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);

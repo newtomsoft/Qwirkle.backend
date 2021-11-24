@@ -17,6 +17,8 @@ public class CoreUseCase
         _notification = notification;
     }
 
+    public int GetUserId(int playerId) => _repository.GetUserId(playerId);
+
     public List<Player> CreateGame(List<int> usersIds)
     {
         Game = _repository.CreateGame(DateTime.UtcNow);
@@ -27,7 +29,7 @@ public class CoreUseCase
         return Game.Players;
     }
 
-    public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<(int tileId, Abscissa x, Ordinate y)> tilesToArrangeTuple)
+    public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<(int tileId, Coordinates coordinates)> tilesToArrangeTuple)
     {
         var player = GetPlayer(playerId);
         var tilesIds = GetTiles(tilesToArrangeTuple).Select(tiles => tiles.Id).ToList();
@@ -38,8 +40,8 @@ public class CoreUseCase
         ArrangeRack(player, tilesToArrange);
         return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
     }
-    
-    public PlayReturn TryPlayTiles(int playerId, IEnumerable<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay)
+
+    public PlayReturn TryPlayTiles(int playerId, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay)
     {
         var player = GetPlayer(playerId);
         if (!player.IsTurn) return new PlayReturn { Code = PlayReturnCode.NotPlayerTurn, GameId = player.GameId };
@@ -53,12 +55,12 @@ public class CoreUseCase
         var playReturn = GetPlayReturn(tilesToPlay, player);
         if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
         playReturn.NewRack = PlayTiles(player, tilesToPlay, playReturn.Points);
-        _notification.SendTilesPlayed(Game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
-        _notification.SendPlayerIdTurn(Game.Id, GetPlayerIdTurn(Game.Id));
+        _notification?.SendTilesPlayed(Game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
+        _notification?.SendPlayerIdTurn(Game.Id, GetPlayerIdTurn(Game.Id));
         return playReturn;
     }
 
-    public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay)
+    public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay)
     {
         var player = GetPlayer(playerId);
         var tilesToPlay = GetTiles(tilesTupleToPlay);
@@ -173,14 +175,28 @@ public class CoreUseCase
         return winnersPlayersIds;
     }
 
-    public object GetPossiblesMoves(int gameId, int userId)
+    public List<PlayReturn> GetPossiblesMoves(int gameId, int userId)
     {
-        var player = _repository.GetPlayer(gameId, userId);
+        var rack = _repository.GetPlayer(gameId, userId).Rack;
         var board = _repository.GetGame(gameId).Board;
+        var possibleCoordinatesToPlay = board.GetPossibleCoordinatesToPlay();
+        var playerId = _repository.GetPlayer(gameId, userId).Id;
+        var playReturns = new List<PlayReturn>();
+        foreach (var tile in rack.Tiles)
+        {
+            foreach (var coordinates in possibleCoordinatesToPlay)
+            {
+                var tilesTuple = new List<(int, Coordinates)> {(tile.Id, coordinates)};
+                var playReturn = TryPlayTilesSimulation(playerId, tilesTuple);
+                if (playReturn.Code == PlayReturnCode.Ok) playReturns.Add(playReturn);
+            }
+        }
 
+        playReturns = playReturns.OrderByDescending(p => p.Points).ToList();
+        //we have all possible moves with 1 tile !
 
-
-        return null;
+        //TODO // asyncs
+        return playReturns;
     }
 
     private SkipTurnReturn SkipTurn(Player player)
@@ -326,7 +342,7 @@ public class CoreUseCase
         Game.Players.First(p => p.Id == playerId).SetTurn(true);
     }
 
-    private List<TileOnBoard> GetTiles(IEnumerable<(int tileId, Abscissa x, Ordinate y)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(_repository.GetTileById(tileTupleToPlay.tileId), new Coordinates(tileTupleToPlay.x, tileTupleToPlay.y))).ToList();
+    private List<TileOnBoard> GetTiles(IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(_repository.GetTileById(tileTupleToPlay.tileId), tileTupleToPlay.coordinates)).ToList();
     private List<TileOnPlayer> GetPlayerTiles(int playerId, IEnumerable<int> tilesIds) => tilesIds.Select(tileId => _repository.GetTileOnPlayerById(playerId, tileId)).ToList();
 
 

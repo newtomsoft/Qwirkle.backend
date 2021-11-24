@@ -15,8 +15,8 @@ public class BotController : ControllerBase
     }
 
 
-    [HttpGet("PossiblesMoves/{gameId:int}")]
-    public ActionResult<int> GetPossiblesMoves(int gameId) => new ObjectResult(_coreUseCase.GetPossiblesMoves(gameId, _userId));
+    [HttpGet("PossibleMoves/{gameId:int}")]
+    public ActionResult GetPossibleMoves(int gameId) => new ObjectResult(_coreUseCase.GetPossiblesMoves(gameId, _userId));
 
 
 

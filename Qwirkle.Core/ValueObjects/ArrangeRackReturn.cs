@@ -7,4 +7,13 @@ public struct PlayReturn
     public List<TileOnBoard> TilesPlayed { get; set; }
     public Rack NewRack { get; set; }
     public int Points { get; set; }
+
+    public PlayReturn(int points)
+    {
+        Points = points;
+        Code = PlayReturnCode.Ok;
+        GameId = 0;
+        TilesPlayed = null;
+        NewRack = null;
+    }
 }

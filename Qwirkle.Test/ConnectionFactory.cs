@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
-
-namespace Qwirkle.Core.Tests;
+﻿namespace Qwirkle.Test;
 
 public sealed class ConnectionFactory : IDisposable
 {

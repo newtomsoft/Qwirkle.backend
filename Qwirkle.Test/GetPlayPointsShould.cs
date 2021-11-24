@@ -1,4 +1,4 @@
-﻿namespace Qwirkle.Core.Tests;
+﻿namespace Qwirkle.Test;
 
 public class GetPlayPointsShould
 {

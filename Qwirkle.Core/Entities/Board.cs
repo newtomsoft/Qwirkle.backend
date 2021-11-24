@@ -11,6 +11,7 @@ public class Board
 
     public bool IsTileIsolated(TileOnBoard tile)
     {
+        //IsIsolated(tile.Coordinates);
         var tileRight = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Right());
         var tileLeft = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Left());
         var tileTop = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Top());
