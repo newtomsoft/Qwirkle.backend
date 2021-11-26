@@ -6,7 +6,7 @@ public class Tile
     public TileColor Color { get; }
     public TileShape Shape { get; }
 
-    public Tile(Tile tile)
+    protected Tile(Tile tile)
     {
         Id = tile.Id;
         Color = tile.Color;
