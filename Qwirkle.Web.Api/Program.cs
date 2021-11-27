@@ -1,9 +1,11 @@
-using Qwirkle.Authentication.Adapters;
+using NLog;
+using NLog.Extensions.Logging;
 
 var appBuilder = WebApplication.CreateBuilder(args);
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", "appsettings.json"), optional: true);
 appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.{environmentName}.json"), optional: true);
+LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetSection("NLog"));
 appBuilder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => builder

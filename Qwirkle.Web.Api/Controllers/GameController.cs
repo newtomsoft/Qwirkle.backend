@@ -28,7 +28,7 @@ public class GameController : ControllerBase
 
 
     [HttpGet("{gameId:int}")]
-    public ActionResult GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGame(gameId, _userId));
+    public ActionResult GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGameWithTilesOnlyForAuthenticatedUser(gameId, _userId));
 
 
     [HttpGet("UserGamesIds")]

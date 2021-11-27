@@ -1,6 +1,6 @@
-﻿namespace Qwirkle.Core.Entities;
+﻿namespace Qwirkle.Core.ValueObjects;
 
-public class Tile
+public record Tile
 {
     public int Id { get; }
     public TileColor Color { get; }

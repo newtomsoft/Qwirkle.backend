@@ -2,31 +2,20 @@
 
 public class Board
 {
-    public List<TileOnBoard> Tiles { get; set; }
+    public List<TileOnBoard> Tiles { get; }
 
-    public Board(List<TileOnBoard> tiles)
-    {
-        Tiles = tiles;
-    }
+    public Board(List<TileOnBoard> tiles) => Tiles = tiles;
 
-    public bool IsTileIsolated(TileOnBoard tile)
-    {
-        //IsIsolated(tile.Coordinates);
-        var tileRight = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Right());
-        var tileLeft = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Left());
-        var tileTop = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Top());
-        var tileBottom = Tiles.FirstOrDefault(t => t.Coordinates == tile.Coordinates.Bottom());
-        return tileRight != null || tileLeft != null || tileTop != null || tileBottom != null;
-    }
+    public bool IsIsolatedTile(TileOnBoard tile) => IsIsolated(Coordinates.From(tile.Coordinates.X, tile.Coordinates.Y));
 
-    public List<Coordinates> GetPossibleCoordinatesToPlay()
+    public List<Coordinates> GetAdjoiningCoordinatesToTiles()
     {
         var coordinates = new List<Coordinates>();
         if (XMaxToPlay() == int.MaxValue) return new List<Coordinates> { Coordinates.From(0, 0) };
         for (var x = XMinToPlay(); x <= XMaxToPlay(); x++)
             for (var y = YMinToPlay(); y <= YMaxToPlay(); y++)
             {
-                var coordinate = new Coordinates((sbyte)x, (sbyte)y);
+                var coordinate = Coordinates.From(x, y);
                 if (IsFree(coordinate) & IsIsolated(coordinate)) coordinates.Add(coordinate);
             }
         return coordinates;

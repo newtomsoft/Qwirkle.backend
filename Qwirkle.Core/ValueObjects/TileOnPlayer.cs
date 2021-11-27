@@ -1,6 +1,6 @@
-﻿namespace Qwirkle.Core.Entities;
+﻿namespace Qwirkle.Core.ValueObjects;
 
-public class TileOnPlayer : Tile
+public record TileOnPlayer : Tile
 {
     public RackPosition RackPosition { get; }
 

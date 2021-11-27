@@ -1,6 +1,6 @@
-﻿namespace Qwirkle.Core.Entities;
+﻿namespace Qwirkle.Core.ValueObjects;
 
-public class TileOnBoard : Tile
+public record TileOnBoard : Tile
 {
     public Coordinates Coordinates { get; }
 

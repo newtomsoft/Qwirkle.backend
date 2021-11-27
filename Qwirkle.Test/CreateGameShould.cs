@@ -5,33 +5,34 @@ public class CreateGameShould
     private readonly CoreUseCase _coreUseCase;
     private readonly DefaultDbContext _dbContext;
 
-    private const int User1 = 71;
-    private const int User2 = 21;
-    private const int User3 = 3;
-    private const int User4 = 14;
+    private const int User1Id = 71;
+    private const int User2Id = 21;
+    private const int User3Id = 3;
+    private const int User4Id = 14;
     private const int TilesNumberPerPlayer = 6;
 
     public CreateGameShould()
     {
-        _dbContext = ConnectionFactory.CreateContextForInMemory();
+        var connectionFactory = new ConnectionFactory();
+        _dbContext = connectionFactory.CreateContextForInMemory();
         IRepository repository = new Repository(_dbContext);
         _coreUseCase = new CoreUseCase(repository, null);
-        AddUsers();
+        Add4DefaultTestUsers();
     }
 
-    private void AddUsers()
+    private void Add4DefaultTestUsers()
     {
-        _dbContext.Users.Add(new UserDao { Id = User1 });
-        _dbContext.Users.Add(new UserDao { Id = User2 });
-        _dbContext.Users.Add(new UserDao { Id = User3 });
-        _dbContext.Users.Add(new UserDao { Id = User4 });
+        _dbContext.Users.Add(new UserDao { Id = User1Id });
+        _dbContext.Users.Add(new UserDao { Id = User2Id });
+        _dbContext.Users.Add(new UserDao { Id = User3Id });
+        _dbContext.Users.Add(new UserDao { Id = User4Id });
         _dbContext.SaveChanges();
     }
 
     [Fact]
     public void CreateGoodPlayersWithOrder1234()
     {
-        var userIds = new List<int> { User1, User2, User3, User4 };
+        var userIds = new List<int> { User1Id, User2Id, User3Id, User4Id };
         var players = _coreUseCase.CreateGame(userIds);
 
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
@@ -47,7 +48,7 @@ public class CreateGameShould
     [Fact]
     public void CreateGoodPlayersWithOrder123()
     {
-        var userIds = new List<int> { User1, User3, User4 };
+        var userIds = new List<int> { User1Id, User3Id, User4Id };
         var players = _coreUseCase.CreateGame(userIds);
 
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
@@ -61,7 +62,7 @@ public class CreateGameShould
     [Fact]
     public void CreateGoodPlayersWithOrder12()
     {
-        var userIds = new List<int> { User3, User4 };
+        var userIds = new List<int> { User3Id, User4Id };
         var players = _coreUseCase.CreateGame(userIds);
 
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
@@ -74,7 +75,7 @@ public class CreateGameShould
     [Fact]
     public void CreateGoodPlayerWithOrder1()
     {
-        var userIds = new List<int> { User3 };
+        var userIds = new List<int> { User3Id };
         var players = _coreUseCase.CreateGame(userIds);
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
         Assert.Equal(1, players.Count(p => p.IsTurn));

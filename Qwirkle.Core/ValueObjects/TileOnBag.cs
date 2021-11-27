@@ -1,6 +1,6 @@
-﻿namespace Qwirkle.Core.Entities;
+﻿namespace Qwirkle.Core.ValueObjects;
 
-public class TileOnBag : Tile
+public record TileOnBag : Tile
 {
     public TileOnBag(int id, TileColor color, TileShape shape) : base(id, color, shape)
     {

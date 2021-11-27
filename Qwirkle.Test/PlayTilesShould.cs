@@ -1,9 +1,9 @@
 ﻿namespace Qwirkle.Test;
 
-[Collection("Sequential")]
+//[Collection("Sequential")]
 public class PlayTilesShould
 {
-    private readonly CoreUseCase _coreUseCase;
+    #region private
 
     private const int TotalTiles = 108;
     private const int GameId = 7;
@@ -15,14 +15,10 @@ public class PlayTilesShould
     private const int Player3 = 3;
     private const int Player8 = 8;
     private const int Player14 = 14;
-
-    public PlayTilesShould() => _coreUseCase = new CoreUseCase(new Repository(Context()), null);
-
-    #region private methods
     private DefaultDbContext Context()
     {
         var contextOptions = new DbContextOptionsBuilder<DefaultDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
         var dbContext = new DefaultDbContext(contextOptions);
@@ -106,7 +102,7 @@ public class PlayTilesShould
 
     private void AddTilesOnBag(DefaultDbContext dbContext)
     {
-        for (int i = 1; i <= TotalTiles; i++)
+        for (var i = 1; i <= TotalTiles; i++)
             dbContext.TilesOnBag.Add(new TileOnBagDao { Id = 100 + i, GameId = GameId, TileId = i });
 
         dbContext.SaveChanges();
@@ -116,70 +112,77 @@ public class PlayTilesShould
     [Fact]
     public void Return3After1PlayerHavePlayedHisTiles()
     {
+        var coreUseCase = new CoreUseCase(new Repository(Context()), null);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (1, Coordinates.From(-3, 4)), (2, Coordinates.From(-3, 5)), (3, Coordinates.From(-3, 6)) };
-        _coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(3);
+        coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(3);
     }
 
     [Fact]
     public void Return0WhenItsNotTurnPlayer()
     {
+        var coreUseCase = new CoreUseCase(new Repository(Context()), null);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (7, Coordinates.From(-4, 4)), (8, Coordinates.From(-4, 3)), (9, Coordinates.From(-4, 2)) };
-        _coreUseCase.TryPlayTiles(Player3, tilesToPlay).Points.ShouldBe(0);
+        coreUseCase.TryPlayTiles(Player3, tilesToPlay).Points.ShouldBe(0);
     }
 
     [Fact]
     public void Return0After1PlayerHavePlayedNotHisTiles()
     {
+        var coreUseCase = new CoreUseCase(new Repository(Context()), null);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (7, Coordinates.From(-3, 4)) };
-        _coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(0);
+        coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(0);
     }
 
     [Fact]
     public void Return5After2PlayersHavePlayed()
     {
+        var coreUseCase = new CoreUseCase(new Repository(Context()), null);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (1, Coordinates.From(-3, 4)), (2, Coordinates.From(-3, 5)), (3, Coordinates.From(-3, 6)) };
-        _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        coreUseCase.TryPlayTiles(Player9, tilesToPlay);
         var tilesToPlay2 = new List<(int tileId, Coordinates coordinates)> { (7, Coordinates.From(-4, 4)), (8, Coordinates.From(-4, 3)), (9, Coordinates.From(-4, 2)) };
-        _coreUseCase.TryPlayTiles(Player3, tilesToPlay2).Points.ShouldBe(5);
+        coreUseCase.TryPlayTiles(Player3, tilesToPlay2).Points.ShouldBe(5);
     }
 
     [Fact]
     public void Return6After3PlayersHavePlayed()
     {
+        var coreUseCase = new CoreUseCase(new Repository(Context()), null);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (1, Coordinates.From(-3, 4)), (2, Coordinates.From(-3, 5)), (3, Coordinates.From(-3, 6)) };
-        _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        coreUseCase.TryPlayTiles(Player9, tilesToPlay);
         var tilesToPlay2 = new List<(int tileId, Coordinates coordinates)> { (7, Coordinates.From(-4, 4)), (8, Coordinates.From(-4, 3)), (9, Coordinates.From(-4, 2)) };
-        _coreUseCase.TryPlayTiles(Player3, tilesToPlay2);
+        coreUseCase.TryPlayTiles(Player3, tilesToPlay2);
         var tilesToPlay3 = new List<(int tileId, Coordinates coordinates)> { (13, Coordinates.From(-2, 4)), (14, Coordinates.From(-2, 3)), (15, Coordinates.From(-2, 2)) };
-        Assert.Equal(6, _coreUseCase.TryPlayTiles(Player8, tilesToPlay3).Points);
+        coreUseCase.TryPlayTiles(Player8, tilesToPlay3).Points.ShouldBe(6);
     }
 
     [Fact]
     public void Return6After4PlayersHavePlayed()
     {
+        var coreUseCase = new CoreUseCase(new Repository(Context()), null);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (1, Coordinates.From(-3, 4)), (2, Coordinates.From(-3, 5)), (3, Coordinates.From(-3, 6)) };
-        _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        coreUseCase.TryPlayTiles(Player9, tilesToPlay);
         var tilesToPlay2 = new List<(int tileId, Coordinates coordinates)> { (7, Coordinates.From(-4, 4)), (8, Coordinates.From(-4, 3)), (9, Coordinates.From(-4, 2)) };
-        _coreUseCase.TryPlayTiles(Player3, tilesToPlay2);
+        coreUseCase.TryPlayTiles(Player3, tilesToPlay2);
         var tilesToPlay3 = new List<(int tileId, Coordinates coordinates)> { (13, Coordinates.From(-2, 4)), (14, Coordinates.From(-2, 3)), (15, Coordinates.From(-2, 2)) };
-        _coreUseCase.TryPlayTiles(Player8, tilesToPlay3);
+        coreUseCase.TryPlayTiles(Player8, tilesToPlay3);
         var tilesToPlay4 = new List<(int tileId, Coordinates coordinates)> { (21, Coordinates.From(-3, 2)), (20, Coordinates.From(-3, 1)), (19, Coordinates.From(-3, 0)) };
-        _coreUseCase.TryPlayTiles(Player14, tilesToPlay4).Points.ShouldBe(6);
+        coreUseCase.TryPlayTiles(Player14, tilesToPlay4).Points.ShouldBe(6);
     }
 
     [Fact]
     public void Return0AfterPlayersHavePlayedOnTheSamePlaceThanOtherTile()
     {
+        var coreUseCase = new CoreUseCase(new Repository(Context()), null);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (1, Coordinates.From(-3, 4)), (2, Coordinates.From(-3, 5)), (3, Coordinates.From(-3, 6)) };
-        _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        coreUseCase.TryPlayTiles(Player9, tilesToPlay);
         var tilesToPlay2 = new List<(int tileId, Coordinates coordinates)> { (7, Coordinates.From(-4, 4)), (8, Coordinates.From(-4, 3)), (9, Coordinates.From(-4, 2)) };
-        _coreUseCase.TryPlayTiles(Player3, tilesToPlay2);
+        coreUseCase.TryPlayTiles(Player3, tilesToPlay2);
         var tilesToPlay3 = new List<(int tileId, Coordinates coordinates)> { (13, Coordinates.From(-2, 4)), (14, Coordinates.From(-2, 3)), (15, Coordinates.From(-2, 2)) };
-        _coreUseCase.TryPlayTiles(Player8, tilesToPlay3);
+        coreUseCase.TryPlayTiles(Player8, tilesToPlay3);
         var tilesToPlay4 = new List<(int tileId, Coordinates coordinates)> { (21, Coordinates.From(-3, 2)), (20, Coordinates.From(-3, 1)), (19, Coordinates.From(-3, 0)) };
-        _coreUseCase.TryPlayTiles(Player14, tilesToPlay4);
+        coreUseCase.TryPlayTiles(Player14, tilesToPlay4);
         var tilesToPlay5 = new List<(int tileId, Coordinates coordinates)> { (4, Coordinates.From(-3, 2)), (5, Coordinates.From(-3, 1)), (6, Coordinates.From(-3, 0)) };
-        _coreUseCase.TryPlayTiles(Player9, tilesToPlay5).Points.ShouldBe(0);
+        coreUseCase.TryPlayTiles(Player9, tilesToPlay5).Points.ShouldBe(0);
     }
 
 }

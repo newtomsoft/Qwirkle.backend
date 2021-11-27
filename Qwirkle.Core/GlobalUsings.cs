@@ -10,3 +10,4 @@ global using System.Threading.Tasks;
 global using RackPosition = System.Byte;
 global using Abscissa = System.SByte;
 global using Ordinate = System.SByte;
+global using System.Diagnostics;
