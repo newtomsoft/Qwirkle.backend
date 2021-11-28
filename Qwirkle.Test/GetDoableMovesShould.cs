@@ -25,28 +25,133 @@ public class GetDoableMovesShould
     #endregion
 
     [Fact]
-    public void PartWith1TileReturn6MovesWhenBoardIsEmptyWithFirstTileCoordinates0_0Async()
+    public void Return6ItemsWhenBoardIsEmptyAndNoCombinationPossibleInRack()
     {
         var usersIds = _useCase.GetAllUsersId();
         var players = _useCase.CreateGame(usersIds);
         players = players.OrderBy(p => p.Id).ToList();
-        var constTiles = _dbContext.Tiles.OrderBy(t => t.Id).Take(6).ToList();
+        var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
+        var constTile1 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Blue && t.Shape == TileShape.Clover);
+        var constTile2 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Orange && t.Shape == TileShape.Diamond);
+        var constTile3 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Purple && t.Shape == TileShape.EightPointStar);
+        var constTile4 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Red && t.Shape == TileShape.FourPointStar);
+        var constTile5 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Yellow && t.Shape == TileShape.Square);
+        var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2!, constTile3!, constTile4!, constTile5! }.OrderBy(t => t.Id).ToList();
         ChangePlayerTilesBy(players[0].Id, constTiles);
 
         var gameId = players[0].GameId;
-        var playReturns = _useCase.GetDoableMoves(gameId, usersIds[0]);
+        var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
+        playReturns.Count.ShouldBe(6); // 6 tiles from the rack are all doable
+
+        var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
+        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Id).ToList();
+        playReturnsWith1Tile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
+        tilesPlayedSingle.Select(t => t.Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
+        tilesPlayedSingle.Select(t => t.Id).SequenceEqual(constTiles.Select(t => t.Id)).ShouldBeTrue(); // each of tile from rack
+
+        var playReturnsWith2Tiles = playReturns.Where(p => p.TilesPlayed.Count == 2).ToList();
+        playReturnsWith2Tiles.Count.ShouldBe(0); // no combination possible with these 6 tiles
+    }
+
+    [Fact]
+    public void ReturnMaxItemsWhenBoardIsEmptyAndMaxCombinationInRackIsPossible()
+    {
+        var usersIds = _useCase.GetAllUsersId();
+        var players = _useCase.CreateGame(usersIds);
+        players = players.OrderBy(p => p.Id).ToList();
+        var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
+        var constTile1 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Clover);
+        var constTile2 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Diamond);
+        var constTile3 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.EightPointStar);
+        var constTile4 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.FourPointStar);
+        var constTile5 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Square);
+        var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2!, constTile3!, constTile4!, constTile5! }.OrderBy(t => t.Id).ToList();
+        ChangePlayerTilesBy(players[0].Id, constTiles);
+
+        var gameId = players[0].GameId;
+        var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
 
         var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
         var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Id).ToList();
 
-        playReturnsWith1Tile.Count.ShouldBe(6);
-        tilesPlayedSingle.Select(t => t.Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0));
-        tilesPlayedSingle.Select(t => t.Id).SequenceEqual(constTiles.Select(t => t.Id)).ShouldBeTrue();
+        playReturnsWith1Tile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
+        tilesPlayedSingle.Select(t => t.Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
+        tilesPlayedSingle.Select(t => t.Id).SequenceEqual(constTiles.Select(t => t.Id)).ShouldBeTrue();// each of tile from rack
 
         var playReturnsWith2Tiles = playReturns.Where(p => p.TilesPlayed.Count == 2).ToList();
-        var tilesPlayed2Tiles = playReturnsWith2Tiles.Select(p => p.TilesPlayed).ToList();
+        var tilesPlayedWith2Tiles = playReturnsWith2Tiles.Select(p => p.TilesPlayed).ToList();
+        tilesPlayedWith2Tiles.Count.ShouldBe(6 * 5 * 4); // 6 first tile x 5 second tile x 4 adjoining
 
-        playReturnsWith2Tiles.Count.ShouldBe(4*5*6);
+        var playReturnsWith3Tiles = playReturns.Where(p => p.TilesPlayed.Count == 3).ToList();
+        var tilesPlayedWith3Tiles = playReturnsWith3Tiles.Select(p => p.TilesPlayed).ToList();
+        tilesPlayedWith3Tiles.Count.ShouldBe(6 * 5 * 4 * 4); // 6 first tile x 5 second tile x 4 third tile x 4 adjoining
+    }
 
+    [Fact]
+    public void TORENAME()
+    {
+        var usersIds = _useCase.GetAllUsersId();
+        var players = _useCase.CreateGame(usersIds);
+        players = players.OrderBy(p => p.Id).ToList();
+        var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
+        var constTile1 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Yellow && t.Shape == TileShape.Clover);
+        var constTile2 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Diamond);
+        var constTile3 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Purple && t.Shape == TileShape.EightPointStar);
+        var constTile4 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Red && t.Shape == TileShape.FourPointStar);
+        var constTile5 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Square);
+        var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2!, constTile3!, constTile4!, constTile5! }.OrderBy(t => t.Id).ToList();
+        ChangePlayerTilesBy(players[0].Id, constTiles);
+
+        var gameId = players[0].GameId;
+        var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
+
+        var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
+        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Id).ToList();
+
+        playReturnsWith1Tile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
+        tilesPlayedSingle.Select(t => t.Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
+        tilesPlayedSingle.Select(t => t.Id).SequenceEqual(constTiles.Select(t => t.Id)).ShouldBeTrue();// each of tile from rack
+
+        var playReturnsWith2Tiles = playReturns.Where(p => p.TilesPlayed.Count == 2).ToList();
+        var tilesPlayedWith2Tiles = playReturnsWith2Tiles.Select(p => p.TilesPlayed).ToList();
+        tilesPlayedWith2Tiles.Count.ShouldBe(3 * 2 * 4); // 3 first tile x 2 second tile x 4 adjoining
+
+        var playReturnsWith3Tiles = playReturns.Where(p => p.TilesPlayed.Count == 3).ToList();
+        var tilesPlayedWith3Tiles = playReturnsWith3Tiles.Select(p => p.TilesPlayed).ToList();
+        tilesPlayedWith3Tiles.Count.ShouldBe(3 * 2 * 1 * 4); // 3 first tile x 2 second tile x 1 third tile x 4 adjoining
+    }
+    
+    [Fact]
+    public void TORENAME2()
+    {
+        var usersIds = _useCase.GetAllUsersId();
+        var players = _useCase.CreateGame(usersIds);
+        players = players.OrderBy(p => p.Id).ToList();
+        var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
+        var constTile1 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Yellow && t.Shape == TileShape.Clover);
+        var constTile2 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Diamond);
+        var constTile3 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Purple && t.Shape == TileShape.Circle);
+        var constTile4 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Red && t.Shape == TileShape.Diamond);
+        var constTile5 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Square);
+        var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2!, constTile3!, constTile4!, constTile5! }.OrderBy(t => t.Id).ToList();
+        ChangePlayerTilesBy(players[0].Id, constTiles);
+
+        var gameId = players[0].GameId;
+        var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
+
+        var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
+        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Id).ToList();
+
+        playReturnsWith1Tile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
+        tilesPlayedSingle.Select(t => t.Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
+        tilesPlayedSingle.Select(t => t.Id).SequenceEqual(constTiles.Select(t => t.Id)).ShouldBeTrue();// each of tile from rack
+
+        var playReturnsWith2Tiles = playReturns.Where(p => p.TilesPlayed.Count == 2).ToList();
+        var tilesPlayedWith2Tiles = playReturnsWith2Tiles.Select(p => p.TilesPlayed).ToList();
+        tilesPlayedWith2Tiles.Count.ShouldBe(10 * 4);
+
+        var playReturnsWith3Tiles = playReturns.Where(p => p.TilesPlayed.Count == 3).ToList();
+        var tilesPlayedWith3Tiles = playReturnsWith3Tiles.Select(p => p.TilesPlayed).ToList();
+        tilesPlayedWith3Tiles.Count.ShouldBe(3 * 2 * 1 * 4); // 3 first tile x 2 second tile x 1 third tile x 4 adjoining
     }
 }

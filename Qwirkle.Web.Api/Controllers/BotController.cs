@@ -24,6 +24,6 @@ public class BotController : ControllerBase
     public ActionResult GetPossibleMoves(int gameId)
     {
         _logger.Info($"userId:{_userId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
-        return new ObjectResult(_coreUseCase.GetDoableMoves(gameId, _userId));
+        return new ObjectResult(_coreUseCase.ComputeDoableMoves(gameId, _userId));
     }
 }
