@@ -1,9 +1,3 @@
 ﻿namespace Qwirkle.Core.ValueObjects;
 
-public record TileOnBag : Tile
-{
-    public TileOnBag(int id, TileColor color, TileShape shape) : base(id, color, shape)
-    {
-
-    }
-}
+public record TileOnBag(TileColor Color, TileShape Shape) : Tile(Color, Shape);

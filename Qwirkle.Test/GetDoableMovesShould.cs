@@ -44,10 +44,10 @@ public class GetDoableMovesShould
         playReturns.Count.ShouldBe(6); // 6 tiles from the rack are all doable
 
         var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
-        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Id).ToList();
+        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Color).ThenBy(t => t.Shape).ToList();
         playReturnsWith1Tile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
         tilesPlayedSingle.Select(t => t.Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
-        tilesPlayedSingle.Select(t => t.Id).SequenceEqual(constTiles.Select(t => t.Id)).ShouldBeTrue(); // each of tile from rack
+        tilesPlayedSingle.Select(t => t.ToTile()).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
 
         var playReturnsWith2Tiles = playReturns.Where(p => p.TilesPlayed.Count == 2).ToList();
         playReturnsWith2Tiles.Count.ShouldBe(0); // no combination possible with these 6 tiles
@@ -72,19 +72,19 @@ public class GetDoableMovesShould
         var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
 
         var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
-        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Id).ToList();
+        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Color).ThenBy(t => t.Shape).ToList();
 
         playReturnsWith1Tile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
         tilesPlayedSingle.Select(t => t.Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
-        tilesPlayedSingle.Select(t => t.Id).SequenceEqual(constTiles.Select(t => t.Id)).ShouldBeTrue();// each of tile from rack
+        tilesPlayedSingle.Select(t => t.ToTile()).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
 
         var playReturnsWith2Tiles = playReturns.Where(p => p.TilesPlayed.Count == 2).ToList();
         var tilesPlayedWith2Tiles = playReturnsWith2Tiles.Select(p => p.TilesPlayed).ToList();
-        tilesPlayedWith2Tiles.Count.ShouldBe(6 * 5 * 4); // 6 first tile x 5 second tile x 4 adjoining
+        tilesPlayedWith2Tiles.Count.ShouldBe(6 * 5); // 6 first tile x 5 second tile
 
         var playReturnsWith3Tiles = playReturns.Where(p => p.TilesPlayed.Count == 3).ToList();
         var tilesPlayedWith3Tiles = playReturnsWith3Tiles.Select(p => p.TilesPlayed).ToList();
-        tilesPlayedWith3Tiles.Count.ShouldBe(6 * 5 * 4 * 4); // 6 first tile x 5 second tile x 4 third tile x 4 adjoining
+        tilesPlayedWith3Tiles.Count.ShouldBe(6 * 5 * 4); // 6 first tile x 5 second tile x 4 third tile
     }
 
     [Fact]
@@ -106,21 +106,21 @@ public class GetDoableMovesShould
         var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
 
         var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
-        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Id).ToList();
+        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Color).ThenBy(t => t.Shape).ToList();
 
         playReturnsWith1Tile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
         tilesPlayedSingle.Select(t => t.Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
-        tilesPlayedSingle.Select(t => t.Id).SequenceEqual(constTiles.Select(t => t.Id)).ShouldBeTrue();// each of tile from rack
+        tilesPlayedSingle.Select(t => t.ToTile()).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
 
         var playReturnsWith2Tiles = playReturns.Where(p => p.TilesPlayed.Count == 2).ToList();
         var tilesPlayedWith2Tiles = playReturnsWith2Tiles.Select(p => p.TilesPlayed).ToList();
-        tilesPlayedWith2Tiles.Count.ShouldBe(3 * 2 * 4); // 3 first tile x 2 second tile x 4 adjoining
+        tilesPlayedWith2Tiles.Count.ShouldBe(3 * 2); // 3 first tile x 2 second tile
 
         var playReturnsWith3Tiles = playReturns.Where(p => p.TilesPlayed.Count == 3).ToList();
         var tilesPlayedWith3Tiles = playReturnsWith3Tiles.Select(p => p.TilesPlayed).ToList();
-        tilesPlayedWith3Tiles.Count.ShouldBe(3 * 2 * 1 * 4); // 3 first tile x 2 second tile x 1 third tile x 4 adjoining
+        tilesPlayedWith3Tiles.Count.ShouldBe(3 * 2 * 1); // 3 first tile x 2 second tile x 1 third tile
     }
-    
+
     [Fact]
     public void TORENAME2()
     {
@@ -140,18 +140,18 @@ public class GetDoableMovesShould
         var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
 
         var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
-        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Id).ToList();
+        var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Color).ThenBy(t => t.Shape).ToList();
 
         playReturnsWith1Tile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
         tilesPlayedSingle.Select(t => t.Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
-        tilesPlayedSingle.Select(t => t.Id).SequenceEqual(constTiles.Select(t => t.Id)).ShouldBeTrue();// each of tile from rack
+        tilesPlayedSingle.Select(t => t.ToTile()).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
 
         var playReturnsWith2Tiles = playReturns.Where(p => p.TilesPlayed.Count == 2).ToList();
         var tilesPlayedWith2Tiles = playReturnsWith2Tiles.Select(p => p.TilesPlayed).ToList();
-        tilesPlayedWith2Tiles.Count.ShouldBe(10 * 4);
+        tilesPlayedWith2Tiles.Count.ShouldBe(10);
 
         var playReturnsWith3Tiles = playReturns.Where(p => p.TilesPlayed.Count == 3).ToList();
         var tilesPlayedWith3Tiles = playReturnsWith3Tiles.Select(p => p.TilesPlayed).ToList();
-        tilesPlayedWith3Tiles.Count.ShouldBe(3 * 2 * 1 * 4); // 3 first tile x 2 second tile x 1 third tile x 4 adjoining
+        tilesPlayedWith3Tiles.Count.ShouldBe(3 * 2 * 1); // 3 first tile x 2 second tile x 1 third tile
     }
 }

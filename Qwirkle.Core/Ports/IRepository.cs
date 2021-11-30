@@ -4,9 +4,9 @@ public interface IRepository
     Game CreateGame(DateTime date);
     void SetPlayerTurn(int playerId);
     void UpdatePlayer(Player player);
-    void TilesFromPlayerToBoard(int gameId, int playerId, List<TileOnBoard> tiles);
+    void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay);
     void TilesFromBagToPlayer(Player player, List<byte> positionsInRack);
-    void TilesFromPlayerToBag(Player player, List<TileOnPlayer> tiles);
+    void TilesFromPlayerToBag(Player player, IEnumerable<int> tilesIds);
     Game GetGame(int gameId);
     Player GetPlayer(int playerId);
     Player GetPlayer(int gameId, int userId);
@@ -21,7 +21,7 @@ public interface IRepository
     void SetGameOver(int gameId);
     List<int> GetLeadersPlayersId(int gameId);
     bool IsGameOver(int gameId);
-    void ArrangeRack(Player player, List<TileOnPlayer> tilesToArrange);
+    void ArrangeRack(Player player, List<int> tilesIds);
     List<int> GetAllUsersId();
     List<int> GetUserGames(int userId);
 }

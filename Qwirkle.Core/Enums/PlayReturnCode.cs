@@ -7,4 +7,5 @@ public enum PlayReturnCode
     PlayerDoesntHaveThisTile,
     TileIsolated,
     TilesDoesntMakedValidRow,
+    NotFree,
 }

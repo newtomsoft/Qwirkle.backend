@@ -9,6 +9,8 @@ public class Rack
         Tiles = tiles;
     }
 
+    public Rack GetRackWithoutDuplicates() => new (Tiles.Distinct().ToList());
+
     public IEnumerable<Move> PossibleMoves(Board board)
     {
 

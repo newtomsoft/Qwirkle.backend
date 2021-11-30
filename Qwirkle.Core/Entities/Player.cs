@@ -26,9 +26,10 @@ public class Player
         LastTurnSkipped = lastTurnSkipped;
     }
 
-
     public void SetTurn(bool turn) => IsTurn = turn;
-    public bool HasTiles(IEnumerable<int> tilesIds) => tilesIds.All(id => Rack.Tiles.Select(t => t.Id).Contains(id));
+    
+    public bool HasTiles(IEnumerable<Tile> tiles) => tiles.All(tile => Rack.Tiles.Select(t => (t.Color, t.Shape)).Contains((tile.Color, tile.Shape)));
+
     public int TilesNumberCanBePlayedAtGameBeginning()
     {
         var tiles = Rack.Tiles;
