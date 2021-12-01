@@ -7,13 +7,15 @@ public class GameController : ControllerBase
 {
     private readonly ILogger<GameController> _logger;
     private readonly CoreUseCase _coreUseCase;
+    private readonly InfoUseCase _infoUseCase;
     private readonly UserManager<UserDao> _userManager;
     private int _userId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    public GameController(ILogger<GameController> logger, CoreUseCase coreUseCase, UserManager<UserDao> userManager)
+    public GameController(ILogger<GameController> logger, CoreUseCase coreUseCase, InfoUseCase infoUseCase, UserManager<UserDao> userManager)
     {
         _logger = logger;
         _coreUseCase = coreUseCase;
+        _infoUseCase = infoUseCase;
         _userManager = userManager;
     }
 
@@ -28,9 +30,9 @@ public class GameController : ControllerBase
 
 
     [HttpGet("{gameId:int}")]
-    public ActionResult GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGameWithTilesOnlyForAuthenticatedUser(gameId, _userId));
+    public ActionResult GetGame(int gameId) => new ObjectResult(_infoUseCase.GetGameWithTilesOnlyForAuthenticatedUser(gameId, _userId));
 
 
     [HttpGet("UserGamesIds")]
-    public ActionResult GetUserGamesIds() => new ObjectResult(_coreUseCase.GetUserGames(_userId));
+    public ActionResult GetUserGamesIds() => new ObjectResult(_infoUseCase.GetUserGames(_userId));
 }

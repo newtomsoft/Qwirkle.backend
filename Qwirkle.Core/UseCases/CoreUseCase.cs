@@ -53,7 +53,7 @@ public class CoreUseCase
 
         playReturn = playReturn with { NewRack = PlayTiles(player, tilesTuplesList, playReturn.Points) };
         _notification?.SendTilesPlayed(Game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
-        _notification?.SendPlayerIdTurn(Game.Id, GetPlayerIdTurn(Game.Id));
+        _notification?.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
         return playReturn;
     }
 
@@ -67,7 +67,7 @@ public class CoreUseCase
         if (!player.HasTiles(tiles)) return new SwapTilesReturn { GameId = Game.Id, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
         var swapTilesReturn = SwapTiles(player, tilesIdsList);
         _notification.SendTilesSwapped(Game.Id, playerId);
-        _notification.SendPlayerIdTurn(Game.Id, GetPlayerIdTurn(Game.Id));
+        _notification.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
         return swapTilesReturn;
     }
 
@@ -78,7 +78,7 @@ public class CoreUseCase
         var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
         if (skipTurnReturn.Code != PlayReturnCode.Ok) return skipTurnReturn;
         _notification.SendTurnSkipped(Game.Id, playerId);
-        _notification.SendPlayerIdTurn(Game.Id, GetPlayerIdTurn(Game.Id));
+        _notification.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
         return skipTurnReturn;
     }
 
@@ -152,32 +152,6 @@ public class CoreUseCase
         bool IsBoardNotEmpty() => Game.Board.Tiles.Count > 0;
         bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => Game.Board.IsIsolatedTile(tile));
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !Game.Board.IsFreeTile(tile));
-    }
-
-
-    public Player GetPlayer(int gameId, int userId) => _repository.GetPlayer(gameId, userId);
-    public string GetPlayerNameTurn(int gameId) => _repository.GetPlayerNameTurn(gameId);
-    public int GetPlayerIdTurn(int gameId) => _repository.GetPlayerIdToPlay(gameId);
-    public List<int> GetGamesIdsContainingPlayers() => _repository.GetGamesIdsContainingPlayers();
-    public List<int> GetAllUsersId() => _repository.GetAllUsersId();
-    public List<int> GetUserGames(int userId) => _repository.GetUserGames(userId);
-    public Game GetGameForSuperUser(int gameId) => _repository.GetGame(gameId);
-    public Game GetGameWithTilesOnlyForAuthenticatedUser(int gameId, int userId)
-    {
-        var game = _repository.GetGame(gameId);
-        var isUserInGame = game.Players.Any(p => p.UserId == userId);
-        if (!isUserInGame) return null;
-        var otherPlayers = game.Players.Where(p => p.UserId != userId);
-        foreach (var player in otherPlayers) player.Rack = new Rack(null);
-        return game;
-    }
-
-    public List<int> GetWinnersPlayersId(int gameId)
-    {
-        if (!_repository.IsGameOver(gameId)) return null;
-        var winnersPlayersIds = _repository.GetLeadersPlayersId(gameId);
-        _notification.SendGameOver(gameId, winnersPlayersIds);
-        return winnersPlayersIds;
     }
 
     public List<PlayReturn> ComputeDoableMoves(int gameId, int userId)

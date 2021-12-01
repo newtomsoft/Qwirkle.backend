@@ -14,7 +14,7 @@ public class PlayTest
         connectionFactory.Add4DefaultTestUsers();
 
         var repository = new Repository(_dbContext);
-        _infoUseCase = new InfoUseCase(repository);
+        _infoUseCase = new InfoUseCase(repository, null);
         _useCase = new CoreUseCase(repository, null, _infoUseCase);
     }
 
@@ -31,7 +31,7 @@ public class PlayTest
     [Fact]
     public void TryArrangeRackShouldArrangeRackWhenItsPossible()
     {
-        var usersIds = _useCase.GetAllUsersId();
+        var usersIds = _infoUseCase.GetAllUsersId();
         var players = _useCase.CreateGame(usersIds);
         players = players.OrderBy(p => p.Id).ToList();
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);

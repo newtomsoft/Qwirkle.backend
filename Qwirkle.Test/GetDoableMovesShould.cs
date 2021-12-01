@@ -3,6 +3,7 @@
 public class GetDoableMovesShould
 {
     private readonly DefaultDbContext _dbContext;
+    private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _useCase;
 
     public GetDoableMovesShould()
@@ -12,7 +13,8 @@ public class GetDoableMovesShould
         connectionFactory.Add4DefaultTestUsers();
 
         var repository = new Repository(_dbContext);
-        _useCase = new CoreUseCase(repository, null, null);
+        _infoUseCase = new InfoUseCase(repository, null);
+        _useCase = new CoreUseCase(repository, null, _infoUseCase);
     }
 
     #region private methods
@@ -27,7 +29,7 @@ public class GetDoableMovesShould
     [Fact]
     public void Return6ItemsWhenBoardIsEmptyAndNoCombinationPossibleInRack()
     {
-        var usersIds = _useCase.GetAllUsersId();
+        var usersIds = _infoUseCase.GetAllUsersId();
         var players = _useCase.CreateGame(usersIds);
         players = players.OrderBy(p => p.Id).ToList();
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
@@ -56,7 +58,7 @@ public class GetDoableMovesShould
     [Fact]
     public void ReturnMaxItemsWhenBoardIsEmptyAndMaxCombinationInRackIsPossible()
     {
-        var usersIds = _useCase.GetAllUsersId();
+        var usersIds = _infoUseCase.GetAllUsersId();
         var players = _useCase.CreateGame(usersIds);
         players = players.OrderBy(p => p.Id).ToList();
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
@@ -90,7 +92,7 @@ public class GetDoableMovesShould
     [Fact]
     public void TORENAME()
     {
-        var usersIds = _useCase.GetAllUsersId();
+        var usersIds = _infoUseCase.GetAllUsersId();
         var players = _useCase.CreateGame(usersIds);
         players = players.OrderBy(p => p.Id).ToList();
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
@@ -124,7 +126,7 @@ public class GetDoableMovesShould
     [Fact]
     public void TORENAME2()
     {
-        var usersIds = _useCase.GetAllUsersId();
+        var usersIds = _infoUseCase.GetAllUsersId();
         var players = _useCase.CreateGame(usersIds);
         players = players.OrderBy(p => p.Id).ToList();
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
