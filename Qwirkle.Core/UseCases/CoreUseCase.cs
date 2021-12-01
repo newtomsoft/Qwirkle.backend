@@ -17,7 +17,7 @@ public class CoreUseCase
         _notification = notification;
         _infoUseCase = infoUseCase;
     }
-    
+
     public List<Player> CreateGame(List<int> usersIds)
     {
         Game = _repository.CreateGame(DateTime.UtcNow);

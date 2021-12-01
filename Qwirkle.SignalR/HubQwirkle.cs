@@ -3,7 +3,7 @@
 public class HubQwirkle : Hub
 {
     private static readonly Dictionary<int, List<Player>> GameIdWithPlayers = new();
-    
+
     public override Task OnDisconnectedAsync(Exception exception)
     {
         var gameId = GameIdWithPlayers.Where(item => item.Value.Count(p => p.ConnectionId == Context.ConnectionId) == 1).Select(item => item.Key).FirstOrDefault();

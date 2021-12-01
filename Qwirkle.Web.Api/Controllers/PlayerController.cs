@@ -8,7 +8,7 @@ public class PlayerController : ControllerBase
     private readonly InfoUseCase _infoUseCase;
     private readonly UserManager<UserDao> _userManager;
     private int _userId => int.Parse(_userManager.GetUserId(User) ?? "0");
-    
+
     public PlayerController(InfoUseCase infoUseCase, UserManager<UserDao> userManager)
     {
         _infoUseCase = infoUseCase;

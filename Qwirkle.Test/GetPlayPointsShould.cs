@@ -9,15 +9,15 @@ public class GetPlayPointsShould
     public void ReturnNumberOfTilesWhenGameIsEmptyAndTilesMakeRow()
     {
         UseCase.Game = new Game(1, new List<TileOnBoard>(), new List<Player>(), false);
-        UseCase.GetPlayReturn(new List<TileOnBoard> { new (TileColor.Blue, TileShape.Circle, new Coordinates(1, 5)) }, null).Points.ShouldBe(1);
-        UseCase.GetPlayReturn(new List<TileOnBoard> { new (TileColor.Blue, TileShape.Circle, new Coordinates(13, 69)), new(TileColor.Purple, TileShape.Circle, new Coordinates(12, 69)) }, null).Points.ShouldBe(2);
+        UseCase.GetPlayReturn(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(1, 5)) }, null).Points.ShouldBe(1);
+        UseCase.GetPlayReturn(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(13, 69)), new(TileColor.Purple, TileShape.Circle, new Coordinates(12, 69)) }, null).Points.ShouldBe(2);
     }
 
     [Fact]
     public void Return0WhenGameIsEmptyAndTilesNotInRow()
     {
         UseCase.Game = new Game(1, new List<TileOnBoard>(), new List<Player>(), false);
-        UseCase.GetPlayReturn(new List<TileOnBoard> { new (TileColor.Blue, TileShape.Circle, new Coordinates(1, 5)), new(TileColor.Purple, TileShape.Circle, new Coordinates(2, 4)) }, null).Points.ShouldBe(0);
+        UseCase.GetPlayReturn(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(1, 5)), new(TileColor.Purple, TileShape.Circle, new Coordinates(2, 4)) }, null).Points.ShouldBe(0);
         UseCase.GetPlayReturn(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(8, 12)), new(TileColor.Yellow, TileShape.Circle, new Coordinates(9, 12)), new(TileColor.Purple, TileShape.Circle, new Coordinates(6, 12)) }, null).Points.ShouldBe(0);
     }
 

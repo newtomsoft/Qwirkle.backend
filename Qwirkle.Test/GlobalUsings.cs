@@ -1,4 +1,5 @@
-﻿global using Microsoft.EntityFrameworkCore;
+﻿global using Microsoft.Data.Sqlite;
+global using Microsoft.EntityFrameworkCore;
 global using Qwirkle.Core.Entities;
 global using Qwirkle.Core.Enums;
 global using Qwirkle.Core.Ports;
@@ -12,4 +13,3 @@ global using System;
 global using System.Collections.Generic;
 global using System.Linq;
 global using Xunit;
-global using Microsoft.Data.Sqlite;

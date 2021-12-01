@@ -3,7 +3,7 @@
 public class AuthenticationUseCase
 {
     private readonly IAuthentication _authentication;
-    
+
     public AuthenticationUseCase(IAuthentication authentication)
     {
         _authentication = authentication;

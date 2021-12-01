@@ -11,7 +11,7 @@ public sealed class ConnectionFactory : IDisposable
     private const int User2Id = 21;
     private const int User3Id = 3;
     private const int User4Id = 14;
-    
+
     public DefaultDbContext CreateContextForInMemory()
     {
         var option = new DbContextOptionsBuilder<DefaultDbContext>().UseInMemoryDatabase(databaseName: "Test_Database").Options;
@@ -29,7 +29,7 @@ public sealed class ConnectionFactory : IDisposable
         _dbContext.Users.Add(new UserDao { Id = User4Id });
         _dbContext.SaveChanges();
     }
-    
+
 
 
     public DefaultDbContext CreateContextForSqLite()

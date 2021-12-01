@@ -18,7 +18,7 @@ public class PlayTest
         _useCase = new CoreUseCase(repository, null, _infoUseCase);
     }
 
-    
+
     private void ChangePlayerTilesBy(int playerId, IReadOnlyList<TileDao> newTiles)
     {
         var tilesOnPlayer = _dbContext.TilesOnPlayer.Where(t => t.PlayerId == playerId).ToList();

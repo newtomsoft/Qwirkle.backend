@@ -155,7 +155,7 @@ public class PlayTilesShould
         var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (1, Coordinates.From(-3, 4)), (2, Coordinates.From(-3, 5)), (3, Coordinates.From(-3, 6)) };
         InitBoard();
-        coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(5); 
+        coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(5);
 
         void InitBoard()
         {
@@ -165,7 +165,7 @@ public class PlayTilesShould
             dbContext.SaveChanges();
         }
     }
-    
+
     [Fact]
     public void ReturnNotFreeWhenCoordinateOnBoardIsNotFree()
     {

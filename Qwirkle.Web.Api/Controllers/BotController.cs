@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using NLog;
+﻿using NLog;
+using System.Reflection;
 
 namespace Qwirkle.Web.Api.Controllers;
 
