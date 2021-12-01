@@ -468,9 +468,7 @@ public class CoreUseCase
 
     private List<TileOnBoard> GetTilesOnBoard(IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay)
     {
-        //tileId, coordinates Color Shape 
-        return tilesTupleToPlay.Select(tileTupleToPlay =>
-            new TileOnBoard(_repository.GetTileById(tileTupleToPlay.tileId), tileTupleToPlay.coordinates)).ToList();
+        return tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(_repository.GetTileById(tileTupleToPlay.tileId), tileTupleToPlay.coordinates)).ToList();
     }
 
     private List<TileOnPlayer> GetPlayerTiles(int playerId, IEnumerable<int> tilesIds) => tilesIds.Select(tileId => _repository.GetTileOnPlayerById(playerId, tileId)).ToList();
