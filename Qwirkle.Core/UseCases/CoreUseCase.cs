@@ -7,17 +7,17 @@ public class CoreUseCase
     private const int PointsForAQwirkle = 12;
     private readonly IRepository _repository;
     private readonly INotification _notification;
+    private readonly InfoUseCase _infoUseCase;
 
     public Game Game { get; set; }
 
-    public CoreUseCase(IRepository repository, INotification notification)
+    public CoreUseCase(IRepository repository, INotification notification, InfoUseCase infoUseCase)
     {
         _repository = repository;
         _notification = notification;
+        _infoUseCase = infoUseCase;
     }
-
-    public int GetUserId(int playerId) => _repository.GetUserId(playerId);
-
+    
     public List<Player> CreateGame(List<int> usersIds)
     {
         Game = _repository.CreateGame(DateTime.UtcNow);
@@ -30,7 +30,7 @@ public class CoreUseCase
 
     public ArrangeRackReturn TryArrangeRack(int playerId, List<int> tilesIds)
     {
-        var player = GetPlayer(playerId);
+        var player = _infoUseCase.GetPlayer(playerId);
         var tiles = GetTiles(tilesIds);
         if (!player.HasTiles(tiles)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
         ArrangeRack(player, tilesIds);
@@ -39,7 +39,7 @@ public class CoreUseCase
 
     public PlayReturn TryPlayTiles(int playerId, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay)
     {
-        var player = GetPlayer(playerId);
+        var player = _infoUseCase.GetPlayer(playerId);
         if (!player.IsTurn) return new PlayReturn(player.GameId, PlayReturnCode.NotPlayerTurn, null, null, 0);
 
         var tilesTuplesList = tilesTupleToPlay.ToList();
@@ -60,7 +60,7 @@ public class CoreUseCase
     public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<int> tilesIds)
     {
         var tilesIdsList = tilesIds.ToList();
-        var player = GetPlayer(playerId);
+        var player = _infoUseCase.GetPlayer(playerId);
         var tiles = GetTiles(tilesIdsList);
         InitializeGame(player.GameId);
         if (!player.IsTurn) return new SwapTilesReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
@@ -73,7 +73,7 @@ public class CoreUseCase
 
     public SkipTurnReturn TrySkipTurn(int playerId)
     {
-        var player = GetPlayer(playerId);
+        var player = _infoUseCase.GetPlayer(playerId);
         InitializeGame(player.GameId);
         var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
         if (skipTurnReturn.Code != PlayReturnCode.Ok) return skipTurnReturn;
@@ -84,7 +84,7 @@ public class CoreUseCase
 
     public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay)
     {
-        var player = GetPlayer(playerId);
+        var player = _infoUseCase.GetPlayer(playerId);
         var tilesToPlay = GetTilesOnBoard(tilesTupleToPlay);
         InitializeGame(player.GameId);
         return GetPlayReturn(tilesToPlay, player, true);
@@ -154,7 +154,7 @@ public class CoreUseCase
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !Game.Board.IsFreeTile(tile));
     }
 
-    public Player GetPlayer(int playerId) => _repository.GetPlayer(playerId);
+
     public Player GetPlayer(int gameId, int userId) => _repository.GetPlayer(gameId, userId);
     public string GetPlayerNameTurn(int gameId) => _repository.GetPlayerNameTurn(gameId);
     public int GetPlayerIdTurn(int gameId) => _repository.GetPlayerIdToPlay(gameId);
@@ -340,7 +340,7 @@ public class CoreUseCase
         _repository.TilesFromBagToPlayer(player, positionsInRack);
         _repository.TilesFromPlayerToBag(player, tilesIdsList);
         _repository.UpdatePlayer(player);
-        return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = GetPlayer(player.Id).Rack };
+        return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoUseCase.GetPlayer(player.Id).Rack };
     }
 
     private Rack PlayTiles(Player player, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay, int points)

@@ -6,17 +6,18 @@ namespace Qwirkle.Web.Api.Controllers;
 [Route("Action")]
 public class ActionController : ControllerBase
 {
+    private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
     private readonly UserManager<UserDao> _userManager;
     private int _userId => int.Parse(_userManager.GetUserId(User) ?? "0");
-    public ActionController(CoreUseCase coreUseCase, UserManager<UserDao> userManager) => (_coreUseCase, _userManager) = (coreUseCase, userManager);
+    public ActionController(CoreUseCase coreUseCase, InfoUseCase infoUseCase, UserManager<UserDao> userManager) => (_coreUseCase, _infoUseCase, _userManager) = (coreUseCase, infoUseCase, userManager);
 
 
     [HttpPost("PlayTiles/")]
     public ActionResult<int> PlayTiles(List<TileViewModel> tiles)
     {
         var playerId = tiles.First().PlayerId;
-        var userId = _coreUseCase.GetUserId(playerId);
+        var userId = _infoUseCase.GetUserId(playerId);
         return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTiles(playerId, tiles.Select(t => (t.TileId, Coordinates.From(t.X, t.Y)))));
     }
 
@@ -25,7 +26,7 @@ public class ActionController : ControllerBase
     public ActionResult<int> PlayTilesSimulation(List<TileViewModel> tiles)
     {
         var playerId = tiles.First().PlayerId;
-        var userId = _coreUseCase.GetUserId(playerId);
+        var userId = _infoUseCase.GetUserId(playerId);
         return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => (t.TileId, Coordinates.From(t.X, t.Y)))));
     }
 
@@ -34,7 +35,7 @@ public class ActionController : ControllerBase
     public ActionResult<int> SwapTiles(List<TileViewModel> tiles)
     {
         var playerId = tiles.First().PlayerId;
-        var userId = _coreUseCase.GetUserId(playerId);
+        var userId = _infoUseCase.GetUserId(playerId);
         return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySwapTiles(tiles.First().PlayerId, tiles.Select(t => t.TileId)));
     }
 
@@ -42,7 +43,7 @@ public class ActionController : ControllerBase
     [HttpPost("SkipTurn/")]
     public ActionResult<int> SkipTurn(PlayerViewModel player)
     {
-        var userId = _coreUseCase.GetUserId(player.Id);
+        var userId = _infoUseCase.GetUserId(player.Id);
         return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySkipTurn(player.Id));
     }
 
@@ -51,7 +52,7 @@ public class ActionController : ControllerBase
     public ActionResult ArrangeRack(List<TileOnPlayerViewModel> tiles)
     {
         var playerId = tiles.First().PlayerId;
-        var userId = _coreUseCase.GetUserId(playerId);
+        var userId = _infoUseCase.GetUserId(playerId);
         return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryArrangeRack(tiles.First().PlayerId, tiles.Select(t => t.TileId).ToList()));
     }
 }

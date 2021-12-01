@@ -117,7 +117,9 @@ public class PlayTilesShould
     public void Return0WhenItsNotTurnPlayer()
     {
         var dbContext = Context();
-        var coreUseCase = new CoreUseCase(new Repository(dbContext), null);
+        var repository = new Repository(dbContext);
+        var infoUseCase = new InfoUseCase(repository);
+        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (7, Coordinates.From(-4, 4)), (8, Coordinates.From(-4, 3)), (9, Coordinates.From(-4, 2)) };
         coreUseCase.TryPlayTiles(Player3, tilesToPlay).Points.ShouldBe(0);
     }
@@ -126,7 +128,9 @@ public class PlayTilesShould
     public void Return0After1PlayerHavePlayedNotHisTiles()
     {
         var dbContext = Context();
-        var coreUseCase = new CoreUseCase(new Repository(dbContext), null);
+        var repository = new Repository(dbContext);
+        var infoUseCase = new InfoUseCase(repository);
+        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (7, Coordinates.From(-3, 4)) };
         coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(0);
     }
@@ -135,7 +139,9 @@ public class PlayTilesShould
     public void Return3After1PlayerHavePlayedHisTiles()
     {
         var dbContext = Context();
-        var coreUseCase = new CoreUseCase(new Repository(dbContext), null);
+        var repository = new Repository(dbContext);
+        var infoUseCase = new InfoUseCase(repository);
+        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (1, Coordinates.From(-3, 4)), (2, Coordinates.From(-3, 5)), (3, Coordinates.From(-3, 6)) };
         coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(3);
     }
@@ -144,7 +150,9 @@ public class PlayTilesShould
     public void Return5After2PlayersHavePlayed()
     {
         var dbContext = Context();
-        var coreUseCase = new CoreUseCase(new Repository(dbContext), null);
+        var repository = new Repository(dbContext);
+        var infoUseCase = new InfoUseCase(repository);
+        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (1, Coordinates.From(-3, 4)), (2, Coordinates.From(-3, 5)), (3, Coordinates.From(-3, 6)) };
         InitBoard();
         coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(5); 
@@ -162,7 +170,9 @@ public class PlayTilesShould
     public void ReturnNotFreeWhenCoordinateOnBoardIsNotFree()
     {
         var dbContext = Context();
-        var coreUseCase = new CoreUseCase(new Repository(dbContext), null);
+        var repository = new Repository(dbContext);
+        var infoUseCase = new InfoUseCase(repository);
+        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
         InitBoard();
 
         var tilesToPlay = new List<(int tileId, Coordinates coordinates)> { (1, Coordinates.From(5, 7)) };

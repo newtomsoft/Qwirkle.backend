@@ -3,6 +3,7 @@ namespace Qwirkle.Test;
 public class PlayTest
 {
     private readonly DefaultDbContext _dbContext;
+    private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _useCase;
 
     #region arrange methods
@@ -13,7 +14,8 @@ public class PlayTest
         connectionFactory.Add4DefaultTestUsers();
 
         var repository = new Repository(_dbContext);
-        _useCase = new CoreUseCase(repository, null);
+        _infoUseCase = new InfoUseCase(repository);
+        _useCase = new CoreUseCase(repository, null, _infoUseCase);
     }
 
     
@@ -45,19 +47,19 @@ public class PlayTest
 
         {
             _useCase.TryArrangeRack(playerId, new List<int> { constTile0!.Id, constTile1!.Id, constTile2!.Id, constTile3!.Id, constTile4!.Id, constTile5!.Id });
-            var tilesOrderedByPosition = _useCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
+            var tilesOrderedByPosition = _infoUseCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
             for (var i = 0; i < tilesOrderedByPosition.Count; i++)
                 tilesOrderedByPosition[i].ToTile().ShouldBe(constTiles[i].ToTile());
         }
         {
             _useCase.TryArrangeRack(playerId, new List<int> { constTile5!.Id, constTile4!.Id, constTile3!.Id, constTile2!.Id, constTile1!.Id, constTile0!.Id });
-            var tilesOrderedByPosition = _useCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
+            var tilesOrderedByPosition = _infoUseCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
             for (var i = 0; i < tilesOrderedByPosition.Count; i++)
                 tilesOrderedByPosition[i].ToTile().ShouldBe(constTiles[^(i + 1)].ToTile());
         }
         {
             _useCase.TryArrangeRack(playerId, new List<int> { constTile3!.Id, constTile5!.Id, constTile0!.Id, constTile2!.Id, constTile1!.Id, constTile4!.Id });
-            var tilesOrderedByPosition = _useCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
+            var tilesOrderedByPosition = _infoUseCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
             tilesOrderedByPosition[0].ToTile().ShouldBe(constTiles[3].ToTile());
             tilesOrderedByPosition[1].ToTile().ShouldBe(constTiles[5].ToTile());
             tilesOrderedByPosition[2].ToTile().ShouldBe(constTiles[0].ToTile());

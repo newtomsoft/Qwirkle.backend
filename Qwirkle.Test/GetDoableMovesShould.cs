@@ -12,7 +12,7 @@ public class GetDoableMovesShould
         connectionFactory.Add4DefaultTestUsers();
 
         var repository = new Repository(_dbContext);
-        _useCase = new CoreUseCase(repository, null);
+        _useCase = new CoreUseCase(repository, null, null);
     }
 
     #region private methods

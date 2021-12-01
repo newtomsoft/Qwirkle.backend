@@ -6,13 +6,16 @@
 public class AdminController : ControllerBase
 {
     private readonly CoreUseCase _coreUseCase;
-    public AdminController(CoreUseCase coreUseCase)
+    private readonly InfoUseCase _infoUseCase;
+
+    public AdminController(CoreUseCase coreUseCase, InfoUseCase infoUseCase)
     {
         _coreUseCase = coreUseCase;
+        _infoUseCase = infoUseCase;
     }
 
     [HttpGet("Player/{playerId:int}")]
-    public ActionResult GetPlayerById(int playerId) => new ObjectResult(_coreUseCase.GetPlayer(playerId));
+    public ActionResult GetPlayerById(int playerId) => new ObjectResult(_infoUseCase.GetPlayer(playerId));
 
 
     [HttpGet("AllUsersIds")]
