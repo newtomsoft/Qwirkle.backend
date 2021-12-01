@@ -2,13 +2,9 @@
 public class Repository : IRepository
 {
     private DefaultDbContext DbContext { get; }
-
     private const int TotalTiles = 108;
 
-    public Repository(DefaultDbContext defaultDbContext)
-    {
-        DbContext = defaultDbContext;
-    }
+    public Repository(DefaultDbContext defaultDbContext) => DbContext = defaultDbContext;
 
     public int GetUserId(int playerId) => DbContext.Players.First(p => p.Id == playerId).UserId;
 
@@ -42,13 +38,13 @@ public class Repository : IRepository
 
     public List<int> GetAllUsersId() => DbContext.Users.Select(u => u.Id).ToList();
 
-    public List<int> GetUserGames(int userId) => DbContext.Players.Where(p => p.UserId == userId).Select(p => p.GameId).ToList();
+    public List<int> GetUserGamesIds(int userId) => DbContext.Players.Where(p => p.UserId == userId).Select(p => p.GameId).ToList();
 
     public string GetPlayerNameTurn(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Include(p => p.User).FirstOrDefault()?.User.UserName;
 
     public int GetPlayerIdToPlay(int gameId) => DbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.Id).FirstOrDefault();
 
-    public Tile GetTileById(int tileId) => DbContext.Tiles.Single(t => t.Id == tileId).ToTile();
+    public Tile GetTile(int id) => DbContext.Tiles.Single(t => t.Id == id).ToTile();
 
     public TileOnPlayer GetTileOnPlayerById(int playerId, int tileId) => DbContext.TilesOnPlayer.Single(t => t.PlayerId == playerId && t.TileId == tileId).ToTileOnPlayer();
 

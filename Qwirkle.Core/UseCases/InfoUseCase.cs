@@ -20,7 +20,7 @@ public class InfoUseCase
     public int GetPlayerIdTurn(int gameId) => _repository.GetPlayerIdToPlay(gameId);
     public List<int> GetGamesIdsContainingPlayers() => _repository.GetGamesIdsContainingPlayers();
     public List<int> GetAllUsersId() => _repository.GetAllUsersId();
-    public List<int> GetUserGames(int userId) => _repository.GetUserGames(userId);
+    public List<int> GetUserGames(int userId) => _repository.GetUserGamesIds(userId);
     public Game GetGameForSuperUser(int gameId) => _repository.GetGame(gameId);
     public List<int> GetWinnersPlayersId(int gameId)
     {

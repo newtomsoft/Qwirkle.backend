@@ -15,13 +15,4 @@ public class Game
         Bag = bag;
         GameOver = gameOver;
     }
-
-    public Game(Game game)
-    {
-        Id = game.Id;
-        Board = game.Board;
-        Players = game.Players;
-        Bag = game.Bag;
-        GameOver = game.GameOver;
-    }
 }
