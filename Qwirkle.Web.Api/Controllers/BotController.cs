@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using NLog;
-using NLog.Fluent;
 
 namespace Qwirkle.Web.Api.Controllers;
 
@@ -21,7 +20,7 @@ public class BotController : ControllerBase
 
 
     [HttpGet("PossibleMoves/{gameId:int}")]
-    public ActionResult GetPossibleMoves(int gameId)
+    public ActionResult ComputeDoableMoves(int gameId)
     {
         _logger.Info($"userId:{_userId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
         return new ObjectResult(_coreUseCase.ComputeDoableMoves(gameId, _userId));
