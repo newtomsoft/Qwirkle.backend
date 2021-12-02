@@ -21,6 +21,7 @@ appBuilder.Services.AddScoped<IAuthentication, Authentication>();
 appBuilder.Services.AddScoped<AuthenticationUseCase>();
 appBuilder.Services.AddScoped<CoreUseCase>();
 appBuilder.Services.AddScoped<InfoUseCase>();
+appBuilder.Services.AddScoped<ComplianceUseCase>();
 appBuilder.Services.AddControllers();
 appBuilder.Services.AddDbContext<DefaultDbContext>(appBuilder.Configuration);
 appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>

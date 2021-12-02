@@ -3,7 +3,7 @@
 public class GetPlayPointsShould
 {
     private const int QwirklePoints = 6;
-    private CoreUseCase UseCase { get; } = new(null, null, null);
+    private CoreUseCase UseCase { get; } = new(null, null, null, null);
 
     [Fact]
     public void ReturnNumberOfTilesWhenGameIsEmptyAndTilesMakeRow()
