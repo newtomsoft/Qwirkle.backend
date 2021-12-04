@@ -54,7 +54,7 @@ public class Repository : IRepository
         var tilesOnBagDao = DbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
         var bag = new Bag(gameId);
         foreach (var tileOnBagDao in tilesOnBagDao) bag.Tiles.Add(tileOnBagDao.ToTileOnBag());
-        return new Game(gameId, tiles, players, gameOver, bag);
+        return new Game(gameId, Board.From(tiles), players, gameOver, bag);
     }
 
     public Player GetPlayer(int playerId) => DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).First().ToPlayer(DbContext);

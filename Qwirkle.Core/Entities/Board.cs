@@ -4,8 +4,11 @@ public class Board
 {
     public List<TileOnBoard> Tiles { get; }
 
-    public Board(List<TileOnBoard> tiles) => Tiles = tiles;
+    public static Board From(List<TileOnBoard> tiles) => new(tiles);
+    public static Board Empty() => new(new List<TileOnBoard>());
 
+    private Board(List<TileOnBoard> tiles) => Tiles = tiles;
+    
     public bool IsIsolatedTile(TileOnBoard tile) => IsIsolated(Coordinates.From(tile.Coordinates.X, tile.Coordinates.Y));
     public bool IsFreeTile(TileOnBoard tile) => IsFree(tile.Coordinates);
     public List<Coordinates> GetAdjoiningCoordinatesToTiles()
