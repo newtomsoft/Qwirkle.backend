@@ -14,7 +14,7 @@ public sealed class ConnectionFactory : IDisposable
 
     public DefaultDbContext CreateContextForInMemory()
     {
-        var option = new DbContextOptionsBuilder<DefaultDbContext>().UseInMemoryDatabase(databaseName: "Test_Database").Options;
+        var option = new DbContextOptionsBuilder<DefaultDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
         _dbContext = new DefaultDbContext(option);
         _dbContext.Database.EnsureDeleted();
         _dbContext.Database.EnsureCreated();
@@ -29,21 +29,7 @@ public sealed class ConnectionFactory : IDisposable
         _dbContext.Users.Add(new UserDao { Id = User4Id });
         _dbContext.SaveChanges();
     }
-
-
-
-    public DefaultDbContext CreateContextForSqLite()
-    {
-        var connection = new SqliteConnection("DataSource=:memory:");
-        connection.Open();
-        var option = new DbContextOptionsBuilder<DefaultDbContext>().UseSqlite(connection).Options;
-        var context = new DefaultDbContext(option);
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
-        return context;
-    }
-
-
+    
     private void Dispose(bool disposing)
     {
         if (_disposedValue) return;

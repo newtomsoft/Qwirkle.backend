@@ -8,13 +8,13 @@ namespace Qwirkle.Web.Api.Controllers;
 [Route("Bot")]
 public class BotController : ControllerBase
 {
-    private readonly CoreUseCase _coreUseCase;
+    private readonly BotUseCase _botUseCase;
     private readonly UserManager<UserDao> _userManager;
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-    private int _userId => int.Parse(_userManager.GetUserId(User) ?? "0");
-    public BotController(CoreUseCase coreUseCase, UserManager<UserDao> userManager)
+    private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
+    public BotController(BotUseCase botUseCase, UserManager<UserDao> userManager)
     {
-        _coreUseCase = coreUseCase;
+        _botUseCase = botUseCase;
         _userManager = userManager;
     }
 
@@ -22,7 +22,7 @@ public class BotController : ControllerBase
     [HttpGet("PossibleMoves/{gameId:int}")]
     public ActionResult ComputeDoableMoves(int gameId)
     {
-        _logger.Info($"userId:{_userId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
-        return new ObjectResult(_coreUseCase.ComputeDoableMoves(gameId, _userId));
+        _logger.Info($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
+        return new ObjectResult(_botUseCase.ComputeDoableMoves(gameId, UserId));
     }
 }

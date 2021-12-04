@@ -1,13 +1,13 @@
 namespace Qwirkle.Test;
 
-public class PlayTest
+public class ArrangeRackTests
 {
     private readonly DefaultDbContext _dbContext;
     private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _useCase;
 
     #region arrange methods
-    public PlayTest()
+    public ArrangeRackTests()
     {
         var connectionFactory = new ConnectionFactory();
         _dbContext = connectionFactory.CreateContextForInMemory();
@@ -15,7 +15,7 @@ public class PlayTest
 
         var repository = new Repository(_dbContext);
         _infoUseCase = new InfoUseCase(repository, null);
-        _useCase = new CoreUseCase(repository, null, _infoUseCase, null);
+        _useCase = new CoreUseCase(repository, null, _infoUseCase);
     }
 
 
@@ -69,8 +69,4 @@ public class PlayTest
         }
 
     }
-
-
-
-
 }

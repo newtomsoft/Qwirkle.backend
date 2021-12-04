@@ -7,7 +7,7 @@ public class PlayerController : ControllerBase
 {
     private readonly InfoUseCase _infoUseCase;
     private readonly UserManager<UserDao> _userManager;
-    private int _userId => int.Parse(_userManager.GetUserId(User) ?? "0");
+    private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
     public PlayerController(InfoUseCase infoUseCase, UserManager<UserDao> userManager)
     {
@@ -16,7 +16,7 @@ public class PlayerController : ControllerBase
     }
 
 
-    [Obsolete]
+    [Obsolete("method soon to be discontinued")]
     [HttpGet("{playerId:int}")]
     public ActionResult GetById(int playerId) => new ObjectResult(_infoUseCase.GetPlayer(playerId));
 
@@ -25,7 +25,7 @@ public class PlayerController : ControllerBase
 
 
     [HttpGet("PlayerIdByGameId/{gameId:int}")]
-    public ActionResult GetByGameId(int gameId) => new ObjectResult(_infoUseCase.GetPlayer(gameId, _userId).Id);
+    public ActionResult GetByGameId(int gameId) => new ObjectResult(_infoUseCase.GetPlayer(gameId, UserId).Id);
 
 
     [HttpGet("NameTurn/{gameId:int}")]

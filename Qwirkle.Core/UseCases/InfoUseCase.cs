@@ -10,9 +10,6 @@ public class InfoUseCase
         _repository = repository;
         _notification = notification;
     }
-
-
-
     public int GetUserId(int playerId) => _repository.GetUserId(playerId);
     public Player GetPlayer(int playerId) => _repository.GetPlayer(playerId);
     public Player GetPlayer(int gameId, int userId) => _repository.GetPlayer(gameId, userId);
@@ -22,6 +19,7 @@ public class InfoUseCase
     public List<int> GetAllUsersId() => _repository.GetAllUsersId();
     public List<int> GetUserGames(int userId) => _repository.GetUserGamesIds(userId);
     public Game GetGameForSuperUser(int gameId) => _repository.GetGame(gameId);
+    public Game GetGame(int gameId) => _repository.GetGame(gameId);
     public List<int> GetWinnersPlayersId(int gameId)
     {
         if (!_repository.IsGameOver(gameId)) return null;

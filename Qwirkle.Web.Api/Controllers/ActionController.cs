@@ -9,7 +9,8 @@ public class ActionController : ControllerBase
     private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
     private readonly UserManager<UserDao> _userManager;
-    private int _userId => int.Parse(_userManager.GetUserId(User) ?? "0");
+    private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
+
     public ActionController(CoreUseCase coreUseCase, InfoUseCase infoUseCase, UserManager<UserDao> userManager) => (_coreUseCase, _infoUseCase, _userManager) = (coreUseCase, infoUseCase, userManager);
 
 
@@ -18,7 +19,7 @@ public class ActionController : ControllerBase
     {
         var playerId = tiles.First().PlayerId;
         var userId = _infoUseCase.GetUserId(playerId);
-        return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTiles(playerId, tiles.Select(t => (t.TileId, Coordinates.From(t.X, t.Y)))));
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTiles(playerId, tiles.Select(t => (t.TileId, Coordinates.From(t.X, t.Y)))));
     }
 
 
@@ -27,7 +28,7 @@ public class ActionController : ControllerBase
     {
         var playerId = tiles.First().PlayerId;
         var userId = _infoUseCase.GetUserId(playerId);
-        return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => (t.TileId, Coordinates.From(t.X, t.Y)))));
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => (t.TileId, Coordinates.From(t.X, t.Y)))));
     }
 
 
@@ -36,7 +37,7 @@ public class ActionController : ControllerBase
     {
         var playerId = tiles.First().PlayerId;
         var userId = _infoUseCase.GetUserId(playerId);
-        return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySwapTiles(tiles.First().PlayerId, tiles.Select(t => t.TileId)));
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySwapTiles(tiles.First().PlayerId, tiles.Select(t => t.TileId)));
     }
 
 
@@ -44,7 +45,7 @@ public class ActionController : ControllerBase
     public ActionResult<int> SkipTurn(PlayerViewModel player)
     {
         var userId = _infoUseCase.GetUserId(player.Id);
-        return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySkipTurn(player.Id));
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySkipTurn(player.Id));
     }
 
 
@@ -53,6 +54,6 @@ public class ActionController : ControllerBase
     {
         var playerId = tiles.First().PlayerId;
         var userId = _infoUseCase.GetUserId(playerId);
-        return userId != _userId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryArrangeRack(tiles.First().PlayerId, tiles.Select(t => t.TileId).ToList()));
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryArrangeRack(tiles.First().PlayerId, tiles.Select(t => t.TileId).ToList()));
     }
 }

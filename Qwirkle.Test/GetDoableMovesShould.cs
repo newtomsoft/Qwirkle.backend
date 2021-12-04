@@ -5,6 +5,7 @@ public class GetDoableMovesShould
     private readonly DefaultDbContext _dbContext;
     private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _useCase;
+    private readonly BotUseCase _botUseCase;
 
     public GetDoableMovesShould()
     {
@@ -14,7 +15,8 @@ public class GetDoableMovesShould
 
         var repository = new Repository(_dbContext);
         _infoUseCase = new InfoUseCase(repository, null);
-        _useCase = new CoreUseCase(repository, null, _infoUseCase, new ComplianceUseCase());
+        _useCase = new CoreUseCase(repository, null, _infoUseCase);
+        _botUseCase = new BotUseCase(_infoUseCase, _useCase);
     }
 
     #region private methods
@@ -42,7 +44,7 @@ public class GetDoableMovesShould
         ChangePlayerTilesBy(players[0].Id, constTiles);
 
         var gameId = players[0].GameId;
-        var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
+        var playReturns = _botUseCase.ComputeDoableMoves(gameId, usersIds[0]);
         playReturns.Count.ShouldBe(6); // 6 tiles from the rack are all doable
 
         var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
@@ -71,7 +73,7 @@ public class GetDoableMovesShould
         ChangePlayerTilesBy(players[0].Id, constTiles);
 
         var gameId = players[0].GameId;
-        var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
+        var playReturns = _botUseCase.ComputeDoableMoves(gameId, usersIds[0]);
 
         var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
         var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Color).ThenBy(t => t.Shape).ToList();
@@ -105,7 +107,7 @@ public class GetDoableMovesShould
         ChangePlayerTilesBy(players[0].Id, constTiles);
 
         var gameId = players[0].GameId;
-        var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
+        var playReturns = _botUseCase.ComputeDoableMoves(gameId, usersIds[0]);
 
         var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
         var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Color).ThenBy(t => t.Shape).ToList();
@@ -139,7 +141,7 @@ public class GetDoableMovesShould
         ChangePlayerTilesBy(players[0].Id, constTiles);
 
         var gameId = players[0].GameId;
-        var playReturns = _useCase.ComputeDoableMoves(gameId, usersIds[0]);
+        var playReturns = _botUseCase.ComputeDoableMoves(gameId, usersIds[0]);
 
         var playReturnsWith1Tile = playReturns.Where(p => p.TilesPlayed.Count == 1).ToList();
         var tilesPlayedSingle = playReturnsWith1Tile.Select(p => p.TilesPlayed[0]).OrderBy(t => t.Color).ThenBy(t => t.Shape).ToList();

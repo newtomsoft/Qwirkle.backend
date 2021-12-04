@@ -10,12 +10,8 @@ public class Repository : IRepository
 
     public void CreateTiles(int gameId)
     {
-        AddAllTilesInDataBase();
-        var tilesIds = DbContext.Tiles.Select(tile => tile.Id).ToList();
-        for (var i = 0; i < TotalTiles; i++)
-            DbContext.TilesOnBag.Add(new TileOnBagDao { GameId = gameId, TileId = tilesIds[i] });
-
-        DbContext.SaveChanges();
+        AddAllTilesInDataBaseIfNotPresent();
+        AddAllTilesOnBag(gameId);
     }
 
     public Player CreatePlayer(int userId, int gameId)
@@ -133,16 +129,22 @@ public class Repository : IRepository
 
     public bool IsGameOver(int gameId) => DbContext.Games.Any(g => g.Id == gameId && g.GameOver);
 
-    private void AddAllTilesInDataBase()
+    private void AddAllTilesInDataBaseIfNotPresent()
     {
         if (DbContext.Tiles.Count() == TotalTiles) return;
-
         const int numberOfSameTile = 3;
         for (var i = 0; i < numberOfSameTile; i++)
             foreach (var color in (TileColor[])Enum.GetValues(typeof(TileColor)))
                 foreach (var shape in (TileShape[])Enum.GetValues(typeof(TileShape)))
                     DbContext.Tiles.Add(new TileDao { Color = color, Shape = shape });
+        DbContext.SaveChanges();
+    }
 
+    private void AddAllTilesOnBag(int gameId)
+    {
+        var tilesIds = DbContext.Tiles.Select(tile => tile.Id).ToList();
+        for (var i = 0; i < TotalTiles; i++)
+            DbContext.TilesOnBag.Add(new TileOnBagDao { GameId = gameId, TileId = tilesIds[i] });
         DbContext.SaveChanges();
     }
 

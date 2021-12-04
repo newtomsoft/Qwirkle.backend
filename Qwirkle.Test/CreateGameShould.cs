@@ -16,7 +16,7 @@ public class CreateGameShould
         var connectionFactory = new ConnectionFactory();
         _dbContext = connectionFactory.CreateContextForInMemory();
         IRepository repository = new Repository(_dbContext);
-        _coreUseCase = new CoreUseCase(repository, null, null, null);
+        _coreUseCase = new CoreUseCase(repository, null, null);
         Add4DefaultTestUsers();
     }
 
