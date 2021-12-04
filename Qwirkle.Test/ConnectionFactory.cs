@@ -29,7 +29,7 @@ public sealed class ConnectionFactory : IDisposable
         _dbContext.Users.Add(new UserDao { Id = User4Id });
         _dbContext.SaveChanges();
     }
-    
+
     private void Dispose(bool disposing)
     {
         if (_disposedValue) return;

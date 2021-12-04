@@ -86,9 +86,9 @@ public class CoreUseCase
         var tilesToPlay = GetTilesOnBoard(tilesTupleToPlay);
         return Play(tilesToPlay, player, true);
     }
-    
+
     private void InitializeGame() => Game = _repository.CreateGame(DateTime.UtcNow);
-    
+
     private void DealTilesToPlayers()
     {
         var rackPositions = new List<byte>();
