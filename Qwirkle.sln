@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AI", "AI", "{748E9369-9766-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Test", "Qwirkle.Test\Qwirkle.Test.csproj", "{98847D8C-EB3A-49A1-8BD9-6E37E5B918AD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{A035D5C4-CCF4-4401-813E-E86B41A1F1E0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{A035D5C4-CCF4-4401-813E-E86B41A1F1E0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
