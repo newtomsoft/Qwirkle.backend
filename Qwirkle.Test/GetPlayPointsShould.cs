@@ -3,7 +3,7 @@
 public class GetPlayPointsShould
 {
     private const int QwirklePoints = 6;
-    private CoreUseCase UseCase { get; } = new (null, null, null);
+    private CoreUseCase UseCase { get; } = new(null, null, null);
 
     [Fact]
     public void ReturnNumberOfTilesWhenGameIsEmptyAndTilesMakeRow()
@@ -36,7 +36,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return2When1GoodTileIsAround1TileOnGame()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Green, TileShape.Square, new Coordinates(7, -3)),
             }), new List<Player>(), false);
         UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(8, -3)) }, null).Points.ShouldBe(2);
@@ -52,7 +52,7 @@ public class GetPlayPointsShould
         var coordinatesNotFree2 = new Coordinates(14, 28);
         var coordinatesNotFree3 = new Coordinates(-7, 3);
         var coordinatesNotFree4 = new Coordinates(-4, 12);
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Blue, TileShape.Circle, coordinatesNotFree1),
                 new(TileColor.Blue, TileShape.Circle, coordinatesNotFree2),
                 new(TileColor.Blue, TileShape.Circle, coordinatesNotFree3),
@@ -67,7 +67,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return0WhenNoTilesOnGameAreAroundTile()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0)),
                 new(TileColor.Green, TileShape.Square, new Coordinates(7, -3)),
             }), new List<Player>(), false);
@@ -84,7 +84,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return0WhenTileMakeBadColumn()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0)),
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 1)),
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 2)),
@@ -105,7 +105,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return4When1TileMakeValidColumnWith3GameTiles()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Green, TileShape.Square, new Coordinates(7, -5)),
                 new(TileColor.Blue, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(7, -3)),
@@ -121,7 +121,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return0WhenTileMakeBadLine()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0)),
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(1, 0)),
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(2, 0)),
@@ -142,7 +142,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return4When1TileMakeValidLineWith3GameTiles()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Green, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
@@ -159,7 +159,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return2When1GoodTileTouch1TileInGameOnSide()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
             new(TileColor.Green, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
@@ -171,7 +171,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return5When2TilesWithFirstTouchTileInGame()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
             new(TileColor.Green, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
@@ -183,7 +183,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return5When2TilesWithSecondTouchTileInGame()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
             new(TileColor.Green, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
@@ -195,7 +195,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return7When3TilesRowTouch3GameTileLine()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
             new(TileColor.Green, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
@@ -207,7 +207,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return24WhenAQwirkleYellowLineTouchQwirklePurpleLine()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Purple, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Purple, TileShape.Circle, new Coordinates(8, -4)),
                 new(TileColor.Purple, TileShape.Diamond, new Coordinates(9, -4)),
@@ -230,7 +230,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return0WhenAQwirkleYellowTouchQwirklePurpleButNotInTheSameOrder()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Purple, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Purple, TileShape.Circle, new Coordinates(8, -4)),
                 new(TileColor.Purple, TileShape.Diamond, new Coordinates(9, -4)),
@@ -252,7 +252,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return0WhenTilesAreNotInARow()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Purple, TileShape.Square, new Coordinates(7, -4)),
             }), new List<Player>(), false);
         var tilesTested = new List<TileOnBoard> {
@@ -265,7 +265,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return0WhenTilesAreNotInTheSameColumn()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Purple, TileShape.Square, new Coordinates(7, -3)),
                 new(TileColor.Purple, TileShape.FourPointStar, new Coordinates(7, -4)),
                 new(TileColor.Purple, TileShape.Clover, new Coordinates(7, -1)),
@@ -281,7 +281,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return0WhenTilesAreNotInTheSameLine()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Purple, TileShape.Square, new Coordinates(-3, 7)),
                 new(TileColor.Purple, TileShape.FourPointStar, new Coordinates(-4, 7)),
                 new(TileColor.Purple, TileShape.Clover, new Coordinates(-1,7)),
@@ -302,7 +302,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return12When2TilesAreInTheSame4GameTilesColumn()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Purple, TileShape.FourPointStar, new Coordinates(7, -4)),
                 new(TileColor.Purple, TileShape.Square, new Coordinates(7, -3)),
                 new(TileColor.Purple, TileShape.Clover, new Coordinates(7, -1)),
@@ -325,7 +325,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return12When2TilesAreInTheSame4GameTilesLine()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Yellow, TileShape.Square, new Coordinates(14, 3)),
                 new(TileColor.Yellow, TileShape.Clover, new Coordinates(16, 3)),
                 new(TileColor.Yellow, TileShape.EightPointStar, new Coordinates(13, 3)),
@@ -348,7 +348,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return0WhenTilesMakeColumnJoinedBy2ColumnsWithDifferentsTiles()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Blue, TileShape.FourPointStar, new Coordinates(7, 2)),
                 new(TileColor.Blue, TileShape.Diamond, new Coordinates(7, 1)),
                 new(TileColor.Green, TileShape.Circle, new Coordinates(7, -1)),
@@ -362,7 +362,7 @@ public class GetPlayPointsShould
     [Fact]
     public void Return0WhenTilesMakeLineJoinedBy2LinesWithDifferentsTiles()
     {
-        UseCase.Game = new Game(1, Board.From(new  List<TileOnBoard> {
+        UseCase.Game = new Game(1, Board.From(new List<TileOnBoard> {
                 new(TileColor.Blue, TileShape.FourPointStar, new Coordinates(2, 7)),
                 new(TileColor.Blue, TileShape.Diamond, new Coordinates(1, 7)),
                 new(TileColor.Green, TileShape.Circle, new Coordinates(-1, 7)),
