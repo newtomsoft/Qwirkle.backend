@@ -4,12 +4,20 @@ public class BotUseCase
 {
     private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
+    private readonly IArtificialIntelligence _artificialIntelligence;
 
-    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase)
+    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase, IArtificialIntelligence artificialIntelligence)
     {
         _infoUseCase = infoUseCase;
         _coreUseCase = coreUseCase;
+        _artificialIntelligence = artificialIntelligence;
     }
+
+    public Game ToRename(Game game)
+    {
+        return null;
+    }
+
     public List<PlayReturn> ComputeDoableMoves(int gameId, int userId)
     {
         var player = _infoUseCase.GetPlayer(gameId, userId);
