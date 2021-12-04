@@ -7,7 +7,7 @@ public class Game
     public Bag Bag { get; set; }
     public bool GameOver { get; set; }
 
-    public Game(int id, Board board, List<Player> players, bool gameOver, Bag bag = null) //todo board
+    public Game(int id, Board board, List<Player> players, bool gameOver, Bag bag = null)
     {
         Id = id;
         Board = board;
