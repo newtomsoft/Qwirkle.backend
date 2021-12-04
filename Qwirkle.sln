@@ -33,12 +33,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Test", "Qwirkle.Tes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{A035D5C4-CCF4-4401-813E-E86B41A1F1E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qwirkle.AI", "Qwirkle.AI\Qwirkle.AI.csproj", "{E5D79468-7F66-44CC-B148-2C452DE7119E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.AI", "Qwirkle.AI\Qwirkle.AI.csproj", "{E5D79468-7F66-44CC-B148-2C452DE7119E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5} = {3FC43582-6D07-42A0-805F-9036DA5E28C5}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qwirkle.UltraBoardGames.Player", "Qwirkle.UltraBoardGames.Player\Qwirkle.UltraBoardGames.Player.csproj", "{33561E33-BA67-4A59-9490-BBD70C345220}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.UltraBoardGames.Player", "Qwirkle.UltraBoardGames.Player\Qwirkle.UltraBoardGames.Player.csproj", "{33561E33-BA67-4A59-9490-BBD70C345220}"
 	ProjectSection(ProjectDependencies) = postProject
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5} = {3FC43582-6D07-42A0-805F-9036DA5E28C5}
 	EndProjectSection
