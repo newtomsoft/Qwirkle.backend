@@ -1,9 +1,9 @@
 ﻿global using Microsoft.EntityFrameworkCore;
-global using Qwirkle.Core.Entities;
-global using Qwirkle.Core.Enums;
-global using Qwirkle.Core.Ports;
-global using Qwirkle.Core.UseCases;
-global using Qwirkle.Core.ValueObjects;
+global using Qwirkle.Domain.Entities;
+global using Qwirkle.Domain.Enums;
+global using Qwirkle.Domain.Ports;
+global using Qwirkle.Domain.UseCases;
+global using Qwirkle.Domain.ValueObjects;
 global using Qwirkle.Infra.Repository;
 global using Qwirkle.Infra.Repository.Adapters;
 global using Qwirkle.Infra.Repository.Dao;

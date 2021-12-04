@@ -1,6 +1,4 @@
-﻿using Qwirkle.Core.ValueObjects;
-
-namespace Qwirkle.Web.Api.Controllers;
+﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Route("Action")]

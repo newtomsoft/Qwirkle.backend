@@ -1,9 +1,11 @@
-﻿using Qwirkle.Core.Ports;
+﻿using Qwirkle.Domain.Ports;
 
-namespace Qwirkle.AI
+namespace Qwirkle.AI;
+
+public class ArtificialIntelligence : IArtificialIntelligence
 {
-    public class ArtificialIntelligence : IArtificialIntelligence
+    public void ToRenameMethod()
     {
-
+        throw new NotImplementedException();
     }
 }

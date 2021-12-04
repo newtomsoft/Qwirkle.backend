@@ -4,10 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Qwirkle.Core\Qwirkle.Core.csproj" />
+    <ProjectReference Include="..\Qwirkle.Domain\Qwirkle.Domain.csproj" />
   </ItemGroup>
 
 </Project>

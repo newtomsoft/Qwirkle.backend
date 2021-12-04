@@ -27,9 +27,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\Qwirkle.Core\Qwirkle.Core.csproj" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="appsettings.json">
@@ -52,6 +49,10 @@
 	  </PackageReference>
 	  <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.0" />
 	  <PackageReference Include="Newtomsoft.EntityFramework" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Qwirkle.Domain\Qwirkle.Domain.csproj" />
 	</ItemGroup>
 
 

@@ -1,6 +1,4 @@
-﻿using Qwirkle.Core.ValueObjects;
-
-namespace Qwirkle.SignalR.Adapters;
+﻿namespace Qwirkle.SignalR.Adapters;
 
 public class SignalRNotification : INotification
 {

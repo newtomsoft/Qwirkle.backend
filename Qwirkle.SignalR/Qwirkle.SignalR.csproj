@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Qwirkle.Core\Qwirkle.Core.csproj" />
+    <ProjectReference Include="..\Qwirkle.Domain\Qwirkle.Domain.csproj" />
   </ItemGroup>
 
 </Project>
