@@ -4,17 +4,36 @@ using OpenQA.Selenium.Support.UI;
 using Qwirkle.Domain.ValueObjects;
 
 namespace Qwirkle.UltraBoardGames.Player;
-public class Scraper
+public class GameScraper
 {
     private const string GamePageUrl = "https://www.ultraboardgames.com/qwirkle/game.php?startcomputer";
 
     private readonly IWebDriver _driver;
 
-    public Scraper()
+    public GameScraper()
     {
         _driver = new FirefoxDriver();
         _ = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
         _driver.Navigate().GoToUrl(GamePageUrl);
+    }
+
+    public async Task AcceptPoliciesAsync()
+    {
+        bool isAccepted = false;
+        DateTime limitDate = DateTime.Now.AddSeconds(10);
+        while (!isAccepted && DateTime.Now < limitDate)
+        {
+            try
+            {
+                _driver.FindElement(By.Id("ez-accept-all")).Click();
+                break;
+            }
+            catch
+            {
+                await Task.Delay(100);
+                continue;
+            }
+        }
     }
 
     public int GetTilesOnBag()

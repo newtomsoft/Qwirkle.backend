@@ -1,13 +1,30 @@
-﻿using Qwirkle.UltraBoardGames.Player;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Qwirkle.AI;
+using Qwirkle.Domain.Ports;
+using Qwirkle.Domain.UseCases;
+using Qwirkle.Infra.Repository;
 
-Console.WriteLine("scraping program");
+var host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices((hostContext, services) =>
+    {
+        services.AddOptions();
+        services.AddLogging(configure => configure.AddConsole());
+        services.AddSingleton<BotUseCase>();
+        services.AddSingleton<CoreUseCase>();
+        services.AddSingleton<InfoUseCase>();
+        services.AddSingleton<UltraBoardGamesPlayerApplication>();
+        services.AddSingleton<IArtificialIntelligence, ArtificialIntelligence>();
+        services.AddSingleton<INotification, FakeNotification>();
+        services.AddSingleton<IRepository, FakeRepository>();
+        services.AddDbContext<DefaultDbContext>();
+    })
+    .UseConsoleLifetime()
+    .Build();
 
-var scraper = new Scraper();
-var playerPoints = scraper.GetPlayerPoints();
-var opponentPoints = scraper.GetOpponentPoints();
-var tilesOnBag = scraper.GetTilesOnBag();
-var tilesOnPlayer = scraper.GetTilesOnPlayer();
-var tilesOnBoard = scraper.GetTilesOnBoard();
+using var serviceScope = host.Services.CreateScope();
+var services = serviceScope.ServiceProvider;
+var serviceProvider = services.GetRequiredService<UltraBoardGamesPlayerApplication>();
+await serviceProvider.RunAsync();
 
-
-var toto = 69;

@@ -13,17 +13,16 @@ public class BotUseCase
         _artificialIntelligence = artificialIntelligence;
     }
 
-    public Game ToRename(Game game)
+    public List<TileOnBoard> GetBestMove(Player player, Board board)
     {
-        _artificialIntelligence.ToRenameMethod();
-        return null;
+        var doableMoves = ComputeDoableMoves(player, board, true);
+        var playReturn = doableMoves.OrderByDescending(m => m.Points).First();
+        return playReturn.TilesPlayed;
     }
 
-    public List<PlayReturn> ComputeDoableMoves(int gameId, int userId)
+    public List<PlayReturn> ComputeDoableMoves(Player player, Board board, bool simulation = false)
     {
-        var player = _infoUseCase.GetPlayer(gameId, userId);
-        var board = _infoUseCase.GetGame(gameId).Board;
-        _coreUseCase.ResetGame(player.GameId);
+        if (!simulation) _coreUseCase.ResetGame(player.GameId);
         var rack = player.Rack.WithoutDuplicatesTiles();
 
         var boardAdjoiningCoordinates = board.GetAdjoiningCoordinatesToTiles();
@@ -85,6 +84,13 @@ public class BotUseCase
             var index = new Random().Next(rowTypeValues.Length);
             return (RowType)rowTypeValues.GetValue(index)!;
         }
+    }
+
+    public List<PlayReturn> ComputeDoableMoves(int gameId, int userId)
+    {
+        var player = _infoUseCase.GetPlayer(gameId, userId);
+        var board = _infoUseCase.GetGame(gameId).Board;
+        return ComputeDoableMoves(player, board);
     }
 
     private IEnumerable<PlayReturn> ComputePlayReturnWith2TilesInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, TileOnBoard firstTile, bool firstGameMove)
