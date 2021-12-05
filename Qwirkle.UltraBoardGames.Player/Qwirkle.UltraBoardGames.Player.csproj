@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Qwirkle.Domain\Qwirkle.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="geckodriver.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
