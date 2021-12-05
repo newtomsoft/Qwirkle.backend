@@ -33,7 +33,7 @@ public class InfoUseCase
         var isUserInGame = game.Players.Any(p => p.UserId == userId);
         if (!isUserInGame) return null;
         var otherPlayers = game.Players.Where(p => p.UserId != userId);
-        foreach (var player in otherPlayers) player.Rack = new Rack(null);
+        foreach (var player in otherPlayers) player.Rack = Rack.From(null);
         return game;
     }
 }
