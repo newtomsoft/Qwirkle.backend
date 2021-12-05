@@ -20,7 +20,7 @@ public class PlayerDao
     {
         Tiles ??= dbContext.TilesOnPlayer.Where(tp => tp.PlayerId == Id).Include(t => t.Tile).ToList();
         User ??= dbContext.Users.First(u => u.Id == UserId);
-        var rack = new Rack(Tiles.Select(tileOnPlayerDao => tileOnPlayerDao.ToTileOnPlayer()).ToList());
+        var rack = Rack.From(Tiles.Select(tileOnPlayerDao => tileOnPlayerDao.ToTileOnPlayer()).ToList());
         return new Player(Id, User.Id, GameId, User.UserName, GamePosition, Points, LastTurnPoints, rack, GameTurn, LastTurnSkipped);
     }
 }
