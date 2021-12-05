@@ -45,8 +45,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.UltraBoardGames.Pla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Domain", "Qwirkle.Domain\Qwirkle.Domain.csproj", "{3FC43582-6D07-42A0-805F-9036DA5E28C5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Forms", "Forms\Forms.csproj", "{50D722C1-D010-4B43-A3EB-BF0B26BA7E45}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,12 +100,6 @@ Global
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5}.NoPersitance|Any CPU.Build.0 = NoPersitance|Any CPU
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50D722C1-D010-4B43-A3EB-BF0B26BA7E45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50D722C1-D010-4B43-A3EB-BF0B26BA7E45}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50D722C1-D010-4B43-A3EB-BF0B26BA7E45}.NoPersitance|Any CPU.ActiveCfg = Debug|Any CPU
-		{50D722C1-D010-4B43-A3EB-BF0B26BA7E45}.NoPersitance|Any CPU.Build.0 = Debug|Any CPU
-		{50D722C1-D010-4B43-A3EB-BF0B26BA7E45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50D722C1-D010-4B43-A3EB-BF0B26BA7E45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -121,7 +113,6 @@ Global
 		{E5D79468-7F66-44CC-B148-2C452DE7119E} = {748E9369-9766-4FA6-9696-E381B5D67050}
 		{33561E33-BA67-4A59-9490-BBD70C345220} = {748E9369-9766-4FA6-9696-E381B5D67050}
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5} = {2094B01D-ED38-4071-9B68-636AE81C694B}
-		{50D722C1-D010-4B43-A3EB-BF0B26BA7E45} = {748E9369-9766-4FA6-9696-E381B5D67050}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {326A9AD2-C15D-4772-8BB7-E6B195208FDB}
