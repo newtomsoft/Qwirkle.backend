@@ -16,8 +16,8 @@ public class BotUseCase
     public List<TileOnBoard> GetBestMove(Player player, Board board)
     {
         var doableMoves = ComputeDoableMoves(player, board, true);
-        var playReturn = doableMoves.OrderByDescending(m => m.Points).First();
-        return playReturn.TilesPlayed;
+        var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
+        return playReturn?.TilesPlayed;
     }
 
     public List<PlayReturn> ComputeDoableMoves(Player player, Board board, bool simulation = false)
