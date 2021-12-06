@@ -1,12 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Qwirkle.AI;
-using Qwirkle.Domain.Ports;
-using Qwirkle.Domain.UseCases;
-using Qwirkle.Infra.Repository;
-
-var host = Host.CreateDefaultBuilder(args)
+﻿var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
         services.AddOptions();
@@ -26,5 +18,5 @@ var host = Host.CreateDefaultBuilder(args)
 using var serviceScope = host.Services.CreateScope();
 var services = serviceScope.ServiceProvider;
 var serviceProvider = services.GetRequiredService<UltraBoardGamesPlayerApplication>();
-await serviceProvider.RunAsync();
+serviceProvider.Run();
 

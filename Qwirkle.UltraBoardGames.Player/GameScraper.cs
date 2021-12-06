@@ -1,9 +1,5 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Support.UI;
-using Qwirkle.Domain.ValueObjects;
+﻿namespace Qwirkle.UltraBoardGames.Player;
 
-namespace Qwirkle.UltraBoardGames.Player;
 public class GameScraper
 {
     private const string GamePageUrl = "https://www.ultraboardgames.com/qwirkle/game.php?startcomputer";
@@ -17,7 +13,7 @@ public class GameScraper
         _driver.Navigate().GoToUrl(GamePageUrl);
     }
 
-    public async Task AcceptPoliciesAsync()
+    public void AcceptPolicies()
     {
         bool isAccepted = false;
         DateTime limitDate = DateTime.Now.AddSeconds(10);
@@ -30,7 +26,7 @@ public class GameScraper
             }
             catch
             {
-                await Task.Delay(100);
+                Task.Delay(100);
                 continue;
             }
         }
@@ -54,17 +50,44 @@ public class GameScraper
         return ConvertToInt(brutPoints, '(');
     }
 
-    public List<TileOnPlayer> GetTilesOnPlayer()
+    public List<TileOnPlayer> GetTilesOnPlayer2()
     {
         var tilesOnPlayer = new List<TileOnPlayer>();
         for (int i = 0; i < 6; i++)
         {
-            var fullImageName = _driver.FindElement(By.Id($"d{i}")).FindElement(By.TagName("img")).GetAttribute("src");
-            string imageCode = GetImageCode(fullImageName);
-            var tile = imageCode.ToTile();
-            tilesOnPlayer.Add(new TileOnPlayer((byte)(i + 1), tile));
+            try
+            {
+                var fullImageName = _driver.FindElement(By.Id($"d{i}")).FindElement(By.TagName("img")).GetAttribute("src");
+                tilesOnPlayer.Add(new TileOnPlayer((byte)(i + 1), GetImageCode(fullImageName).ToTile()));
+            }
+            catch
+            { }
         }
         return tilesOnPlayer;
+    }
+
+    public List<TileOnPlayer> GetTilesOnPlayer()
+    {
+        var tilesOnPlayer = new List<TileOnPlayer>();
+        var tilesCodes = GetTilesOnPlayerCodes();
+        foreach (var position_Tile in tilesCodes) tilesOnPlayer.Add(new TileOnPlayer(position_Tile.Key, position_Tile.Value.ToTile()));
+        return tilesOnPlayer;
+    }
+
+    private Dictionary<RackPosition, string> GetTilesOnPlayerCodes()
+    {
+        var tilesCodes = new Dictionary<RackPosition, string>();
+        for (int i = 0; i < 6; i++)
+        {
+            try
+            {
+                var fullImageName = _driver.FindElement(By.Id($"d{i}")).FindElement(By.TagName("img")).GetAttribute("src");
+                tilesCodes.Add((RackPosition)i, GetImageCode(fullImageName));
+            }
+            catch
+            { }
+        }
+        return tilesCodes;
     }
 
     public List<TileOnBoard> GetTilesOnBoard()
@@ -86,6 +109,67 @@ public class GameScraper
         return tilesOnBoard;
     }
 
+    public void Play(List<TileOnBoard> tilesOnBoard)
+    {
+        if (tilesOnBoard is null || tilesOnBoard.Count == 0)
+        {
+            Skip();
+            return;
+        }
+        PlaceTilesOnBoard(tilesOnBoard);
+        ClicPlay();
+    }
+
+    private void Skip()
+    {
+        ClicPlay();
+        ((IJavaScriptExecutor)_driver).ExecuteScript("Qwirkle.passConfirmation(1)");
+    }
+
+    private void ClicPlay() => _driver.FindElement(By.Id("okay")).Click();
+
+    private void PlaceTilesOnBoard(List<TileOnBoard> tiles)
+    {
+        var playerTilesCodes = GetTilesOnPlayerCodes();
+        foreach (var tile in tiles)
+        {
+            var elementFrom = FindMoveFrom(tile.Tile, playerTilesCodes);
+            var elementTo = FindMoveTo(tile.Coordinates);
+            DragAndDrop(elementFrom, elementTo);
+            try
+            {
+                if (FindMoveFrom(tile.Tile, playerTilesCodes) is null)
+                {
+                    Debug.Assert(false);
+                }
+            }
+            catch
+            {
+                Debug.Assert(false);
+            }
+        }
+    }
+
+    private IWebElement FindMoveFrom(Tile tile, Dictionary<RackPosition, string> playerTilesCodes)
+    {
+        var tileCode = tile.ToCode();
+        var indexTile = playerTilesCodes.First(e => e.Value == tileCode).Key;
+        return _driver.FindElement(By.Id($"d{indexTile}"));
+    }
+
+    private IWebElement FindMoveTo(Coordinates coordinates) => _driver.FindElement(By.Id($"x{coordinates.X}y{coordinates.Y}"));
+
+    private void DragAndDrop(IWebElement from, IWebElement to)
+    {
+        var action = new Actions(_driver);
+        action.DragAndDrop(from, to).Build().Perform();
+    }
+
+
+    private void Swap()
+    {
+        _driver.FindElement(By.Id("okay")).Click();
+    }
 
     private static int ConvertToInt(string brutPoints, char ignoreAfter = ' ')
     {

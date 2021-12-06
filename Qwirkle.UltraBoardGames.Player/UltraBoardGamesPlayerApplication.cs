@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Qwirkle.Domain.Entities;
-using Qwirkle.Domain.UseCases;
-using Qwirkle.UltraBoardGames.Player;
+﻿namespace Qwirkle.UltraBoardGames.Player;
 
 internal class UltraBoardGamesPlayerApplication
 {
@@ -18,34 +14,45 @@ internal class UltraBoardGamesPlayerApplication
         _botUseCase = botUseCase;
     }
 
-    public async Task RunAsync()
+    public void Run()
     {
         _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
         Console.WriteLine("scraping program");
 
         var scraper = new GameScraper();
-        await scraper.AcceptPoliciesAsync();
+        scraper.AcceptPolicies();
+        var tilesOnBoard = scraper.GetTilesOnBoard();
+        var isTilesOnBoardEmpty = true;
+        if (tilesOnBoard.Count == 0)
+        {
+
+            isTilesOnBoardEmpty = false;
+        }
 
         while (true) //todo sharpen
         {
+            WaitOpponentPlay();
             var tilesOnBag = scraper.GetTilesOnBag();
             var playerPoints = scraper.GetPlayerPoints();
             var opponentPoints = scraper.GetOpponentPoints();
             var tilesOnPlayer = scraper.GetTilesOnPlayer();
-            var tilesOnBoard = scraper.GetTilesOnBoard();
+            while ((tilesOnBoard = scraper.GetTilesOnBoard()).Count == 0 && !isTilesOnBoardEmpty) ;
 
             var board = Board.From(tilesOnBoard);
-            var bot = new Player(0, 0, 0, "bot", 0, playerPoints, 0, Rack.From(tilesOnPlayer), true, false);
-            var opponent = new Player(0, 0, 0, "opponent", 0, opponentPoints, 0, Rack.From(tilesOnPlayer), false, false);
-            var players = new List<Player> { bot, opponent };
+            var bot = new Domain.Entities.Player(0, 0, 0, "bot", 0, playerPoints, 0, Rack.From(tilesOnPlayer), true, false);
+            var opponent = new Domain.Entities.Player(0, 0, 0, "opponent", 0, opponentPoints, 0, Rack.From(tilesOnPlayer), false, false);
+            var players = new List<Domain.Entities.Player> { bot, opponent };
 
             _coreUseCase.Game = new Game(0, board, players, false, null);
 
-            var move = _botUseCase.GetBestMove(bot, board);
-            //todo play move
+            var tilesOnBoardToPlay = _botUseCase.GetBestMove(bot, board);
+            scraper.Play(tilesOnBoardToPlay);
+            isTilesOnBoardEmpty = false;
         }
 
 
         _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
     }
+
+    private void WaitOpponentPlay() => Task.Delay(1000); //todo better
 }
