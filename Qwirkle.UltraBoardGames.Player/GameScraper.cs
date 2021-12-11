@@ -7,7 +7,7 @@ public class GameScraper : IDisposable
     private static string QwirkleGamePageWithRandomFirstPlayer => new Random().Next(2) == 0 ? GamePageUrlPlayFirst : GamePageUrlPlaySecond;
     private readonly IWebDriver _driver;
     private readonly ILogger<UltraBoardGamesPlayerApplication> _logger;
-    private string _pathToGameImages;
+    private string _pathToGameImages = string.Empty;
 
     public GameScraper(ILogger<UltraBoardGamesPlayerApplication> logger)
     {
