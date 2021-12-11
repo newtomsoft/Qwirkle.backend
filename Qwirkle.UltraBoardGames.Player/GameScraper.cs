@@ -1,23 +1,40 @@
 ﻿namespace Qwirkle.UltraBoardGames.Player;
 
-public class GameScraper
+public class GameScraper : IDisposable
 {
-    private const string GamePageUrl = "https://www.ultraboardgames.com/qwirkle/game.php?startcomputer";
-
+    private const string GamePageUrlPlaySecond = "https://www.ultraboardgames.com/qwirkle/game.php?startcomputer";
+    private const string GamePageUrlPlayFirst = "https://www.ultraboardgames.com/qwirkle/game.php?startplayer";
     private readonly IWebDriver _driver;
 
     public GameScraper()
     {
         _driver = new FirefoxDriver();
         _ = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
-        _driver.Navigate().GoToUrl(GamePageUrl);
+        var gamePageUrl = new Random().Next(2) == 0 ? GamePageUrlPlayFirst : GamePageUrlPlaySecond;
+        _driver.Navigate().GoToUrl(gamePageUrl);
+    }
+    
+    public GameStatus GetGameStatus()
+    {
+        try
+        {
+            var elementEndGame = _driver.FindElement(By.Id("messageboard"));
+            var text = elementEndGame.FindElement(By.CssSelector("h2")).Text;
+            if (text == string.Empty) return GameStatus.InProgress;
+            if (text.Contains("You lost")) return GameStatus.Lost;
+            if (text.Contains("You won")) return GameStatus.Won;
+            return GameStatus.Draw;
+        }
+        catch
+        {
+            return GameStatus.InProgress;
+        }
     }
 
     public void AcceptPolicies()
     {
-        bool isAccepted = false;
-        DateTime limitDate = DateTime.Now.AddSeconds(10);
-        while (!isAccepted && DateTime.Now < limitDate)
+        var limitDate = DateTime.Now.AddSeconds(10);
+        while (DateTime.Now < limitDate)
         {
             try
             {
@@ -27,7 +44,6 @@ public class GameScraper
             catch
             {
                 Task.Delay(100);
-                continue;
             }
         }
     }
@@ -50,22 +66,6 @@ public class GameScraper
         return ConvertToInt(brutPoints, '(');
     }
 
-    public List<TileOnPlayer> GetTilesOnPlayer2()
-    {
-        var tilesOnPlayer = new List<TileOnPlayer>();
-        for (int i = 0; i < 6; i++)
-        {
-            try
-            {
-                var fullImageName = _driver.FindElement(By.Id($"d{i}")).FindElement(By.TagName("img")).GetAttribute("src");
-                tilesOnPlayer.Add(new TileOnPlayer((byte)(i + 1), GetImageCode(fullImageName).ToTile()));
-            }
-            catch
-            { }
-        }
-        return tilesOnPlayer;
-    }
-
     public List<TileOnPlayer> GetTilesOnPlayer()
     {
         var tilesOnPlayer = new List<TileOnPlayer>();
@@ -74,26 +74,10 @@ public class GameScraper
         return tilesOnPlayer;
     }
 
-    private Dictionary<RackPosition, string> GetTilesOnPlayerCodes()
-    {
-        var tilesCodes = new Dictionary<RackPosition, string>();
-        for (int i = 0; i < 6; i++)
-        {
-            try
-            {
-                var fullImageName = _driver.FindElement(By.Id($"d{i}")).FindElement(By.TagName("img")).GetAttribute("src");
-                tilesCodes.Add((RackPosition)i, GetImageCode(fullImageName));
-            }
-            catch
-            { }
-        }
-        return tilesCodes;
-    }
-
     public List<TileOnBoard> GetTilesOnBoard()
     {
         var tilesOnBoard = new List<TileOnBoard>();
-        var domTiles = _driver.FindElements(By.ClassName("ui-droppable")).ToList();
+        var domTiles = _driver.FindElements(By.ClassName("ui-droppable"))/*.Where(e => e.GetAttribute("Onclick") is null)*/.ToList();
         foreach (var domTile in domTiles)
         {
             try
@@ -104,44 +88,96 @@ public class GameScraper
             }
             catch
             {
+                // ignored
             }
         }
         return tilesOnBoard;
     }
 
-    public void Play(List<TileOnBoard> tilesOnBoard)
+    internal void GetNotificationOpponentHasPlayed()
+    {
+        while (true)
+        {
+            IWebElement element;
+            try
+            {
+                element = _driver.FindElements(By.XPath("//*[contains(., 'Computer:3')]"))[^1];
+                break;
+            }
+            catch
+            {
+                break;
+            }
+        }
+    }
+
+    public void Play(List<TileOnBoard>? tilesOnBoard)
     {
         if (tilesOnBoard is null || tilesOnBoard.Count == 0)
         {
-            Skip();
+            Skip(); //todo test swap tiles / all tiles ?
             return;
         }
         PlaceTilesOnBoard(tilesOnBoard);
-        ClicPlay();
+        ClickPlay();
+    }
+
+    private Dictionary<RackPosition, string> GetTilesOnPlayerCodes()
+    {
+        var tilesCodes = new Dictionary<RackPosition, string>();
+        for (var i = 0; i < 6; i++)
+        {
+            try
+            {
+                var fullImageName = _driver.FindElement(By.Id($"d{i}")).FindElement(By.TagName("img")).GetAttribute("src");
+                tilesCodes.Add((RackPosition)i, GetImageCode(fullImageName));
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+        return tilesCodes;
     }
 
     private void Skip()
     {
-        ClicPlay();
+        ClickPlay();
         ((IJavaScriptExecutor)_driver).ExecuteScript("Qwirkle.passConfirmation(1)");
     }
 
-    private void ClicPlay() => _driver.FindElement(By.Id("okay")).Click();
+    private void ClickPlay()
+    {
+        var notDone = true;
+        while (notDone)
+        {
+            try
+            {
+                _driver.FindElement(By.Id("okay")).Click();
+                notDone = false;
+            }
+            catch
+            {
+                //todo ou diminuer taille board
+                ((IJavaScriptExecutor)_driver).ExecuteScript("document.getElementById('ezmobfooter').style.display='none';");
+            }
+        }
+    }
 
     private void PlaceTilesOnBoard(List<TileOnBoard> tiles)
     {
         var playerTilesCodes = GetTilesOnPlayerCodes();
-        foreach (var tile in tiles)
+        foreach (var (tile, coordinates) in tiles)
         {
-            var elementFrom = FindMoveFrom(tile.Tile, playerTilesCodes);
-            var elementTo = FindMoveTo(tile.Coordinates);
+            var elementFrom = FindElementMoveFrom(tile, playerTilesCodes);
+            var elementTo = FindElementMoveTo(coordinates);
+            Debug.Assert(elementFrom is not null);
             DragAndDrop(elementFrom, elementTo);
+            //todo parfois un cadre empèche le drag n drop.
+            //todo à gérer
             try
             {
-                if (FindMoveFrom(tile.Tile, playerTilesCodes) is null)
-                {
-                    Debug.Assert(false);
-                }
+                FindElementMoveFrom(tile, playerTilesCodes);
             }
             catch
             {
@@ -150,21 +186,28 @@ public class GameScraper
         }
     }
 
-    private IWebElement FindMoveFrom(Tile tile, Dictionary<RackPosition, string> playerTilesCodes)
+    private IWebElement? FindElementMoveFrom(Tile tile, Dictionary<RackPosition, string> playerTilesCodes)
     {
         var tileCode = tile.ToCode();
         var indexTile = playerTilesCodes.First(e => e.Value == tileCode).Key;
-        return _driver.FindElement(By.Id($"d{indexTile}"));
+        try
+        {
+            return _driver.FindElement(By.Id($"d{indexTile}"));
+        }
+        catch
+        {
+            Debug.Assert(false);
+            return null;
+        }
     }
 
-    private IWebElement FindMoveTo(Coordinates coordinates) => _driver.FindElement(By.Id($"x{coordinates.X}y{coordinates.Y}"));
+    private IWebElement FindElementMoveTo(Coordinates coordinates) => _driver.FindElement(By.Id($"x{coordinates.X}y{coordinates.Y}"));
 
     private void DragAndDrop(IWebElement from, IWebElement to)
     {
         var action = new Actions(_driver);
         action.DragAndDrop(from, to).Build().Perform();
     }
-
 
     private void Swap()
     {
@@ -179,4 +222,5 @@ public class GameScraper
         // brutPoints : "10 (4 last turn)" -> return 10
     }
     private static string GetImageCode(string fullImageName) => fullImageName[(fullImageName.LastIndexOf('/') + 1)..fullImageName.LastIndexOf('.')];
+    public void Dispose() => _driver.Dispose();
 }

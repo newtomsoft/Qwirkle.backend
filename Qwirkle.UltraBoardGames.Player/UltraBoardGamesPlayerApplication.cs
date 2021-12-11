@@ -2,57 +2,106 @@
 
 internal class UltraBoardGamesPlayerApplication
 {
-    private readonly IConfiguration _configuration;
     private readonly ILogger _logger;
     private readonly CoreUseCase _coreUseCase;
     private readonly BotUseCase _botUseCase;
-    public UltraBoardGamesPlayerApplication(IConfiguration configuration, ILogger<UltraBoardGamesPlayerApplication> logger, CoreUseCase coreUseCase, BotUseCase botUseCase)
+    private readonly GameScraper _scraper;
+    private readonly Coordinates _originCoordinates = Coordinates.From(25, 25);
+
+    public UltraBoardGamesPlayerApplication(ILogger<UltraBoardGamesPlayerApplication> logger, CoreUseCase coreUseCase, BotUseCase botUseCase)
     {
-        _configuration = configuration;
         _logger = logger;
         _coreUseCase = coreUseCase;
         _botUseCase = botUseCase;
+        _scraper = new GameScraper();
+        _scraper.AcceptPolicies();
     }
 
     public void Run()
     {
-        _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
+        LogStartGame();
         Console.WriteLine("scraping program");
 
-        var scraper = new GameScraper();
-        scraper.AcceptPolicies();
-        var tilesOnBoard = scraper.GetTilesOnBoard();
-        var isTilesOnBoardEmpty = true;
-        if (tilesOnBoard.Count == 0)
+        var gameStatus = PlayGame();
+
+        LogEndGame(gameStatus);
+    }
+
+ 
+    private GameStatus PlayGame()
+    {
+        var board = Board.Empty();
+        GameStatus gameStatus;
+        while (true)
         {
+            board = GetBoardAfterOpponentPlay(board);
+            gameStatus = _scraper.GetGameStatus();
+            if (gameStatus != GameStatus.InProgress) break;
+            _ = _scraper.GetTilesOnBag();
+            var playerPoints = _scraper.GetPlayerPoints();
+            var opponentPoints = _scraper.GetOpponentPoints();
+            var tilesOnPlayer = _scraper.GetTilesOnPlayer();
 
-            isTilesOnBoardEmpty = false;
+            var bot = Player(playerPoints, tilesOnPlayer, true);
+            var opponent = Player(opponentPoints, tilesOnPlayer, false);
+            var players = new List<Domain.Entities.Player> {bot, opponent};
+
+            _coreUseCase.Game = new Game(0, board, players, false);
+
+            var tilesToPlay = board.Tiles.Count > 0
+                ? _botUseCase.GetBestMove(bot, board)
+                : _botUseCase.GetBestMove(bot, board, _originCoordinates);
+
+            List<TileOnBoard> otherTilesToPlay;
+            var copyBoard = Board.From(board.Tiles);
+            var tilesToPlayStillHere = new List<TileOnBoard>();
+            var tilesToPlayArranged = new List<TileOnBoard>();
+            tilesToPlayStillHere.AddRange(tilesToPlay);
+            do
+            {
+                var firstTilesToPlay = copyBoard.Tiles.Count > 0
+                    ? tilesToPlayStillHere.Where(tile => copyBoard.IsIsolatedTile(tile)).ToList()
+                    : tilesToPlayStillHere.Where(tile => tile.Coordinates == _originCoordinates).ToList();
+                otherTilesToPlay = tilesToPlayStillHere.Except(firstTilesToPlay).ToList();
+                tilesToPlayArranged.AddRange(firstTilesToPlay);
+                if (otherTilesToPlay.Count == 0) break;
+                copyBoard.Tiles.AddRange(firstTilesToPlay);
+                tilesToPlayStillHere = otherTilesToPlay;
+            } while (otherTilesToPlay.Count != 0);
+
+            _scraper.Play(tilesToPlayArranged);
         }
+        //todo fermer popup fin de partie, rentrer nom, screenshot partie
+        return gameStatus;
+    }
 
-        while (true) //todo sharpen
+    private Board GetBoardAfterOpponentPlay(Board board)
+    {
+        var tilesOnBoard = board.Tiles;
+        var timeOut = DateTime.UtcNow.AddSeconds(4);
+        while (true)
         {
-            WaitOpponentPlay();
-            var tilesOnBag = scraper.GetTilesOnBag();
-            var playerPoints = scraper.GetPlayerPoints();
-            var opponentPoints = scraper.GetOpponentPoints();
-            var tilesOnPlayer = scraper.GetTilesOnPlayer();
-            while ((tilesOnBoard = scraper.GetTilesOnBoard()).Count == 0 && !isTilesOnBoardEmpty) ;
-
-            var board = Board.From(tilesOnBoard);
-            var bot = new Domain.Entities.Player(0, 0, 0, "bot", 0, playerPoints, 0, Rack.From(tilesOnPlayer), true, false);
-            var opponent = new Domain.Entities.Player(0, 0, 0, "opponent", 0, opponentPoints, 0, Rack.From(tilesOnPlayer), false, false);
-            var players = new List<Domain.Entities.Player> { bot, opponent };
-
-            _coreUseCase.Game = new Game(0, board, players, false, null);
-
-            var tilesOnBoardToPlay = _botUseCase.GetBestMove(bot, board);
-            scraper.Play(tilesOnBoardToPlay);
-            isTilesOnBoardEmpty = false;
+            if (DateTime.UtcNow > timeOut) break;
+            var tilesOnBoardUpdated = _scraper.GetTilesOnBoard();
+            if (tilesOnBoardUpdated.Count < tilesOnBoard.Count || tilesOnBoardUpdated.Count == 0)
+            {
+                Task.Delay(500).Wait();
+                continue;
+            }
+            tilesOnBoard = tilesOnBoardUpdated;
+            return Board.From(tilesOnBoard);
         }
+        return Board.From(tilesOnBoard);
+    }
 
+    private void LogStartGame() => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
 
+    private void LogEndGame(GameStatus gameStatus)
+    {
+        _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", $"{gameStatus}", DateTime.UtcNow);
         _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
     }
 
-    private void WaitOpponentPlay() => Task.Delay(1000); //todo better
+    private static Domain.Entities.Player Player(int playerPoints, List<TileOnPlayer> tilesOnPlayer, bool isTurn)
+        => new(0, 0, 0, "", 0, playerPoints, 0, Rack.From(tilesOnPlayer), isTurn, false);
 }

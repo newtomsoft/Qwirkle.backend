@@ -13,19 +13,19 @@ public class BotUseCase
         _artificialIntelligence = artificialIntelligence;
     }
 
-    public List<TileOnBoard> GetBestMove(Player player, Board board)
+    public IEnumerable<TileOnBoard> GetBestMove(Player player, Board board, Coordinates originCoordinates = null)
     {
-        var doableMoves = ComputeDoableMoves(player, board, true);
+        var doableMoves = ComputeDoableMoves(player, board, originCoordinates, true);
         var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
         return playReturn?.TilesPlayed;
     }
 
-    public List<PlayReturn> ComputeDoableMoves(Player player, Board board, bool simulation = false)
+    public List<PlayReturn> ComputeDoableMoves(Player player, Board board, Coordinates originCoordinates = null, bool simulation = false)
     {
         if (!simulation) _coreUseCase.ResetGame(player.GameId);
         var rack = player.Rack.WithoutDuplicatesTiles();
 
-        var boardAdjoiningCoordinates = board.GetAdjoiningCoordinatesToTiles();
+        var boardAdjoiningCoordinates = board.GetFreeAdjoiningCoordinatesToTiles(originCoordinates);
 
         var playReturnsWith1Tile = new List<PlayReturn>();
         foreach (var coordinates in boardAdjoiningCoordinates)

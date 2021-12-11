@@ -17,6 +17,6 @@
 
 using var serviceScope = host.Services.CreateScope();
 var services = serviceScope.ServiceProvider;
-var serviceProvider = services.GetRequiredService<UltraBoardGamesPlayerApplication>();
-serviceProvider.Run();
+var application = services.GetRequiredService<UltraBoardGamesPlayerApplication>();
+application.Run();
 

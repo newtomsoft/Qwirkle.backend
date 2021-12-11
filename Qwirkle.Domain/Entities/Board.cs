@@ -11,10 +11,11 @@ public class Board
 
     public bool IsIsolatedTile(TileOnBoard tile) => IsIsolated(Coordinates.From(tile.Coordinates.X, tile.Coordinates.Y));
     public bool IsFreeTile(TileOnBoard tile) => IsFree(tile.Coordinates);
-    public List<Coordinates> GetAdjoiningCoordinatesToTiles()
+    public List<Coordinates> GetFreeAdjoiningCoordinatesToTiles(Coordinates originCoordinates = null)
     {
+        originCoordinates ??= Coordinates.From(0, 0);
         var coordinates = new List<Coordinates>();
-        if (Tiles.Count == 0) return new List<Coordinates> { Coordinates.From(0, 0) };
+        if (Tiles.Count == 0) return new List<Coordinates> { originCoordinates };
         for (var x = XMinToPlay(); x <= XMaxToPlay(); x++)
             for (var y = YMinToPlay(); y <= YMaxToPlay(); y++)
             {

@@ -60,7 +60,7 @@ public class GetAdjoiningCoordinatesToTilesShould
     public void Return0_0WhenBoardIsEmpty()
     {
         var board = Board.Empty();
-        var result = board.GetAdjoiningCoordinatesToTiles();
+        var result = board.GetFreeAdjoiningCoordinatesToTiles();
         result.ShouldBe(new List<Coordinates> { new(0, 0) });
     }
 
@@ -75,7 +75,7 @@ public class GetAdjoiningCoordinatesToTilesShould
         var coord7 = Coordinates.From(1, 0);
         var singleTile = new List<TileOnBoard> { new(tile, coord4) };
         var board = Board.From(singleTile);
-        var result = board.GetAdjoiningCoordinatesToTiles();
+        var result = board.GetFreeAdjoiningCoordinatesToTiles();
         var expected = new List<Coordinates> { coord1, coord3, coord5, coord7 };
         Sort(result).ShouldBe(Sort(expected));
     }
@@ -86,7 +86,7 @@ public class GetAdjoiningCoordinatesToTilesShould
         var tile = new Tile(TileColor.Blue, TileShape.Circle);
         var tileSingle = new List<TileOnBoard> { new(tile, _coord11), new(tile, _coord12) };
         var board = Board.From(tileSingle);
-        var result = board.GetAdjoiningCoordinatesToTiles();
+        var result = board.GetFreeAdjoiningCoordinatesToTiles();
         var expected = new List<Coordinates> { _coord01, _coord02, _coord10, _coord13, _coord21, _coord22 };
         Sort(result).ShouldBe(Sort(expected));
     }
@@ -104,7 +104,7 @@ public class GetAdjoiningCoordinatesToTilesShould
             new(tile, _coord35), new(tile, _coord45), new(tile, _coord55),
         };
         var board = Board.From(tileSingle);
-        var result = board.GetAdjoiningCoordinatesToTiles();
+        var result = board.GetFreeAdjoiningCoordinatesToTiles();
         var expected = new List<Coordinates>
         {
             _coord30, _coord40,
