@@ -29,16 +29,17 @@ public class CoreUseCase
 
     public void ResetGame(int gameId) => Game = _repository.GetGame(gameId);
 
-    public ArrangeRackReturn TryArrangeRack(int playerId, List<int> tilesIds)
-    {
-        var player = _infoUseCase.GetPlayer(playerId);
-        var tiles = GetTiles(tilesIds);
-        if (!player.HasTiles(tiles)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
-        ArrangeRack(player, tilesIds);
-        return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
-    }
+#warning reimplemente method without tileid !
+    //public ArrangeRackReturn TryArrangeRack(int playerId, List<int> tilesIds)
+    //{
+    //    var player = _infoUseCase.GetPlayer(playerId);
+    //    var tiles = GetTiles(tilesIds);
+    //    if (!player.HasTiles(tiles)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+    //    ArrangeRack(player, tilesIds);
+    //    return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
+    //}
 
-    public PlayReturn TryPlayTiles(int playerId, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay)
+    public PlayReturn TryPlayTiles(int playerId, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay)
     {
         var player = _infoUseCase.GetPlayer(playerId);
         if (!player.IsTurn) return new PlayReturn(player.GameId, PlayReturnCode.NotPlayerTurn, null, null, 0);
@@ -57,18 +58,19 @@ public class CoreUseCase
         return playReturn;
     }
 
-    public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<int> tilesIds)
-    {
-        var tilesIdsList = tilesIds.ToList();
-        var player = _infoUseCase.GetPlayer(playerId);
-        var tiles = GetTiles(tilesIdsList);
-        if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
-        if (!player.HasTiles(tiles)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
-        var swapTilesReturn = SwapTiles(player, tilesIdsList);
-        _notification.SendTilesSwapped(Game.Id, playerId);
-        _notification.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
-        return swapTilesReturn;
-    }
+#warning reimplemente method without tileid !
+    //public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<int> tilesIds)
+    //{
+    //    var tilesIdsList = tilesIds.ToList();
+    //    var player = _infoUseCase.GetPlayer(playerId);
+    //    var tiles = GetTiles(tilesIdsList);
+    //    if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
+    //    if (!player.HasTiles(tiles)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+    //    var swapTilesReturn = SwapTiles(player, tilesIdsList);
+    //    _notification.SendTilesSwapped(Game.Id, playerId);
+    //    _notification.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
+    //    return swapTilesReturn;
+    //}
 
     public SkipTurnReturn TrySkipTurn(int playerId)
     {
@@ -80,7 +82,7 @@ public class CoreUseCase
         return skipTurnReturn;
     }
 
-    public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay)
+    public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay)
     {
         var player = _infoUseCase.GetPlayer(playerId);
         var tilesToPlay = GetTilesOnBoard(tilesTupleToPlay);
@@ -181,7 +183,7 @@ public class CoreUseCase
         return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoUseCase.GetPlayer(player.Id).Rack };
     }
 
-    private Rack PlayTiles(Player player, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay, int points)
+    private Rack PlayTiles(Player player, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay, int points)
     {
         var tilesTupleToPlayList = tilesTupleToPlay.ToList();
         var tilesToPlay = GetTilesOnBoard(tilesTupleToPlayList);
@@ -225,7 +227,8 @@ public class CoreUseCase
         Game.Players.First(p => p.Id == playerId).SetTurn(true);
     }
 
-    private IEnumerable<Tile> GetTiles(IEnumerable<int> tilesIds) => tilesIds.Select(id => _repository.GetTile(id));
+#warning reimplemente method without tileid !
+    //private IEnumerable<Tile> GetTiles(IEnumerable<int> tilesIds) => tilesIds.Select(id => _repository.GetTile(id));
 
-    private List<TileOnBoard> GetTilesOnBoard(IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(_repository.GetTile(tileTupleToPlay.tileId), tileTupleToPlay.coordinates)).ToList();
+    private List<TileOnBoard> GetTilesOnBoard(IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(_repository.GetTile(tileTupleToPlay.color, tileTupleToPlay.shape), tileTupleToPlay.coordinates)).ToList();
 }

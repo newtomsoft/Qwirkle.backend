@@ -4,7 +4,7 @@ public interface IRepository
     Game CreateGame(DateTime date);
     void SetPlayerTurn(int playerId);
     void UpdatePlayer(Player player);
-    void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<(int tileId, Coordinates coordinates)> tilesTupleToPlay);
+    void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay);
     void TilesFromBagToPlayer(Player player, List<byte> positionsInRack);
     void TilesFromPlayerToBag(Player player, IEnumerable<int> tilesIds);
     Game GetGame(int gameId);
@@ -13,7 +13,7 @@ public interface IRepository
     string GetPlayerNameTurn(int gameId);
     int GetPlayerIdToPlay(int gameId);
     int GetUserId(int playerId);
-    Tile GetTile(int id);
+    Tile GetTile(TileColor color, TileShape shape);
     List<int> GetGamesIdsContainingPlayers();
     Player CreatePlayer(int userId, int gameId);
     void CreateTiles(int gameId);
