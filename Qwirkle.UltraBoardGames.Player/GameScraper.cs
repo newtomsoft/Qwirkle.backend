@@ -4,16 +4,45 @@ public class GameScraper : IDisposable
 {
     private const string GamePageUrlPlaySecond = "https://www.ultraboardgames.com/qwirkle/game.php?startcomputer";
     private const string GamePageUrlPlayFirst = "https://www.ultraboardgames.com/qwirkle/game.php?startplayer";
+    private static string QwirkleGamePageWithRandomFirstPlayer => new Random().Next(2) == 0 ? GamePageUrlPlayFirst : GamePageUrlPlaySecond;
     private readonly IWebDriver _driver;
+    private readonly ILogger<UltraBoardGamesPlayerApplication> _logger;
+    private string _pathToGameImages;
 
-    public GameScraper()
+    public GameScraper(ILogger<UltraBoardGamesPlayerApplication> logger)
     {
-        _driver = new FirefoxDriver();
-        _ = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
-        var gamePageUrl = new Random().Next(2) == 0 ? GamePageUrlPlayFirst : GamePageUrlPlaySecond;
-        _driver.Navigate().GoToUrl(gamePageUrl);
+        _logger = logger;
+        //_driver = new FirefoxDriver();
+        _driver = CreateEdgeDriver();
+        _ = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
     }
-    
+
+    private static FirefoxDriver CreateFirefoxDriver()
+    {
+        var profile = new FirefoxProfile();
+        profile.AddExtension("ublock_origin-1.39.2-an+fx.xpi");
+        //profile.SetPreference("permissions.default.image", 2);
+        var options = new FirefoxOptions { Profile = profile };
+        var driver = new FirefoxDriver(options);
+        return driver;
+    }
+
+    private static EdgeDriver CreateEdgeDriver()
+    {
+        var options = new EdgeOptions();
+        options.AddExtensions("uBlock-Origin.edge.crx");
+        var driver = new EdgeDriver(options);
+        return driver;
+    }
+
+    public void GoToGame()
+    {
+        _pathToGameImages = DateTime.Now.ToString("yyyy-MM-dd-HH_mm_ss");
+        Directory.CreateDirectory(_pathToGameImages);
+        _driver.Navigate().GoToUrl(QwirkleGamePageWithRandomFirstPlayer);
+        _driver.Manage().Window.Maximize();
+    }
+
     public GameStatus GetGameStatus()
     {
         try
@@ -33,7 +62,7 @@ public class GameScraper : IDisposable
 
     public void AcceptPolicies()
     {
-        var limitDate = DateTime.Now.AddSeconds(10);
+        var limitDate = DateTime.Now.AddSeconds(2);
         while (DateTime.Now < limitDate)
         {
             try
@@ -43,7 +72,7 @@ public class GameScraper : IDisposable
             }
             catch
             {
-                Task.Delay(100);
+                Task.Delay(50);
             }
         }
     }
@@ -158,7 +187,6 @@ public class GameScraper : IDisposable
             }
             catch
             {
-                //todo ou diminuer taille board
                 ((IJavaScriptExecutor)_driver).ExecuteScript("document.getElementById('ezmobfooter').style.display='none';");
             }
         }
@@ -171,16 +199,15 @@ public class GameScraper : IDisposable
         {
             var elementFrom = FindElementMoveFrom(tile, playerTilesCodes);
             var elementTo = FindElementMoveTo(coordinates);
-            Debug.Assert(elementFrom is not null);
-            DragAndDrop(elementFrom, elementTo);
-            //todo parfois un cadre empèche le drag n drop.
-            //todo à gérer
             try
             {
+                DragAndDrop(elementFrom!, elementTo);
                 FindElementMoveFrom(tile, playerTilesCodes);
+                LogFindElementMoveFrom(tile, coordinates);
             }
             catch
             {
+                //todo parfois un cadre empèche le drag n drop. A gérer
                 Debug.Assert(false);
             }
         }
@@ -203,16 +230,9 @@ public class GameScraper : IDisposable
 
     private IWebElement FindElementMoveTo(Coordinates coordinates) => _driver.FindElement(By.Id($"x{coordinates.X}y{coordinates.Y}"));
 
-    private void DragAndDrop(IWebElement from, IWebElement to)
-    {
-        var action = new Actions(_driver);
-        action.DragAndDrop(from, to).Build().Perform();
-    }
+    private void DragAndDrop(IWebElement fromElement, IWebElement toElement) => new Actions(_driver).DragAndDrop(fromElement, toElement).Build().Perform();
 
-    private void Swap()
-    {
-        _driver.FindElement(By.Id("okay")).Click();
-    }
+    private void Swap() => _driver.FindElement(By.Id("okay")).Click();
 
     private static int ConvertToInt(string brutPoints, char ignoreAfter = ' ')
     {
@@ -223,4 +243,52 @@ public class GameScraper : IDisposable
     }
     private static string GetImageCode(string fullImageName) => fullImageName[(fullImageName.LastIndexOf('/') + 1)..fullImageName.LastIndexOf('.')];
     public void Dispose() => _driver.Dispose();
+
+    public void CloseEndWindow()
+    {
+        try
+        {
+            var inputNameElement = _driver.FindElement(By.Id("nicknamepop"));
+            inputNameElement.SendKeys("newtom");
+        }
+        catch
+        {
+            // ignored
+        }
+        _driver.FindElement(By.ClassName("messageboard_button")).Click();
+        ((IJavaScriptExecutor)_driver).ExecuteScript("Qwirkle.removeMessageBoard()");
+        TakeScreenShot();
+    }
+
+    [SuppressMessage("Interoperability", "CA1416:Valider la compatibilité de la plateforme", Justification = "<En attente>")]
+    public void TakeScreenShot()
+    {
+        const int margin = 5;
+        var boardElement = _driver.FindElement(By.Id("board"));
+        var scoresElement = _driver.FindElement(By.Id("scores"));
+        var rackElement = _driver.FindElement(By.Id("scoreboard1"));
+        var totalHeight = boardElement.Size.Height + scoresElement.Size.Height + rackElement.Size.Height;
+        var totalWidth = boardElement.Size.Width;
+        var size = new Size(totalWidth + 2 * margin, totalHeight + 2 * margin);
+        var originLocation = scoresElement.Location;
+        originLocation.Offset(-margin, -margin);
+        var screenShot = ((ITakesScreenshot)_driver).GetScreenshot();
+        //screenShot.SaveAsFile(screenShotFilename, ScreenshotImageFormat.Png);
+        using var memStream = new MemoryStream(screenShot.AsByteArray);
+        var screenShotImage = Image.FromStream(memStream);
+        var bitmap = CropImage(screenShotImage, new Rectangle(originLocation, size));
+        var screenShotFilename = Path.Combine(_pathToGameImages, DateTime.Now.ToString("yyyy-MM-dd-HH_mm_ss") + ".png");
+        bitmap.Save(screenShotFilename, ImageFormat.Png);
+
+        static Bitmap CropImage(Image originImage, Rectangle sourceRectange)
+        {
+            var destRect = new Rectangle(Point.Empty, sourceRectange.Size);
+            var cropImage = new Bitmap(destRect.Width, destRect.Height);
+            using var graphics = Graphics.FromImage(cropImage);
+            graphics.DrawImage(originImage, destRect, sourceRectange, GraphicsUnit.Pixel);
+            return cropImage;
+        }
+    }
+
+    private void LogFindElementMoveFrom(Tile tile, Coordinates coordinates) => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} {tile} to {coordinates} at {dateTime}", "Move elements", tile, coordinates, DateTime.UtcNow);
 }

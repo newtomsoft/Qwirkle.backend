@@ -1,6 +1,6 @@
 ﻿namespace Qwirkle.UltraBoardGames.Player;
 
-internal class UltraBoardGamesPlayerApplication
+public class UltraBoardGamesPlayerApplication
 {
     private readonly ILogger _logger;
     private readonly CoreUseCase _coreUseCase;
@@ -8,43 +8,41 @@ internal class UltraBoardGamesPlayerApplication
     private readonly GameScraper _scraper;
     private readonly Coordinates _originCoordinates = Coordinates.From(25, 25);
 
-    public UltraBoardGamesPlayerApplication(ILogger<UltraBoardGamesPlayerApplication> logger, CoreUseCase coreUseCase, BotUseCase botUseCase)
+    public UltraBoardGamesPlayerApplication(ILogger<UltraBoardGamesPlayerApplication> logger, CoreUseCase coreUseCase, BotUseCase botUseCase, GameScraper gameScraper)
     {
         _logger = logger;
         _coreUseCase = coreUseCase;
         _botUseCase = botUseCase;
-        _scraper = new GameScraper();
-        _scraper.AcceptPolicies();
+        _scraper = gameScraper;
     }
 
     public void Run()
     {
-        LogStartGame();
-        Console.WriteLine("scraping program");
-
-        var gameStatus = PlayGame();
-
-        LogEndGame(gameStatus);
+        LogStartApplication();
+        for (var i = 0; i < 3; i++) PlayGame();
+        LogEndApplication();
     }
 
- 
-    private GameStatus PlayGame()
+    private void PlayGame()
     {
+        LogStartGame();
+        _scraper.GoToGame();
+        _scraper.AcceptPolicies();
         var board = Board.Empty();
         GameStatus gameStatus;
         while (true)
         {
             board = GetBoardAfterOpponentPlay(board);
+            _scraper.TakeScreenShot();
             gameStatus = _scraper.GetGameStatus();
             if (gameStatus != GameStatus.InProgress) break;
             _ = _scraper.GetTilesOnBag();
             var playerPoints = _scraper.GetPlayerPoints();
             var opponentPoints = _scraper.GetOpponentPoints();
             var tilesOnPlayer = _scraper.GetTilesOnPlayer();
-
             var bot = Player(playerPoints, tilesOnPlayer, true);
             var opponent = Player(opponentPoints, tilesOnPlayer, false);
-            var players = new List<Domain.Entities.Player> {bot, opponent};
+            var players = new List<Domain.Entities.Player> { bot, opponent };
 
             _coreUseCase.Game = new Game(0, board, players, false);
 
@@ -70,9 +68,10 @@ internal class UltraBoardGamesPlayerApplication
             } while (otherTilesToPlay.Count != 0);
 
             _scraper.Play(tilesToPlayArranged);
+            _scraper.TakeScreenShot();
         }
-        //todo fermer popup fin de partie, rentrer nom, screenshot partie
-        return gameStatus;
+        _scraper.CloseEndWindow();
+        LogEndGame(gameStatus);
     }
 
     private Board GetBoardAfterOpponentPlay(Board board)
@@ -89,19 +88,14 @@ internal class UltraBoardGamesPlayerApplication
                 continue;
             }
             tilesOnBoard = tilesOnBoardUpdated;
-            return Board.From(tilesOnBoard);
+            break;
         }
         return Board.From(tilesOnBoard);
     }
 
+    private void LogStartApplication() => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
     private void LogStartGame() => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
-
-    private void LogEndGame(GameStatus gameStatus)
-    {
-        _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", $"{gameStatus}", DateTime.UtcNow);
-        _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
-    }
-
-    private static Domain.Entities.Player Player(int playerPoints, List<TileOnPlayer> tilesOnPlayer, bool isTurn)
-        => new(0, 0, 0, "", 0, playerPoints, 0, Rack.From(tilesOnPlayer), isTurn, false);
+    private void LogEndGame(GameStatus gameStatus) => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", $"{gameStatus}", DateTime.UtcNow);
+    private void LogEndApplication() => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
+    private static Domain.Entities.Player Player(int playerPoints, List<TileOnPlayer> tilesOnPlayer, bool isTurn) => new(0, 0, 0, "", 0, playerPoints, 0, Rack.From(tilesOnPlayer), isTurn, false);
 }

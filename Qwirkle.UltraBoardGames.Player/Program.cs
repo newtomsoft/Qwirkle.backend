@@ -1,16 +1,20 @@
 ﻿var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((hostContext, services) =>
+    .ConfigureServices((_, services) =>
     {
         services.AddOptions();
-        services.AddLogging(configure => configure.AddConsole());
+        services.AddSingleton<UltraBoardGamesPlayerApplication>();
         services.AddSingleton<BotUseCase>();
         services.AddSingleton<CoreUseCase>();
         services.AddSingleton<InfoUseCase>();
-        services.AddSingleton<UltraBoardGamesPlayerApplication>();
-        services.AddSingleton<IArtificialIntelligence, ArtificialIntelligence>();
+        services.AddSingleton<GameScraper>();
         services.AddSingleton<INotification, FakeNotification>();
+        services.AddSingleton<IArtificialIntelligence, ArtificialIntelligence>();
         services.AddSingleton<IRepository, FakeRepository>();
         services.AddDbContext<DefaultDbContext>();
+    })
+    .ConfigureLogging((_, builder) =>
+    {
+        builder.AddFile("Logs/QwirkleUltraBoardGames-{Date}.txt");
     })
     .UseConsoleLifetime()
     .Build();

@@ -1,3 +1,5 @@
+
+
 var appBuilder = WebApplication.CreateBuilder(args);
 var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", "appsettings.json"), optional: true);
@@ -19,6 +21,7 @@ appBuilder.Services.AddScoped<AuthenticationUseCase>();
 appBuilder.Services.AddScoped<CoreUseCase>();
 appBuilder.Services.AddScoped<InfoUseCase>();
 appBuilder.Services.AddScoped<BotUseCase>();
+appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
 appBuilder.Services.AddScoped<ComputePointsUseCase>();
 appBuilder.Services.AddControllers();
 appBuilder.Services.AddDbContext<DefaultDbContext>(appBuilder.Configuration);

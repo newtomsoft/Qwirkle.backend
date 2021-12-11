@@ -8,6 +8,7 @@ global using Microsoft.Extensions.Logging;
 global using Newtomsoft.EntityFramework.Core;
 global using NLog;
 global using NLog.Extensions.Logging;
+global using Qwirkle.AI;
 global using Qwirkle.Authentication.Adapters;
 global using Qwirkle.Domain.Entities;
 global using Qwirkle.Domain.Ports;
