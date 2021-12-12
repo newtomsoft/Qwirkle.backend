@@ -16,7 +16,6 @@ public class Repository : IRepository
 
     public Player CreatePlayer(int userId, int gameId)
     {
-        if (!DbContext.Users.Any()) CreateFirstUsersCreatorOnlineGame();
         var playerDao = new PlayerDao { GameId = gameId, UserId = userId, LastTurnSkipped = false };
         DbContext.Players.Add(playerDao);
         DbContext.SaveChanges();
@@ -147,17 +146,6 @@ public class Repository : IRepository
         var tilesIds = DbContext.Tiles.Select(tile => tile.Id).ToList();
         for (var i = 0; i < TotalTiles; i++)
             DbContext.TilesOnBag.Add(new TileOnBagDao { GameId = gameId, TileId = tilesIds[i] });
-        DbContext.SaveChanges();
-    }
-
-    private void CreateFirstUsersCreatorOnlineGame()
-    {
-        var tomJc = new List<UserDao>
-        {
-            new() { Id=1, UserName = "Tom", FirstName = "Thomas", LastName = "Vuille" },
-            new() { Id=2, UserName = "JC", FirstName = "Jean Charles", LastName = "Gouleau" },
-        };
-        DbContext.Users.AddRange(tomJc);
         DbContext.SaveChanges();
     }
 
