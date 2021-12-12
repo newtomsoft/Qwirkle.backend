@@ -84,7 +84,7 @@ public class ComputePointsUseCase
 
         return allTilesAlongReferenceTiles.Count != TilesNumberForAQwirkle ? allTilesAlongReferenceTiles.Count : PointsForAQwirkle;
     }
- public int ComputePointsMcts(List<TileOnBoard> tiles,Game game)
+    public int ComputePointsMcts(List<TileOnBoard> tiles, Game game)
     {
         if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
             return 0;
@@ -93,31 +93,31 @@ public class ComputePointsUseCase
         int points;
         if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) == tiles.Count)
         {
-            if ((points = ComputePointsInLineMcts(tiles,game)) is 0) return 0;
+            if ((points = ComputePointsInLineMcts(tiles, game)) is 0) return 0;
             if (points is not 1) totalPoints += points;
             if (tiles.Count > 1)
             {
                 foreach (var tile in tiles)
                 {
-                    if ((points = ComputePointsInColumnMcts(new List<TileOnBoard> { tile },game)) is 0) return 0;
+                    if ((points = ComputePointsInColumnMcts(new List<TileOnBoard> { tile }, game)) is 0) return 0;
                     if (points is not 1) totalPoints += points;
                 }
             }
         }
 
         if (tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count) return totalPoints;
-        if ((points = ComputePointsInColumnMcts(tiles,game)) == 0) return 0;
+        if ((points = ComputePointsInColumnMcts(tiles, game)) == 0) return 0;
         if (points != 1) totalPoints += points;
         if (tiles.Count <= 1) return totalPoints;
         foreach (var tile in tiles)
         {
-            if ((points = ComputePointsInLineMcts(new List<TileOnBoard> { tile },game)) == 0) return 0;
+            if ((points = ComputePointsInLineMcts(new List<TileOnBoard> { tile }, game)) == 0) return 0;
             if (points != 1) totalPoints += points;
         }
         return totalPoints;
     }
 
-    private int ComputePointsInLineMcts(IReadOnlyList<TileOnBoard> tiles,Game game)
+    private int ComputePointsInLineMcts(IReadOnlyList<TileOnBoard> tiles, Game game)
     {
         var allTilesAlongReferenceTiles = tiles.ToList();
         var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);

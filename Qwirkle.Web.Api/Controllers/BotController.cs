@@ -13,7 +13,7 @@ public class BotController : ControllerBase
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
     private MonteCarloTreeSearchNode mcts;
-    
+
     public BotController(BotUseCase botUseCase, UserManager<UserDao> userManager)
     {
         _botUseCase = botUseCase;
@@ -44,7 +44,7 @@ public class BotController : ControllerBase
             mctsroot.children.ForEach(mcts =>
             {
                 List<MonteCarloTreeSearchNode> searchPath = new List<MonteCarloTreeSearchNode>();
-                 var mcts_rollout = mcts;
+                var mcts_rollout = mcts;
                 searchPath.Add(mctsroot);
                 while (!mcts_rollout.game.GameOver)
                 {
@@ -98,18 +98,19 @@ public class BotController : ControllerBase
                     mcts_rollout.looses++;
                 }
 
-                mcts_rollout=Backpropagate.backpropagate(mcts_rollout, searchPath[searchPath.Count-1]);
-                while(mcts_rollout.parent!=null){
-                     
-                    mcts_rollout=mcts_rollout.parent;
+                mcts_rollout = Backpropagate.backpropagate(mcts_rollout, searchPath[searchPath.Count - 1]);
+                while (mcts_rollout.parent != null)
+                {
+
+                    mcts_rollout = mcts_rollout.parent;
 
                 }
-                
+
             });
-            
-           
+
+
         }
-            var val = BestChildUCB.bestChildUCB(mctsroot, 0.1);
-            return new ObjectResult(BestChildUCB.bestChildUCB(mctsroot, 0.1).parent_action);
+        var val = BestChildUCB.bestChildUCB(mctsroot, 0.1);
+        return new ObjectResult(BestChildUCB.bestChildUCB(mctsroot, 0.1).parent_action);
     }
 }

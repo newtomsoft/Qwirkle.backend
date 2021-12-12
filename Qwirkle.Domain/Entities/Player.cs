@@ -26,7 +26,7 @@ public class Player
         IsTurn = isTurn;
         LastTurnSkipped = lastTurnSkipped;
     }
-public Player(Player player)
+    public Player(Player player)
     {
         Id = player.Id;
         UserId = player.UserId;
@@ -35,7 +35,7 @@ public Player(Player player)
         GamePosition = player.GamePosition;
         Points = player.Points;
         LastTurnPoints = player.LastTurnPoints;
-        Rack = Rack.From(player.Rack.Tiles);
+        Rack = new Rack(player.Rack.Tiles);
         IsTurn = player.IsTurn;
         LastTurnSkipped = player.LastTurnSkipped;
     }

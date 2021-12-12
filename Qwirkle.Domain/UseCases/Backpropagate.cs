@@ -4,23 +4,25 @@ namespace Qwirkle.Domain.UseCases
     {
 
 
-      public static MonteCarloTreeSearchNode backpropagate(MonteCarloTreeSearchNode mcts, MonteCarloTreeSearchNode node){
+        public static MonteCarloTreeSearchNode backpropagate(MonteCarloTreeSearchNode mcts, MonteCarloTreeSearchNode node)
+        {
 
-        
-             if (node!=null){
+
+            if (node != null)
+            {
                 node.number_of_visits++;
-                node.wins+=mcts.wins;
-                node.looses+=mcts.looses;
-                Backpropagate.backpropagate(mcts,node.parent);
-         }
-         return node;
-      }
-       
-        
-          
-         
-        
+                node.wins += mcts.wins;
+                node.looses += mcts.looses;
+                Backpropagate.backpropagate(mcts, node.parent);
+            }
+            return node;
+        }
 
 
-    }  
+
+
+
+
+
     }
+}

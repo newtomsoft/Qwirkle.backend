@@ -19,9 +19,9 @@ public class Game
     public Game(Game game)
     {
         this.Id = game.Id;
-        this.Board = Board.From(game.Board.Tiles);
+        this.Board = new Board(game.Board.Tiles);
         this.Players = game.Players.ConvertAll(x => new Player(x));
-        this.Bag = new Bag(game.Id,game.Bag.Tiles.ConvertAll(x => x));
+        this.Bag = new Bag(game.Id, game.Bag.Tiles.ConvertAll(x => x));
         this.GameOver = game.GameOver;
     }
 }

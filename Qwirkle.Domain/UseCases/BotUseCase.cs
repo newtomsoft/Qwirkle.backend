@@ -5,7 +5,7 @@ public class BotUseCase
     private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
 
-     private readonly IRepository _repository;
+    private readonly IRepository _repository;
     private readonly IArtificialIntelligence _artificialIntelligence;
 
     public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase, IArtificialIntelligence artificialIntelligence)
@@ -13,6 +13,7 @@ public class BotUseCase
         _infoUseCase = infoUseCase;
         _coreUseCase = coreUseCase;
         _artificialIntelligence = artificialIntelligence;
+
     }
 
     public IEnumerable<TileOnBoard> GetBestMove(Player player, Board board, Coordinates originCoordinates = null)
@@ -21,7 +22,11 @@ public class BotUseCase
         var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
         return playReturn?.TilesPlayed;
     }
+public Game GetGame(int gameId)
+    {
 
+        return _infoUseCase.GetGame(gameId);
+    }
     public List<PlayReturn> ComputeDoableMoves(Player player, Board board, Coordinates originCoordinates = null, bool simulation = false)
     {
         if (!simulation) _coreUseCase.ResetGame(player.GameId);
@@ -161,29 +166,25 @@ public class BotUseCase
         }
         return playReturnsWith3Tiles;
     }
-public Game GetGame(int gameId)
-    {
         
-        return _repository.GetGame(gameId);
-    }
     private PlayReturn TestPlayTiles(Player player, List<TileOnBoard> tilesToPlay) => _coreUseCase.Play(tilesToPlay, player, true);
-    public PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player,game ,true);
-public PlayReturn GetPlayReturnMCTS(List<TileOnBoard> tilesPlayed, Player player,Game game, bool simulationMode = false)
+    public PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game, true);
+    public PlayReturn GetPlayReturnMCTS(List<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
     {
         if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
         if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
         var computePointsUseCase = new ComputePointsUseCase();
-        var wonPoints = computePointsUseCase.ComputePointsMcts(tilesPlayed,game);
-        
+        var wonPoints = computePointsUseCase.ComputePointsMcts(tilesPlayed, game);
+
         if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
 
         if (IsGameFinished())
         {
             const int endGameBonusPoints = 6;
             wonPoints += endGameBonusPoints;
-            
-            game.GameOver=true;
+
+            game.GameOver = true;
             if (!simulationMode) _repository.SetGameOver(game.Id);
         }
         return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
@@ -195,9 +196,9 @@ public PlayReturn GetPlayReturnMCTS(List<TileOnBoard> tilesPlayed, Player player
         bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => game.Board.IsIsolatedTile(tile));
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
     }
-public  List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game)
+    public List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game)
     {
-      
+
         var rack = player.Rack.WithoutDuplicatesTiles();
 
 
@@ -208,7 +209,7 @@ public  List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game
         {
             foreach (var tile in rack.Tiles)
             {
-                var playReturn = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) },game);
+                var playReturn = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) }, game);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
             }
         }
@@ -261,5 +262,5 @@ public  List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game
             return (RowType)rowTypeValues.GetValue(index)!;
         }
     }
-    
+
 }
