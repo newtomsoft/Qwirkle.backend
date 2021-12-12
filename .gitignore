@@ -348,3 +348,4 @@ healthchecksdb
 /Qwirkle.Web.Api/qwirkle.sqlite-shm
 /Qwirkle.Web.Api/qwirkle.sqlite-wal
 /Qwirkle.AI/env
+/bfg-1.14.0.jar
