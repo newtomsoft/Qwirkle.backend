@@ -26,7 +26,19 @@ public class Player
         IsTurn = isTurn;
         LastTurnSkipped = lastTurnSkipped;
     }
-
+public Player(Player player)
+    {
+        Id = player.Id;
+        UserId = player.UserId;
+        GameId = player.GameId;
+        Pseudo = player.Pseudo;
+        GamePosition = player.GamePosition;
+        Points = player.Points;
+        LastTurnPoints = player.LastTurnPoints;
+        Rack = Rack.From(player.Rack.Tiles);
+        IsTurn = player.IsTurn;
+        LastTurnSkipped = player.LastTurnSkipped;
+    }
     public void SetTurn(bool turn) => IsTurn = turn;
 
     public bool HasTiles(IEnumerable<Tile> tiles) => tiles.All(tile => Rack.Tiles.Select(t => (t.Color, t.Shape)).Contains((tile.Color, tile.Shape)));
