@@ -349,3 +349,4 @@ healthchecksdb
 /Qwirkle.Web.Api/qwirkle.sqlite-wal
 /Qwirkle.AI/env
 /bfg-1.14.0.jar
+/appsettings.Staging.json
