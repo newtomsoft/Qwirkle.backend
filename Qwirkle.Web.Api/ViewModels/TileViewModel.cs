@@ -1,6 +1,4 @@
-﻿using Qwirkle.Domain.Enums;
-
-namespace Qwirkle.Web.Api.ViewModels;
+﻿namespace Qwirkle.Web.Api.ViewModels;
 
 public class TileViewModel
 {

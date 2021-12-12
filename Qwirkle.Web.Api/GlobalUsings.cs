@@ -11,6 +11,7 @@ global using NLog.Extensions.Logging;
 global using Qwirkle.AI;
 global using Qwirkle.Authentication.Adapters;
 global using Qwirkle.Domain.Entities;
+global using Qwirkle.Domain.Enums;
 global using Qwirkle.Domain.Ports;
 global using Qwirkle.Domain.UseCases;
 global using Qwirkle.Domain.ValueObjects;

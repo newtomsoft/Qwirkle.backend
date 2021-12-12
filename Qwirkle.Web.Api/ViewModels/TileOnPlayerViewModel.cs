@@ -3,5 +3,6 @@
 public class TileOnPlayerViewModel
 {
     public int PlayerId { get; set; }
-    public int TileId { get; set; }
+    public TileColor Color { get; set; }
+    public TileShape Shape { get; set; }
 }

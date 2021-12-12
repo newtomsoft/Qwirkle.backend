@@ -29,14 +29,13 @@ public class ActionController : ControllerBase
         return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => (t.Color, t.Shape, Coordinates.From(t.X, t.Y)))));
     }
 
-#warning reimplemente method without tileid !
-    //[HttpPost("SwapTiles/")]
-    //public ActionResult<int> SwapTiles(List<TileViewModel> tiles)
-    //{
-    //    var playerId = tiles.First().PlayerId;
-    //    var userId = _infoUseCase.GetUserId(playerId);
-    //    return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySwapTiles(tiles.First().PlayerId, tiles.Select(t => (t.Color, t.Shape))));
-    //}
+    [HttpPost("SwapTiles/")]
+    public ActionResult<int> SwapTiles(List<TileViewModel> tiles)
+    {
+        var playerId = tiles.First().PlayerId;
+        var userId = _infoUseCase.GetUserId(playerId);
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySwapTiles(tiles.First().PlayerId, tiles.Select(t => (t.Color, t.Shape))));
+    }
 
 
     [HttpPost("SkipTurn/")]
@@ -46,12 +45,12 @@ public class ActionController : ControllerBase
         return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySkipTurn(player.Id));
     }
 
-#warning reimplemente method without tileid !
-    //[HttpPost("ArrangeRack/")]
-    //public ActionResult ArrangeRack(List<TileOnPlayerViewModel> tiles)
-    //{
-    //    var playerId = tiles.First().PlayerId;
-    //    var userId = _infoUseCase.GetUserId(playerId);
-    //    return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryArrangeRack(tiles.First().PlayerId, tiles.Select(t => t.TileId).ToList()));
-    //}
+
+    [HttpPost("ArrangeRack/")]
+    public ActionResult ArrangeRack(List<TileOnPlayerViewModel> tiles)
+    {
+        var playerId = tiles.First().PlayerId;
+        var userId = _infoUseCase.GetUserId(playerId);
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryArrangeRack(tiles.First().PlayerId, tiles.Select(t => (t.Color, t.Shape))));
+    }
 }

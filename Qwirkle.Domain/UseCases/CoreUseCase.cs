@@ -29,15 +29,15 @@ public class CoreUseCase
 
     public void ResetGame(int gameId) => Game = _repository.GetGame(gameId);
 
-#warning reimplemente method without tileid !
-    //public ArrangeRackReturn TryArrangeRack(int playerId, List<int> tilesIds)
-    //{
-    //    var player = _infoUseCase.GetPlayer(playerId);
-    //    var tiles = GetTiles(tilesIds);
-    //    if (!player.HasTiles(tiles)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
-    //    ArrangeRack(player, tilesIds);
-    //    return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
-    //}
+    public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
+    {
+        var tilesTupleList = tilesTuple.ToList();
+        var player = _infoUseCase.GetPlayer(playerId);
+        var tiles = GetTiles(tilesTupleList);
+        if (!player.HasTiles(tiles)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        ArrangeRack(player, tilesTupleList);
+        return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
+    }
 
     public PlayReturn TryPlayTiles(int playerId, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay)
     {
@@ -58,19 +58,18 @@ public class CoreUseCase
         return playReturn;
     }
 
-#warning reimplemente method without tileid !
-    //public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<int> tilesIds)
-    //{
-    //    var tilesIdsList = tilesIds.ToList();
-    //    var player = _infoUseCase.GetPlayer(playerId);
-    //    var tiles = GetTiles(tilesIdsList);
-    //    if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
-    //    if (!player.HasTiles(tiles)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
-    //    var swapTilesReturn = SwapTiles(player, tilesIdsList);
-    //    _notification.SendTilesSwapped(Game.Id, playerId);
-    //    _notification.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
-    //    return swapTilesReturn;
-    //}
+    public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
+    {
+        var tilesList = tilesTuple.ToList();
+        var player = _infoUseCase.GetPlayer(playerId);
+        var tiles = GetTiles(tilesList);
+        if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
+        if (!player.HasTiles(tiles)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        var swapTilesReturn = SwapTiles(player, tilesList);
+        _notification.SendTilesSwapped(Game.Id, playerId);
+        _notification.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
+        return swapTilesReturn;
+    }
 
     public SkipTurnReturn TrySkipTurn(int playerId)
     {
@@ -111,7 +110,7 @@ public class CoreUseCase
         Game.Players.ForEach(player => _repository.UpdatePlayer(player));
     }
 
-    private void ArrangeRack(Player player, List<int> tilesIds) => _repository.ArrangeRack(player, tilesIds);
+    private void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple) => _repository.ArrangeRack(player, tilesTuple);
 
     private void SetPositionsPlayers()
     {
@@ -170,15 +169,15 @@ public class CoreUseCase
         return new SkipTurnReturn { GameId = player.GameId, Code = PlayReturnCode.Ok };
     }
 
-    private SwapTilesReturn SwapTiles(Player player, IEnumerable<int> tilesIds)
+    private SwapTilesReturn SwapTiles(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
     {
+        var tiles = tilesTuple.ToList();
         ResetGame(player.GameId);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();
-        var tilesIdsList = tilesIds.ToList();
-        for (byte i = 0; i < tilesIdsList.Count; i++) positionsInRack.Add(i);
+        for (byte i = 0; i < tiles.Count; i++) positionsInRack.Add(i);
         _repository.TilesFromBagToPlayer(player, positionsInRack);
-        _repository.TilesFromPlayerToBag(player, tilesIdsList);
+        _repository.TilesFromPlayerToBag(player, tiles);
         _repository.UpdatePlayer(player);
         return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoUseCase.GetPlayer(player.Id).Rack };
     }
@@ -227,8 +226,7 @@ public class CoreUseCase
         Game.Players.First(p => p.Id == playerId).SetTurn(true);
     }
 
-#warning reimplemente method without tileid !
-    //private IEnumerable<Tile> GetTiles(IEnumerable<int> tilesIds) => tilesIds.Select(id => _repository.GetTile(id));
+    private IEnumerable<Tile> GetTiles(IEnumerable<(TileColor color, TileShape shape)> tilesTuples) => tilesTuples.Select(tileTuple => _repository.GetTile(tileTuple.color, tileTuple.shape));
 
     private List<TileOnBoard> GetTilesOnBoard(IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(_repository.GetTile(tileTupleToPlay.color, tileTupleToPlay.shape), tileTupleToPlay.coordinates)).ToList();
 }

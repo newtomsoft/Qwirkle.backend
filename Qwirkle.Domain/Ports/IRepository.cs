@@ -6,7 +6,7 @@ public interface IRepository
     void UpdatePlayer(Player player);
     void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay);
     void TilesFromBagToPlayer(Player player, List<byte> positionsInRack);
-    void TilesFromPlayerToBag(Player player, IEnumerable<int> tilesIds);
+    void TilesFromPlayerToBag(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple);
     Game GetGame(int gameId);
     Player GetPlayer(int playerId);
     Player GetPlayer(int gameId, int userId);
@@ -20,7 +20,7 @@ public interface IRepository
     void SetGameOver(int gameId);
     List<int> GetLeadersPlayersId(int gameId);
     bool IsGameOver(int gameId);
-    void ArrangeRack(Player player, List<int> tilesIds);
+    void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple);
     List<int> GetAllUsersId();
     List<int> GetUserGamesIds(int userId);
 }

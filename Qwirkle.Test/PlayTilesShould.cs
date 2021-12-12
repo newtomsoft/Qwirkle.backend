@@ -1,6 +1,5 @@
 ﻿namespace Qwirkle.Test;
 
-//[Collection("Sequential")]
 public class PlayTilesShould
 {
     #region private
