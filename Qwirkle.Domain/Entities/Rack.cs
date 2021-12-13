@@ -6,7 +6,11 @@ public class Rack
 
     public static Rack From(List<TileOnPlayer> tiles) => new(tiles);
 
-    private Rack(List<TileOnPlayer> tiles) => Tiles = tiles;
+       public Rack(List<TileOnPlayer> tiles)
+    {
+        Tiles = tiles!=null ? tiles.ConvertAll(x=>new TileOnPlayer(x.RackPosition,x.Color,x.Shape)) : null;
+    }
+
 
     public Rack WithoutDuplicatesTiles() => new(Tiles.Distinct().ToList());
 }
