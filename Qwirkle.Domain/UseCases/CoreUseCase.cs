@@ -57,7 +57,7 @@ public class CoreUseCase
         _notification?.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
         return playReturn;
     }
-
+    
     public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
     {
         var tilesList = tilesTuple.ToList();
