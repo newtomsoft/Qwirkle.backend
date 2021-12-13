@@ -1,14 +1,9 @@
 ﻿namespace Qwirkle.Domain.Entities;
 
-public class Board
+public record Board(List<TileOnBoard> Tiles)
 {
-    public List<TileOnBoard> Tiles { get; }
-
     public static Board From(List<TileOnBoard> tiles) => new(tiles);
     public static Board Empty() => new(new List<TileOnBoard>());
-
-    public Board(List<TileOnBoard> tiles) => Tiles = tiles.ConvertAll(x=>x);
-
     public bool IsIsolatedTile(TileOnBoard tile) => IsIsolated(Coordinates.From(tile.Coordinates.X, tile.Coordinates.Y));
     public bool IsFreeTile(TileOnBoard tile) => IsFree(tile.Coordinates);
     public List<Coordinates> GetFreeAdjoiningCoordinatesToTiles(Coordinates originCoordinates = null)

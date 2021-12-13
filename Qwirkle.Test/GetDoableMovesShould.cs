@@ -13,7 +13,7 @@ public class GetDoableMovesShould
         var useCase = new CoreUseCase(repository, null, infoUseCase);
         var usersIds = infoUseCase.GetAllUsersId();
         var players = useCase.CreateGame(usersIds).OrderBy(p => p.Id).ToList();
-        _botUseCase = new BotUseCase(infoUseCase, useCase, null);
+        _botUseCase = new BotUseCase(infoUseCase, useCase);
         _player = players[0];
         _userId = usersIds[0];
     }

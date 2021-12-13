@@ -26,6 +26,7 @@ public class Player
         IsTurn = isTurn;
         LastTurnSkipped = lastTurnSkipped;
     }
+
     public Player(Player player)
     {
         Id = player.Id;

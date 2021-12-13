@@ -5,15 +5,10 @@ public class BotUseCase
     private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
 
-    private readonly IRepository _repository;
-    private readonly IArtificialIntelligence _artificialIntelligence;
-
-    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase, IArtificialIntelligence artificialIntelligence)
+    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase)
     {
         _infoUseCase = infoUseCase;
         _coreUseCase = coreUseCase;
-        _artificialIntelligence = artificialIntelligence;
-
     }
 
     public IEnumerable<TileOnBoard> GetBestMove(Player player, Board board, Coordinates originCoordinates = null)
@@ -22,11 +17,10 @@ public class BotUseCase
         var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
         return playReturn?.TilesPlayed;
     }
-public Game GetGame(int gameId)
-    {
 
-        return _infoUseCase.GetGame(gameId);
-    }
+#warning to remove ?
+    public Game GetGame(int gameId) => _infoUseCase.GetGame(gameId);
+
     public List<PlayReturn> ComputeDoableMoves(Player player, Board board, Coordinates originCoordinates = null, bool simulation = false)
     {
         if (!simulation) _coreUseCase.ResetGame(player.GameId);
@@ -166,7 +160,7 @@ public Game GetGame(int gameId)
         }
         return playReturnsWith3Tiles;
     }
-        
+
     private PlayReturn TestPlayTiles(Player player, List<TileOnBoard> tilesToPlay) => _coreUseCase.Play(tilesToPlay, player, true);
     public PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game, true);
     public PlayReturn GetPlayReturnMCTS(List<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
@@ -185,7 +179,6 @@ public Game GetGame(int gameId)
             wonPoints += endGameBonusPoints;
 
             game.GameOver = true;
-            if (!simulationMode) _repository.SetGameOver(game.Id);
         }
         return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 
