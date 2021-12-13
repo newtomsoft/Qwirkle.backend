@@ -1,9 +1,4 @@
-
-
 var appBuilder = WebApplication.CreateBuilder(args);
-var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", "appsettings.json"), optional: true);
-appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.{environmentName}.json"), optional: true);
 LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetSection("NLog"));
 appBuilder.Services.AddCors(options =>
 {
@@ -24,7 +19,7 @@ appBuilder.Services.AddScoped<BotUseCase>();
 appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
 appBuilder.Services.AddScoped<ComputePointsUseCase>();
 appBuilder.Services.AddControllers();
-appBuilder.Services.AddDbContext<DefaultDbContext>(appBuilder.Configuration);
+appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(appBuilder.Configuration.GetConnectionString("SqlServer")));
 appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
 {
     options.Password.RequireDigit = false;

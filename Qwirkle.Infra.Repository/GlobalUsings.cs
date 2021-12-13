@@ -2,7 +2,6 @@
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Design;
-global using Newtomsoft.EntityFramework.Core;
 global using Qwirkle.Domain.Entities;
 global using Qwirkle.Domain.Enums;
 global using Qwirkle.Domain.Ports;
