@@ -23,9 +23,7 @@
     },
     "Staging": {
       "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Staging"
-      }
+      "commandLineArgs": "--environment=Staging"
     }
   }
 }
