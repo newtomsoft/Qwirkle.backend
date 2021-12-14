@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<Configurations>Debug;Release;NoPersitance</Configurations>
+		<Configurations>Debug;Release</Configurations>
 		<UserSecretsId>1b9feb8c-a6dd-4811-8fec-c8a9ccd568ca</UserSecretsId>
 	</PropertyGroup>
 
@@ -20,7 +20,16 @@
 
 	<ItemGroup>
 	  <Content Update="appsettings.Development.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettings.Production.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettings.Staging.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
 
