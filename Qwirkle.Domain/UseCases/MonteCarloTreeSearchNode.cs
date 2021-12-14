@@ -4,7 +4,7 @@ namespace Qwirkle.Domain.UseCases;
 
 
 
-    public class MonteCarloTreeSearchNode
+public class MonteCarloTreeSearchNode
 {
     public Game game { get; set; }
     public MonteCarloTreeSearchNode parent { get; set; }

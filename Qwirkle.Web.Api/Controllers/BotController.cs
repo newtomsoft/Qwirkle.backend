@@ -55,7 +55,7 @@ public class BotController : ControllerBase
                     {
                         mcts_rollout = Expand.ExpandMcts(mcts_rollout, playReturns, playerIndex);
                         var index = random.Next(playReturns.Count);
-                        var coordinatesrandomAction = new List<PlayReturn> {playReturns[index]};
+                        var coordinatesrandomAction = new List<PlayReturn> { playReturns[index] };
                         mcts_rollout.children[index].game.Players[playerIndex].Points += playReturns[index].Points;
                         searchPath.Add(mcts_rollout);
                         mcts_rollout.children[index].number_of_visits++;

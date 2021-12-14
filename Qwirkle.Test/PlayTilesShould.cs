@@ -119,7 +119,7 @@ public class PlayTilesShould
         var repository = new Repository(dbContext);
         var infoUseCase = new InfoUseCase(repository, null);
         var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
-        var tilesToPlay = new List<TileOnBoard> { new (TileColor.Blue, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Blue, TileShape.Clover, Coordinates.From(-4, 3)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(-4, 2)) };
+        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Blue, TileShape.Clover, Coordinates.From(-4, 3)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(-4, 2)) };
         coreUseCase.TryPlayTiles(Player3, tilesToPlay).Points.ShouldBe(0);
     }
 

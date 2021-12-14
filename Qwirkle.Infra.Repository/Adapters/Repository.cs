@@ -101,7 +101,7 @@ public class Repository : IRepository
         foreach (var tileOnPlayerDao in tilesOnPlayerDao) DbContext.TilesOnBag.Add(tileOnPlayerDao.ToTileOnBagDao(player.GameId));
         DbContext.SaveChanges();
     }
-    
+
     public void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<TileOnBoard> tilesOnBoard)
     {
         var game = DbContext.Games.Single(g => g.Id == gameId);
