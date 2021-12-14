@@ -1,4 +1,4 @@
-namespace Qwirkle.Domain.UseCases;
+namespace Qwirkle.Domain.UseCases.Ai;
 
 public class Backpropagate
 {
@@ -10,10 +10,10 @@ public class Backpropagate
 
         if (node != null)
         {
-            node.number_of_visits++;
-            node.wins += mcts.wins;
-            node.looses += mcts.looses;
-            backpropagate(mcts, node.parent);
+            node.NumberOfVisits++;
+            node.Wins += mcts.Wins;
+            node.Looses += mcts.Looses;
+            backpropagate(mcts, node.Parent);
         }
         return node;
     }

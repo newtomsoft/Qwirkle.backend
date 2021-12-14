@@ -1,4 +1,4 @@
-namespace Qwirkle.Domain.UseCases;
+namespace Qwirkle.Domain.UseCases.Ai;
 
 public class BestChildUCB
 {
@@ -7,9 +7,9 @@ public class BestChildUCB
         MonteCarloTreeSearchNode bestChild = null;
         var best = double.NegativeInfinity;
 
-        foreach (var child in current.children)
+        foreach (var child in current.Children)
         {
-            var UCB1 = (Convert.ToDouble(SetMonteCarloNode.valueWinLoose(child)) / Convert.ToDouble(child.number_of_visits)) + param * Math.Sqrt((2.0 * Math.Log(Convert.ToDouble(current.number_of_visits))) / Convert.ToDouble(child.number_of_visits));
+            var UCB1 = (Convert.ToDouble(SetMonteCarloNode.valueWinLoose(child)) / Convert.ToDouble(child.NumberOfVisits)) + param * Math.Sqrt((2.0 * Math.Log(Convert.ToDouble(current.NumberOfVisits))) / Convert.ToDouble(child.NumberOfVisits));
 
             if (UCB1 > best)
             {
@@ -25,21 +25,21 @@ public class BestChildUCB
         public static MonteCarloTreeSearchNode SetWin(MonteCarloTreeSearchNode mcts, int win)
         {
 
-            mcts.wins = win;
+            mcts.Wins = win;
             return mcts;
 
         }
         public static MonteCarloTreeSearchNode setLoose(MonteCarloTreeSearchNode mcts, int loose)
         {
 
-            mcts.looses = loose;
+            mcts.Looses = loose;
             return mcts;
 
         }
         public static int valueWinLoose(MonteCarloTreeSearchNode mcts)
         {
 
-            return mcts.wins - mcts.looses;
+            return mcts.Wins - mcts.Looses;
 
         }
 

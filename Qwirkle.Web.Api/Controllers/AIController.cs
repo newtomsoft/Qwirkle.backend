@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
+using Qwirkle.Domain.UseCases.Ai;
 
 namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
-[Authorize] //todo : only for bot
+[Authorize] //todo : only for ai
 [Route("Ai")]
 public class AiController : ControllerBase
 {
@@ -28,79 +29,79 @@ public class AiController : ControllerBase
         _mcts = new MonteCarloTreeSearchNode(_botUseCase.GetGame(gameId));
         var playReturns = _botUseCase.ComputeDoableMoves(gameId, UserId);
         var random = new Random();
-        var playerIndexRoot = _mcts.game.Players.FindIndex(player => player.IsTurn);
+        var playerIndexRoot = _mcts.Game.Players.FindIndex(player => player.IsTurn);
         var mctsRoot = Expand.ExpandMcts(_mcts, playReturns, playerIndexRoot);
 
-        for (var i = 0; i < 5; i++)
+        for (var i = 0; i < 5; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
         {
-            mctsRoot.children.ForEach(mcts =>
+            mctsRoot.Children.ForEach(mcts =>
             {
                 var searchPath = new List<MonteCarloTreeSearchNode>();
                 var mctsRollout = mcts;
                 searchPath.Add(mctsRoot);
-                while (!mctsRollout.game.GameOver)
+                while (!mctsRollout.Game.GameOver)
                 {
-                    var player = mctsRollout.game.Players.FirstOrDefault(p => p.IsTurn);
-                    var playerIndex = mctsRollout.game.Players.FindIndex(p => p.IsTurn);
-                    var currentPlayReturns = _botUseCase.ComputeDoableMovesMcts(mctsRollout.game.Board, player, mctsRollout.game);
+                    var player = mctsRollout.Game.Players.FirstOrDefault(p => p.IsTurn);
+                    var playerIndex = mctsRollout.Game.Players.FindIndex(p => p.IsTurn);
+                    var currentPlayReturns = _botUseCase.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game);
+                    //todo voir si ComputeDoableMoves(Player player, Board board, Coordinates originCoordinates, bool simulation) peut faire l'affaire ou l'adapter
+                    
+
                     if (currentPlayReturns.Count > 0)
                     {
                         mctsRollout = Expand.ExpandMcts(mctsRollout, currentPlayReturns, playerIndex);
                         var index = random.Next(currentPlayReturns.Count);
                         var coordinatesrandomAction = new List<PlayReturn> { currentPlayReturns[index] };
-                        mctsRollout.children[index].game.Players[playerIndex].Points += currentPlayReturns[index].Points;
+                        mctsRollout.Children[index].Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
                         searchPath.Add(mctsRollout);
-                        mctsRollout.children[index].number_of_visits++;
-                        mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.children[index].game, mctsRollout);
+                        mctsRollout.Children[index].NumberOfVisits++;
+                        mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children[index].Game, mctsRollout);
                     }
                     else
                     {
-                        var removeTiles = mctsRollout.game.Players[playerIndex].Rack.Tiles;
+                        var removeTiles = mctsRollout.Game.Players[playerIndex].Rack.Tiles;
                         var indexRemoveTile = random.Next(removeTiles.Count);
                         for (var i = 0; i < indexRemoveTile; i++)
                         {
-                            var removeTile = removeTiles[random.Next(mctsRollout.game.Players[playerIndex].Rack.Tiles.Count)];
+                            var removeTile = removeTiles[random.Next(mctsRollout.Game.Players[playerIndex].Rack.Tiles.Count)];
 
-                            mctsRollout.game.Players[playerIndex].Rack.Tiles.Remove(removeTile);
-                            mctsRollout.game.Bag.Tiles.Add(new TileOnBag(removeTile.Color, removeTile.Shape));
+                            mctsRollout.Game.Players[playerIndex].Rack.Tiles.Remove(removeTile);
+                            mctsRollout.Game.Bag.Tiles.Add(new TileOnBag(removeTile.Color, removeTile.Shape));
                         }
                         for (var i = 0; i < indexRemoveTile; i++)
                         {
-                            var index = random.Next(mctsRollout.game.Bag.Tiles.Count);
-                            var addTile = mctsRollout.game.Bag.Tiles[index];
-                            mctsRollout.game.Players[playerIndex].Rack.Tiles.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
-                            mctsRollout.game.Bag.Tiles.Remove(addTile);
+                            var index = random.Next(mctsRollout.Game.Bag.Tiles.Count);
+                            var addTile = mctsRollout.Game.Bag.Tiles[index];
+                            mctsRollout.Game.Players[playerIndex].Rack.Tiles.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
+                            mctsRollout.Game.Bag.Tiles.Remove(addTile);
                         }
 
-                        mctsRollout = Expand.SetNextPlayerTurnToPlay(mctsRollout, mctsRollout.game.Players[playerIndex]);
+                        mctsRollout = Expand.SetNextPlayerTurnToPlay(mctsRollout, mctsRollout.Game.Players[playerIndex]);
                         searchPath.Add(mctsRollout);
                     }
 
                 }
 
-                var score = mctsRollout.game.Players.Select(p => p.Points).ToList().Max();
-                if (score == mctsRollout.game.Players[playerIndexRoot].Points)
+                var score = mctsRollout.Game.Players.Select(p => p.Points).ToList().Max();
+                if (score == mctsRollout.Game.Players[playerIndexRoot].Points)
                 {
-                    mctsRollout.wins++;
+                    mctsRollout.Wins++;
                 }
                 else
                 {
-                    mctsRollout.looses++;
+                    mctsRollout.Looses++;
                 }
 
                 mctsRollout = Backpropagate.backpropagate(mctsRollout, searchPath[^1]);
-                while (mctsRollout.parent != null)
+                while (mctsRollout.Parent != null)
                 {
 
-                    mctsRollout = mctsRollout.parent;
+                    mctsRollout = mctsRollout.Parent;
 
                 }
-
             });
-
-
         }
         var val = BestChildUCB.bestChildUCB(mctsRoot, 0.1);
-        return new ObjectResult(BestChildUCB.bestChildUCB(mctsRoot, 0.1).parent_action);
+        return new ObjectResult(BestChildUCB.bestChildUCB(mctsRoot, 0.1).ParentAction);
     }
 }

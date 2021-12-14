@@ -1,4 +1,4 @@
-namespace Qwirkle.Domain.UseCases;
+namespace Qwirkle.Domain.UseCases.Ai;
 
 public class Expand
 {
@@ -9,7 +9,7 @@ public class Expand
         foreach (var coordinate in playReturns)
         {
 
-            var newgame = new Game(mcts.game);
+            var newgame = new Game(mcts.Game);
 
             var random = new Random();
             coordinate.TilesPlayed.ForEach(tileBoard =>
@@ -31,8 +31,8 @@ public class Expand
 
             });
             var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed);
-            childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.game.Players[indexPlayer]);
-            mcts.children.Add(childrenNode);
+            childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.Game.Players[indexPlayer]);
+            mcts.Children.Add(childrenNode);
 
         }
 
@@ -44,20 +44,20 @@ public class Expand
 
     public static MonteCarloTreeSearchNode SetNextPlayerTurnToPlay(MonteCarloTreeSearchNode mcts, Player player)
     {
-        if (mcts.game.GameOver) return mcts;
+        if (mcts.Game.GameOver) return mcts;
 
 
-        if (mcts.game.Players.Count == 1)
+        if (mcts.Game.Players.Count == 1)
         {
             player.SetTurn(true);
 
         }
         else
         {
-            var position = mcts.game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
-            var playersNumber = mcts.game.Players.Count;
+            var position = mcts.Game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
+            var playersNumber = mcts.Game.Players.Count;
             var nextPlayerPosition = position < playersNumber ? position + 1 : 1;
-            var nextPlayer = mcts.game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
+            var nextPlayer = mcts.Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
             player.SetTurn(false);
             nextPlayer!.SetTurn(true);
 
