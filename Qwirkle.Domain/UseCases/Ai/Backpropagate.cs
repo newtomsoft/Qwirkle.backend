@@ -4,7 +4,7 @@ public class Backpropagate
 {
 
 
-    public static MonteCarloTreeSearchNode backpropagate(MonteCarloTreeSearchNode mcts, MonteCarloTreeSearchNode node)
+    public static MonteCarloTreeSearchNode BackPropagate(MonteCarloTreeSearchNode mcts, MonteCarloTreeSearchNode node)
     {
 
 
@@ -13,7 +13,7 @@ public class Backpropagate
             node.NumberOfVisits++;
             node.Wins += mcts.Wins;
             node.Looses += mcts.Looses;
-            backpropagate(mcts, node.Parent);
+            BackPropagate(mcts, node.Parent);
         }
         return node;
     }

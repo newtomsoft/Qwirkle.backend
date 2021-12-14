@@ -92,7 +92,7 @@ public class AiController : ControllerBase
                     mctsRollout.Looses++;
                 }
 
-                mctsRollout = Backpropagate.backpropagate(mctsRollout, searchPath[^1]);
+                mctsRollout = Backpropagate.BackPropagate(mctsRollout, searchPath[^1]);
                 while (mctsRollout.Parent != null)
                 {
 
@@ -101,7 +101,7 @@ public class AiController : ControllerBase
                 }
             });
         }
-        var val = BestChildUCB.bestChildUCB(mctsRoot, 0.1);
-        return new ObjectResult(BestChildUCB.bestChildUCB(mctsRoot, 0.1).ParentAction);
+        var val = BestChildUCB.BestChildUcb(mctsRoot, 0.1);
+        return new ObjectResult(BestChildUCB.BestChildUcb(mctsRoot, 0.1).ParentAction);
     }
 }

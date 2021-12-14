@@ -13,8 +13,6 @@ public class BotController : ControllerBase
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    private MonteCarloTreeSearchNode mcts;
-
     public BotController(BotUseCase botUseCase, UserManager<UserDao> userManager)
     {
         _botUseCase = botUseCase;
