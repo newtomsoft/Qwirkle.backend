@@ -11,6 +11,7 @@ public class InfoUseCase
         _notification = notification;
     }
     public int GetUserId(int playerId) => _repository.GetUserId(playerId);
+    public int GetPlayerId(int gameId, int userId) => _repository.GetPlayerId(gameId, userId);
     public Player GetPlayer(int playerId) => _repository.GetPlayer(playerId);
     public Player GetPlayer(int gameId, int userId) => _repository.GetPlayer(gameId, userId);
     public string GetPlayerNameTurn(int gameId) => _repository.GetPlayerNameTurn(gameId);

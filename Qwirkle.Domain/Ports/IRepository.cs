@@ -8,6 +8,7 @@ public interface IRepository
     void TilesFromBagToPlayer(Player player, List<byte> positionsInRack);
     void TilesFromPlayerToBag(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple);
     Game GetGame(int gameId);
+    int GetPlayerId(int gameId, int userId);
     Player GetPlayer(int playerId);
     Player GetPlayer(int gameId, int userId);
     string GetPlayerNameTurn(int gameId);

@@ -58,6 +58,7 @@ public class Repository : IRepository
 
     public Player GetPlayer(int playerId) => DbContext.Players.Where(p => p.Id == playerId).Include(p => p.User).First().ToPlayer(DbContext);
     public Player GetPlayer(int gameId, int userId) => DbContext.Players.First(p => p.GameId == gameId && p.UserId == userId).ToPlayer(DbContext);
+    public int GetPlayerId(int gameId, int userId) => DbContext.Players.FirstOrDefault(p => p.GameId == gameId && p.UserId == userId)?.Id ?? 0;
 
     public void UpdatePlayer(Player player)
     {
@@ -155,6 +156,5 @@ public class Repository : IRepository
         var tilesDao = DbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
         return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.Single(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Color, tileDao.Shape, new Coordinates(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
     }
-
 }
 

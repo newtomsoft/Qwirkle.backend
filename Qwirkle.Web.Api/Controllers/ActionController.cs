@@ -15,28 +15,27 @@ public class ActionController : ControllerBase
     [HttpPost("PlayTiles/")]
     public ActionResult<int> PlayTiles(List<TileViewModel> tiles)
     {
-        var playerId = tiles.First().PlayerId;
-        var userId = _infoUseCase.GetUserId(playerId);
-        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTiles(playerId, tiles.Select(t => t.ToTileOnBoard())));
+        var gameId = tiles.First().GameId;
+        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreUseCase.TryPlayTiles(playerId, tiles.Select(t => t.ToTileOnBoard())));
     }
 
 
     [HttpPost("PlayTilesSimulation/")]
     public ActionResult<int> PlayTilesSimulation(List<TileViewModel> tiles)
     {
-        var playerId = tiles.First().PlayerId;
-        var userId = _infoUseCase.GetUserId(playerId);
-        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => (t.Color, t.Shape, Coordinates.From(t.X, t.Y)))));
+        var gameId = tiles.First().GameId;
+        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+        return  new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => (t.Color, t.Shape, Coordinates.From(t.X, t.Y)))));
     }
 
     [HttpPost("SwapTiles/")]
     public ActionResult<int> SwapTiles(List<TileViewModel> tiles)
     {
-        var playerId = tiles.First().PlayerId;
-        var userId = _infoUseCase.GetUserId(playerId);
-        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySwapTiles(tiles.First().PlayerId, tiles.Select(t => (t.Color, t.Shape))));
+        var gameId = tiles.First().GameId;
+        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreUseCase.TrySwapTiles(playerId, tiles.Select(t => (t.Color, t.Shape))));
     }
-
 
     [HttpPost("SkipTurn/")]
     public ActionResult<int> SkipTurn(PlayerViewModel player)
