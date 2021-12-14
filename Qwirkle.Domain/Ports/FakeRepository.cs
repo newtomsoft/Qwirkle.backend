@@ -21,7 +21,7 @@ public class FakeRepository : IRepository
     public void SetPlayerTurn(int playerId) => throw new NotImplementedException();
     public void TilesFromBagToPlayer(Player player, List<byte> positionsInRack) => throw new NotImplementedException();
     public void UpdatePlayer(Player player) => throw new NotImplementedException();
-    public void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay) => throw new NotImplementedException();
     public void TilesFromPlayerToBag(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTupleToPlay) => throw new NotImplementedException();
     public void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple) => throw new NotImplementedException();
+    public void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<TileOnBoard> tilesOnBoard) => throw new NotImplementedException();
 }

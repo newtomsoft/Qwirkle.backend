@@ -39,20 +39,19 @@ public class CoreUseCase
         return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
     }
 
-    public PlayReturn TryPlayTiles(int playerId, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay)
+    public PlayReturn TryPlayTiles(int playerId, IEnumerable<TileOnBoard> tilesTupleToPlay)
     {
         var player = _infoUseCase.GetPlayer(playerId);
         if (!player.IsTurn) return new PlayReturn(player.GameId, PlayReturnCode.NotPlayerTurn, null, null, 0);
 
-        var tilesTuplesList = tilesTupleToPlay.ToList();
-        var tilesToPlay = GetTilesOnBoard(tilesTuplesList);
+        var tilesToPlay = tilesTupleToPlay.ToList();
 
         if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, PlayReturnCode.PlayerDoesntHaveThisTile, null, null, 0);
 
         var playReturn = Play(tilesToPlay, player);
         if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
 
-        playReturn = playReturn with { NewRack = PlayTiles(player, tilesTuplesList, playReturn.Points) };
+        playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
         _notification?.SendTilesPlayed(Game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
         _notification?.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
         return playReturn;
@@ -182,10 +181,10 @@ public class CoreUseCase
         return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoUseCase.GetPlayer(player.Id).Rack };
     }
 
-    private Rack PlayTiles(Player player, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay, int points)
+    private Rack PlayTiles(Player player, IEnumerable<TileOnBoard> tilesTupleToPlay, int points)
     {
         var tilesTupleToPlayList = tilesTupleToPlay.ToList();
-        var tilesToPlay = GetTilesOnBoard(tilesTupleToPlayList);
+        var tilesToPlay = tilesTupleToPlayList.ToList();
 
         player.LastTurnPoints = points;
         player.Points += points;
@@ -228,5 +227,5 @@ public class CoreUseCase
 
     private IEnumerable<Tile> GetTiles(IEnumerable<(TileColor color, TileShape shape)> tilesTuples) => tilesTuples.Select(tileTuple => _repository.GetTile(tileTuple.color, tileTuple.shape));
 
-    private List<TileOnBoard> GetTilesOnBoard(IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(_repository.GetTile(tileTupleToPlay.color, tileTupleToPlay.shape), tileTupleToPlay.coordinates)).ToList();
+    private static List<TileOnBoard> GetTilesOnBoard(IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(tileTupleToPlay.color, tileTupleToPlay.shape, tileTupleToPlay.coordinates)).ToList();
 }

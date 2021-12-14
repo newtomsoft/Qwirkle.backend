@@ -1,51 +1,50 @@
-namespace Qwirkle.Domain.UseCases
+namespace Qwirkle.Domain.UseCases;
+
+public class BestChildUCB
 {
-    public class BestChildUCB
+    public static MonteCarloTreeSearchNode bestChildUCB(MonteCarloTreeSearchNode current, double param)
     {
-        public static MonteCarloTreeSearchNode bestChildUCB(MonteCarloTreeSearchNode current, double param)
+        MonteCarloTreeSearchNode bestChild = null;
+        var best = double.NegativeInfinity;
+
+        foreach (var child in current.children)
         {
-            MonteCarloTreeSearchNode bestChild = null;
-            double best = double.NegativeInfinity;
+            var UCB1 = (Convert.ToDouble(SetMonteCarloNode.valueWinLoose(child)) / Convert.ToDouble(child.number_of_visits)) + param * Math.Sqrt((2.0 * Math.Log(Convert.ToDouble(current.number_of_visits))) / Convert.ToDouble(child.number_of_visits));
 
-            foreach (MonteCarloTreeSearchNode child in current.children)
+            if (UCB1 > best)
             {
-                double UCB1 = (Convert.ToDouble(SetMonteCarloNode.valueWinLoose(child)) / Convert.ToDouble(child.number_of_visits)) + param * Math.Sqrt((2.0 * Math.Log(Convert.ToDouble(current.number_of_visits))) / Convert.ToDouble(child.number_of_visits));
-
-                if (UCB1 > best)
-                {
-                    bestChild = child;
-                    best = UCB1;
-                }
+                bestChild = child;
+                best = UCB1;
             }
-
-            return bestChild;
         }
-        public class SetMonteCarloNode
+
+        return bestChild;
+    }
+    public class SetMonteCarloNode
+    {
+        public static MonteCarloTreeSearchNode SetWin(MonteCarloTreeSearchNode mcts, int win)
         {
-            public static MonteCarloTreeSearchNode SetWin(MonteCarloTreeSearchNode mcts, int win)
-            {
 
-                mcts.wins = win;
-                return mcts;
+            mcts.wins = win;
+            return mcts;
 
-            }
-            public static MonteCarloTreeSearchNode setLoose(MonteCarloTreeSearchNode mcts, int loose)
-            {
+        }
+        public static MonteCarloTreeSearchNode setLoose(MonteCarloTreeSearchNode mcts, int loose)
+        {
 
-                mcts.looses = loose;
-                return mcts;
+            mcts.looses = loose;
+            return mcts;
 
-            }
-            public static int valueWinLoose(MonteCarloTreeSearchNode mcts)
-            {
+        }
+        public static int valueWinLoose(MonteCarloTreeSearchNode mcts)
+        {
 
-                return mcts.wins - mcts.looses;
-
-            }
-
+            return mcts.wins - mcts.looses;
 
         }
 
 
     }
+
+
 }

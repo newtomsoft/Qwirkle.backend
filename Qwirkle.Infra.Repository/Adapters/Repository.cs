@@ -101,16 +101,17 @@ public class Repository : IRepository
         foreach (var tileOnPlayerDao in tilesOnPlayerDao) DbContext.TilesOnBag.Add(tileOnPlayerDao.ToTileOnBagDao(player.GameId));
         DbContext.SaveChanges();
     }
-
-    public void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay)
+    
+    public void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<TileOnBoard> tilesOnBoard)
     {
         var game = DbContext.Games.Single(g => g.Id == gameId);
         game.LastPlayDate = DateTime.UtcNow;
-        var tuplesToPlayList = tilesTupleToPlay.ToList();
-        foreach (var (color, shape, coordinates) in tuplesToPlayList) DbContext.TilesOnBoard.Add(DbContext.TilesOnPlayer.Include(t => t.Tile).First(tp => tp.PlayerId == playerId && tp.Tile.Color == color && tp.Tile.Shape == shape).ToTileOnBoardDao(coordinates));
-        foreach (var (color, shape, _) in tuplesToPlayList) DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.Include(t => t.Tile).First(tp => tp.PlayerId == playerId && tp.Tile.Color == color && tp.Tile.Shape == shape));
+        var tiles = tilesOnBoard.ToList();
+        foreach (var tile in tiles) DbContext.TilesOnBoard.Add(DbContext.TilesOnPlayer.Include(t => t.Tile).First(tp => tp.PlayerId == playerId && tp.Tile.Color == tile.Color && tp.Tile.Shape == tile.Shape).ToTileOnBoardDao(tile.Coordinates));
+        foreach (var tile in tiles) DbContext.TilesOnPlayer.Remove(DbContext.TilesOnPlayer.Include(t => t.Tile).First(tp => tp.PlayerId == playerId && tp.Tile.Color == tile.Color && tp.Tile.Shape == tile.Shape));
         DbContext.SaveChanges();
     }
+
 
     public void SetPlayerTurn(int playerId)
     {

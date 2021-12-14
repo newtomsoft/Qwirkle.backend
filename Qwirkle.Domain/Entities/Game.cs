@@ -18,10 +18,10 @@ public class Game
     }
     public Game(Game game)
     {
-        this.Id = game.Id;
-        this.Board = new Board(game.Board.Tiles);
-        this.Players = game.Players.ConvertAll(x => new Player(x));
-        this.Bag = new Bag(game.Id, game.Bag.Tiles.ConvertAll(x => x));
-        this.GameOver = game.GameOver;
+        Id = game.Id;
+        Board = new Board(game.Board.Tiles);
+        Players = game.Players.ConvertAll(x => new Player(x));
+        Bag = new Bag(game.Id, game.Bag.Tiles.ConvertAll(x => x));
+        GameOver = game.GameOver;
     }
 }

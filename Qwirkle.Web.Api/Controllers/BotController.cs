@@ -34,7 +34,7 @@ public class BotController : ControllerBase
         _logger.Info($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
 
         mcts = new MonteCarloTreeSearchNode(_botUseCase.GetGame(gameId));
-        List<PlayReturn> playReturns = _botUseCase.ComputeDoableMoves(gameId, UserId);
+        var playReturns = _botUseCase.ComputeDoableMoves(gameId, UserId);
         var random = new Random();
         var playerIndexRoot = mcts.game.Players.FindIndex(player => player.IsTurn);
         var mctsroot = Expand.ExpandMcts(mcts, playReturns, playerIndexRoot);
@@ -43,20 +43,19 @@ public class BotController : ControllerBase
         {
             mctsroot.children.ForEach(mcts =>
             {
-                List<MonteCarloTreeSearchNode> searchPath = new List<MonteCarloTreeSearchNode>();
+                var searchPath = new List<MonteCarloTreeSearchNode>();
                 var mcts_rollout = mcts;
                 searchPath.Add(mctsroot);
                 while (!mcts_rollout.game.GameOver)
                 {
                     var player = mcts_rollout.game.Players.Where(player => player.IsTurn).FirstOrDefault();
                     var playerIndex = mcts_rollout.game.Players.FindIndex(player => player.IsTurn);
-                    List<PlayReturn> playReturns = _botUseCase.ComputeDoableMovesMcts(mcts_rollout.game.Board, player, mcts_rollout.game);
+                    var playReturns = _botUseCase.ComputeDoableMovesMcts(mcts_rollout.game.Board, player, mcts_rollout.game);
                     if (playReturns.Count > 0)
                     {
                         mcts_rollout = Expand.ExpandMcts(mcts_rollout, playReturns, playerIndex);
-                        int index = random.Next(playReturns.Count);
-                        var coordinatesrandomAction = new List<PlayReturn>();
-                        coordinatesrandomAction.Add(playReturns[index]);
+                        var index = random.Next(playReturns.Count);
+                        var coordinatesrandomAction = new List<PlayReturn> {playReturns[index]};
                         mcts_rollout.children[index].game.Players[playerIndex].Points += playReturns[index].Points;
                         searchPath.Add(mcts_rollout);
                         mcts_rollout.children[index].number_of_visits++;
@@ -65,18 +64,18 @@ public class BotController : ControllerBase
                     else
                     {
                         var removeTiles = mcts_rollout.game.Players[playerIndex].Rack.Tiles;
-                        int indexRemoveTile = random.Next(removeTiles.Count);
-                        for (int i = 0; i < indexRemoveTile; i++)
+                        var indexRemoveTile = random.Next(removeTiles.Count);
+                        for (var i = 0; i < indexRemoveTile; i++)
                         {
                             var removeTile = removeTiles[random.Next(mcts_rollout.game.Players[playerIndex].Rack.Tiles.Count)];
 
                             mcts_rollout.game.Players[playerIndex].Rack.Tiles.Remove(removeTile);
                             mcts_rollout.game.Bag.Tiles.Add(new TileOnBag(removeTile.Color, removeTile.Shape));
                         }
-                        for (int i = 0; i < indexRemoveTile; i++)
+                        for (var i = 0; i < indexRemoveTile; i++)
                         {
 
-                            int index = random.Next(mcts_rollout.game.Bag.Tiles.Count);
+                            var index = random.Next(mcts_rollout.game.Bag.Tiles.Count);
                             var addTile = mcts_rollout.game.Bag.Tiles[index];
                             mcts_rollout.game.Players[playerIndex].Rack.Tiles.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
                             mcts_rollout.game.Bag.Tiles.Remove(addTile);
@@ -98,7 +97,7 @@ public class BotController : ControllerBase
                     mcts_rollout.looses++;
                 }
 
-                mcts_rollout = Backpropagate.backpropagate(mcts_rollout, searchPath[searchPath.Count - 1]);
+                mcts_rollout = Backpropagate.backpropagate(mcts_rollout, searchPath[^1]);
                 while (mcts_rollout.parent != null)
                 {
 

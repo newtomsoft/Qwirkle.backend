@@ -242,7 +242,7 @@ public class GameScraper : IDisposable
         // brutPoints : "10 (4 last turn)" -> return 10
     }
     private static string GetImageCode(string fullImageName) => fullImageName[(fullImageName.LastIndexOf('/') + 1)..fullImageName.LastIndexOf('.')];
-    public void Dispose() => _driver.Dispose();
+    public void Dispose() => GC.SuppressFinalize(this);
 
     public void CloseEndWindow()
     {

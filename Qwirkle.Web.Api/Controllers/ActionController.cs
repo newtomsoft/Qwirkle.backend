@@ -17,7 +17,7 @@ public class ActionController : ControllerBase
     {
         var playerId = tiles.First().PlayerId;
         var userId = _infoUseCase.GetUserId(playerId);
-        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTiles(playerId, tiles.Select(t => (t.Color, t.Shape, Coordinates.From(t.X, t.Y)))));
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryPlayTiles(playerId, tiles.Select(t => t.ToTileOnBoard())));
     }
 
 

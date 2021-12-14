@@ -72,8 +72,6 @@ public class PlayTilesShould
 
     private static void AddTilesOnPlayers(DefaultDbContext dbContext)
     {
-        var tiles = dbContext.Tiles.ToList();
-
         dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 1, PlayerId = Player9, TileId = 1 });
         dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 2, PlayerId = Player9, TileId = 2 });
         dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 3, PlayerId = Player9, TileId = 3 });
@@ -121,7 +119,7 @@ public class PlayTilesShould
         var repository = new Repository(dbContext);
         var infoUseCase = new InfoUseCase(repository, null);
         var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
-        var tilesToPlay = new List<(TileColor color, TileShape shape, Coordinates coordinates)> { (TileColor.Blue, TileShape.Circle, Coordinates.From(-4, 4)), (TileColor.Blue, TileShape.Clover, Coordinates.From(-4, 3)), (TileColor.Blue, TileShape.Diamond, Coordinates.From(-4, 2)) };
+        var tilesToPlay = new List<TileOnBoard> { new (TileColor.Blue, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Blue, TileShape.Clover, Coordinates.From(-4, 3)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(-4, 2)) };
         coreUseCase.TryPlayTiles(Player3, tilesToPlay).Points.ShouldBe(0);
     }
 
@@ -132,7 +130,7 @@ public class PlayTilesShould
         var repository = new Repository(dbContext);
         var infoUseCase = new InfoUseCase(repository, null);
         var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
-        var tilesToPlay = new List<(TileColor color, TileShape shape, Coordinates coordinates)> { (TileColor.Blue, TileShape.Circle, Coordinates.From(-3, 4)) };
+        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-3, 4)) };
         coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(0);
     }
 
@@ -143,7 +141,7 @@ public class PlayTilesShould
         var repository = new Repository(dbContext);
         var infoUseCase = new InfoUseCase(repository, null);
         var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
-        var tilesToPlay = new List<(TileColor color, TileShape shape, Coordinates coordinates)> { (TileColor.Green, TileShape.Circle, Coordinates.From(-4, 4)), (TileColor.Green, TileShape.Square, Coordinates.From(-4, 3)), (TileColor.Green, TileShape.Diamond, Coordinates.From(-4, 2)) };
+        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Green, TileShape.Square, Coordinates.From(-4, 3)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(-4, 2)) };
         coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(3);
     }
 
@@ -154,7 +152,7 @@ public class PlayTilesShould
         var repository = new Repository(dbContext);
         var infoUseCase = new InfoUseCase(repository, null);
         var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
-        var tilesToPlay = new List<(TileColor color, TileShape shape, Coordinates coordinates)> { (TileColor.Green, TileShape.Circle, Coordinates.From(-3, 4)), (TileColor.Green, TileShape.Square, Coordinates.From(-3, 5)), (TileColor.Green, TileShape.Diamond, Coordinates.From(-3, 6)) };
+        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(-3, 4)), new(TileColor.Green, TileShape.Square, Coordinates.From(-3, 5)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(-3, 6)) };
         InitBoard();
         coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(5);
 
@@ -176,7 +174,7 @@ public class PlayTilesShould
         var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
         InitBoard();
 
-        var tilesToPlay = new List<(TileColor color, TileShape shape, Coordinates coordinates)> { (TileColor.Green, TileShape.Circle, Coordinates.From(5, 7)) };
+        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(5, 7)) };
         coreUseCase.TryPlayTiles(Player9, tilesToPlay).Code.ShouldBe(PlayReturnCode.NotFree);
 
         void InitBoard()

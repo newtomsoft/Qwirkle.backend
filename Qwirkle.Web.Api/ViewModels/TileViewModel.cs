@@ -7,4 +7,6 @@ public class TileViewModel
     public TileShape Shape { get; set; }
     public sbyte X { get; set; }
     public sbyte Y { get; set; }
+
+    public TileOnBoard ToTileOnBoard() => new(Color, Shape, Coordinates.From(X, Y));
 }
