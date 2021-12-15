@@ -181,19 +181,17 @@ public class CoreUseCase
         return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoUseCase.GetPlayer(player.Id).Rack };
     }
 
-    private Rack PlayTiles(Player player, IEnumerable<TileOnBoard> tilesTupleToPlay, int points)
+    private Rack PlayTiles(Player player, IEnumerable<TileOnBoard> tilesToPlay, int points)
     {
-        var tilesTupleToPlayList = tilesTupleToPlay.ToList();
-        var tilesToPlay = tilesTupleToPlayList.ToList();
-
+        var tilesToPlayList = tilesToPlay.ToList();
         player.LastTurnPoints = points;
         player.Points += points;
-        Game.Board.Tiles.AddRange(tilesToPlay);
+        Game.Board.Tiles.AddRange(tilesToPlayList);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();
-        for (byte i = 0; i < tilesToPlay.Count; i++) positionsInRack.Add(i);
+        for (byte i = 0; i < tilesToPlayList.Count; i++) positionsInRack.Add(i);
         _repository.TilesFromBagToPlayer(player, positionsInRack);
-        _repository.TilesFromPlayerToBoard(Game.Id, player.Id, tilesTupleToPlayList);
+        _repository.TilesFromPlayerToBoard(Game.Id, player.Id, tilesToPlayList);
         return _repository.GetPlayer(player.Id).Rack;
     }
 
