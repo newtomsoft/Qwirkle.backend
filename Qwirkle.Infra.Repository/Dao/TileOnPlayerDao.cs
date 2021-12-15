@@ -23,15 +23,5 @@ public class TileOnPlayerDao
 
     public TileOnPlayer ToTileOnPlayer() => new(RackPosition, Tile.Color, Tile.Shape);
 
-    internal TileOnBoardDao ToTileOnBoardDao(Coordinates coordinates)
-    {
-        var tileOnBoardDao = new TileOnBoardDao
-        {
-            PositionX = coordinates.X,
-            PositionY = coordinates.Y,
-            TileId = Id,
-            GameId = Player.GameId
-        };
-        return tileOnBoardDao;
-    }
+    public TileOnBoardDao ToTileOnBoardDao(Coordinates coordinates) => new() {PositionX = coordinates.X, PositionY = coordinates.Y, TileId = TileId, GameId = Player.GameId};
 }
