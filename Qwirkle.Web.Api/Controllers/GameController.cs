@@ -21,14 +21,6 @@ public class GameController : ControllerBase
 
 
     [HttpPost("New")]
-    public ActionResult CreateGame(HashSet<int> usersIds)
-    {
-        usersIds.Add(UserId);
-        _logger.LogInformation("CreateGame with {usersIds}", usersIds);
-        return new ObjectResult(_coreUseCase.CreateGame(usersIds));
-    }
-
-    [HttpPost("New")]
     public ActionResult CreateGame(HashSet<string> usersNames)
     {
         var usersIdsList = new List<int> { UserId };

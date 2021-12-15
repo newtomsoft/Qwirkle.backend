@@ -7,7 +7,7 @@ public class Repository : IRepository
     public Repository(DefaultDbContext defaultDbContext) => DbContext = defaultDbContext;
 
     public int GetUserId(int playerId) => DbContext.Players.First(p => p.Id == playerId).UserId;
-    public int GetUserId(string userName) => DbContext.Users.First(u => u.UserName == userName).Id;
+    public int GetUserId(string userName) => DbContext.Users.Where(u => u.UserName == userName).Select(u => u.Id).FirstOrDefault();
     public void CreateTiles(int gameId)
     {
         AddAllTilesInDataBaseIfNotPresent();
