@@ -28,7 +28,7 @@ public class PlayTilesShould
             AddAllTiles(dbContext);
             AddUsers(dbContext);
             AddGames(dbContext);
-            AddPlayers(dbContext);
+            Add2Players(dbContext);
             AddTilesOnPlayers(dbContext);
             AddTilesOnBag(dbContext);
         }
@@ -61,10 +61,15 @@ public class PlayTilesShould
         dbContext.SaveChanges();
     }
 
-    private static void AddPlayers(DefaultDbContext dbContext)
+    private static void Add2Players(DefaultDbContext dbContext)
     {
         dbContext.Players.Add(new PlayerDao { Id = Player9, UserId = User71, GameId = GameId, GamePosition = 1, GameTurn = true });
         dbContext.Players.Add(new PlayerDao { Id = Player3, UserId = User21, GameId = GameId, GamePosition = 2, GameTurn = false });
+        dbContext.SaveChanges();
+    }
+
+    private static void Add2MorePlayers(DefaultDbContext dbContext)
+    {
         dbContext.Players.Add(new PlayerDao { Id = Player8, UserId = User3, GameId = GameId, GamePosition = 3, GameTurn = false });
         dbContext.Players.Add(new PlayerDao { Id = Player14, UserId = User14, GameId = GameId, GamePosition = 4, GameTurn = false });
         dbContext.SaveChanges();
@@ -181,6 +186,49 @@ public class PlayTilesShould
         {
             dbContext.TilesOnBoard.Add(new TileOnBoardDao { GameId = GameId, TileId = 69, PositionX = 5, PositionY = 7 });
             dbContext.SaveChanges();
+        }
+    }
+
+    [Fact]
+    public void PersistGoodAfter2PlayersMoves()
+    {
+        var dbContext = GetContext();
+        var repository = new Repository(dbContext);
+        var infoUseCase = new InfoUseCase(repository, null);
+        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
+        
+        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(0, 0)), new(TileColor.Green, TileShape.Square, Coordinates.From(0, 1)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(0, 2)) };
+        var playReturn = coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        playReturn.Code.ShouldBe(PlayReturnCode.Ok);
+        var tilesPlayedOrdered = new List<TileOnBoard>();
+        tilesPlayedOrdered = TilesPlayedOrdered();
+        var tilesOnBoardOrdered = TileOnBoardDaoOrdered();
+        TestEqualityTilesPlayedAndPersistenceBoard();
+
+        tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(1, 0)), new(TileColor.Blue, TileShape.Square, Coordinates.From(1, 1)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(1, 2)) };
+        playReturn = coreUseCase.TryPlayTiles(Player3, tilesToPlay);
+        playReturn.Code.ShouldBe(PlayReturnCode.Ok);
+
+        tilesPlayedOrdered = TilesPlayedOrdered();
+        tilesOnBoardOrdered = TileOnBoardDaoOrdered();
+        TestEqualityTilesPlayedAndPersistenceBoard();
+
+
+        List<TileOnBoard> TilesPlayedOrdered()
+        {
+            tilesPlayedOrdered.AddRange(tilesToPlay);
+            tilesPlayedOrdered = tilesPlayedOrdered.OrderBy(t => t.Coordinates.X).ThenBy(t => t.Coordinates.Y).ToList();
+            return tilesPlayedOrdered;
+        }
+
+        List<TileOnBoardDao> TileOnBoardDaoOrdered() => dbContext.TilesOnBoard.Where(t => t.GameId == GameId).OrderBy(t => t.PositionX).ThenBy(t => t.PositionY).ToList();
+
+        void TestEqualityTilesPlayedAndPersistenceBoard()
+        {
+            tilesOnBoardOrdered.Select(t => t.PositionX).ShouldBe(tilesPlayedOrdered.Select(t => t.Coordinates.X));
+            tilesOnBoardOrdered.Select(t => t.PositionY).ShouldBe(tilesPlayedOrdered.Select(t => t.Coordinates.Y));
+            tilesOnBoardOrdered.Select(t => t.Tile.Shape).ShouldBe(tilesPlayedOrdered.Select(t => t.Shape));
+            tilesOnBoardOrdered.Select(t => t.Tile.Color).ShouldBe(tilesPlayedOrdered.Select(t => t.Color));
         }
     }
 }
