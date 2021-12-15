@@ -7,7 +7,7 @@ public class Repository : IRepository
     public Repository(DefaultDbContext defaultDbContext) => DbContext = defaultDbContext;
 
     public int GetUserId(int playerId) => DbContext.Players.First(p => p.Id == playerId).UserId;
-
+    public int GetUserId(string userName) => DbContext.Users.First(u => u.UserName == userName).Id;
     public void CreateTiles(int gameId)
     {
         AddAllTilesInDataBaseIfNotPresent();
@@ -31,7 +31,7 @@ public class Repository : IRepository
     }
     public List<int> GetGamesIdsContainingPlayers() => DbContext.Players.Select(p => p.GameId).Distinct().ToList();
 
-    public List<int> GetAllUsersId() => DbContext.Users.Select(u => u.Id).ToList();
+    public HashSet<int> GetAllUsersId() => DbContext.Users.Select(u => u.Id).ToHashSet();
 
     public List<int> GetUserGamesIds(int userId) => DbContext.Players.Where(p => p.UserId == userId).Select(p => p.GameId).ToList();
 

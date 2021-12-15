@@ -21,9 +21,20 @@ public class GameController : ControllerBase
 
 
     [HttpPost("New")]
-    public ActionResult CreateGame(List<int> usersIds)
+    public ActionResult CreateGame(HashSet<int> usersIds)
     {
         usersIds.Add(UserId);
+        _logger.LogInformation("CreateGame with {usersIds}", usersIds);
+        return new ObjectResult(_coreUseCase.CreateGame(usersIds));
+    }
+
+    [HttpPost("New")]
+    public ActionResult CreateGame(HashSet<string> usersNames)
+    {
+        var usersIdsList = new List<int> { UserId };
+        usersIdsList.AddRange(usersNames.Select(userName => _infoUseCase.GetUserId(userName)));
+        usersIdsList.RemoveAll(id => id == 0);
+        var usersIds = new HashSet<int>(usersIdsList);
         _logger.LogInformation("CreateGame with {usersIds}", usersIds);
         return new ObjectResult(_coreUseCase.CreateGame(usersIds));
     }

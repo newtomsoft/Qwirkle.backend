@@ -10,6 +10,8 @@ public class InfoUseCase
         _repository = repository;
         _notification = notification;
     }
+
+    public int GetUserId(string userName) => _repository.GetUserId(userName);
     public int GetUserId(int playerId) => _repository.GetUserId(playerId);
     public int GetPlayerId(int gameId, int userId) => _repository.GetPlayerId(gameId, userId);
     public Player GetPlayer(int playerId) => _repository.GetPlayer(playerId);
@@ -17,7 +19,7 @@ public class InfoUseCase
     public string GetPlayerNameTurn(int gameId) => _repository.GetPlayerNameTurn(gameId);
     public int GetPlayerIdTurn(int gameId) => _repository.GetPlayerIdToPlay(gameId);
     public List<int> GetGamesIdsContainingPlayers() => _repository.GetGamesIdsContainingPlayers();
-    public List<int> GetAllUsersId() => _repository.GetAllUsersId();
+    public HashSet<int> GetAllUsersId() => _repository.GetAllUsersId();
     public List<int> GetUserGames(int userId) => _repository.GetUserGamesIds(userId);
     public Game GetGameForSuperUser(int gameId) => _repository.GetGame(gameId);
     public Game GetGame(int gameId) => _repository.GetGame(gameId);

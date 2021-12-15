@@ -14,6 +14,7 @@ public interface IRepository
     string GetPlayerNameTurn(int gameId);
     int GetPlayerIdToPlay(int gameId);
     int GetUserId(int playerId);
+    int GetUserId(string userName);
     Tile GetTile(TileColor color, TileShape shape);
     List<int> GetGamesIdsContainingPlayers();
     Player CreatePlayer(int userId, int gameId);
@@ -22,6 +23,6 @@ public interface IRepository
     List<int> GetLeadersPlayersId(int gameId);
     bool IsGameOver(int gameId);
     void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple);
-    List<int> GetAllUsersId();
+    HashSet<int> GetAllUsersId();
     List<int> GetUserGamesIds(int userId);
 }

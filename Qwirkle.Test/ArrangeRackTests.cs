@@ -52,13 +52,13 @@ public class ArrangeRackTests
                 tilesOrderedByPosition[i].ToTile().ShouldBe(constTiles[i].ToTile());
         }
         {
-            _useCase.TryArrangeRack(playerId, new List<(TileColor color, TileShape shape)> { (constTile5!.Color, constTile5.Shape), (constTile4!.Color, constTile4.Shape), (constTile3!.Color, constTile3.Shape), (constTile2!.Color, constTile2.Shape), (constTile1!.Color, constTile1.Shape), (constTile0!.Color, constTile0.Shape) });
+            _useCase.TryArrangeRack(playerId, new List<(TileColor color, TileShape shape)> { (constTile5.Color, constTile5.Shape), (constTile4.Color, constTile4.Shape), (constTile3.Color, constTile3.Shape), (constTile2.Color, constTile2.Shape), (constTile1.Color, constTile1.Shape), (constTile0.Color, constTile0.Shape) });
             var tilesOrderedByPosition = _infoUseCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
             for (var i = 0; i < tilesOrderedByPosition.Count; i++)
                 tilesOrderedByPosition[i].ToTile().ShouldBe(constTiles[^(i + 1)].ToTile());
         }
         {
-            _useCase.TryArrangeRack(playerId, new List<(TileColor color, TileShape shape)> { (constTile3!.Color, constTile3.Shape), (constTile5!.Color, constTile5.Shape), (constTile0!.Color, constTile0.Shape), (constTile2!.Color, constTile2.Shape), (constTile1!.Color, constTile1.Shape), (constTile4!.Color, constTile4.Shape) });
+            _useCase.TryArrangeRack(playerId, new List<(TileColor color, TileShape shape)> { (constTile3.Color, constTile3.Shape), (constTile5.Color, constTile5.Shape), (constTile0.Color, constTile0.Shape), (constTile2.Color, constTile2.Shape), (constTile1.Color, constTile1.Shape), (constTile4.Color, constTile4.Shape) });
             var tilesOrderedByPosition = _infoUseCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
             tilesOrderedByPosition[0].ToTile().ShouldBe(constTiles[3].ToTile());
             tilesOrderedByPosition[1].ToTile().ShouldBe(constTiles[5].ToTile());

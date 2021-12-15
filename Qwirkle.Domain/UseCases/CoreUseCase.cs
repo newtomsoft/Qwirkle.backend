@@ -17,7 +17,7 @@ public class CoreUseCase
         _infoUseCase = infoUseCase;
     }
 
-    public List<Player> CreateGame(List<int> usersIds)
+    public List<Player> CreateGame(HashSet<int> usersIds)
     {
         InitializeGame();
         CreatePlayers(usersIds);
@@ -39,12 +39,12 @@ public class CoreUseCase
         return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
     }
 
-    public PlayReturn TryPlayTiles(int playerId, IEnumerable<TileOnBoard> tilesTupleToPlay)
+    public PlayReturn TryPlayTiles(int playerId, IEnumerable<TileOnBoard> tiles)
     {
         var player = _infoUseCase.GetPlayer(playerId);
         if (!player.IsTurn) return new PlayReturn(player.GameId, PlayReturnCode.NotPlayerTurn, null, null, 0);
 
-        var tilesToPlay = tilesTupleToPlay.ToList();
+        var tilesToPlay = tiles.ToList();
 
         if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, PlayReturnCode.PlayerDoesntHaveThisTile, null, null, 0);
 
@@ -80,50 +80,11 @@ public class CoreUseCase
         return skipTurnReturn;
     }
 
-    public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay)
+    public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<TileOnBoard> tiles)
     {
         var player = _infoUseCase.GetPlayer(playerId);
-        var tilesToPlay = GetTilesOnBoard(tilesTupleToPlay);
+        var tilesToPlay = tiles.ToList();
         return Play(tilesToPlay, player, true);
-    }
-
-    private void InitializeGame() => Game = _repository.CreateGame(DateTime.UtcNow);
-
-    private void DealTilesToPlayers()
-    {
-        var rackPositions = new List<byte>();
-        for (byte i = 0; i < TilesNumberPerPlayer; i++)
-            rackPositions.Add(i);
-
-        foreach (var player in Game.Players)
-            _repository.TilesFromBagToPlayer(player, rackPositions);
-    }
-
-    private void CreateTiles() => _repository.CreateTiles(Game.Id);
-
-    private void CreatePlayers(List<int> usersIds)
-    {
-        Game.Players = new List<Player>();
-        usersIds.ForEach(userId => Game.Players.Add(_repository.CreatePlayer(userId, Game.Id)));
-        SetPositionsPlayers();
-        Game.Players.ForEach(player => _repository.UpdatePlayer(player));
-    }
-
-    private void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple) => _repository.ArrangeRack(player, tilesTuple);
-
-    private void SetPositionsPlayers()
-    {
-        Game.Players = Game.Players.OrderBy(_ => Guid.NewGuid()).ToList();
-        for (var i = 0; i < Game.Players.Count; i++)
-            Game.Players[i].GamePosition = (byte)(i + 1);
-    }
-
-    private void SelectFirstPlayer()
-    {
-        var playersWithNumberCanBePlayedTiles = new Dictionary<int, int>();
-        Game.Players.ForEach(p => playersWithNumberCanBePlayedTiles[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
-        var playerIdToPlay = playersWithNumberCanBePlayedTiles.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
-        SetPlayerTurn(playerIdToPlay);
     }
 
     public PlayReturn Play(List<TileOnBoard> tilesPlayed, Player player, bool simulationMode = false)
@@ -151,6 +112,45 @@ public class CoreUseCase
         bool IsBoardNotEmpty() => Game.Board.Tiles.Count > 0;
         bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => Game.Board.IsIsolatedTile(tile));
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !Game.Board.IsFreeTile(tile));
+    }
+
+    private void InitializeGame() => Game = _repository.CreateGame(DateTime.UtcNow);
+
+    private void DealTilesToPlayers()
+    {
+        var rackPositions = new List<byte>();
+        for (byte i = 0; i < TilesNumberPerPlayer; i++)
+            rackPositions.Add(i);
+
+        foreach (var player in Game.Players)
+            _repository.TilesFromBagToPlayer(player, rackPositions);
+    }
+
+    private void CreateTiles() => _repository.CreateTiles(Game.Id);
+
+    private void CreatePlayers(HashSet<int> usersIds)
+    {
+        Game.Players = new List<Player>();
+        foreach (var userId in usersIds) Game.Players.Add(_repository.CreatePlayer(userId, Game.Id));
+        SetPositionsPlayers();
+        Game.Players.ForEach(player => _repository.UpdatePlayer(player));
+    }
+
+    private void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple) => _repository.ArrangeRack(player, tilesTuple);
+
+    private void SetPositionsPlayers()
+    {
+        Game.Players = Game.Players.OrderBy(_ => Guid.NewGuid()).ToList();
+        for (var i = 0; i < Game.Players.Count; i++)
+            Game.Players[i].GamePosition = (byte)(i + 1);
+    }
+
+    private void SelectFirstPlayer()
+    {
+        var playersWithNumberCanBePlayedTiles = new Dictionary<int, int>();
+        Game.Players.ForEach(p => playersWithNumberCanBePlayedTiles[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
+        var playerIdToPlay = playersWithNumberCanBePlayedTiles.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
+        SetPlayerTurn(playerIdToPlay);
     }
 
     private SkipTurnReturn SkipTurn(Player player)
@@ -224,6 +224,4 @@ public class CoreUseCase
     }
 
     private IEnumerable<Tile> GetTiles(IEnumerable<(TileColor color, TileShape shape)> tilesTuples) => tilesTuples.Select(tileTuple => _repository.GetTile(tileTuple.color, tileTuple.shape));
-
-    private static List<TileOnBoard> GetTilesOnBoard(IEnumerable<(TileColor color, TileShape shape, Coordinates coordinates)> tilesTupleToPlay) => tilesTupleToPlay.Select(tileTupleToPlay => new TileOnBoard(tileTupleToPlay.color, tileTupleToPlay.shape, tileTupleToPlay.coordinates)).ToList();
 }

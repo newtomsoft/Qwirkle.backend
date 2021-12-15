@@ -3,6 +3,12 @@
 public class PlayTilesShould
 {
     #region private
+
+    private DefaultDbContext _dbContext = null!;
+    private Repository _repository = null!;
+    private InfoUseCase _infoUseCase = null!;
+    private CoreUseCase _coreUseCase = null!;
+
     private const int TotalTiles = 108;
     private const int GameId = 7;
     private const int User71 = 71;
@@ -13,222 +19,215 @@ public class PlayTilesShould
     private const int Player3 = 3;
     private const int Player8 = 8;
     private const int Player14 = 14;
-    private static DefaultDbContext GetContext()
+
+    private void InitDbContext()
     {
         var contextOptions = new DbContextOptionsBuilder<DefaultDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())
             .Options;
 
-        var dbContext = new DefaultDbContext(contextOptions);
+        _dbContext = new DefaultDbContext(contextOptions);
         InitializeData();
-        return dbContext;
-
-        void InitializeData()
-        {
-            AddAllTiles(dbContext);
-            AddUsers(dbContext);
-            AddGames(dbContext);
-            Add2Players(dbContext);
-            AddTilesOnPlayers(dbContext);
-            AddTilesOnBag(dbContext);
-        }
     }
 
-    private static void AddAllTiles(DefaultDbContext dbContext)
+    private void InitializeData()
+    {
+        AddAllTiles();
+        AddUsers();
+        AddGames();
+        Add2Players();
+        AddTilesOnPlayers();
+        AddTilesOnBag();
+    }
+
+    private void InitTest()
+    {
+        InitDbContext();
+        _repository = new Repository(_dbContext);
+        _infoUseCase = new InfoUseCase(_repository, null);
+        _coreUseCase = new CoreUseCase(_repository, null, _infoUseCase);
+    }
+
+    private void AddAllTiles()
     {
         const int numberOfSameTile = 3;
         var id = 0;
         for (var i = 0; i < numberOfSameTile; i++)
             foreach (var color in (TileColor[])Enum.GetValues(typeof(TileColor)))
                 foreach (var shape in (TileShape[])Enum.GetValues(typeof(TileShape)))
-                    dbContext.Tiles.Add(new TileDao { Id = ++id, Color = color, Shape = shape });
+                    _dbContext.Tiles.Add(new TileDao { Id = ++id, Color = color, Shape = shape });
 
-        dbContext.SaveChanges();
+        _dbContext.SaveChanges();
     }
 
-    private static void AddGames(DefaultDbContext dbContext)
+    private void AddGames()
     {
-        dbContext.Games.Add(new GameDao { Id = GameId, });
-        dbContext.SaveChanges();
+        _dbContext.Games.Add(new GameDao { Id = GameId, });
+        _dbContext.SaveChanges();
     }
 
-    private static void AddUsers(DefaultDbContext dbContext)
+    private void AddUsers()
     {
-        dbContext.Users.Add(new UserDao { Id = User71 });
-        dbContext.Users.Add(new UserDao { Id = User21 });
-        dbContext.Users.Add(new UserDao { Id = User3 });
-        dbContext.Users.Add(new UserDao { Id = User14 });
-        dbContext.SaveChanges();
+        _dbContext.Users.Add(new UserDao { Id = User71 });
+        _dbContext.Users.Add(new UserDao { Id = User21 });
+        _dbContext.Users.Add(new UserDao { Id = User3 });
+        _dbContext.Users.Add(new UserDao { Id = User14 });
+        _dbContext.SaveChanges();
     }
 
-    private static void Add2Players(DefaultDbContext dbContext)
+    private void Add2Players()
     {
-        dbContext.Players.Add(new PlayerDao { Id = Player9, UserId = User71, GameId = GameId, GamePosition = 1, GameTurn = true });
-        dbContext.Players.Add(new PlayerDao { Id = Player3, UserId = User21, GameId = GameId, GamePosition = 2, GameTurn = false });
-        dbContext.SaveChanges();
+        _dbContext.Players.Add(new PlayerDao { Id = Player9, UserId = User71, GameId = GameId, GamePosition = 1, GameTurn = true });
+        _dbContext.Players.Add(new PlayerDao { Id = Player3, UserId = User21, GameId = GameId, GamePosition = 2, GameTurn = false });
+        _dbContext.SaveChanges();
     }
 
-    private static void Add2MorePlayers(DefaultDbContext dbContext)
+    private void Add2MorePlayers()
     {
-        dbContext.Players.Add(new PlayerDao { Id = Player8, UserId = User3, GameId = GameId, GamePosition = 3, GameTurn = false });
-        dbContext.Players.Add(new PlayerDao { Id = Player14, UserId = User14, GameId = GameId, GamePosition = 4, GameTurn = false });
-        dbContext.SaveChanges();
+        _dbContext.Players.Add(new PlayerDao { Id = Player8, UserId = User3, GameId = GameId, GamePosition = 3, GameTurn = false });
+        _dbContext.Players.Add(new PlayerDao { Id = Player14, UserId = User14, GameId = GameId, GamePosition = 4, GameTurn = false });
+        _dbContext.SaveChanges();
     }
 
-    private static void AddTilesOnPlayers(DefaultDbContext dbContext)
+    private void AddTilesOnPlayers()
     {
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 1, PlayerId = Player9, TileId = 1 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 2, PlayerId = Player9, TileId = 2 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 3, PlayerId = Player9, TileId = 3 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 4, PlayerId = Player9, TileId = 4 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 5, PlayerId = Player9, TileId = 5 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 6, PlayerId = Player9, TileId = 6 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 1, PlayerId = Player9, TileId = 1 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 2, PlayerId = Player9, TileId = 2 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 3, PlayerId = Player9, TileId = 3 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 4, PlayerId = Player9, TileId = 4 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 5, PlayerId = Player9, TileId = 5 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 6, PlayerId = Player9, TileId = 6 });
 
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 11, PlayerId = Player3, TileId = 7 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 12, PlayerId = Player3, TileId = 8 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 13, PlayerId = Player3, TileId = 9 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 14, PlayerId = Player3, TileId = 10 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 15, PlayerId = Player3, TileId = 11 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 16, PlayerId = Player3, TileId = 12 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 11, PlayerId = Player3, TileId = 7 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 12, PlayerId = Player3, TileId = 8 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 13, PlayerId = Player3, TileId = 9 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 14, PlayerId = Player3, TileId = 10 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 15, PlayerId = Player3, TileId = 11 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 16, PlayerId = Player3, TileId = 12 });
 
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 21, PlayerId = Player8, TileId = 13 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 22, PlayerId = Player8, TileId = 14 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 23, PlayerId = Player8, TileId = 15 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 24, PlayerId = Player8, TileId = 16 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 25, PlayerId = Player8, TileId = 17 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 26, PlayerId = Player8, TileId = 18 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 21, PlayerId = Player8, TileId = 13 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 22, PlayerId = Player8, TileId = 14 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 23, PlayerId = Player8, TileId = 15 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 24, PlayerId = Player8, TileId = 16 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 25, PlayerId = Player8, TileId = 17 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 26, PlayerId = Player8, TileId = 18 });
 
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 31, PlayerId = Player14, TileId = 19 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 32, PlayerId = Player14, TileId = 20 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 33, PlayerId = Player14, TileId = 21 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 34, PlayerId = Player14, TileId = 22 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 35, PlayerId = Player14, TileId = 23 });
-        dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 36, PlayerId = Player14, TileId = 24 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 31, PlayerId = Player14, TileId = 19 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 32, PlayerId = Player14, TileId = 20 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 33, PlayerId = Player14, TileId = 21 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 34, PlayerId = Player14, TileId = 22 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 35, PlayerId = Player14, TileId = 23 });
+        _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 36, PlayerId = Player14, TileId = 24 });
 
-        dbContext.SaveChanges();
+        _dbContext.SaveChanges();
     }
 
-    private static void AddTilesOnBag(DefaultDbContext dbContext)
+    private void AddTilesOnBag()
     {
         for (var i = 1; i <= TotalTiles; i++)
-            dbContext.TilesOnBag.Add(new TileOnBagDao { Id = 100 + i, GameId = GameId, TileId = i });
-
-        dbContext.SaveChanges();
+            _dbContext.TilesOnBag.Add(new TileOnBagDao { Id = 100 + i, GameId = GameId, TileId = i });
+        _dbContext.SaveChanges();
     }
     #endregion
 
     [Fact]
     public void Return0WhenItsNotTurnPlayer()
     {
-        var dbContext = GetContext();
-        var repository = new Repository(dbContext);
-        var infoUseCase = new InfoUseCase(repository, null);
-        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
+        InitTest();
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Blue, TileShape.Clover, Coordinates.From(-4, 3)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(-4, 2)) };
-        coreUseCase.TryPlayTiles(Player3, tilesToPlay).Points.ShouldBe(0);
+        var playReturn = _coreUseCase.TryPlayTiles(Player3, tilesToPlay);
+        playReturn.Code.ShouldBe(PlayReturnCode.NotPlayerTurn);
+        playReturn.Points.ShouldBe(0);
     }
 
     [Fact]
     public void Return0After1PlayerHavePlayedNotHisTiles()
     {
-        var dbContext = GetContext();
-        var repository = new Repository(dbContext);
-        var infoUseCase = new InfoUseCase(repository, null);
-        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
+        InitTest();
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-3, 4)) };
-        coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(0);
+        var playReturn = _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        playReturn.Code.ShouldBe(PlayReturnCode.PlayerDoesntHaveThisTile);
+        playReturn.Points.ShouldBe(0);
     }
 
     [Fact]
     public void Return3After1PlayerHavePlayedHisTiles()
     {
-        var dbContext = GetContext();
-        var repository = new Repository(dbContext);
-        var infoUseCase = new InfoUseCase(repository, null);
-        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
+        InitTest();
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Green, TileShape.Square, Coordinates.From(-4, 3)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(-4, 2)) };
-        coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(3);
+        var playReturn = _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        playReturn.Code.ShouldBe(PlayReturnCode.Ok);
+        playReturn.Points.ShouldBe(3);
     }
 
     [Fact]
     public void Return5After2PlayersHavePlayed()
     {
-        var dbContext = GetContext();
-        var repository = new Repository(dbContext);
-        var infoUseCase = new InfoUseCase(repository, null);
-        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
-        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(-3, 4)), new(TileColor.Green, TileShape.Square, Coordinates.From(-3, 5)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(-3, 6)) };
+        InitTest();
         InitBoard();
-        coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(5);
+
+        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(-3, 4)), new(TileColor.Green, TileShape.Square, Coordinates.From(-3, 5)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(-3, 6)) };
+        _coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(5);
 
         void InitBoard()
         {
-            dbContext.TilesOnBoard.Add(new TileOnBoardDao { GameId = GameId, TileId = 74, PositionX = -4, PositionY = 4 });
-            dbContext.TilesOnBoard.Add(new TileOnBoardDao { GameId = GameId, TileId = 75, PositionX = -4, PositionY = 3 });
-            dbContext.TilesOnBoard.Add(new TileOnBoardDao { GameId = GameId, TileId = 76, PositionX = -4, PositionY = 2 });
-            dbContext.SaveChanges();
+            _dbContext.TilesOnBoard.Add(new TileOnBoardDao { GameId = GameId, TileId = 74, PositionX = -4, PositionY = 4 });
+            _dbContext.TilesOnBoard.Add(new TileOnBoardDao { GameId = GameId, TileId = 75, PositionX = -4, PositionY = 3 });
+            _dbContext.TilesOnBoard.Add(new TileOnBoardDao { GameId = GameId, TileId = 76, PositionX = -4, PositionY = 2 });
+            _dbContext.SaveChanges();
         }
     }
 
     [Fact]
     public void ReturnNotFreeWhenCoordinateOnBoardIsNotFree()
     {
-        var dbContext = GetContext();
-        var repository = new Repository(dbContext);
-        var infoUseCase = new InfoUseCase(repository, null);
-        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
+        InitTest();
         InitBoard();
 
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(5, 7)) };
-        coreUseCase.TryPlayTiles(Player9, tilesToPlay).Code.ShouldBe(PlayReturnCode.NotFree);
+        _coreUseCase.TryPlayTiles(Player9, tilesToPlay).Code.ShouldBe(PlayReturnCode.NotFree);
 
         void InitBoard()
         {
-            dbContext.TilesOnBoard.Add(new TileOnBoardDao { GameId = GameId, TileId = 69, PositionX = 5, PositionY = 7 });
-            dbContext.SaveChanges();
+            _dbContext.TilesOnBoard.Add(new TileOnBoardDao { GameId = GameId, TileId = 69, PositionX = 5, PositionY = 7 });
+            _dbContext.SaveChanges();
         }
     }
 
     [Fact]
     public void PersistGoodAfter2PlayersMoves()
     {
-        var dbContext = GetContext();
-        var repository = new Repository(dbContext);
-        var infoUseCase = new InfoUseCase(repository, null);
-        var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
+        InitTest();
+        List<TileOnBoard> tilesToPlay;
+        List<TileOnBoard> tilesPlayedOrdered = new List<TileOnBoard>();
 
-        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(0, 0)), new(TileColor.Green, TileShape.Square, Coordinates.From(0, 1)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(0, 2)) };
-        var playReturn = coreUseCase.TryPlayTiles(Player9, tilesToPlay);
-        playReturn.Code.ShouldBe(PlayReturnCode.Ok);
-        var tilesPlayedOrdered = new List<TileOnBoard>();
-        tilesPlayedOrdered = TilesPlayedOrdered();
-        var tilesOnBoardOrdered = TileOnBoardDaoOrdered();
-        TestEqualityTilesPlayedAndPersistenceBoard();
+        tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(0, 0)), new(TileColor.Green, TileShape.Square, Coordinates.From(0, 1)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(0, 2)) };
+        tilesPlayedOrdered = PlayTilesAndTestPersistence(Player9, tilesToPlay, tilesPlayedOrdered);
 
         tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(1, 0)), new(TileColor.Blue, TileShape.Square, Coordinates.From(1, 1)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(1, 2)) };
-        playReturn = coreUseCase.TryPlayTiles(Player3, tilesToPlay);
+        tilesPlayedOrdered = PlayTilesAndTestPersistence(Player3, tilesToPlay, tilesPlayedOrdered);
+    }
+
+    private static List<TileOnBoardDao> TileOnBoardDaoOrdered(DefaultDbContext _dbContext) => _dbContext.TilesOnBoard.Where(t => t.GameId == GameId).OrderBy(t => t.PositionX).ThenBy(t => t.PositionY).ToList();
+
+    private List<TileOnBoard> Order(List<TileOnBoard> tilesToPlay) => tilesToPlay.OrderBy(t => t.Coordinates.X).ThenBy(t => t.Coordinates.Y).ToList();
+
+    private static void TestEqualityBetweenTilesPlayedAndPersistenceBoard(IReadOnlyCollection<TileOnBoardDao> tilesOnBoard, IReadOnlyCollection<TileOnBoard> tilesPlayed)
+    {
+        tilesOnBoard.Select(t => t.PositionX).ShouldBe(tilesPlayed.Select(t => t.Coordinates.X));
+        tilesOnBoard.Select(t => t.PositionY).ShouldBe(tilesPlayed.Select(t => t.Coordinates.Y));
+        tilesOnBoard.Select(t => t.Tile.Shape).ShouldBe(tilesPlayed.Select(t => t.Shape));
+        tilesOnBoard.Select(t => t.Tile.Color).ShouldBe(tilesPlayed.Select(t => t.Color));
+    }
+
+    private List<TileOnBoard> PlayTilesAndTestPersistence(int playerId, List<TileOnBoard> tilesToPlay, List<TileOnBoard> tilesPlayedOrdered)
+    {
+        var playReturn = _coreUseCase.TryPlayTiles(playerId, tilesToPlay);
         playReturn.Code.ShouldBe(PlayReturnCode.Ok);
-
-        tilesPlayedOrdered = TilesPlayedOrdered();
-        tilesOnBoardOrdered = TileOnBoardDaoOrdered();
-        TestEqualityTilesPlayedAndPersistenceBoard();
-
-
-        List<TileOnBoard> TilesPlayedOrdered()
-        {
-            tilesPlayedOrdered.AddRange(tilesToPlay);
-            tilesPlayedOrdered = tilesPlayedOrdered.OrderBy(t => t.Coordinates.X).ThenBy(t => t.Coordinates.Y).ToList();
-            return tilesPlayedOrdered;
-        }
-
-        List<TileOnBoardDao> TileOnBoardDaoOrdered() => dbContext.TilesOnBoard.Where(t => t.GameId == GameId).OrderBy(t => t.PositionX).ThenBy(t => t.PositionY).ToList();
-
-        void TestEqualityTilesPlayedAndPersistenceBoard()
-        {
-            tilesOnBoardOrdered.Select(t => t.PositionX).ShouldBe(tilesPlayedOrdered.Select(t => t.Coordinates.X));
-            tilesOnBoardOrdered.Select(t => t.PositionY).ShouldBe(tilesPlayedOrdered.Select(t => t.Coordinates.Y));
-            tilesOnBoardOrdered.Select(t => t.Tile.Shape).ShouldBe(tilesPlayedOrdered.Select(t => t.Shape));
-            tilesOnBoardOrdered.Select(t => t.Tile.Color).ShouldBe(tilesPlayedOrdered.Select(t => t.Color));
-        }
+        tilesPlayedOrdered.AddRange(tilesToPlay);
+        tilesPlayedOrdered = Order(tilesPlayedOrdered);
+        var tilesOnBoardOrdered = TileOnBoardDaoOrdered(_dbContext);
+        TestEqualityBetweenTilesPlayedAndPersistenceBoard(tilesOnBoardOrdered, tilesPlayedOrdered);
+        return tilesPlayedOrdered;
     }
 }

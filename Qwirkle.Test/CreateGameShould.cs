@@ -32,7 +32,7 @@ public class CreateGameShould
     [Fact]
     public void CreateGoodPlayersWithOrder1234()
     {
-        var userIds = new List<int> { User1Id, User2Id, User3Id, User4Id };
+        var userIds = new HashSet<int> { User1Id, User2Id, User3Id, User4Id };
         var players = _coreUseCase.CreateGame(userIds);
 
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
@@ -48,7 +48,7 @@ public class CreateGameShould
     [Fact]
     public void CreateGoodPlayersWithOrder123()
     {
-        var userIds = new List<int> { User1Id, User3Id, User4Id };
+        var userIds = new HashSet<int> { User1Id, User3Id, User4Id };
         var players = _coreUseCase.CreateGame(userIds);
 
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
@@ -62,7 +62,7 @@ public class CreateGameShould
     [Fact]
     public void CreateGoodPlayersWithOrder12()
     {
-        var userIds = new List<int> { User3Id, User4Id };
+        var userIds = new HashSet<int> { User3Id, User4Id };
         var players = _coreUseCase.CreateGame(userIds);
 
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
@@ -75,7 +75,7 @@ public class CreateGameShould
     [Fact]
     public void CreateGoodPlayerWithOrder1()
     {
-        var userIds = new List<int> { User3Id };
+        var userIds = new HashSet<int> { User3Id };
         var players = _coreUseCase.CreateGame(userIds);
         Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
         Assert.Equal(1, players.Count(p => p.IsTurn));
