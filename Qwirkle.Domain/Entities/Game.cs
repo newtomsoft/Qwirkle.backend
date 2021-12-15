@@ -19,7 +19,7 @@ public class Game
     public Game(Game game)
     {
         Id = game.Id;
-        Board = new Board(game.Board.Tiles);
+        Board = new Board(game.Board.Tiles.ConvertAll(x => x));
         Players = game.Players.ConvertAll(x => new Player(x));
         Bag = new Bag(game.Id, game.Bag.Tiles.ConvertAll(x => x));
         GameOver = game.GameOver;

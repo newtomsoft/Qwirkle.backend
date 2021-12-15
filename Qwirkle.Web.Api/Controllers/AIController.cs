@@ -27,7 +27,8 @@ public class AiController : ControllerBase
         _logger.Info($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
 
         _mcts = new MonteCarloTreeSearchNode(_botUseCase.GetGame(gameId));
-        var playReturns = _botUseCase.ComputeDoableMoves(gameId, UserId);
+        var playerRoot = _mcts.Game.Players.FirstOrDefault(p => p.IsTurn);
+        var playReturns = _botUseCase.ComputeDoableMovesMcts(_mcts.Game.Board, playerRoot, _mcts.Game);
         var random = new Random();
         var playerIndexRoot = _mcts.Game.Players.FindIndex(player => player.IsTurn);
         var mctsRoot = Expand.ExpandMcts(_mcts, playReturns, playerIndexRoot);
@@ -42,20 +43,31 @@ public class AiController : ControllerBase
                 while (!mctsRollout.Game.GameOver)
                 {
                     var player = mctsRollout.Game.Players.FirstOrDefault(p => p.IsTurn);
-                    var playerIndex = mctsRollout.Game.Players.FindIndex(p => p.IsTurn);
+                    var playerIndex = mctsRollout.Game.Players.FindIndex(p => p.IsTurn==true);
                     var currentPlayReturns = _botUseCase.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game);
                     //todo voir si ComputeDoableMoves(Player player, Board board, Coordinates originCoordinates, bool simulation) peut faire l'affaire ou l'adapter
 
 
                     if (currentPlayReturns.Count > 0)
                     {
-                        mctsRollout = Expand.ExpandMcts(mctsRollout, currentPlayReturns, playerIndex);
+                        // mctsRollout = Expand.ExpandMcts(mctsRollout, currentPlayReturns, playerIndex);
+                        // var index = random.Next(currentPlayReturns.Count);
+                        // var coordinatesrandomAction = new List<PlayReturn> { currentPlayReturns[index] };
+                        // mctsRollout.Children[index].Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
+                        // searchPath.Add(mctsRollout);
+                        // mctsRollout.Children[index].NumberOfVisits++;
+                        // mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children[index].Game, mctsRollout);
+                        
+                        
                         var index = random.Next(currentPlayReturns.Count);
                         var coordinatesrandomAction = new List<PlayReturn> { currentPlayReturns[index] };
-                        mctsRollout.Children[index].Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
+                        mctsRollout = Expand.ExpandMcts(mctsRollout, coordinatesrandomAction, playerIndex);
+                        mctsRollout.Children[0].Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
                         searchPath.Add(mctsRollout);
-                        mctsRollout.Children[index].NumberOfVisits++;
-                        mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children[index].Game, mctsRollout);
+                        mctsRollout.Children[0].NumberOfVisits++;
+                        
+                        mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children[0].Game, mctsRollout);
+ 
                     }
                     else
                     {

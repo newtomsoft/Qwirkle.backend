@@ -36,7 +36,7 @@ public class Player
         GamePosition = player.GamePosition;
         Points = player.Points;
         LastTurnPoints = player.LastTurnPoints;
-        Rack = new Rack(player.Rack.Tiles);
+        Rack = new Rack(player.Rack.Tiles.ConvertAll(x=>x));
         IsTurn = player.IsTurn;
         LastTurnSkipped = player.LastTurnSkipped;
     }
