@@ -196,7 +196,7 @@ public class PlayTilesShould
         var repository = new Repository(dbContext);
         var infoUseCase = new InfoUseCase(repository, null);
         var coreUseCase = new CoreUseCase(repository, null, infoUseCase);
-        
+
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(0, 0)), new(TileColor.Green, TileShape.Square, Coordinates.From(0, 1)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(0, 2)) };
         var playReturn = coreUseCase.TryPlayTiles(Player9, tilesToPlay);
         playReturn.Code.ShouldBe(PlayReturnCode.Ok);

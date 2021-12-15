@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using Qwirkle.Domain.UseCases.Ai;
+﻿using Qwirkle.Domain.UseCases.Ai;
+using System.Reflection;
 
 namespace Qwirkle.Web.Api.Controllers;
 
@@ -45,7 +45,7 @@ public class AiController : ControllerBase
                     var playerIndex = mctsRollout.Game.Players.FindIndex(p => p.IsTurn);
                     var currentPlayReturns = _botUseCase.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game);
                     //todo voir si ComputeDoableMoves(Player player, Board board, Coordinates originCoordinates, bool simulation) peut faire l'affaire ou l'adapter
-                    
+
 
                     if (currentPlayReturns.Count > 0)
                     {

@@ -26,7 +26,7 @@ public class ActionController : ControllerBase
     {
         var gameId = tiles.First().GameId;
         var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
-        return  new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => (t.Color, t.Shape, Coordinates.From(t.X, t.Y)))));
+        return new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => (t.Color, t.Shape, Coordinates.From(t.X, t.Y)))));
     }
 
     [HttpPost("SwapTiles/")]

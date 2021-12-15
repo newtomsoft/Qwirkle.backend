@@ -1,5 +1,3 @@
-using System.Configuration;
-
 var appBuilder = WebApplication.CreateBuilder(args);
 LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetSection("NLog"));
 appBuilder.Services.AddCors(options =>
