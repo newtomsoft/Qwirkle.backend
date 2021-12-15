@@ -31,6 +31,15 @@ public class GameController : ControllerBase
         return new ObjectResult(_coreUseCase.CreateGame(usersIds));
     }
 
+    [HttpPost("NewRandom")]
+    public ActionResult CreateRandomGame()
+    {
+        var usersIds = new HashSet<int> { UserId };
+        //todo : add user waiting or wait...
+        _logger.LogInformation("CreateGame with {usersIds}", usersIds);
+        return new ObjectResult(_coreUseCase.CreateGame(usersIds));
+    }
+
 
     [HttpGet("{gameId:int}")]
     public ActionResult GetGame(int gameId) => new ObjectResult(_infoUseCase.GetGameWithTilesOnlyForAuthenticatedUser(gameId, UserId));
