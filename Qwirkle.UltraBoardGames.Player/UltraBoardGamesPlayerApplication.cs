@@ -3,15 +3,13 @@
 public class UltraBoardGamesPlayerApplication
 {
     private readonly ILogger _logger;
-    private readonly CoreUseCase _coreUseCase;
     private readonly BotUseCase _botUseCase;
     private readonly GameScraper _scraper;
     private readonly Coordinates _originCoordinates = Coordinates.From(25, 25);
 
-    public UltraBoardGamesPlayerApplication(ILogger<UltraBoardGamesPlayerApplication> logger, CoreUseCase coreUseCase, BotUseCase botUseCase, GameScraper gameScraper)
+    public UltraBoardGamesPlayerApplication(ILogger<UltraBoardGamesPlayerApplication> logger, BotUseCase botUseCase, GameScraper gameScraper)
     {
         _logger = logger;
-        _coreUseCase = coreUseCase;
         _botUseCase = botUseCase;
         _scraper = gameScraper;
     }
@@ -36,7 +34,6 @@ public class UltraBoardGamesPlayerApplication
             _scraper.TakeScreenShot();
             gameStatus = _scraper.GetGameStatus();
             if (gameStatus != GameStatus.InProgress) break;
-            _ = _scraper.GetTilesOnBag();
             var playerPoints = _scraper.GetPlayerPoints();
             var opponentPoints = _scraper.GetOpponentPoints();
             var tilesOnPlayer = _scraper.GetTilesOnPlayer();
@@ -44,11 +41,10 @@ public class UltraBoardGamesPlayerApplication
             var opponent = Player(opponentPoints, tilesOnPlayer, false);
             var players = new List<Domain.Entities.Player> { bot, opponent };
 
-            _coreUseCase.Game = new Game(0, board, players, false);
-
+            var game = new Game(0, board, players, false);
             var tilesToPlay = board.Tiles.Count > 0
-                ? _botUseCase.GetBestMove(bot, board)
-                : _botUseCase.GetBestMove(bot, board, _originCoordinates);
+                ? _botUseCase.GetMostPointsMove(bot, game)
+                : _botUseCase.GetMostPointsMove(bot, game, _originCoordinates);
 
             List<TileOnBoard> otherTilesToPlay;
             var copyBoard = Board.From(board.Tiles);

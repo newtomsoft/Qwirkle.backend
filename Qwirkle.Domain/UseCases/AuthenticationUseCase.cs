@@ -16,5 +16,9 @@ public class AuthenticationUseCase
 
     public async Task LogOutAsync() => await _authentication.LogoutOutAsync();
 
-    public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => await _authentication.LoginAsync(pseudo, password, isRemember);
+    public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember)
+    {
+        var toto = await _authentication.LoginAsync(pseudo, password, isRemember);
+        return toto;
+    }
 }

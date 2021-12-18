@@ -32,7 +32,7 @@ public class ArrangeRackTests
     public void TryArrangeRackShouldArrangeRackWhenItsPossible()
     {
         var usersIds = _infoUseCase.GetAllUsersId();
-        var players = _useCase.CreateGame(usersIds);
+        var players = _useCase.CreateGame(usersIds.ToHashSet());
         players = players.OrderBy(p => p.Id).ToList();
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Shape == TileShape.Circle && t.Color == TileColor.Green);
         var constTile1 = _dbContext.Tiles.FirstOrDefault(t => t.Shape == TileShape.Clover && t.Color == TileColor.Blue);

@@ -31,7 +31,7 @@ public class Repository : IRepository
     }
     public List<int> GetGamesIdsContainingPlayers() => DbContext.Players.Select(p => p.GameId).Distinct().ToList();
 
-    public HashSet<int> GetAllUsersId() => DbContext.Users.Select(u => u.Id).ToHashSet();
+    public List<int> GetAllUsersId() => DbContext.Users.Select(u => u.Id).ToList();
 
     public List<int> GetUserGamesIds(int userId) => DbContext.Players.Where(p => p.UserId == userId).Select(p => p.GameId).ToList();
 
