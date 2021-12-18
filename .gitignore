@@ -346,3 +346,5 @@ healthchecksdb
 /.vscode/
 /Qwirkle.Web.Api/qwirkle.sqlite-shm
 /Qwirkle.Web.Api/qwirkle.sqlite-wal
+/Qwirkle.Web.Api/appsettings.Staging.json
+/Qwirkle.Web.Api/appsettings.Production.json
