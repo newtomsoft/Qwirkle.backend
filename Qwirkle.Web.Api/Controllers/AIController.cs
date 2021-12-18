@@ -28,90 +28,89 @@ public class AiController : ControllerBase
 
         _mcts = new MonteCarloTreeSearchNode(_botUseCase.GetGame(gameId));
         var playerRoot = _mcts.Game.Players.FirstOrDefault(p => p.IsTurn);
-        var playReturns = _botUseCase.ComputeDoableMovesMcts(_mcts.Game.Board, playerRoot, _mcts.Game);
+        var playReturns = Expand.ComputeDoableMovesMcts(_mcts.Game.Board, playerRoot, _mcts.Game);
         var random = new Random();
         var playerIndexRoot = _mcts.Game.Players.FindIndex(player => player.IsTurn);
         var mctsRoot = Expand.ExpandMcts(_mcts, playReturns, playerIndexRoot);
 
         for (var i = 0; i < 5; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
         {
-            mctsRoot.Children.ForEach(mcts =>
-            {
-                var searchPath = new List<MonteCarloTreeSearchNode>();
-                var mctsRollout = mcts;
-                searchPath.Add(mctsRoot);
-                while (!mctsRollout.Game.GameOver)
-                {
-                    var player = mctsRollout.Game.Players.FirstOrDefault(p => p.IsTurn);
-                    var playerIndex = mctsRollout.Game.Players.FindIndex(p => p.IsTurn==true);
-                    var currentPlayReturns = _botUseCase.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game);
+
+            mctsRoot.Children.ForEach( mcts =>
+              {
+                  var searchPath = new List<MonteCarloTreeSearchNode>();
+                  var mctsRollout = mcts;
+                  searchPath.Add(mctsRoot);
+                 
+                  while (!mctsRollout.Game.GameOver)
+                  {
+                      var player = mctsRollout.Game.Players.FirstOrDefault(p => p.IsTurn);
+                      var playerIndex = mctsRollout.Game.Players.FindIndex(p => p.IsTurn == true);
+                      
+                      var currentPlayReturns = Expand.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game);
+                       
                     //todo voir si ComputeDoableMoves(Player player, Board board, Coordinates originCoordinates, bool simulation) peut faire l'affaire ou l'adapter
 
 
                     if (currentPlayReturns.Count > 0)
-                    {
+                      {
                         // mctsRollout = Expand.ExpandMcts(mctsRollout, currentPlayReturns, playerIndex);
                         // var index = random.Next(currentPlayReturns.Count);
                         // var coordinatesrandomAction = new List<PlayReturn> { currentPlayReturns[index] };
                         // mctsRollout.Children[index].Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
-                        // searchPath.Add(mctsRollout);
+                        // sevar score = mctsRollout.Game.var currentPlayReturns = _botUseCase.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game);Players.Select(p => p.Points).ToList().Max();archPath.Add(mctsRollout);
                         // mctsRollout.Children[index].NumberOfVisits++;
                         // mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children[index].Game, mctsRollout);
-                        
-                        
+                         var dateOne = DateTime.Now;
+
                         var index = random.Next(currentPlayReturns.Count);
-                        var coordinatesrandomAction = new List<PlayReturn> { currentPlayReturns[index] };
-                        mctsRollout = Expand.ExpandMcts(mctsRollout, coordinatesrandomAction, playerIndex);
-                        mctsRollout.Children[0].Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
-                        searchPath.Add(mctsRollout);
-                        mctsRollout.Children[0].NumberOfVisits++;
-                        
-                        mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children[0].Game, mctsRollout);
- 
-                    }
-                    else
-                    {
-                        var removeTiles = mctsRollout.Game.Players[playerIndex].Rack.Tiles;
-                        var indexRemoveTile = random.Next(removeTiles.Count);
-                        for (var i = 0; i < indexRemoveTile; i++)
-                        {
-                            var removeTile = removeTiles[random.Next(mctsRollout.Game.Players[playerIndex].Rack.Tiles.Count)];
+                          mctsRollout = Expand.ExpandMctsOne(mctsRollout, currentPlayReturns[index], playerIndex);
+                          mctsRollout.Children[0].Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
 
-                            mctsRollout.Game.Players[playerIndex].Rack.Tiles.Remove(removeTile);
-                            mctsRollout.Game.Bag.Tiles.Add(new TileOnBag(removeTile.Color, removeTile.Shape));
-                        }
-                        for (var i = 0; i < indexRemoveTile; i++)
-                        {
-                            var index = random.Next(mctsRollout.Game.Bag.Tiles.Count);
-                            var addTile = mctsRollout.Game.Bag.Tiles[index];
-                            mctsRollout.Game.Players[playerIndex].Rack.Tiles.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
-                            mctsRollout.Game.Bag.Tiles.Remove(addTile);
-                        }
+                          mctsRollout.Children[0].NumberOfVisits++;
+                          searchPath.Add(mctsRollout);
+                          mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children[0].Game, mctsRollout);
+                           var datetwo = DateTime.Now;
+                         Console.WriteLine(datetwo - dateOne); 
 
-                        mctsRollout = Expand.SetNextPlayerTurnToPlay(mctsRollout, mctsRollout.Game.Players[playerIndex]);
-                        searchPath.Add(mctsRollout);
-                    }
+                      }
+                      else
+                      {
+                          mctsRollout=Expand.SwapTilesMcts(mctsRollout,playerIndex);
+                          
+                        player.LastTurnSkipped = true;
+                        if (mctsRollout.Game.Bag.Tiles.Count == 0 && mctsRollout.Game.Players.Count(p => p.LastTurnSkipped) == mctsRollout.Game.Players.Count)
+                            {
+                                
+                                mctsRollout.Game.GameOver= true;
+                            }
+                            else
+                                mctsRollout = Expand.SetNextPlayerTurnToPlay(mctsRollout, mctsRollout.Game.Players[playerIndex]);
+                          
+                          searchPath.Add(mctsRollout);
+                      }
 
-                }
+                  }
+                  
+                  var score = mctsRollout.Game.Players.Select(p => p.Points).ToList().Max();
+                  if (score == mctsRollout.Game.Players[playerIndexRoot].Points)
+                  {
+                      mctsRollout.Wins++;
+                  }
+                  else
+                  {
+                      mctsRollout.Looses++;
+                  }
 
-                var score = mctsRollout.Game.Players.Select(p => p.Points).ToList().Max();
-                if (score == mctsRollout.Game.Players[playerIndexRoot].Points)
-                {
-                    mctsRollout.Wins++;
-                }
-                else
-                {
-                    mctsRollout.Looses++;
-                }
+                  mctsRollout = Backpropagate.BackPropagate(mctsRollout, searchPath[^1]);
+                  while (mctsRollout.Parent != null)
+                  {
 
-                mctsRollout = Backpropagate.BackPropagate(mctsRollout, searchPath[^1]);
-                while (mctsRollout.Parent != null)
-                {
+                      mctsRollout = mctsRollout.Parent;
 
-                    mctsRollout = mctsRollout.Parent;
-
-                }
-            });
+                  }
+              });
+            
         }
         var val = BestChildUCB.BestChildUcb(mctsRoot, 0.1);
         return new ObjectResult(BestChildUCB.BestChildUcb(mctsRoot, 0.1).ParentAction);

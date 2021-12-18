@@ -34,6 +34,7 @@ public class BotUseCase
             foreach (var tile in rack.Tiles)
             {
                 var playReturn = TestPlayTiles(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) });
+                Console.WriteLine(playReturn.Code);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
             }
         }
@@ -162,98 +163,6 @@ public class BotUseCase
     }
 
     private PlayReturn TestPlayTiles(Player player, List<TileOnBoard> tilesToPlay) => _coreUseCase.Play(tilesToPlay, player, true);
-    public PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game);
-    public PlayReturn GetPlayReturnMCTS(List<TileOnBoard> tilesPlayed, Player player, Game game)
-    {
-        if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
-        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
-        if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
-        var computePointsUseCase = new ComputePointsUseCase();
-        var wonPoints = computePointsUseCase.ComputePointsMcts(tilesPlayed, game);
-
-        if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
-
-        if (IsGameFinished())
-        {
-            const int endGameBonusPoints = 6;
-            wonPoints += endGameBonusPoints;
-
-            game.GameOver = true;
-        }
-        return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
-
-        bool IsGameFinished() => IsBagEmpty() && AreAllTilesInRackPlayed();
-        bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;
-        bool IsBagEmpty() => game.Bag?.Tiles.Count == 0;
-        bool IsBoardNotEmpty() => game.Board.Tiles.Count > 0;
-        bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => game.Board.IsIsolatedTile(tile));
-        bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
-    }
-    public List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game)
-    {
-
-        var rack = player.Rack.WithoutDuplicatesTiles();
-
-
-        var boardAdjoiningCoordinates = board.GetFreeAdjoiningCoordinatesToTiles();
-
-        var playReturnsWith1Tile = new List<PlayReturn>();
-        foreach (var coordinates in boardAdjoiningCoordinates)
-        {
-            foreach (var tile in rack.Tiles)
-            {
-                var playReturn = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) }, game);
-                if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
-            }
-        }
-        playReturnsWith1Tile = playReturnsWith1Tile.OrderByDescending(p => p.Points).ToList();
-
-        var playReturnsWith2Tiles = new List<PlayReturn>();
-        foreach (var playReturn in playReturnsWith1Tile)
-        {
-            var tilePlayed = playReturn.TilesPlayed[0];
-            var currentTilesToTest = rack.Tiles.Where(t => t != tilePlayed).ToList();
-
-            var firstGameMove = board.Tiles.Count == 0;
-            if (firstGameMove)
-            {
-                playReturnsWith2Tiles.AddRange(ComputePlayReturnWith2TilesInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilePlayed, true));
-            }
-            else
-            {
-                foreach (RowType rowType in Enum.GetValues(typeof(RowType)))
-                    playReturnsWith2Tiles.AddRange(ComputePlayReturnWith2TilesInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilePlayed, false));
-            }
-        }
-        playReturnsWith2Tiles = playReturnsWith2Tiles.OrderBy(p => p.Points).ToList();
-
-
-        var playReturnsWith3Tiles = new List<PlayReturn>();
-        foreach (var playReturn in playReturnsWith2Tiles)
-        {
-            var firstTilePlayed = playReturn.TilesPlayed[0];
-            var secondTilePlayed = playReturn.TilesPlayed[1];
-            var rowType = firstTilePlayed.Coordinates.X == secondTilePlayed.Coordinates.X ? RowType.Column : RowType.Line;
-
-            var currentTilesToTest = rack.Tiles.Where(t => t != firstTilePlayed && t != secondTilePlayed).ToList();
-            playReturnsWith3Tiles.AddRange(ComputePlayReturnWith3TilesInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, firstTilePlayed, secondTilePlayed));
-        }
-
-        //we have all possible moves with 3 tiles :)
-        var allPlayReturns = new List<PlayReturn>();
-        allPlayReturns.AddRange(playReturnsWith3Tiles);
-        allPlayReturns.AddRange(playReturnsWith2Tiles);
-        allPlayReturns.AddRange(playReturnsWith1Tile);
-
-        return allPlayReturns;
-
-
-        static RowType RandomRowType()
-        {
-            var rowTypeValues = typeof(RowType).GetEnumValues();
-            var index = new Random().Next(rowTypeValues.Length);
-            return (RowType)rowTypeValues.GetValue(index)!;
-        }
-    }
+    
 
 }
