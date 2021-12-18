@@ -1,41 +1,50 @@
 ﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("Game")]
 public class GameController : ControllerBase
 {
     private readonly ILogger<GameController> _logger;
     private readonly CoreUseCase _coreUseCase;
+    private readonly InfoUseCase _infoUseCase;
     private readonly UserManager<UserDao> _userManager;
+    private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    public GameController(ILogger<GameController> logger, CoreUseCase coreUseCase, UserManager<UserDao> userManager)
+    public GameController(ILogger<GameController> logger, CoreUseCase coreUseCase, InfoUseCase infoUseCase, UserManager<UserDao> userManager)
     {
         _logger = logger;
         _coreUseCase = coreUseCase;
+        _infoUseCase = infoUseCase;
         _userManager = userManager;
     }
 
 
     [HttpPost("New")]
-    public ActionResult<int> CreateGame(List<int> usersIds)
+    public ActionResult CreateGame(HashSet<string> usersNames)
     {
-        _logger.LogInformation($"CreateGame with {usersIds}");
+        var usersIdsList = new List<int> { UserId };
+        usersIdsList.AddRange(usersNames.Select(userName => _infoUseCase.GetUserId(userName)));
+        usersIdsList.RemoveAll(id => id == 0);
+        var usersIds = new HashSet<int>(usersIdsList);
+        _logger.LogInformation("CreateGame with {usersIds}", usersIds);
+        return new ObjectResult(_coreUseCase.CreateGame(usersIds));
+    }
+
+    [HttpPost("NewRandom")]
+    public ActionResult CreateRandomGame()
+    {
+        var usersIds = new HashSet<int> { UserId };
+        //todo : add user waiting or wait...
+        _logger.LogInformation("CreateGame with {usersIds}", usersIds);
         return new ObjectResult(_coreUseCase.CreateGame(usersIds));
     }
 
 
     [HttpGet("{gameId:int}")]
-    public ActionResult<int> GetGame(int gameId) => new ObjectResult(_coreUseCase.GetGame(gameId));
+    public ActionResult GetGame(int gameId) => new ObjectResult(_infoUseCase.GetGameWithTilesOnlyForAuthenticatedUser(gameId, UserId));
 
 
-    [HttpPost("GamesByUserId/{userId:int}")]
-    public ActionResult<int> GetGamesByUserId(int userId) => new ObjectResult(_coreUseCase.GetUserGames(userId));
-
-
-    [HttpGet("UserGames")]
-    public ActionResult<int> GetUserGames() => new ObjectResult(_coreUseCase.GetUserGames(int.Parse(_userManager.GetUserId(User) ?? "0")));
-
-
-    [HttpGet("GamesIds")]
-    public ActionResult<int> GetGamesIdsContainingPlayers() => new ObjectResult(_coreUseCase.GetGamesIdsContainingPlayers());
+    [HttpGet("UserGamesIds")]
+    public ActionResult GetUserGamesIds() => new ObjectResult(_infoUseCase.GetUserGames(UserId));
 }

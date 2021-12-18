@@ -10,6 +10,8 @@
 *.userosscache
 *.sln.docstates
 appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -348,3 +350,7 @@ healthchecksdb
 /Qwirkle.Web.Api/qwirkle.sqlite-wal
 /Qwirkle.Web.Api/appsettings.Staging.json
 /Qwirkle.Web.Api/appsettings.Production.json
+/Qwirkle.AI/env
+/bfg-1.14.0.jar
+
+

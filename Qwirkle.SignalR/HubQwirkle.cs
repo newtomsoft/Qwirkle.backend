@@ -1,11 +1,8 @@
 ﻿namespace Qwirkle.SignalR;
 
-//[Authorize]
 public class HubQwirkle : Hub
 {
     private static readonly Dictionary<int, List<Player>> GameIdWithPlayers = new();
-
-    public override Task OnConnectedAsync() => base.OnConnectedAsync();
 
     public override Task OnDisconnectedAsync(Exception exception)
     {

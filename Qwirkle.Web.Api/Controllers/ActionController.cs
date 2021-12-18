@@ -4,26 +4,52 @@
 [Route("Action")]
 public class ActionController : ControllerBase
 {
+    private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
-    public ActionController(CoreUseCase coreUseCase) => _coreUseCase = coreUseCase;
+    private readonly UserManager<UserDao> _userManager;
+    private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
+
+    public ActionController(CoreUseCase coreUseCase, InfoUseCase infoUseCase, UserManager<UserDao> userManager) => (_coreUseCase, _infoUseCase, _userManager) = (coreUseCase, infoUseCase, userManager);
 
 
     [HttpPost("PlayTiles/")]
-    public ActionResult<int> PlayTiles(List<TileViewModel> tiles) => new ObjectResult(_coreUseCase.TryPlayTiles(tiles.First().PlayerId, tiles.Select(t => (t.TileId, t.X, t.Y))));
+    public ActionResult<int> PlayTiles(List<TileViewModel> tiles)
+    {
+        var gameId = tiles.First().GameId;
+        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreUseCase.TryPlayTiles(playerId, tiles.Select(t => t.ToTileOnBoard())));
+    }
 
 
     [HttpPost("PlayTilesSimulation/")]
-    public ActionResult<int> PlayTilesSimulation(List<TileViewModel> tiles) => new ObjectResult(_coreUseCase.TryPlayTilesSimulation(tiles.First().PlayerId, tiles.Select(t => (t.TileId, t.X, t.Y))));
-
+    public ActionResult<int> PlayTilesSimulation(List<TileViewModel> tiles)
+    {
+        var gameId = tiles.First().GameId;
+        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => t.ToTileOnBoard())));
+    }
 
     [HttpPost("SwapTiles/")]
-    public ActionResult<int> SwapTiles(List<TileViewModel> tiles) => new ObjectResult(_coreUseCase.TrySwapTiles(tiles.First().PlayerId, tiles.Select(t => t.TileId)));
-
+    public ActionResult<int> SwapTiles(List<TileViewModel> tiles)
+    {
+        var gameId = tiles.First().GameId;
+        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreUseCase.TrySwapTiles(playerId, tiles.Select(t => (t.Color, t.Shape))));
+    }
 
     [HttpPost("SkipTurn/")]
-    public ActionResult<int> SkipTurn(PlayerViewModel player) => new ObjectResult(_coreUseCase.TrySkipTurn(player.Id));
+    public ActionResult<int> SkipTurn(PlayerViewModel player)
+    {
+        var userId = _infoUseCase.GetUserId(player.Id);
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TrySkipTurn(player.Id));
+    }
 
 
     [HttpPost("ArrangeRack/")]
-    public ActionResult<int> ArrangeRack(List<TileViewModel> tiles) => new ObjectResult(_coreUseCase.TryArrangeRack(tiles.First().PlayerId, tiles.Select(t => (t.TileId, t.X, t.Y))));
+    public ActionResult ArrangeRack(List<TileOnPlayerViewModel> tiles)
+    {
+        var playerId = tiles.First().PlayerId;
+        var userId = _infoUseCase.GetUserId(playerId);
+        return userId != UserId ? new NotFoundObjectResult("") : new ObjectResult(_coreUseCase.TryArrangeRack(tiles.First().PlayerId, tiles.Select(t => (t.Color, t.Shape))));
+    }
 }

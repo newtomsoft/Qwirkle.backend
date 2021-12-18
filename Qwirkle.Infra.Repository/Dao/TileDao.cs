@@ -8,6 +8,6 @@ public class TileDao
     public TileColor Color { get; set; }
 
 
-    public Tile ToTile() => new(Id, Color, Shape);
+    public Tile ToTile() => new(Color, Shape);
 
 }

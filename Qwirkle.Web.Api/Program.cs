@@ -1,7 +1,5 @@
 var appBuilder = WebApplication.CreateBuilder(args);
-var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", "appsettings.json"), optional: true);
-appBuilder.Configuration.AddJsonFile(Path.Combine(Directory.GetCurrentDirectory(), "..", $"appsettings.{environmentName}.json"), optional: true);
+LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetSection("NLog"));
 appBuilder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder => builder
@@ -12,10 +10,24 @@ appBuilder.Services.AddCors(options =>
 });
 appBuilder.Services.AddSignalR();
 appBuilder.Services.AddScoped<IRepository, Repository>();
-appBuilder.Services.AddSingleton<ISignal, Signal>();
+appBuilder.Services.AddSingleton<INotification, SignalRNotification>();
+appBuilder.Services.AddScoped<IAuthentication, Authentication>();
+appBuilder.Services.AddScoped<AuthenticationUseCase>();
 appBuilder.Services.AddScoped<CoreUseCase>();
+appBuilder.Services.AddScoped<InfoUseCase>();
+appBuilder.Services.AddScoped<BotUseCase>();
+appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
+appBuilder.Services.AddScoped<ComputePointsUseCase>();
 appBuilder.Services.AddControllers();
-appBuilder.Services.AddDbContext<DefaultDbContext>(appBuilder.Configuration);
+switch (appBuilder.Configuration.GetValue<string>("Repository").ToLowerInvariant())
+{
+    case "sqlserver":
+        appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(appBuilder.Configuration.GetConnectionString("Qwirkle")));
+        break;
+    case "postgres":
+        appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseNpgsql(appBuilder.Configuration.GetConnectionString("Qwirkle")));
+        break;
+}
 appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
 {
     options.Password.RequireDigit = false;
@@ -24,13 +36,14 @@ appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
     options.Password.RequireUppercase = false;
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 2;
+    options.User.RequireUniqueEmail = true;
 })
   .AddRoleManager<RoleManager<IdentityRole<int>>>()
   .AddEntityFrameworkStores<DefaultDbContext>()
   .AddDefaultTokenProviders()
   .AddDefaultUI();
 appBuilder.Services.AddOptions();
-appBuilder.Services.ConfigureApplicationCookie(options => options.LoginPath = "/Identity/Account/Login");
+appBuilder.Services.ConfigureApplicationCookie(options => options.LoginPath = "");
 appBuilder.Services.AddSession();
 
 var app = appBuilder.Build();
