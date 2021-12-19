@@ -1,5 +1,4 @@
 ﻿using Qwirkle.Domain.UseCases.Ai;
-using System.Reflection;
 
 namespace Qwirkle.Web.Api.Controllers;
 
@@ -21,5 +20,5 @@ public class AiController : ControllerBase
         _userManager = userManager;
     }
 
-    
+
 }
