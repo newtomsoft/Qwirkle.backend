@@ -108,8 +108,8 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
         var rack = player.Rack.WithoutDuplicatesTiles();
 
 
-        var boardAdjoiningCoordinates = board.GetFreeAdjoiningCoordinatesToTiles();
-
+        var boardAdjoiningCoordinates =board.GetFreeAdjoiningCoordinatesToTiles().Take(15);
+        
         var playReturnsWith1Tile = new List<PlayReturn>();
         foreach (var coordinates in boardAdjoiningCoordinates)
         {
@@ -120,7 +120,7 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
             }
         }
         playReturnsWith1Tile = playReturnsWith1Tile.OrderByDescending(p => p.Points).ToList();
-
+       
         var playReturnsWith2Tiles = new List<PlayReturn>();
         foreach (var playReturn in playReturnsWith1Tile)
         {
@@ -157,7 +157,7 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
         allPlayReturns.AddRange(playReturnsWith3Tiles);
         allPlayReturns.AddRange(playReturnsWith2Tiles);
         allPlayReturns.AddRange(playReturnsWith1Tile);
-
+        
         return allPlayReturns;
 
 
@@ -168,6 +168,22 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
             return (RowType)rowTypeValues.GetValue(index)!;
         }
     }
+       public static List<T> GetRandomFromList<T>(List<T> passedList, int numberToChoose)
+{
+    if (numberToChoose==0) return passedList;
+    System.Random rnd = new System.Random();
+    List<T> chosenItems = new List<T>();
+
+    for (int i = 1; i <= numberToChoose; i++)
+    {
+      int index = rnd.Next(passedList.Count);
+      chosenItems.Add(passedList[index]);
+    }
+
+    //Debug.Log(chosenItems.Count);
+
+    return chosenItems;
+}
     private static IEnumerable<PlayReturn> ComputePlayReturnWith2TilesInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, TileOnBoard firstTile, bool firstGameMove,Game game)
     {
         var (tilePlayedX, tilePlayedY) = firstTile.Coordinates;

@@ -32,21 +32,24 @@ public class AiController : ControllerBase
         var random = new Random();
         var playerIndexRoot = _mcts.Game.Players.FindIndex(player => player.IsTurn);
         var mctsRoot = Expand.ExpandMcts(_mcts, playReturns, playerIndexRoot);
-
-        for (var i = 0; i < 5; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
+        var nbSimulation=0;
+        var dateOne=DateTime.Now;
+        for (var i = 0; i < 8; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
         {
-
-            mctsRoot.Children.ForEach( mcts =>
+            mctsRoot.Children
+                .AsParallel()      
+                .ForAll(mcts =>
               {
                   var searchPath = new List<MonteCarloTreeSearchNode>();
                   var mctsRollout = mcts;
                   searchPath.Add(mctsRoot);
-                 
+               
                   while (!mctsRollout.Game.GameOver)
                   {
+                      
                       var player = mctsRollout.Game.Players.FirstOrDefault(p => p.IsTurn);
                       var playerIndex = mctsRollout.Game.Players.FindIndex(p => p.IsTurn == true);
-                      
+                       
                       var currentPlayReturns = Expand.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game);
                        
                     //todo voir si ComputeDoableMoves(Player player, Board board, Coordinates originCoordinates, bool simulation) peut faire l'affaire ou l'adapter
@@ -54,24 +57,15 @@ public class AiController : ControllerBase
 
                     if (currentPlayReturns.Count > 0)
                       {
-                        // mctsRollout = Expand.ExpandMcts(mctsRollout, currentPlayReturns, playerIndex);
-                        // var index = random.Next(currentPlayReturns.Count);
-                        // var coordinatesrandomAction = new List<PlayReturn> { currentPlayReturns[index] };
-                        // mctsRollout.Children[index].Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
-                        // sevar score = mctsRollout.Game.var currentPlayReturns = _botUseCase.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game);Players.Select(p => p.Points).ToList().Max();archPath.Add(mctsRollout);
-                        // mctsRollout.Children[index].NumberOfVisits++;
-                        // mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children[index].Game, mctsRollout);
-                         var dateOne = DateTime.Now;
-
+                        
                         var index = random.Next(currentPlayReturns.Count);
                           mctsRollout = Expand.ExpandMctsOne(mctsRollout, currentPlayReturns[index], playerIndex);
-                          mctsRollout.Children[0].Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
+                          mctsRollout.Children.First().Game.Players[playerIndex].Points += currentPlayReturns[index].Points;
 
-                          mctsRollout.Children[0].NumberOfVisits++;
+                          mctsRollout.Children.First().NumberOfVisits++;
                           searchPath.Add(mctsRollout);
-                          mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children[0].Game, mctsRollout);
-                           var datetwo = DateTime.Now;
-                         Console.WriteLine(datetwo - dateOne); 
+                          mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children.First().Game, mctsRollout);
+                          
 
                       }
                       else
@@ -89,9 +83,10 @@ public class AiController : ControllerBase
                           
                           searchPath.Add(mctsRollout);
                       }
-
+                   
+                    
                   }
-                  
+                nbSimulation++;
                   var score = mctsRollout.Game.Players.Select(p => p.Points).ToList().Max();
                   if (score == mctsRollout.Game.Players[playerIndexRoot].Points)
                   {
@@ -112,7 +107,11 @@ public class AiController : ControllerBase
               });
             
         }
+        var dateTwo=DateTime.Now;
+        Console.WriteLine((dateTwo-dateOne) + " " + nbSimulation);
         var val = BestChildUCB.BestChildUcb(mctsRoot, 0.1);
         return new ObjectResult(BestChildUCB.BestChildUcb(mctsRoot, 0.1).ParentAction);
     }
+
+ 
 }
