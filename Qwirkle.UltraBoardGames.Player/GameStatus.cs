@@ -7,3 +7,10 @@ public enum GameStatus
     Lost,
     Draw
 }
+
+public class GameStatusNew
+{
+
+
+
+}

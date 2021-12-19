@@ -2,6 +2,7 @@
 
 public class UltraBoardGamesPlayerApplication
 {
+    private const int TilesNumberPerPlayer = 6;
     private readonly ILogger _logger;
     private readonly BotUseCase _botUseCase;
     private readonly GameScraper _scraper;
@@ -28,9 +29,19 @@ public class UltraBoardGamesPlayerApplication
         _scraper.AcceptPolicies();
         var board = Board.Empty();
         GameStatus gameStatus;
+        var lastTilesPlayedByOpponent = new HashSet<TileOnBoard>();
         while (true)
         {
-            board = GetBoardAfterOpponentPlay(board);
+            HashSet<TileOnBoard> tilesPlayedByOpponent;
+            var timeOut = DateTime.Now.AddSeconds(2);
+            do
+            {
+                tilesPlayedByOpponent = _scraper.GetTilesPlayedByOpponent();
+                Task.Delay(50);
+            } while ((tilesPlayedByOpponent.Count == 0 || lastTilesPlayedByOpponent.SetEquals(tilesPlayedByOpponent)) && timeOut > DateTime.Now);
+            lastTilesPlayedByOpponent = new HashSet<TileOnBoard>();
+            lastTilesPlayedByOpponent.UnionWith(tilesPlayedByOpponent);
+            board.AddTiles(tilesPlayedByOpponent);
             _scraper.TakeScreenShot();
             gameStatus = _scraper.GetGameStatus();
             if (gameStatus != GameStatus.InProgress) break;
@@ -41,57 +52,47 @@ public class UltraBoardGamesPlayerApplication
             var opponent = Player(opponentPoints, tilesOnPlayer, false);
             var players = new List<Domain.Entities.Player> { bot, opponent };
 
-            var game = new Game(0, board, players, false);
+            var game = new Game(board, players);
             var tilesToPlay = board.Tiles.Count > 0
-                ? _botUseCase.GetMostPointsMove(bot, game)
-                : _botUseCase.GetMostPointsMove(bot, game, _originCoordinates);
+                ? _botUseCase.GetMostPointsMove(bot, game).ToList()
+                : _botUseCase.GetMostPointsMove(bot, game, _originCoordinates).ToList();
+
+            if (tilesToPlay.Count == 0)
+            {
+                var tilesOnBagNumber = _scraper.GetTilesOnBag();
+                _scraper.Swap(Math.Min(tilesOnBagNumber, TilesNumberPerPlayer));
+                _scraper.TakeScreenShot();
+                continue;
+            }
 
             List<TileOnBoard> otherTilesToPlay;
-            var copyBoard = Board.From(board.Tiles);
             var tilesToPlayStillHere = new List<TileOnBoard>();
             var tilesToPlayArranged = new List<TileOnBoard>();
             tilesToPlayStillHere.AddRange(tilesToPlay);
+            var boardCopy = Board.From(board);
             do
             {
-                var firstTilesToPlay = copyBoard.Tiles.Count > 0
-                    ? tilesToPlayStillHere.Where(tile => copyBoard.IsIsolatedTile(tile)).ToList()
-                    : tilesToPlayStillHere.Where(tile => tile.Coordinates == _originCoordinates).ToList();
+                var firstTilesToPlay = boardCopy.Tiles.Count == 0
+                    ? tilesToPlayStillHere.Where(tile => tile.Coordinates == _originCoordinates).ToList()
+                    : tilesToPlayStillHere.Where(tile => boardCopy.IsIsolatedTile(tile)).ToList();
                 otherTilesToPlay = tilesToPlayStillHere.Except(firstTilesToPlay).ToList();
                 tilesToPlayArranged.AddRange(firstTilesToPlay);
                 if (otherTilesToPlay.Count == 0) break;
-                copyBoard.Tiles.AddRange(firstTilesToPlay);
+                boardCopy.AddTiles(firstTilesToPlay);
                 tilesToPlayStillHere = otherTilesToPlay;
             } while (otherTilesToPlay.Count != 0);
 
             _scraper.Play(tilesToPlayArranged);
+            board.AddTiles(tilesToPlay);
             _scraper.TakeScreenShot();
         }
         _scraper.CloseEndWindow();
         LogEndGame(gameStatus);
     }
 
-    private Board GetBoardAfterOpponentPlay(Board board)
-    {
-        var tilesOnBoard = board.Tiles;
-        var timeOut = DateTime.UtcNow.AddSeconds(4);
-        while (true)
-        {
-            if (DateTime.UtcNow > timeOut) break;
-            var tilesOnBoardUpdated = _scraper.GetTilesOnBoard();
-            if (tilesOnBoardUpdated.Count < tilesOnBoard.Count || tilesOnBoardUpdated.Count == 0)
-            {
-                Task.Delay(500).Wait();
-                continue;
-            }
-            tilesOnBoard = tilesOnBoardUpdated;
-            break;
-        }
-        return Board.From(tilesOnBoard);
-    }
-
-    private void LogStartApplication() => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
-    private void LogStartGame() => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
-    private void LogEndGame(GameStatus gameStatus) => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", $"{gameStatus}", DateTime.UtcNow);
-    private void LogEndApplication() => _logger.LogInformation("UltraBoardGamesPlayerApplication {applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
+    private void LogStartApplication() => _logger.LogInformation("{applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
+    private void LogStartGame() => _logger.LogInformation("{applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
+    private void LogEndGame(GameStatus gameStatus) => _logger.LogInformation("{applicationEvent} at {dateTime}", $"{gameStatus}", DateTime.UtcNow);
+    private void LogEndApplication() => _logger.LogInformation("{applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
     private static Domain.Entities.Player Player(int playerPoints, List<TileOnPlayer> tilesOnPlayer, bool isTurn) => new(0, 0, 0, "", 0, playerPoints, 0, Rack.From(tilesOnPlayer), isTurn, false);
 }
