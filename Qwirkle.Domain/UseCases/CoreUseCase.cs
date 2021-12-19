@@ -48,7 +48,9 @@ public class CoreUseCase
 
         if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, PlayReturnCode.PlayerDoesntHaveThisTile, null, null, 0);
 
-        var playReturn = Play(tilesToPlay, player);
+        var game = _repository.GetGame(player.GameId);
+        Game = game;
+        var playReturn = Play(tilesToPlay, player, game);
         if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
 
         playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
@@ -84,34 +86,34 @@ public class CoreUseCase
     {
         var player = _infoUseCase.GetPlayer(playerId);
         var tilesToPlay = tiles.ToList();
-        return Play(tilesToPlay, player, true);
+        var game = _repository.GetGame(player.GameId);
+        return Play(tilesToPlay, player, game, true);
     }
 
-    public PlayReturn Play(List<TileOnBoard> tilesPlayed, Player player, bool simulationMode = false)
+    public PlayReturn Play(List<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
     {
-        if (Game is null) ResetGame(player.GameId);
-        if (Game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(Game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
-        if (IsCoordinatesNotFree()) return new PlayReturn(Game.Id, PlayReturnCode.NotFree, null, null, 0);
-        if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(Game.Id, PlayReturnCode.TileIsolated, null, null, 0);
+        if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
+        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
+        if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
 
         var computePointsUseCase = new ComputePointsUseCase();
-        var wonPoints = computePointsUseCase.ComputePoints(Game, tilesPlayed);
-        if (wonPoints == 0) return new PlayReturn(Game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
+        var wonPoints = computePointsUseCase.ComputePoints(game, tilesPlayed);
+        if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
 
         if (IsGameFinished())
         {
             const int endGameBonusPoints = 6;
             wonPoints += endGameBonusPoints;
-            if (!simulationMode) _repository.SetGameOver(Game.Id);
+            if (!simulationMode) _repository.SetGameOver(game.Id);
         }
-        return new PlayReturn(Game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
+        return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 
         bool IsGameFinished() => IsBagEmpty() && AreAllTilesInRackPlayed();
         bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;
-        bool IsBagEmpty() => Game.Bag?.Tiles.Count == 0;
-        bool IsBoardNotEmpty() => Game.Board.Tiles.Count > 0;
-        bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => Game.Board.IsIsolatedTile(tile));
-        bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !Game.Board.IsFreeTile(tile));
+        bool IsBagEmpty() => game.Bag?.Tiles.Count == 0;
+        bool IsBoardNotEmpty() => game.Board.Tiles.Count > 0;
+        bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => game.Board.IsIsolatedTile(tile));
+        bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
     }
 
     private void InitializeGame() => Game = _repository.CreateGame(DateTime.UtcNow);

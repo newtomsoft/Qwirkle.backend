@@ -5,7 +5,7 @@ public class FakeRepository : IRepository
     public Game CreateGame(DateTime date) => throw new NotImplementedException();
     public Player CreatePlayer(int userId, int gameId) => throw new NotImplementedException();
     public void CreateTiles(int gameId) => throw new NotImplementedException();
-    public HashSet<int> GetAllUsersId() => throw new NotImplementedException();
+    public List<int> GetAllUsersId() => throw new NotImplementedException();
     public Game GetGame(int gameId) => throw new NotImplementedException();
     public int GetPlayerId(int gameId, int userId) => throw new NotImplementedException();
     public Tile GetTile(TileColor color, TileShape shape) => throw new NotImplementedException();

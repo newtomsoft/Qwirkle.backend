@@ -23,6 +23,6 @@ public interface IRepository
     List<int> GetLeadersPlayersId(int gameId);
     bool IsGameOver(int gameId);
     void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple);
-    HashSet<int> GetAllUsersId();
+    List<int> GetAllUsersId();
     List<int> GetUserGamesIds(int userId);
 }

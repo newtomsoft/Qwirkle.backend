@@ -4,26 +4,26 @@ public class FakeNotification : INotification
 {
     public void SendGameOver(int gameId, List<int> winnersPlayersIds)
     {
-        throw new NotImplementedException();
+        // Method intentionally left empty.
     }
 
     public void SendPlayerIdTurn(int gameId, int getPlayerIdToPlay)
     {
-        throw new NotImplementedException();
+        // Method intentionally left empty.
     }
 
     public void SendTilesPlayed(int gameId, int playerId, int scoredPoints, List<TileOnBoard> tilesOnBoardPlayed)
     {
-        throw new NotImplementedException();
+        // Method intentionally left empty.
     }
 
     public void SendTilesSwapped(int gameId, int playerId)
     {
-        throw new NotImplementedException();
+        // Method intentionally left empty.
     }
 
     public void SendTurnSkipped(int gameId, int playerId)
     {
-        throw new NotImplementedException();
+        // Method intentionally left empty.
     }
 }
