@@ -29,6 +29,7 @@ public class AiController : ControllerBase
         _mcts = new MonteCarloTreeSearchNode(_botUseCase.GetGame(gameId));
         var playerRoot = _mcts.Game.Players.FirstOrDefault(p => p.IsTurn);
         var playReturns = Expand.ComputeDoableMovesMcts(_mcts.Game.Board, playerRoot, _mcts.Game);
+        
         var random = new Random();
         var playerIndexRoot = _mcts.Game.Players.FindIndex(player => player.IsTurn);
         var mctsRoot = Expand.ExpandMcts(_mcts, playReturns, playerIndexRoot);

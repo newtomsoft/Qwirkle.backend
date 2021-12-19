@@ -101,15 +101,14 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
         return mcts;
     }
     public static PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game);
-   
-    public static List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game)
+   public static List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game)
     {
-
+        
         var rack = player.Rack.WithoutDuplicatesTiles();
 
+        var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles().Take(15);
 
-        var boardAdjoiningCoordinates =board.GetFreeAdjoiningCoordinatesToTiles().Take(15);
-        
+        var allPlayReturns = new List<PlayReturn>();
         var playReturnsWith1Tile = new List<PlayReturn>();
         foreach (var coordinates in boardAdjoiningCoordinates)
         {
@@ -120,55 +119,41 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
                 if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
             }
         }
-        playReturnsWith1Tile = playReturnsWith1Tile.OrderByDescending(p => p.Points).ToList();
-       
-        var playReturnsWith2Tiles = new List<PlayReturn>();
-        foreach (var playReturn in playReturnsWith1Tile)
-        {
-            var tilePlayed = playReturn.TilesPlayed[0];
-            var currentTilesToTest = rack.Tiles.Where(t => t != tilePlayed).ToList();
 
-            var firstGameMove = board.Tiles.Count == 0;
-            if (firstGameMove)
-            {
-                playReturnsWith2Tiles.AddRange(ComputePlayReturnWith2TilesInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilePlayed, true, game));
-            }
-            else
-            {
-                foreach (RowType rowType in Enum.GetValues(typeof(RowType)))
-                    playReturnsWith2Tiles.AddRange(ComputePlayReturnWith2TilesInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilePlayed, false, game));
-            }
-        }
-        playReturnsWith2Tiles = playReturnsWith2Tiles.OrderBy(p => p.Points).ToList();
-
-
-        var playReturnsWith3Tiles = new List<PlayReturn>();
-        foreach (var playReturn in playReturnsWith2Tiles)
-        {
-            var firstTilePlayed = playReturn.TilesPlayed[0];
-            var secondTilePlayed = playReturn.TilesPlayed[1];
-            var rowType = firstTilePlayed.Coordinates.X == secondTilePlayed.Coordinates.X ? RowType.Column : RowType.Line;
-
-            var currentTilesToTest = rack.Tiles.Where(t => t != firstTilePlayed && t != secondTilePlayed).ToList();
-            playReturnsWith3Tiles.AddRange(ComputePlayReturnWith3TilesInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, firstTilePlayed, secondTilePlayed, game));
-        }
-
-        //we have all possible moves with 3 tiles :)
-        var allPlayReturns = new List<PlayReturn>();
-        allPlayReturns.AddRange(playReturnsWith3Tiles);
-        allPlayReturns.AddRange(playReturnsWith2Tiles);
         allPlayReturns.AddRange(playReturnsWith1Tile);
-        
-        return allPlayReturns;
-
-
-        static RowType RandomRowType()
+        var lastPlayReturn = playReturnsWith1Tile;
+        for (var tilePlayedNumber = 2; tilePlayedNumber <= 6; tilePlayedNumber++)
         {
-            var rowTypeValues = typeof(RowType).GetEnumValues();
-            var index = new Random().Next(rowTypeValues.Length);
-            return (RowType)rowTypeValues.GetValue(index)!;
+            var currentPlayReturns = new List<PlayReturn>();
+            foreach (var playReturn in lastPlayReturn)
+            {
+                var tilesPlayed = playReturn.TilesPlayed;
+                var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
+                var firstGameMove = game.Board.Tiles.Count == 0;
+                if (firstGameMove && tilePlayedNumber == 2) // todo ok but can do better
+                {
+                    currentPlayReturns.AddRange(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true,game));
+                }
+                else
+                {
+                    foreach (RowType rowType in Enum.GetValues(typeof(RowType)))
+                        currentPlayReturns.AddRange(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false,game));
+                }
+            }
+            allPlayReturns.AddRange(currentPlayReturns);
+            lastPlayReturn = currentPlayReturns;
         }
+        return allPlayReturns;
     }
+
+private static RowType RandomRowType()
+    {
+        var rowTypeValues = typeof(RowType).GetEnumValues();
+        var index = new Random().Next(rowTypeValues.Length);
+        return (RowType)rowTypeValues.GetValue(index)!;
+    }
+
+    
        public static List<T> GetRandomFromList<T>(List<T> passedList, int numberToChoose)
 {
     if (numberToChoose==0) return passedList;
@@ -185,77 +170,64 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
 
     return chosenItems;
 }
-    private static IEnumerable<PlayReturn> ComputePlayReturnWith2TilesInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, TileOnBoard firstTile, bool firstGameMove,Game game)
+    
+
+    
+  private static IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, List<TileOnBoard> tilesAlreadyPlayed, bool firstGameMove,Game game)
     {
-        var (tilePlayedX, tilePlayedY) = firstTile.Coordinates;
-        var coordinateChanging = rowType is RowType.Line ? tilePlayedX : tilePlayedY;
-        var coordinateFixed = rowType is RowType.Line ? tilePlayedY : tilePlayedX;
-        var playReturnsWith2Tiles = new List<PlayReturn>();
+        int tilesPlayedNumber = tilesAlreadyPlayed.Count;
+        var coordinatesPlayed = tilesAlreadyPlayed.Select(tilePlayed => tilePlayed.Coordinates).ToList();
+
+        sbyte coordinateChangingMin, coordinateChangingMax;
+        var firstTilePlayedX = coordinatesPlayed[0].X;
+        var firstTilePlayedY = coordinatesPlayed[0].Y;
+        if (tilesPlayedNumber >= 2)
+        {
+            coordinateChangingMax = rowType is RowType.Line ? coordinatesPlayed.Max(c => c.X) : coordinatesPlayed.Max(c => c.Y);
+            coordinateChangingMin = rowType is RowType.Line ? coordinatesPlayed.Min(c => c.X) : coordinatesPlayed.Min(c => c.Y);
+        }
+        else
+        {
+            coordinateChangingMax = rowType is RowType.Line ? firstTilePlayedX : firstTilePlayedY;
+            coordinateChangingMin = coordinateChangingMax;
+        }
+
+        var coordinateFixed = rowType is RowType.Line ? coordinatesPlayed.First().Y : coordinatesPlayed.First().X;
+
+        var playReturns = new List<PlayReturn>();
         var boardAdjoiningCoordinatesRow = rowType is RowType.Line ?
                                             boardAdjoiningCoordinates.Where(c => c.Y == coordinateFixed).Select(c => (int)c.X).ToList()
                                           : boardAdjoiningCoordinates.Where(c => c.X == coordinateFixed).Select(c => (int)c.Y).ToList();
 
         if (!firstGameMove)
         {
-            if (coordinateChanging == boardAdjoiningCoordinatesRow.Max()) boardAdjoiningCoordinatesRow.Add(coordinateChanging + 1);
-            if (coordinateChanging == boardAdjoiningCoordinatesRow.Min()) boardAdjoiningCoordinatesRow.Add(coordinateChanging - 1);
+            if (coordinateChangingMax >= boardAdjoiningCoordinatesRow.Max()) boardAdjoiningCoordinatesRow.Add(coordinateChangingMax + 1);
+            if (coordinateChangingMin <= boardAdjoiningCoordinatesRow.Min()) boardAdjoiningCoordinatesRow.Add(coordinateChangingMin - 1);
         }
         else
         {
             var addOrSubtract1Unit = new Random().Next(2) * 2 - 1;
-            boardAdjoiningCoordinatesRow.Add(coordinateChanging + addOrSubtract1Unit);
+            boardAdjoiningCoordinatesRow.Add(coordinateChangingMax + addOrSubtract1Unit);
+            // we have coordinateChangingMax = coordinateChangingMin
         }
-
-        boardAdjoiningCoordinatesRow.Remove(coordinateChanging);
-        foreach (var currentCoordinate in boardAdjoiningCoordinatesRow)
-        {
-            for (int i = 0; i < tilesToTest.Count; i++)
-            {
-                TileOnPlayer tile = tilesToTest[i];
-                var testedCoordinates = rowType is RowType.Line ? Coordinates.From(currentCoordinate, coordinateFixed) : Coordinates.From(coordinateFixed, currentCoordinate);
-                var testedTile = TileOnBoard.From(tile, testedCoordinates);
-                var playReturn2 = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { firstTile, testedTile },game);
-                
-                if (playReturn2.Code == PlayReturnCode.Ok) playReturnsWith2Tiles.Add(playReturn2);
-            }
-        }
-        return playReturnsWith2Tiles;
-    }
-
-    private static IEnumerable<PlayReturn> ComputePlayReturnWith3TilesInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> rackTiles, TileOnBoard firstTile, TileOnBoard secondTile, Game game)
-    {
-        var (firstTilePlayedX, firstTilePlayedY) = firstTile.Coordinates;
-        var (secondTilePlayedX, secondTilePlayedY) = secondTile.Coordinates;
-
-        var coordinateChangingMax = rowType is RowType.Line ? Math.Max(firstTilePlayedX, secondTilePlayedX) : Math.Max(firstTilePlayedY, secondTilePlayedY);
-        var coordinateChangingMin = rowType is RowType.Line ? Math.Min(firstTilePlayedX, secondTilePlayedX) : Math.Min(firstTilePlayedY, secondTilePlayedY);
-
-        var coordinateFixed = rowType is RowType.Line ? firstTilePlayedY : firstTilePlayedX;
-        var playReturnsWith3Tiles = new List<PlayReturn>();
-        var boardAdjoiningCoordinatesRow = rowType is RowType.Line ?
-            boardAdjoiningCoordinates.Where(c => c.Y == coordinateFixed).Select(c => (int)c.X).ToList()
-            : boardAdjoiningCoordinates.Where(c => c.X == coordinateFixed).Select(c => (int)c.Y).ToList();
-
-        if (coordinateChangingMax == boardAdjoiningCoordinatesRow.Max()) boardAdjoiningCoordinatesRow.Add(coordinateChangingMax + 1);
-        if (coordinateChangingMin == boardAdjoiningCoordinatesRow.Min()) boardAdjoiningCoordinatesRow.Add(coordinateChangingMin - 1);
         boardAdjoiningCoordinatesRow.Remove(coordinateChangingMax);
         boardAdjoiningCoordinatesRow.Remove(coordinateChangingMin);
 
         foreach (var currentCoordinate in boardAdjoiningCoordinatesRow)
         {
-            for (int i = 0; i < rackTiles.Count; i++)
+            foreach (var tile in tilesToTest)
             {
-                TileOnPlayer tile = rackTiles[i];
                 var testedCoordinates = rowType is RowType.Line ? Coordinates.From(currentCoordinate, coordinateFixed) : Coordinates.From(coordinateFixed, currentCoordinate);
                 var testedTile = TileOnBoard.From(tile, testedCoordinates);
-                var playReturn2 = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { firstTile, secondTile, testedTile },game);
-                
-                if (playReturn2.Code == PlayReturnCode.Ok) playReturnsWith3Tiles.Add(playReturn2);
+                var currentTilesToTest = new List<TileOnBoard>();
+                currentTilesToTest.AddRange(tilesAlreadyPlayed);
+                currentTilesToTest.Add(testedTile);
+                var playReturn = TryPlayTilesSimulationMCTS(player,currentTilesToTest ,game);
+                if (playReturn.Code == PlayReturnCode.Ok) playReturns.Add(playReturn);
             }
         }
-        return playReturnsWith3Tiles;
+        return playReturns;
     }
-  
      public static PlayReturn GetPlayReturnMCTS(List<TileOnBoard> tilesPlayed, Player player, Game game)
     {
         if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);

@@ -30,7 +30,7 @@ public class BotUseCase
         return ComputeDoableMoves(player);
     }
 
-    private List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
+    public List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
     {
         if (!simulation) _coreUseCase.ResetGame(player.GameId);
         var rack = player.Rack.WithoutDuplicatesTiles();

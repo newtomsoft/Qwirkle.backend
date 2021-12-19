@@ -1,0 +1,81 @@
+2021-12-19 13:04:03.6566 Info Auto loading assembly file: /home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Api/bin/Debug/net6.0/NLog.Extensions.Logging.dll
+2021-12-19 13:04:03.7012 Info Loading assembly file: /home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Api/bin/Debug/net6.0/NLog.Extensions.Logging.dll
+2021-12-19 13:04:03.7338 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.7.4.1610. Product version: 1.7.4+e2bffa9e949fb4760d75aca224e78631c063f087. GlobalAssemblyCache: False
+2021-12-19 13:04:03.7338 Info Auto loading assembly file: /home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Api/bin/Debug/net6.0/NLog.Extensions.Logging.dll succeeded!
+2021-12-19 13:04:03.7362 Info Message Template Auto Format enabled
+2021-12-19 13:04:03.7432 Info Loading assembly: NLog.Extensions.Logging
+2021-12-19 13:04:03.7436 Info Loading assembly: NLog.Web.AspNetCore
+2021-12-19 13:04:03.7436 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Error loading extensions: NLog.Web.AspNetCore
+ ---> System.IO.FileNotFoundException: Could not load file or assembly 'NLog.Web.AspNetCore, Culture=neutral, PublicKeyToken=null'. The system cannot find the file specified.
+
+File name: 'NLog.Web.AspNetCore, Culture=neutral, PublicKeyToken=null'
+   at System.Reflection.RuntimeAssembly.InternalLoad(ObjectHandleOnStack assemblyName, ObjectHandleOnStack requestingAssembly, StackCrawlMarkHandle stackMark, Boolean throwOnFileNotFound, ObjectHandleOnStack assemblyLoadContext, ObjectHandleOnStack retAssembly)
+   at System.Reflection.RuntimeAssembly.InternalLoad(AssemblyName assemblyName, RuntimeAssembly requestingAssembly, StackCrawlMark& stackMark, Boolean throwOnFileNotFound, AssemblyLoadContext assemblyLoadContext)
+   at System.Reflection.Assembly.Load(String assemblyString)
+   at NLog.Internal.AssemblyHelpers.LoadFromName(String assemblyName)
+   at NLog.Config.LoggingConfigurationParser.ParseExtensionWithAssembly(String assemblyName, String prefix)
+   --- End of inner exception stack trace ---
+2021-12-19 13:04:03.8059 Info Adding target FileTarget(Name=allfile)
+2021-12-19 13:04:03.8126 Error Error parsing layout aspnet-request-url will be ignored. Exception: System.ArgumentException: LayoutRenderer cannot be found: 'aspnet-request-url'. Is NLog.Web not included?
+   at NLog.Config.Factory`2.CreateInstance(String itemName)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(ConfigurationItemFactory configurationItemFactory, String name, Nullable`1 throwConfigExceptions)
+2021-12-19 13:04:03.8126 Error Error parsing layout aspnet-mvc-action will be ignored. Exception: System.ArgumentException: LayoutRenderer cannot be found: 'aspnet-mvc-action'. Is NLog.Web not included?
+   at NLog.Config.Factory`2.CreateInstance(String itemName)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(ConfigurationItemFactory configurationItemFactory, String name, Nullable`1 throwConfigExceptions)
+2021-12-19 13:04:03.8126 Info Adding target ColoredConsoleTarget(Name=ownFile-web)
+2021-12-19 13:04:03.8330 Info Validating config: TargetNames=ownFile-web, ConfigItems=36
+2021-12-19 13:04:03.8408 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: allfile
+2021-12-19 13:14:43.3963 Info Auto loading assembly file: /home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Api/bin/Debug/net6.0/NLog.Extensions.Logging.dll
+2021-12-19 13:14:43.4311 Info Loading assembly file: /home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Api/bin/Debug/net6.0/NLog.Extensions.Logging.dll
+2021-12-19 13:14:43.4635 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.7.4.1610. Product version: 1.7.4+e2bffa9e949fb4760d75aca224e78631c063f087. GlobalAssemblyCache: False
+2021-12-19 13:14:43.4635 Info Auto loading assembly file: /home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Api/bin/Debug/net6.0/NLog.Extensions.Logging.dll succeeded!
+2021-12-19 13:14:43.4635 Info Message Template Auto Format enabled
+2021-12-19 13:14:43.4732 Info Loading assembly: NLog.Extensions.Logging
+2021-12-19 13:14:43.4732 Info Loading assembly: NLog.Web.AspNetCore
+2021-12-19 13:14:43.4758 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Error loading extensions: NLog.Web.AspNetCore
+ ---> System.IO.FileNotFoundException: Could not load file or assembly 'NLog.Web.AspNetCore, Culture=neutral, PublicKeyToken=null'. The system cannot find the file specified.
+
+File name: 'NLog.Web.AspNetCore, Culture=neutral, PublicKeyToken=null'
+   at System.Reflection.RuntimeAssembly.InternalLoad(ObjectHandleOnStack assemblyName, ObjectHandleOnStack requestingAssembly, StackCrawlMarkHandle stackMark, Boolean throwOnFileNotFound, ObjectHandleOnStack assemblyLoadContext, ObjectHandleOnStack retAssembly)
+   at System.Reflection.RuntimeAssembly.InternalLoad(AssemblyName assemblyName, RuntimeAssembly requestingAssembly, StackCrawlMark& stackMark, Boolean throwOnFileNotFound, AssemblyLoadContext assemblyLoadContext)
+   at System.Reflection.Assembly.Load(String assemblyString)
+   at NLog.Internal.AssemblyHelpers.LoadFromName(String assemblyName)
+   at NLog.Config.LoggingConfigurationParser.ParseExtensionWithAssembly(String assemblyName, String prefix)
+   --- End of inner exception stack trace ---
+2021-12-19 13:14:43.5278 Info Adding target FileTarget(Name=allfile)
+2021-12-19 13:14:43.5334 Error Error parsing layout aspnet-request-url will be ignored. Exception: System.ArgumentException: LayoutRenderer cannot be found: 'aspnet-request-url'. Is NLog.Web not included?
+   at NLog.Config.Factory`2.CreateInstance(String itemName)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(ConfigurationItemFactory configurationItemFactory, String name, Nullable`1 throwConfigExceptions)
+2021-12-19 13:14:43.5334 Error Error parsing layout aspnet-mvc-action will be ignored. Exception: System.ArgumentException: LayoutRenderer cannot be found: 'aspnet-mvc-action'. Is NLog.Web not included?
+   at NLog.Config.Factory`2.CreateInstance(String itemName)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(ConfigurationItemFactory configurationItemFactory, String name, Nullable`1 throwConfigExceptions)
+2021-12-19 13:14:43.5334 Info Adding target ColoredConsoleTarget(Name=ownFile-web)
+2021-12-19 13:14:43.5484 Info Validating config: TargetNames=ownFile-web, ConfigItems=36
+2021-12-19 13:14:43.5545 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: allfile
+2021-12-19 13:32:29.0632 Info Auto loading assembly file: /home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Api/bin/Debug/net6.0/NLog.Extensions.Logging.dll
+2021-12-19 13:32:29.1062 Info Loading assembly file: /home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Api/bin/Debug/net6.0/NLog.Extensions.Logging.dll
+2021-12-19 13:32:29.1379 Info NLog.Extensions.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 1.7.4.1610. Product version: 1.7.4+e2bffa9e949fb4760d75aca224e78631c063f087. GlobalAssemblyCache: False
+2021-12-19 13:32:29.1379 Info Auto loading assembly file: /home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Api/bin/Debug/net6.0/NLog.Extensions.Logging.dll succeeded!
+2021-12-19 13:32:29.1403 Info Message Template Auto Format enabled
+2021-12-19 13:32:29.1463 Info Loading assembly: NLog.Extensions.Logging
+2021-12-19 13:32:29.1463 Info Loading assembly: NLog.Web.AspNetCore
+2021-12-19 13:32:29.1485 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Error loading extensions: NLog.Web.AspNetCore
+ ---> System.IO.FileNotFoundException: Could not load file or assembly 'NLog.Web.AspNetCore, Culture=neutral, PublicKeyToken=null'. The system cannot find the file specified.
+
+File name: 'NLog.Web.AspNetCore, Culture=neutral, PublicKeyToken=null'
+   at System.Reflection.RuntimeAssembly.InternalLoad(ObjectHandleOnStack assemblyName, ObjectHandleOnStack requestingAssembly, StackCrawlMarkHandle stackMark, Boolean throwOnFileNotFound, ObjectHandleOnStack assemblyLoadContext, ObjectHandleOnStack retAssembly)
+   at System.Reflection.RuntimeAssembly.InternalLoad(AssemblyName assemblyName, RuntimeAssembly requestingAssembly, StackCrawlMark& stackMark, Boolean throwOnFileNotFound, AssemblyLoadContext assemblyLoadContext)
+   at System.Reflection.Assembly.Load(String assemblyString)
+   at NLog.Internal.AssemblyHelpers.LoadFromName(String assemblyName)
+   at NLog.Config.LoggingConfigurationParser.ParseExtensionWithAssembly(String assemblyName, String prefix)
+   --- End of inner exception stack trace ---
+2021-12-19 13:32:29.1991 Info Adding target FileTarget(Name=allfile)
+2021-12-19 13:32:29.2041 Error Error parsing layout aspnet-request-url will be ignored. Exception: System.ArgumentException: LayoutRenderer cannot be found: 'aspnet-request-url'. Is NLog.Web not included?
+   at NLog.Config.Factory`2.CreateInstance(String itemName)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(ConfigurationItemFactory configurationItemFactory, String name, Nullable`1 throwConfigExceptions)
+2021-12-19 13:32:29.2041 Error Error parsing layout aspnet-mvc-action will be ignored. Exception: System.ArgumentException: LayoutRenderer cannot be found: 'aspnet-mvc-action'. Is NLog.Web not included?
+   at NLog.Config.Factory`2.CreateInstance(String itemName)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(ConfigurationItemFactory configurationItemFactory, String name, Nullable`1 throwConfigExceptions)
+2021-12-19 13:32:29.2041 Info Adding target ColoredConsoleTarget(Name=ownFile-web)
+2021-12-19 13:32:29.2184 Info Validating config: TargetNames=ownFile-web, ConfigItems=36
+2021-12-19 13:32:29.2236 Warn Unused target detected. Add a rule for this target to the configuration. TargetName: allfile
