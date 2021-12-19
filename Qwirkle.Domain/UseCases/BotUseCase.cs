@@ -17,11 +17,8 @@ public class BotUseCase
         _game = game;
         var doableMoves = ComputeDoableMoves(player, originCoordinates, true);
         var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
-        return playReturn?.TilesPlayed;
+        return playReturn?.TilesPlayed ?? new List<TileOnBoard>();
     }
-
-#warning to remove ?
-    public Game GetGame(int gameId) => _infoUseCase.GetGame(gameId);
 
     public List<PlayReturn> ComputeDoableMoves(int gameId, int userId)
     {
@@ -131,7 +128,7 @@ public class BotUseCase
     }
 
     private PlayReturn TestPlayTiles(Player player, List<TileOnBoard> tilesToPlay) => _coreUseCase.Play(tilesToPlay, player, _game, true);
-    
+
     private static RowType RandomRowType()
     {
         var rowTypeValues = typeof(RowType).GetEnumValues();

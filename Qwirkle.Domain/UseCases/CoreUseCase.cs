@@ -132,7 +132,7 @@ public class CoreUseCase
 
     private void CreatePlayers(HashSet<int> usersIds)
     {
-        Game.Players = new List<Player>();
+        Game = Game with { Players = new List<Player>() };
         foreach (var userId in usersIds) Game.Players.Add(_repository.CreatePlayer(userId, Game.Id));
         SetPositionsPlayers();
         Game.Players.ForEach(player => _repository.UpdatePlayer(player));
@@ -142,7 +142,7 @@ public class CoreUseCase
 
     private void SetPositionsPlayers()
     {
-        Game.Players = Game.Players.OrderBy(_ => Guid.NewGuid()).ToList();
+        Game = Game with { Players = Game.Players.OrderBy(_ => Guid.NewGuid()).ToList() };
         for (var i = 0; i < Game.Players.Count; i++)
             Game.Players[i].GamePosition = (byte)(i + 1);
     }
@@ -188,7 +188,7 @@ public class CoreUseCase
         var tilesToPlayList = tilesToPlay.ToList();
         player.LastTurnPoints = points;
         player.Points += points;
-        Game.Board.Tiles.AddRange(tilesToPlayList);
+        Game.Board.AddTiles(tilesToPlayList);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();
         for (byte i = 0; i < tilesToPlayList.Count; i++) positionsInRack.Add(i);
