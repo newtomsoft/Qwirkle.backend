@@ -3,6 +3,7 @@
     {
         services.AddOptions();
         services.AddSingleton<UltraBoardGamesPlayerApplication>();
+        services.AddSingleton<IWebDriverFactory, EdgeDriverFactory>();
         services.AddSingleton<BotUseCase>();
         services.AddSingleton<CoreUseCase>();
         services.AddSingleton<InfoUseCase>();
