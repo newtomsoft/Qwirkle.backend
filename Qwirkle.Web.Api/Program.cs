@@ -1,25 +1,22 @@
 var appBuilder = WebApplication.CreateBuilder(args);
 LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetSection("NLog"));
+const string underDevelopment = "CorsPolicyDevelopment";
+const string underStagingOrProduction = "CorsPolicy";
 appBuilder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicyDevelopment", builder => builder
-        .WithOrigins("https://localhost*")
-        .SetIsOriginAllowedToAllowWildcardSubdomains()
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials());
-    options.AddPolicy("CorsPolicyStaging", builder => builder
-        .WithOrigins("https://*.newtomsoft.fr")
-        .SetIsOriginAllowedToAllowWildcardSubdomains()
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials());
-    options.AddPolicy("CorsPolicyProduction", builder => builder
-        .WithOrigins("https://*.qwirkle.net")
-        .SetIsOriginAllowedToAllowWildcardSubdomains()
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials());
+    options.AddPolicy(underStagingOrProduction, builder => builder
+            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
+            .AllowCredentials()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
+    options.AddPolicy(underDevelopment, builder => builder
+            .WithOrigins("https://localhost")
+            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
 });
 appBuilder.Services.AddSignalR();
 appBuilder.Services.AddScoped<IRepository, Repository>();
@@ -61,24 +58,12 @@ appBuilder.Services.AddSession();
 
 var app = appBuilder.Build();
 
-if (app.Environment.IsProduction())
-    app.UseCors("CorsPolicyProduction");
-else if (app.Environment.IsStaging())
-    app.UseCors("CorsPolicyStaging");
-else if (app.Environment.IsDevelopment())
-    app.UseCors("CorsPolicyDevelopment");
-else throw new ArgumentException("Donne ton environement bordel !!!");
-
-#if DEBUG
-app.UseDeveloperExceptionPage();
-#else
-app.UseExceptionHandler("/Home/Error");
-#endif
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseSession();
+app.UseCors(app.Environment.IsDevelopment() ? underDevelopment : underStagingOrProduction);
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
