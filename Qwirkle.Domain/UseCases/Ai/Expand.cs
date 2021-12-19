@@ -113,8 +113,9 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
         var playReturnsWith1Tile = new List<PlayReturn>();
         foreach (var coordinates in boardAdjoiningCoordinates)
         {
-            foreach (var tile in rack.Tiles)
+            for (int i = 0; i < rack.Tiles.Count; i++)
             {
+                TileOnPlayer tile = rack.Tiles[i];
                 var playReturn = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) }, game);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
             }
@@ -208,8 +209,9 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
         boardAdjoiningCoordinatesRow.Remove(coordinateChanging);
         foreach (var currentCoordinate in boardAdjoiningCoordinatesRow)
         {
-            foreach (var tile in tilesToTest)
+            for (int i = 0; i < tilesToTest.Count; i++)
             {
+                TileOnPlayer tile = tilesToTest[i];
                 var testedCoordinates = rowType is RowType.Line ? Coordinates.From(currentCoordinate, coordinateFixed) : Coordinates.From(coordinateFixed, currentCoordinate);
                 var testedTile = TileOnBoard.From(tile, testedCoordinates);
                 var playReturn2 = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { firstTile, testedTile },game);
@@ -241,8 +243,9 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
 
         foreach (var currentCoordinate in boardAdjoiningCoordinatesRow)
         {
-            foreach (var tile in rackTiles)
+            for (int i = 0; i < rackTiles.Count; i++)
             {
+                TileOnPlayer tile = rackTiles[i];
                 var testedCoordinates = rowType is RowType.Line ? Coordinates.From(currentCoordinate, coordinateFixed) : Coordinates.From(coordinateFixed, currentCoordinate);
                 var testedTile = TileOnBoard.From(tile, testedCoordinates);
                 var playReturn2 = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { firstTile, secondTile, testedTile },game);

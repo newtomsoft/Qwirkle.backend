@@ -36,9 +36,7 @@ public class AiController : ControllerBase
         var dateOne=DateTime.Now;
         for (var i = 0; i < 8; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
         {
-            mctsRoot.Children
-                .AsParallel()      
-                .ForAll(mcts =>
+            Parallel.ForEach(mctsRoot.Children,mcts =>
               {
                   var searchPath = new List<MonteCarloTreeSearchNode>();
                   var mctsRollout = mcts;
@@ -73,7 +71,7 @@ public class AiController : ControllerBase
                           mctsRollout=Expand.SwapTilesMcts(mctsRollout,playerIndex);
                           
                         player.LastTurnSkipped = true;
-                        if (mctsRollout.Game.Bag.Tiles.Count == 0 && mctsRollout.Game.Players.Count(p => p.LastTurnSkipped) == mctsRollout.Game.Players.Count)
+                        if (mctsRollout.Game.Players.Count(p => p.LastTurnSkipped) == mctsRollout.Game.Players.Count)
                             {
                                 
                                 mctsRollout.Game.GameOver= true;
