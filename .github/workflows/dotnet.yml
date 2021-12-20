@@ -2,9 +2,9 @@ name: .NET
 
 on:
   push:
-    branches: [ Development ]
+    branches: [ Staging ]
   pull_request:
-    branches: [ Development ]
+    branches: [ Staging ]
 
 jobs:
   build:
@@ -47,6 +47,6 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         PORT: ${{ secrets.PORT }}
         source: 'publish'
-        target: '/var/www/qwirkleStaging/backend/'
+        target: ${{ secrets.STAGING_PATH }}
         strip_components: 1  
       
