@@ -2,9 +2,9 @@ name: Qwirkle backend Development build and test
 
 on:
   push:
-    branches: [ Staging ]
+    branches: [ Development ]
   pull_request:
-    branches: [ Staging ]
+    branches: [ Development ]
 
 jobs:
   build:
