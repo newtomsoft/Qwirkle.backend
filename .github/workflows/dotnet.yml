@@ -31,7 +31,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: publish
-        path: publish
+        path: Qwirkle.Web.Api/bin/Release/net6.0/linux-x64/publish
 
     - name: Build site assets
       working-directory: ${{ github.workspace }}
