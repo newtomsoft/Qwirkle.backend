@@ -2,14 +2,16 @@ name: .NET
 
 on:
   push:
-    branches: [ Development ]
+    branches: [ Staging ]
   pull_request:
-    branches: [ Development ]
+    branches: [ Staging ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    environment:
+      name: qwirkle
 
     steps:
     - uses: actions/checkout@v2
@@ -20,6 +22,31 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test
+    - name: Publish  
+      run: dotnet publish Qwirkle.Web.Api -c Release -o ./publish -r linux-x64 --self-contained true /p:UseAppHost=true
+    - name: Archive build
+
+      if: success()
+      uses: actions/upload-artifact@v1
+      with:
+        name: publish
+        path: publish
+
+    - name: Build site assets
+      working-directory: ${{ github.workspace }}
+      run: ls -la
+      
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER }}
+        username: ${{ secrets.USER }}
+        password: ${{ secrets.PASSWORD }}
+        PORT: ${{ secrets.PORT }}
+        source: 'publish'
+        target: ${{ secrets.STAGING_PATH }}
+        strip_components: 1  
+      
