@@ -1,4 +1,4 @@
-name: .NET
+name: Qwirkle backend Staging CI
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
 
     runs-on: ubuntu-latest
     environment:
-      name: qwirkle
+      name: Staging
 
     steps:
     - uses: actions/checkout@v2
@@ -47,6 +47,6 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         PORT: ${{ secrets.PORT }}
         source: 'publish'
-        target: ${{ secrets.STAGING_PATH }}
+        target: ${{ secrets.TARGET_PATH }}
         strip_components: 1  
       
