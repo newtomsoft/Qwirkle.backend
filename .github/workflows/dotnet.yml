@@ -26,14 +26,14 @@ jobs:
     - name: Test
       run: dotnet test
     - name: Publish  
-      run: dotnet publish Qwirkle.Web.Api -c Release -r linux-x64 --self-contained true /p:UseAppHost=true
+      run: dotnet publish Qwirkle.Web.Api -c Release -o ./publish -r linux-x64 --self-contained true /p:UseAppHost=true
     - name: Archive build
 
       if: success()
       uses: actions/upload-artifact@v1
       with:
         name: publish
-        path: Qwirkle.Web.Api/bin/Release/net6.0/linux-x64/publish
+        path: publish
 
     - name: Build site assets
       working-directory: ${{ github.workspace }}
@@ -46,7 +46,7 @@ jobs:
         username: ${{ secrets.USER }}
         password: ${{ secrets.PASSWORD }}
         PORT: ${{ secrets.PORT }}
-        source: 'Qwirkle.Web.Api/bin/Release/net6.0/linux-x64/publish'
+        source: 'publish'
         target: '/var/www/qwirkleStaging/backend/'
         strip_components: 1  
       
