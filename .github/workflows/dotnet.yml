@@ -1,4 +1,4 @@
-name: Qwirkle Backend Production CI
+name: Qwirkle backend Production CI
 
 on:
   push:
