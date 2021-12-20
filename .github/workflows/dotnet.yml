@@ -23,3 +23,7 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Publish  
+      run: dotnet publish -p:PublishProfile=Qwirkle.Web.Api\Properties\PublishProfiles\FolderProfile -c Release
+    
+      
