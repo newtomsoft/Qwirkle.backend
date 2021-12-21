@@ -9,6 +9,8 @@ namespace Qwirkle.Web.Api.Controllers;
 public class AiController : ControllerBase
 {
     private readonly BotUseCase _botUseCase;
+    private readonly InfoUseCase _infoUseCase;
+
     private readonly UserManager<UserDao> _userManager;
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
@@ -19,14 +21,15 @@ public class AiController : ControllerBase
     {
         _botUseCase = botUseCase;
         _userManager = userManager;
+        _infoUseCase=_botUseCase._infoUseCase;
+        
     }
 
     [HttpGet("BestMoves/{gameId:int}")]
     public ActionResult BestMoves(int gameId)
     {
         _logger.Info($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
-
-        _mcts = new MonteCarloTreeSearchNode(_botUseCase.GetGame(gameId));
+        _mcts = new MonteCarloTreeSearchNode(_infoUseCase.GetGame(gameId));
         var playerRoot = _mcts.Game.Players.FirstOrDefault(p => p.IsTurn);
         var playReturns = Expand.ComputeDoableMovesMcts(_mcts.Game.Board, playerRoot, _mcts.Game);
         

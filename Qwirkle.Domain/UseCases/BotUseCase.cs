@@ -2,7 +2,7 @@
 
 public class BotUseCase
 {
-    private readonly InfoUseCase _infoUseCase;
+    public readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
     private Game _game;
 
@@ -21,7 +21,7 @@ public class BotUseCase
     }
 
 #warning to remove ?
-    public Game GetGame(int gameId) => _infoUseCase.GetGame(gameId);
+   
 
     public List<PlayReturn> ComputeDoableMoves(int gameId, int userId)
     {
