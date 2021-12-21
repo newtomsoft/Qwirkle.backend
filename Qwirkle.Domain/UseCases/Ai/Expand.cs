@@ -243,7 +243,7 @@ private static RowType RandomRowType()
             const int endGameBonusPoints = 6;
             wonPoints += endGameBonusPoints;
 
-            game.GameOver = true;
+            game =  new Game(game.Id, game.Board, game.Players, true);
         }
         return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 

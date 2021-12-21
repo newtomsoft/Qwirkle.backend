@@ -27,7 +27,7 @@ public class AiController : ControllerBase
     [HttpGet("BestMoves/{gameId:int}")]
     public ActionResult BestMoves(int gameId)
     {
-        _logger.Info($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
+        _logger.Info($"userId:{UserId}  with {gameId}");
         _mcts = new MonteCarloTreeSearchNode(_infoUseCase.GetGame(gameId));
         var playerRoot = _mcts.Game.Players.FirstOrDefault(p => p.IsTurn);
         var playReturns = Expand.ComputeDoableMovesMcts(_mcts.Game.Board, playerRoot, _mcts.Game);
@@ -77,7 +77,7 @@ public class AiController : ControllerBase
                         if (mctsRollout.Game.Players.Count(p => p.LastTurnSkipped) == mctsRollout.Game.Players.Count)
                             {
                                 
-                                mctsRollout.Game.GameOver= true;
+                                mctsRollout.Game =  new Game(mctsRollout.Game.Id, mctsRollout.Game.Board, mctsRollout.Game.Players, true);
                             }
                             else
                                 mctsRollout = Expand.SetNextPlayerTurnToPlay(mctsRollout, mctsRollout.Game.Players[playerIndex]);
@@ -114,9 +114,4 @@ public class AiController : ControllerBase
         return new ObjectResult(BestChildUCB.BestChildUcb(mctsRoot, 0.1).ParentAction);
     }
 
-<<<<<<< HEAD
- 
-=======
-
->>>>>>> 313cc98a871d96738191983678b46b4253babc2d
 }
