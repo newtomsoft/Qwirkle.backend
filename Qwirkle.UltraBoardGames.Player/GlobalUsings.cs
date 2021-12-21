@@ -14,7 +14,6 @@ global using Qwirkle.Domain.UseCases;
 global using Qwirkle.Domain.ValueObjects;
 global using Qwirkle.Infra.Repository;
 global using Qwirkle.UltraBoardGames.Player;
-global using System.Diagnostics;
 global using System.Diagnostics.CodeAnalysis;
 global using System.Drawing;
 global using System.Drawing.Imaging;

@@ -84,8 +84,8 @@ public class GetAdjoiningCoordinatesToTilesShould
     public void ReturnAroundWhen2TilesOnBoard()
     {
         var tile = new Tile(TileColor.Blue, TileShape.Circle);
-        var tileSingle = new List<TileOnBoard> { new(tile, _coord11), new(tile, _coord12) };
-        var board = Board.From(tileSingle);
+        var tiles = new List<TileOnBoard> { new(tile, _coord11), new(tile, _coord12) };
+        var board = Board.From(tiles);
         var result = board.GetFreeAdjoiningCoordinatesToTiles();
         var expected = new List<Coordinates> { _coord01, _coord02, _coord10, _coord13, _coord21, _coord22 };
         Sort(result).ShouldBe(Sort(expected));
@@ -95,7 +95,7 @@ public class GetAdjoiningCoordinatesToTilesShould
     public void ReturnAroundWhenLotOfTilesOnBoard()
     {
         var tile = new Tile(TileColor.Blue, TileShape.Circle);
-        var tileSingle = new List<TileOnBoard>
+        var tiles = new List<TileOnBoard>
         {
             new(tile, _coord31), new(tile, _coord41),
             new(tile, _coord42),
@@ -103,7 +103,7 @@ public class GetAdjoiningCoordinatesToTilesShould
             new(tile, _coord34), new(tile, _coord54),
             new(tile, _coord35), new(tile, _coord45), new(tile, _coord55),
         };
-        var board = Board.From(tileSingle);
+        var board = Board.From(tiles);
         var result = board.GetFreeAdjoiningCoordinatesToTiles();
         var expected = new List<Coordinates>
         {

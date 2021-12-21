@@ -1,12 +1,22 @@
 var appBuilder = WebApplication.CreateBuilder(args);
 LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetSection("NLog"));
+const string underDevelopment = "CorsPolicyDevelopment";
+const string underStagingOrProduction = "CorsPolicy";
 appBuilder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", builder => builder
-    .SetIsOriginAllowed(_ => true)
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .AllowCredentials());
+    options.AddPolicy(underStagingOrProduction, builder => builder
+            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
+            .AllowCredentials()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
+    options.AddPolicy(underDevelopment, builder => builder
+            .WithOrigins("https://localhost")
+            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
 });
 appBuilder.Services.AddSignalR();
 appBuilder.Services.AddScoped<IRepository, Repository>();
@@ -47,17 +57,13 @@ appBuilder.Services.ConfigureApplicationCookie(options => options.LoginPath = ""
 appBuilder.Services.AddSession();
 
 var app = appBuilder.Build();
-app.UseCors("CorsPolicy");
-#if DEBUG
-app.UseDeveloperExceptionPage();
-#else
-app.UseExceptionHandler("/Home/Error");
-#endif
+
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseSession();
+app.UseCors(app.Environment.IsDevelopment() ? underDevelopment : underStagingOrProduction);
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();

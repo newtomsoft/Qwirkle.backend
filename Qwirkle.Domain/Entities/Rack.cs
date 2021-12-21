@@ -6,6 +6,6 @@ public record Rack(List<TileOnPlayer> Tiles)
     public Rack WithoutDuplicatesTiles()
     {
         var tiles = Tiles.Select(t => t.ToTile()).Distinct().ToList();
-        return new (tiles.Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList());
+        return new(tiles.Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList());
     }
 }

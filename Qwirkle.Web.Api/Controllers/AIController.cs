@@ -1,5 +1,4 @@
 ﻿using Qwirkle.Domain.UseCases.Ai;
-using System.Reflection;
 
 namespace Qwirkle.Web.Api.Controllers;
 
@@ -115,5 +114,9 @@ public class AiController : ControllerBase
         return new ObjectResult(BestChildUCB.BestChildUcb(mctsRoot, 0.1).ParentAction);
     }
 
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> 313cc98a871d96738191983678b46b4253babc2d
 }
