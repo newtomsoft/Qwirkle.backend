@@ -12,7 +12,7 @@ public class BotUseCase
         _coreUseCase = coreUseCase;
     }
 
-    public IEnumerable<TileOnBoard> GetMostPointsMove(Player player, Game game, Coordinates originCoordinates = null)
+    public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
         _game = game;
         var doableMoves = ComputeDoableMoves(player, originCoordinates, true);
