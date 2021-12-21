@@ -1,7 +1,4 @@
 
-using System.IO;
-
-using System.Diagnostics;
 
 
 
@@ -110,7 +107,7 @@ namespace Qwirkle.Domain.UseCases.Ai;
                     this.to(device);
             }
 
-            public override Tensor forward(Tensor input)
+            public override torch.Tensor forward(torch.Tensor input)
             {
                 var l11 = conv1.forward(input);
                 var l12 = relu1.forward(l11);
@@ -137,8 +134,8 @@ namespace Qwirkle.Domain.UseCases.Ai;
             Model model,
             torch.optim.Optimizer optimizer,
             Loss loss,
-            Device device,
-            IEnumerable<(Tensor, Tensor)> dataLoader,
+            torch.Device device,
+            IEnumerable<(torch.Tensor, torch.Tensor)> dataLoader,
             int epoch,
             long batchSize,
             long size)
@@ -157,9 +154,6 @@ namespace Qwirkle.Domain.UseCases.Ai;
                     var prediction = model.forward(data);
                     var output = loss(prediction, target);
 
-                    output.backward();
-
-                    optimizer.step();
 
                     if (batchId % _logInterval == 0) {
                         Console.WriteLine($"\rTrain: epoch {epoch} [{batchId * batchSize} / {size}] Loss: {output.ToSingle():F4}");
@@ -175,8 +169,8 @@ namespace Qwirkle.Domain.UseCases.Ai;
         private static void Test(
             Model model,
             Loss loss,
-            Device device,
-            IEnumerable<(Tensor, Tensor)> dataLoader,
+            torch.Device device,
+            IEnumerable<(torch.Tensor, torch.Tensor)> dataLoader,
             long size)
         {
             model.Eval();

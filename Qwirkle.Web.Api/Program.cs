@@ -10,13 +10,19 @@ appBuilder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod()
     );
-    options.AddPolicy(underDevelopment, builder => builder
-            .WithOrigins("https://localhost")
-            .SetIsOriginAllowedToAllowWildcardSubdomains()
+       options.AddPolicy(underDevelopment, builder => builder
+            .SetIsOriginAllowed(origin => true)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
     );
+    // options.AddPolicy(underDevelopment, builder => builder
+    //         .WithOrigins("https://localhost")
+    //         .SetIsOriginAllowedToAllowWildcardSubdomains()
+    //         .AllowAnyHeader()
+    //         .AllowAnyMethod()
+    //         .AllowCredentials()
+    // );
 });
 appBuilder.Services.AddSignalR();
 appBuilder.Services.AddScoped<IRepository, Repository>();
