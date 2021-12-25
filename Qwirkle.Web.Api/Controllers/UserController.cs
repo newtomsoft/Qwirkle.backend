@@ -2,7 +2,7 @@
 
 [ApiController]
 [Authorize]
-[Route("User")]
+[Route("[controller]")]
 public class UserController : ControllerBase
 {
     private readonly AuthenticationUseCase _authenticationUseCase;

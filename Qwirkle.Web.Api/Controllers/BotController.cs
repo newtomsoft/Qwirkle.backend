@@ -4,7 +4,7 @@ namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Authorize] //todo : only for bot
-[Route("Bot")]
+[Route("[controller]")]
 public class BotController : ControllerBase
 {
     private readonly BotUseCase _botUseCase;

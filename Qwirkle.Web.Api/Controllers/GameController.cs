@@ -2,7 +2,7 @@
 
 [ApiController]
 [Authorize]
-[Route("Game")]
+[Route("[controller]")]
 public class GameController : ControllerBase
 {
     private readonly ILogger<GameController> _logger;
