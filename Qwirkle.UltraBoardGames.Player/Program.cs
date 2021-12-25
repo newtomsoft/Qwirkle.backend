@@ -9,7 +9,6 @@
         services.AddSingleton<InfoUseCase>();
         services.AddSingleton<GameScraper>();
         services.AddSingleton<INotification, FakeNotification>();
-        services.AddSingleton<IArtificialIntelligence, ArtificialIntelligence>();
         services.AddSingleton<IRepository, FakeRepository>();
         services.AddDbContext<DefaultDbContext>();
     })
