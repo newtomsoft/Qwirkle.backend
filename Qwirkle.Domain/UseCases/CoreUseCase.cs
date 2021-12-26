@@ -7,6 +7,7 @@ public class CoreUseCase
     private readonly IRepository _repository;
     private readonly INotification _notification;
     private readonly InfoUseCase _infoUseCase;
+    private readonly BotUseCase _botUseCase;
 
     public Game Game { get; set; }
 
@@ -15,6 +16,9 @@ public class CoreUseCase
         _repository = repository;
         _notification = notification;
         _infoUseCase = infoUseCase;
+        _botUseCase = new BotUseCase(infoUseCase, this);
+#warning grosse dette technique
+
     }
 
     public List<Player> CreateGame(HashSet<int> usersIds)
@@ -55,7 +59,10 @@ public class CoreUseCase
 
         playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
         _notification?.SendTilesPlayed(Game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
-        _notification?.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
+        var playerIdTurn = _infoUseCase.GetPlayerIdTurn(Game.Id);
+        var nextPlayer = game.Players.First(p => p.Id == playerIdTurn);
+        if (nextPlayer.IsBot()) _botUseCase.Play(game, nextPlayer);
+        _notification?.SendPlayerIdTurn(Game.Id, playerIdTurn);
         return playReturn;
     }
 

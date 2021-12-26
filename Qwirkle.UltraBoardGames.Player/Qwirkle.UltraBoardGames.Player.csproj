@@ -28,16 +28,19 @@
     <None Update="geckodriver.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="msedgedriver">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="msedgedriver.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="uBlock-Origin.edge.crx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="uBlock0_1.39.2.chromium.zip">
+    <None Update="WebPlugin\uBlock-Origin.edge.crx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ublock_origin-1.39.2-an+fx.xpi">
+    <None Update="WebPlugin\uBlock0_1.39.2.chromium.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="WebPlugin\ublock_origin-1.39.2-an+fx.xpi">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

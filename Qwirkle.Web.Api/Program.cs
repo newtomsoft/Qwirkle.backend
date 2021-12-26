@@ -11,11 +11,10 @@ appBuilder.Services.AddCors(options =>
             .AllowAnyMethod()
     );
     options.AddPolicy(underDevelopment, builder => builder
-            .WithOrigins("https://localhost")
-            .SetIsOriginAllowedToAllowWildcardSubdomains()
+            .WithOrigins("https://localhost", "http://localhost", "https://localhost:4200", "http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
+            .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials()
     );
 });
 appBuilder.Services.AddSignalR();
