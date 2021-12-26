@@ -44,6 +44,9 @@ public class Player
 
     public bool HasTiles(IEnumerable<Tile> tiles) => tiles.All(tile => Rack.Tiles.Select(t => (t.Color, t.Shape)).Contains((tile.Color, tile.Shape)));
 
+    public bool IsBot() => Pseudo.ToLowerInvariant().StartsWith("bot");
+#warning dette technique. Utiliser role
+
     public int TilesNumberCanBePlayedAtGameBeginning()
     {
         var tiles = Rack.Tiles;
