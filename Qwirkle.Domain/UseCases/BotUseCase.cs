@@ -12,6 +12,12 @@ public class BotUseCase
         _coreUseCase = coreUseCase;
     }
 
+    public void Play(Game game, Player bot)
+    {
+        var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
+        _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
+    }
+
     public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
         _game = game;
@@ -135,4 +141,8 @@ public class BotUseCase
         var index = new Random().Next(rowTypeValues.Length);
         return (RowType)rowTypeValues.GetValue(index)!;
     }
+
+
+
+
 }
