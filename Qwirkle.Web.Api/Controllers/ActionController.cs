@@ -1,7 +1,7 @@
 ﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
-[Route("Action")]
+[Route("[controller]")]
 public class ActionController : ControllerBase
 {
     private readonly InfoUseCase _infoUseCase;

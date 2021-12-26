@@ -2,7 +2,7 @@
 
 [ApiController]
 [Authorize] //todo Role = "Admin"
-[Route("Admin")]
+[Route("[controller]")]
 public class AdminController : ControllerBase
 {
     private readonly InfoUseCase _infoUseCase;
