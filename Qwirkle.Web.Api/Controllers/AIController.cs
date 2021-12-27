@@ -39,7 +39,7 @@ public class AiController : ControllerBase
         var dateOne=DateTime.Now;
         for (var i = 0; i < 8; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
         {
-            Parallel.ForEach(mctsRoot.Children,mcts =>
+            mctsRoot.Children.ForEach(mcts =>
               {
                   var searchPath = new List<MonteCarloTreeSearchNode>();
                   var mctsRollout = mcts;
@@ -65,7 +65,8 @@ public class AiController : ControllerBase
 
                           mctsRollout.Children.First().NumberOfVisits++;
                           searchPath.Add(mctsRollout);
-                          mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children.First().Game, mctsRollout);
+                          mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children.First().Game, mctsRollout,currentPlayReturns[index].TilesPlayed);
+                         
                           
 
                       }

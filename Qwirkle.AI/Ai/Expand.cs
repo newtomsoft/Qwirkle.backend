@@ -65,7 +65,10 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
 
 
             });
+            
             var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed);
+            var playReturn = GetPlayReturnMCTS(coordinate.TilesPlayed,newgame.Players[indexPlayer], newgame);
+
             childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.Game.Players[indexPlayer]);
             mcts.Children.Add(childrenNode);
 
@@ -106,7 +109,7 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
         
         var rack = player.Rack.WithoutDuplicatesTiles();
 
-        var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles().Take(15);
+        var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles().GetRange(0,25);
 
         var allPlayReturns = new List<PlayReturn>();
         var playReturnsWith1Tile = new List<PlayReturn>();
@@ -258,6 +261,7 @@ private static RowType RandomRowType()
     {
         var random = new Random();
         var rackToSwap = mcts.Game.Players[playerIndex].Rack.Tiles;
+        if(rackToSwap.Count > 0){
         var tileNumberToSwap = random.Next(rackToSwap.Count) + 1;
         for (var i = 0; i < tileNumberToSwap; i++)
         {
@@ -273,7 +277,7 @@ private static RowType RandomRowType()
             rackToSwap.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
             mcts.Game.Bag.Tiles.Remove(addTile);
         }
-
+        }
 
         
         return mcts;

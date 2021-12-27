@@ -4,7 +4,8 @@ public record Game(int Id, Board Board, List<Player> Players, Bag Bag, bool Game
 {
     public Game(int id, Board board, List<Player> players, bool gameOver) : this(id, board, players, Bag.Empty(), gameOver)
     { }
-
+    public Game(int id, Board board, List<Player> players) : this(id, board, players, Bag.Empty(), true)
+    { }
     public Game(Board board, List<Player> players) : this(0, board, players, Bag.Empty(), false)
     { }
 
@@ -14,7 +15,7 @@ public record Game(int Id, Board Board, List<Player> Players, Bag Bag, bool Game
     public Game(Game game)
     {
         Id = game.Id;
-        Board = new Board(game.Board.Tiles);
+        Board = new Board(game.Board.Tiles.ToHashSet());
         Players = game.Players.Select(x => new Player(x)).ToList();
         Bag = new Bag(game.Id, game.Bag.Tiles.Select(x => x).ToList());
         GameOver = game.GameOver;
