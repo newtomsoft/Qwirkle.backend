@@ -1,4 +1,6 @@
-﻿var host = Host.CreateDefaultBuilder(args)
+﻿using Qwirkle.UltraBoardGames.Player.WebDriverFactory;
+
+var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((_, services) =>
     {
         services.AddOptions();
@@ -9,7 +11,6 @@
         services.AddSingleton<InfoUseCase>();
         services.AddSingleton<GameScraper>();
         services.AddSingleton<INotification, FakeNotification>();
-        services.AddSingleton<IArtificialIntelligence, ArtificialIntelligence>();
         services.AddSingleton<IRepository, FakeRepository>();
         services.AddDbContext<DefaultDbContext>();
     })
@@ -23,5 +24,7 @@
 using var serviceScope = host.Services.CreateScope();
 var services = serviceScope.ServiceProvider;
 var application = services.GetRequiredService<UltraBoardGamesPlayerApplication>();
+
+
 application.Run();
 

@@ -14,7 +14,6 @@ appBuilder.Services.AddCors(options =>
             .SetIsOriginAllowed(origin => true)
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials()
     );
     // options.AddPolicy(underDevelopment, builder => builder
     //         .WithOrigins("https://localhost")
