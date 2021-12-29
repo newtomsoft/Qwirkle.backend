@@ -63,7 +63,7 @@ public class Repository : IRepository
     public void UpdatePlayer(Player player)
     {
         var playerDao = DbContext.Players.First(p => p.Id == player.Id);
-        playerDao.Points = (byte)player.Points;
+        playerDao.Points = player.Points;
         playerDao.LastTurnPoints = (byte)player.LastTurnPoints;
         playerDao.GameTurn = player.IsTurn;
         playerDao.LastTurnSkipped = player.LastTurnSkipped;
