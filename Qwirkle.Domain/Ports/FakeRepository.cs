@@ -23,7 +23,7 @@ public class FakeRepository : IRepository
     public void SetPlayerTurn(int playerId) => throw new NotSupportedException();
     public void TilesFromBagToPlayer(Player player, List<byte> positionsInRack) => throw new NotSupportedException();
     public void UpdatePlayer(Player player) => throw new NotSupportedException();
-    public void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple) => throw new NotSupportedException();
+    public void ArrangeRack(Player player, IEnumerable<Tile> tiles) => throw new NotSupportedException();
     public void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<TileOnBoard> tilesOnBoard) => throw new NotSupportedException();
     public void TilesFromPlayerToBag(Player player, IEnumerable<Tile> tiles) => throw new NotSupportedException();
 }

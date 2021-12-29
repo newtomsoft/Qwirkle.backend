@@ -46,19 +46,19 @@ public class ArrangeRackTests
         ChangePlayerTilesBy(playerId, constTiles);
 
         {
-            _useCase.TryArrangeRack(playerId, new List<(TileColor color, TileShape shape)> { (constTile0!.Color, constTile0.Shape), (constTile1!.Color, constTile1.Shape), (constTile2!.Color, constTile2.Shape), (constTile3!.Color, constTile3.Shape), (constTile4!.Color, constTile4.Shape), (constTile5!.Color, constTile5.Shape) });
+            _useCase.TryArrangeRack(playerId, new List<Tile> { constTile0!.ToTile(), constTile1!.ToTile(), constTile2!.ToTile(), constTile3!.ToTile(), constTile4!.ToTile(), constTile5!.ToTile() });
             var tilesOrderedByPosition = _infoUseCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
             for (var i = 0; i < tilesOrderedByPosition.Count; i++)
                 tilesOrderedByPosition[i].ToTile().ShouldBe(constTiles[i].ToTile());
         }
         {
-            _useCase.TryArrangeRack(playerId, new List<(TileColor color, TileShape shape)> { (constTile5.Color, constTile5.Shape), (constTile4.Color, constTile4.Shape), (constTile3.Color, constTile3.Shape), (constTile2.Color, constTile2.Shape), (constTile1.Color, constTile1.Shape), (constTile0.Color, constTile0.Shape) });
+            _useCase.TryArrangeRack(playerId, new List<Tile> { constTile5!.ToTile(), constTile4!.ToTile(), constTile3!.ToTile(), constTile2!.ToTile(), constTile1!.ToTile(), constTile0!.ToTile() });
             var tilesOrderedByPosition = _infoUseCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
             for (var i = 0; i < tilesOrderedByPosition.Count; i++)
                 tilesOrderedByPosition[i].ToTile().ShouldBe(constTiles[^(i + 1)].ToTile());
         }
         {
-            _useCase.TryArrangeRack(playerId, new List<(TileColor color, TileShape shape)> { (constTile3.Color, constTile3.Shape), (constTile5.Color, constTile5.Shape), (constTile0.Color, constTile0.Shape), (constTile2.Color, constTile2.Shape), (constTile1.Color, constTile1.Shape), (constTile4.Color, constTile4.Shape) });
+            _useCase.TryArrangeRack(playerId, new List<Tile> { constTile3!.ToTile(), constTile5!.ToTile(), constTile0!.ToTile(), constTile2!.ToTile(), constTile1!.ToTile(), constTile4!.ToTile() });
             var tilesOrderedByPosition = _infoUseCase.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();
             tilesOrderedByPosition[0].ToTile().ShouldBe(constTiles[3].ToTile());
             tilesOrderedByPosition[1].ToTile().ShouldBe(constTiles[5].ToTile());

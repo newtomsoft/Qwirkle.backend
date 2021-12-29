@@ -22,7 +22,7 @@ public interface IRepository
     void SetGameOver(int gameId);
     List<int> GetLeadersPlayersId(int gameId);
     bool IsGameOver(int gameId);
-    void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple);
+    void ArrangeRack(Player player, IEnumerable<Tile> tiles);
     List<int> GetAllUsersId();
     List<int> GetUserGamesIds(int userId);
 }

@@ -32,13 +32,11 @@ public class CoreUseCase
 
     public void ResetGame(int gameId) => Game = _repository.GetGame(gameId);
 
-    public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
+    public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<Tile> tiles)
     {
-        var tilesTupleList = tilesTuple.ToList();
         var player = _infoUseCase.GetPlayer(playerId);
-        var tiles = GetTiles(tilesTupleList);
         if (!player.HasTiles(tiles)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
-        ArrangeRack(player, tilesTupleList);
+        ArrangeRack(player, tiles);
         return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
     }
 
@@ -143,7 +141,7 @@ public class CoreUseCase
         Game.Players.ForEach(player => _repository.UpdatePlayer(player));
     }
 
-    private void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple) => _repository.ArrangeRack(player, tilesTuple);
+    private void ArrangeRack(Player player, IEnumerable<Tile> tiles) => _repository.ArrangeRack(player, tiles);
 
     private void SetPositionsPlayers()
     {

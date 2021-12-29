@@ -71,12 +71,12 @@ public class Repository : IRepository
         DbContext.SaveChanges();
     }
 
-    public void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
+    public void ArrangeRack(Player player, IEnumerable<Tile> tiles)
     {
-        var tiles = tilesTuple.ToList();
-        for (byte i = 0; i < tiles.Count; i++)
+        var tilesList = tiles.ToList();
+        for (byte i = 0; i < tiles.Count(); i++)
         {
-            var tile = DbContext.TilesOnPlayer.Include(t => t.Tile).First(tp => tp.PlayerId == player.Id && tp.Tile.Color == tiles[i].color && tp.Tile.Shape == tiles[i].shape);
+            var tile = DbContext.TilesOnPlayer.Include(t => t.Tile).First(tp => tp.PlayerId == player.Id && tp.Tile.Color == tilesList[i].Color && tp.Tile.Shape == tilesList[i].Shape);
             tile.RackPosition = i;
         }
         DbContext.SaveChanges();
