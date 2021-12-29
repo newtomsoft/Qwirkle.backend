@@ -34,7 +34,7 @@ public class ActionController : ControllerBase
     {
         var gameId = tiles.First().GameId;
         var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
-        return new ObjectResult(_coreUseCase.TrySwapTiles(playerId, tiles.Select(t => (t.Color, t.Shape))));
+        return new ObjectResult(_coreUseCase.TrySwapTiles(playerId, tiles.Select(t => t.ToTile())));
     }
 
     [HttpPost("SkipTurn/")]

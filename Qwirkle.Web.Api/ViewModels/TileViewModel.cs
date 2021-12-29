@@ -9,4 +9,5 @@ public class TileViewModel
     public sbyte Y { get; set; }
 
     public TileOnBoard ToTileOnBoard() => new(Color, Shape, Coordinates.From(X, Y));
+    public Tile ToTile() => new(Color, Shape);
 }

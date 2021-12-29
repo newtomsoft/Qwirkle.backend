@@ -93,11 +93,11 @@ public class Repository : IRepository
         DbContext.SaveChanges();
     }
 
-    public void TilesFromPlayerToBag(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
+    public void TilesFromPlayerToBag(Player player, IEnumerable<Tile> tiles)
     {
         var game = DbContext.Games.Single(g => g.Id == player.GameId);
         game.LastPlayDate = DateTime.UtcNow;
-        var tilesOnPlayerDao = tilesTuple.Select(tileTuple => DbContext.TilesOnPlayer.Include(t => t.Tile).First(t => t.PlayerId == player.Id && t.Tile.Color == tileTuple.color && t.Tile.Shape == tileTuple.shape)).ToList();
+        var tilesOnPlayerDao = tiles.Select(tile => DbContext.TilesOnPlayer.Include(t => t.Tile).First(t => t.PlayerId == player.Id && t.Tile.Color == tile.Color && t.Tile.Shape == tile.Shape)).ToList();
         DbContext.TilesOnPlayer.RemoveRange(tilesOnPlayerDao);
         foreach (var tileOnPlayerDao in tilesOnPlayerDao) DbContext.TilesOnBag.Add(tileOnPlayerDao.ToTileOnBagDao(player.GameId));
         DbContext.SaveChanges();

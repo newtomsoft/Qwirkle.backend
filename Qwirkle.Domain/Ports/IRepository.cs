@@ -6,7 +6,7 @@ public interface IRepository
     void UpdatePlayer(Player player);
     void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<TileOnBoard> tilesOnBoard);
     void TilesFromBagToPlayer(Player player, List<byte> positionsInRack);
-    void TilesFromPlayerToBag(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple);
+    void TilesFromPlayerToBag(Player player, IEnumerable<Tile> tiles);
     Game GetGame(int gameId);
     int GetPlayerId(int gameId, int userId);
     Player GetPlayer(int playerId);
