@@ -5,13 +5,13 @@ const string underStagingOrProduction = "CorsPolicy";
 appBuilder.Services.AddCors(options =>
 {
     options.AddPolicy(underStagingOrProduction, builder => builder
-            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
+            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr", "https://localhost", "http://localhost", "https://localhost:4200", "http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod()
     );
     options.AddPolicy(underDevelopment, builder => builder
-            .WithOrigins("https://localhost", "http://localhost", "https://localhost:4200", "http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
+            .WithOrigins("http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod()
