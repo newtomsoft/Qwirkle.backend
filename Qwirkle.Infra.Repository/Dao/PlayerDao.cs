@@ -6,7 +6,7 @@ public class PlayerDao
     public int Id { get; init; }
     public int GameId { get; init; }
     public int UserId { get; init; }
-    public byte Points { get; set; }
+    public int Points { get; set; }
     public byte LastTurnPoints { get; set; }
     public bool GameTurn { get; set; }
     public byte GamePosition { get; set; }

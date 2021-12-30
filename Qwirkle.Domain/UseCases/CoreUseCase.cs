@@ -18,7 +18,6 @@ public class CoreUseCase
         _infoUseCase = infoUseCase;
         _botUseCase = new BotUseCase(infoUseCase, this);
 #warning grosse dette technique
-
     }
 
     public List<Player> CreateGame(HashSet<int> usersIds)
@@ -33,13 +32,11 @@ public class CoreUseCase
 
     public void ResetGame(int gameId) => Game = _repository.GetGame(gameId);
 
-    public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
+    public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<Tile> tiles)
     {
-        var tilesTupleList = tilesTuple.ToList();
         var player = _infoUseCase.GetPlayer(playerId);
-        var tiles = GetTiles(tilesTupleList);
         if (!player.HasTiles(tiles)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
-        ArrangeRack(player, tilesTupleList);
+        ArrangeRack(player, tiles);
         return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
     }
 
@@ -59,18 +56,17 @@ public class CoreUseCase
 
         playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
         _notification?.SendTilesPlayed(Game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
-        var playerIdTurn = _infoUseCase.GetPlayerIdTurn(Game.Id);
-        var nextPlayer = game.Players.First(p => p.Id == playerIdTurn);
+        var nextPlayerId = _infoUseCase.GetPlayerIdTurn(Game.Id);
+        _notification?.SendPlayerIdTurn(Game.Id, nextPlayerId);
+        var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
         if (nextPlayer.IsBot()) _botUseCase.Play(game, nextPlayer);
-        _notification?.SendPlayerIdTurn(Game.Id, playerIdTurn);
         return playReturn;
     }
 
-    public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
+    public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<Tile> tiles)
     {
-        var tilesList = tilesTuple.ToList();
+        var tilesList = tiles.ToList();
         var player = _infoUseCase.GetPlayer(playerId);
-        var tiles = GetTiles(tilesList);
         if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
         if (!player.HasTiles(tiles)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
         var swapTilesReturn = SwapTiles(player, tilesList);
@@ -145,7 +141,7 @@ public class CoreUseCase
         Game.Players.ForEach(player => _repository.UpdatePlayer(player));
     }
 
-    private void ArrangeRack(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple) => _repository.ArrangeRack(player, tilesTuple);
+    private void ArrangeRack(Player player, IEnumerable<Tile> tiles) => _repository.ArrangeRack(player, tiles);
 
     private void SetPositionsPlayers()
     {
@@ -177,13 +173,12 @@ public class CoreUseCase
         return new SkipTurnReturn { GameId = player.GameId, Code = PlayReturnCode.Ok };
     }
 
-    private SwapTilesReturn SwapTiles(Player player, IEnumerable<(TileColor color, TileShape shape)> tilesTuple)
+    private SwapTilesReturn SwapTiles(Player player, IEnumerable<Tile> tiles)
     {
-        var tiles = tilesTuple.ToList();
         ResetGame(player.GameId);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();
-        for (byte i = 0; i < tiles.Count; i++) positionsInRack.Add(i);
+        for (byte i = 0; i < tiles.Count(); i++) positionsInRack.Add(i);
         _repository.TilesFromBagToPlayer(player, positionsInRack);
         _repository.TilesFromPlayerToBag(player, tiles);
         _repository.UpdatePlayer(player);
@@ -229,8 +224,8 @@ public class CoreUseCase
     private void SetPlayerTurn(int playerId)
     {
         _repository.SetPlayerTurn(playerId);
-        Game.Players.First(p => p.Id == playerId).SetTurn(true);
+        var player = Game.Players.First(p => p.Id == playerId);
+        player.SetTurn(true);
+        if (player.IsBot()) _botUseCase.Play(Game, player);
     }
-
-    private IEnumerable<Tile> GetTiles(IEnumerable<(TileColor color, TileShape shape)> tilesTuples) => tilesTuples.Select(tileTuple => _repository.GetTile(tileTuple.color, tileTuple.shape));
 }

@@ -5,6 +5,7 @@ public class BotUseCase
     public readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
     private Game _game;
+    private const int TilesNumberPerPlayer = 6;
 
     public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase)
     {
@@ -15,7 +16,8 @@ public class BotUseCase
     public void Play(Game game, Player bot)
     {
         var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
-        _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
+        if (tilesToPlay.Count > 0) _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
+        else SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
     }
 
     public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
@@ -54,7 +56,7 @@ public class BotUseCase
 
         allPlayReturns.AddRange(playReturnsWith1Tile);
         var lastPlayReturn = playReturnsWith1Tile;
-        for (var tilePlayedNumber = 2; tilePlayedNumber <= 6; tilePlayedNumber++)
+        for (var tilePlayedNumber = 2; tilePlayedNumber <= TilesNumberPerPlayer; tilePlayedNumber++)
         {
             var currentPlayReturns = new List<PlayReturn>();
             foreach (var playReturn in lastPlayReturn)
@@ -143,7 +145,18 @@ public class BotUseCase
         return (RowType)rowTypeValues.GetValue(index)!;
     }
 
+    private void SwapOrSkipTurn(Player bot, int tilesOnBagNumber)
+    {
+        var tilesToSwapMaxNumber = Math.Min(tilesOnBagNumber, TilesNumberPerPlayer);
+        if (tilesToSwapMaxNumber > 0) Swap(bot, tilesToSwapMaxNumber);
+        else Skip(bot.Id);
+    }
 
+    private void Swap(Player bot, int tilesToSwapNumber)
+    {
+        _coreUseCase.TrySwapTiles(bot.Id, bot.Rack.Tiles.Take(tilesToSwapNumber));
+        //todo make algorithm to select tiles to swap 
+    }
 
-
+    private void Skip(int botId) => _coreUseCase.TrySkipTurn(botId);
 }
