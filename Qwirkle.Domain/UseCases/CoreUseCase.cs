@@ -228,6 +228,4 @@ public class CoreUseCase
         player.SetTurn(true);
         if (player.IsBot()) _botUseCase.Play(Game, player);
     }
-
-    private IEnumerable<Tile> GetTiles(IEnumerable<(TileColor color, TileShape shape)> tilesTuples) => tilesTuples.Select(tileTuple => _repository.GetTile(tileTuple.color, tileTuple.shape));
 }
