@@ -148,7 +148,7 @@ public class Expand
                         currentPlayReturns.AddRange(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false, game));
                 }
             }
-            asllPlayReturns.AddRange(currentPlayReturns);
+            allPlayReturns.AddRange(currentPlayReturns);
             lastPlayReturn = currentPlayReturns;
         }
         return allPlayReturns.OrderBy(x => x.Points).Reverse().ToList();
