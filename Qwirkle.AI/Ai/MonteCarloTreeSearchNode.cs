@@ -1,6 +1,6 @@
 namespace Qwirkle.Domain.UseCases.Ai;
 
-public class MonteCarloTreeSearchNode 
+public class MonteCarloTreeSearchNode
 {
     public Game Game { get; set; }
     public MonteCarloTreeSearchNode Parent { get; set; }
@@ -21,5 +21,5 @@ public class MonteCarloTreeSearchNode
         Wins = 0;
         Looses = 0;
     }
-   
+
 }

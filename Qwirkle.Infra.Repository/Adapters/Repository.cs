@@ -128,7 +128,7 @@ public class Repository : IRepository
         DbContext.SaveChanges();
     }
 
-    public List<int> GetLeadersPlayersId(int gameId) => DbContext.Players.Where(player => player.GameId == gameId).OrderByDescending(player => player.Points).GroupBy(player => player.Points).First().Select(player => player.Id).ToList();
+    public List<int> GetLeadersPlayersId(int gameId) =>DbContext.Players.Where(player => player.GameId == gameId).OrderByDescending(player => player.Points).Select(p =>p.Id).ToList();
 
     public bool IsGameOver(int gameId) => DbContext.Games.Any(g => g.Id == gameId && g.GameOver);
 

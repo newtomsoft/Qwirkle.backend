@@ -8,11 +8,11 @@ public class Backpropagate
     {
 
 
-        if (node != null)
+        if (node.Parent != null)
         {
-            node.NumberOfVisits++;
-            node.Wins += mcts.Wins;
-            node.Looses += mcts.Looses;
+            node.Parent.NumberOfVisits++;
+            if (mcts.Wins==1) node.Parent.Looses += 1;
+            if (mcts.Looses==1) node.Parent.Wins += 1;
             BackPropagate(mcts, node.Parent);
         }
         return node;

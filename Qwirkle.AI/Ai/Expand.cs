@@ -40,39 +40,39 @@ public class Expand
 
         return mcts;
     }
-public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mcts, PlayReturn coordinate, int indexPlayer)
+    public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mcts, PlayReturn coordinate, int indexPlayer)
     {
-        
 
-            var newgame = new Game(mcts.Game);
 
-            var random = new Random();
-            coordinate.TilesPlayed.ForEach(tileBoard =>
+        var newgame = new Game(mcts.Game);
+
+        var random = new Random();
+        coordinate.TilesPlayed.ForEach(tileBoard =>
+        {
+
+            newgame.Board.Tiles.Add(tileBoard);
+            var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == tileBoard.Color && tile.Shape == tileBoard.Shape).FirstOrDefault();
+            newgame.Players[indexPlayer].Rack.Tiles.Remove(removeTile);
+
+            if (newgame.Bag.Tiles.Count > 0)
             {
+                var index = random.Next(newgame.Bag.Tiles.Count);
+                var addTile = newgame.Bag.Tiles[index];
 
-                newgame.Board.Tiles.Add(tileBoard);
-                var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == tileBoard.Color && tile.Shape == tileBoard.Shape).FirstOrDefault();
-                newgame.Players[indexPlayer].Rack.Tiles.Remove(removeTile);
-
-                if (newgame.Bag.Tiles.Count > 0)
-                {
-                    var index = random.Next(newgame.Bag.Tiles.Count);
-                    var addTile = newgame.Bag.Tiles[index];
-
-                    newgame.Bag.Tiles.Remove(addTile);
-                    newgame.Players[indexPlayer].Rack.Tiles.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
-                }
+                newgame.Bag.Tiles.Remove(addTile);
+                newgame.Players[indexPlayer].Rack.Tiles.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
+            }
 
 
-            });
-            
-            var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed);
-            var playReturn = GetPlayReturnMCTS(coordinate.TilesPlayed,newgame.Players[indexPlayer], newgame);
+        });
 
-            childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.Game.Players[indexPlayer]);
-            mcts.Children.Add(childrenNode);
-
+        var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed);
        
+
+        childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.Game.Players[indexPlayer]);
+        mcts.Children.Add(childrenNode);
+
+
 
 
 
@@ -104,12 +104,17 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
         return mcts;
     }
     public static PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game);
-   public static List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game)
+    public static List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game, int randomSel)
     {
-        
-        var rack = player.Rack.WithoutDuplicatesTiles();
 
-        var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles().GetRange(0,25);
+        var rack = player.Rack.WithoutDuplicatesTiles();
+        var random = new Random();
+        var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles();
+        if (randomSel>8) {
+             var index = random.Next(boardAdjoiningCoordinates.Count);
+             
+             boardAdjoiningCoordinates=boardAdjoiningCoordinates.GetRange(0,index);
+        }
 
         var allPlayReturns = new List<PlayReturn>();
         var playReturnsWith1Tile = new List<PlayReturn>();
@@ -135,48 +140,48 @@ public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mc
                 var firstGameMove = game.Board.Tiles.Count == 0;
                 if (firstGameMove && tilePlayedNumber == 2) // todo ok but can do better
                 {
-                    currentPlayReturns.AddRange(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true,game));
+                    currentPlayReturns.AddRange(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true, game));
                 }
                 else
                 {
                     foreach (RowType rowType in Enum.GetValues(typeof(RowType)))
-                        currentPlayReturns.AddRange(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false,game));
+                        currentPlayReturns.AddRange(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false, game));
                 }
             }
-            allPlayReturns.AddRange(currentPlayReturns);
+            asllPlayReturns.AddRange(currentPlayReturns);
             lastPlayReturn = currentPlayReturns;
         }
-        return allPlayReturns;
+        return allPlayReturns.OrderBy(x => x.Points).Reverse().ToList();
     }
 
-private static RowType RandomRowType()
+    private static RowType RandomRowType()
     {
         var rowTypeValues = typeof(RowType).GetEnumValues();
         var index = new Random().Next(rowTypeValues.Length);
         return (RowType)rowTypeValues.GetValue(index)!;
     }
 
-    
-       public static List<T> GetRandomFromList<T>(List<T> passedList, int numberToChoose)
-{
-    if (numberToChoose==0) return passedList;
-    System.Random rnd = new System.Random();
-    List<T> chosenItems = new List<T>();
 
-    for (int i = 1; i <= numberToChoose; i++)
+    public static List<T> GetRandomFromList<T>(List<T> passedList, int numberToChoose)
     {
-      int index = rnd.Next(passedList.Count);
-      chosenItems.Add(passedList[index]);
+        if (numberToChoose == 0) return passedList;
+        System.Random rnd = new System.Random();
+        List<T> chosenItems = new List<T>();
+
+        for (int i = 1; i <= numberToChoose; i++)
+        {
+            int index = rnd.Next(passedList.Count);
+            chosenItems.Add(passedList[index]);
+        }
+
+        //Debug.Log(chosenItems.Count);
+
+        return chosenItems;
     }
 
-    //Debug.Log(chosenItems.Count);
 
-    return chosenItems;
-}
-    
 
-    
-  private static IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, List<TileOnBoard> tilesAlreadyPlayed, bool firstGameMove,Game game)
+    private static IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, List<TileOnBoard> tilesAlreadyPlayed, bool firstGameMove, Game game)
     {
         int tilesPlayedNumber = tilesAlreadyPlayed.Count;
         var coordinatesPlayed = tilesAlreadyPlayed.Select(tilePlayed => tilePlayed.Coordinates).ToList();
@@ -225,13 +230,13 @@ private static RowType RandomRowType()
                 var currentTilesToTest = new List<TileOnBoard>();
                 currentTilesToTest.AddRange(tilesAlreadyPlayed);
                 currentTilesToTest.Add(testedTile);
-                var playReturn = TryPlayTilesSimulationMCTS(player,currentTilesToTest ,game);
+                var playReturn = TryPlayTilesSimulationMCTS(player, currentTilesToTest, game);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturns.Add(playReturn);
             }
         }
         return playReturns;
     }
-     public static PlayReturn GetPlayReturnMCTS(List<TileOnBoard> tilesPlayed, Player player, Game game)
+    public static PlayReturn GetPlayReturnMCTS(List<TileOnBoard> tilesPlayed, Player player, Game game)
     {
         if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
@@ -246,7 +251,7 @@ private static RowType RandomRowType()
             const int endGameBonusPoints = 6;
             wonPoints += endGameBonusPoints;
 
-            game =  new Game(game.Id, game.Board, game.Players, true);
+            game = new Game(game.Id, game.Board, game.Players, true);
         }
         return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 
@@ -261,32 +266,33 @@ private static RowType RandomRowType()
     {
         var random = new Random();
         var rackToSwap = mcts.Game.Players[playerIndex].Rack.Tiles;
-        if(rackToSwap.Count > 0){
-        var tileNumberToSwap = random.Next(rackToSwap.Count) + 1;
-        for (var i = 0; i < tileNumberToSwap; i++)
+        if (rackToSwap.Count > 0)
         {
-            var removeTile = rackToSwap[random.Next(rackToSwap.Count)];
+            var tileNumberToSwap = random.Next(rackToSwap.Count) + 1;
+            for (var i = 0; i < tileNumberToSwap; i++)
+            {
+                var removeTile = rackToSwap[random.Next(rackToSwap.Count)];
 
-            rackToSwap.Remove(removeTile);
-            mcts.Game.Bag.Tiles.Add(new TileOnBag(removeTile.Color, removeTile.Shape));
-        }
-        for (var i = 0; i < tileNumberToSwap; i++)
-        {
-            var index = random.Next(mcts.Game.Bag.Tiles.Count);
-            var addTile = mcts.Game.Bag.Tiles[index];
-            rackToSwap.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
-            mcts.Game.Bag.Tiles.Remove(addTile);
-        }
+                rackToSwap.Remove(removeTile);
+                mcts.Game.Bag.Tiles.Add(new TileOnBag(removeTile.Color, removeTile.Shape));
+            }
+            for (var i = 0; i < tileNumberToSwap; i++)
+            {
+                var index = random.Next(mcts.Game.Bag.Tiles.Count);
+                var addTile = mcts.Game.Bag.Tiles[index];
+                rackToSwap.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
+                mcts.Game.Bag.Tiles.Remove(addTile);
+            }
         }
 
-        
+
         return mcts;
     }
 
 
-   
 
-   
 
-   
+
+
+
 }

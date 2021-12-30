@@ -4,17 +4,18 @@ const string underDevelopment = "CorsPolicyDevelopment";
 const string underStagingOrProduction = "CorsPolicy";
 appBuilder.Services.AddCors(options =>
 {
-    options.AddPolicy(underStagingOrProduction, builder => builder
-            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
-            .AllowCredentials()
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-    );
-       options.AddPolicy(underDevelopment, builder => builder
-            .SetIsOriginAllowed(origin => true)
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-    );
+    // options.AddPolicy(underStagingOrProduction, builder => builder
+    //         .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
+    //         .AllowCredentials()
+    //         .AllowAnyHeader()
+    //         .AllowAnyMethod()
+    // );
+    options.AddPolicy(underDevelopment, builder => builder
+         .SetIsOriginAllowed(origin => true)
+         .AllowCredentials()
+         .AllowAnyHeader()
+         .AllowAnyMethod()
+ );
     // options.AddPolicy(underDevelopment, builder => builder
     //         .WithOrigins("https://localhost")
     //         .SetIsOriginAllowedToAllowWildcardSubdomains()

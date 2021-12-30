@@ -175,7 +175,7 @@ public class GetPlayPointsShould
         Assert.True(0 < UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points);
         Assert.Equal(2, UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points);
     }
-[Fact]
+    [Fact]
     public void Return1When1GoodTileTouch1TileInGameOnSide()
     {
         var game = new Game(1, Board.From(new List<TileOnBoard> {

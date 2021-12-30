@@ -20,5 +20,5 @@ public record Game(int Id, Board Board, List<Player> Players, Bag Bag, bool Game
         Bag = new Bag(game.Id, game.Bag.Tiles.Select(x => x).ToList());
         GameOver = game.GameOver;
     }
-   
+
 }
