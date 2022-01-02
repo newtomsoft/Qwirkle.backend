@@ -4,10 +4,10 @@ public class DefaultDesignTimeDbContextFactory : IDesignTimeDbContextFactory<Def
 {
     public DefaultDbContext CreateDbContext(string[] args)
     {
-#warning todo connectionStrings
-        const string connectionString = "";
+        // use command dotnet ef Database update --connection "<connectionString>"
+        // exemple :   dotnet ef Database update --connection "Server=localhost;Database=qwirkle.dev;Trusted_Connection=True;"
         var optionsBuilder = new DbContextOptionsBuilder<DefaultDbContext>();
-        optionsBuilder.UseSqlServer(connectionString);
+        optionsBuilder.UseSqlServer("replaced by option --connection");
         return new DefaultDbContext(optionsBuilder.Options);
     }
 }
