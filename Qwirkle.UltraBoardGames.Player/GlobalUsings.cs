@@ -6,7 +6,6 @@ global using OpenQA.Selenium.Edge;
 global using OpenQA.Selenium.Firefox;
 global using OpenQA.Selenium.Interactions;
 global using OpenQA.Selenium.Support.UI;
-global using Qwirkle.AI;
 global using Qwirkle.Domain.Entities;
 global using Qwirkle.Domain.Enums;
 global using Qwirkle.Domain.Ports;

@@ -14,5 +14,7 @@ public static class DaoExtensionsMethods
         var rack = Rack.From(playerDao.Tiles.Select(tileOnPlayerDao => tileOnPlayerDao.ToTileOnPlayer()).ToList());
         return new Player(playerDao.Id, playerDao.User.Id, playerDao.GameId, playerDao.User.UserName, playerDao.GamePosition, playerDao.Points, playerDao.LastTurnPoints, rack, playerDao.GameTurn, playerDao.LastTurnSkipped);
     }
+    public static TileOnPlayerDao ToTileOnPlayerDao(this TileOnBagDao tileOnBagDao, byte rackPosition, int playerId) => new(tileOnBagDao, rackPosition, playerId);
+
 }
 

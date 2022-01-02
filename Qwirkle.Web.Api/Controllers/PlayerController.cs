@@ -20,6 +20,8 @@ public class PlayerController : ControllerBase
     [HttpGet("{playerId:int}")]
     public ActionResult GetById(int playerId) => new ObjectResult(_infoUseCase.GetPlayer(playerId));
 
+
+    [Obsolete("method soon to be discontinued")]
     [HttpGet("{gameId}/{userId:int}")]
     public ActionResult GetByGameIdUserId(int gameId, int userId) => new ObjectResult(_infoUseCase.GetPlayer(gameId, userId));
 
