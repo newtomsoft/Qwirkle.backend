@@ -9,20 +9,22 @@ public class BotController : ControllerBase
 {
     private readonly BotUseCase _botUseCase;
     private readonly UserManager<UserDao> _userManager;
-    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private readonly ILogger<CoreUseCase> _logger;
+
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    public BotController(BotUseCase botUseCase, UserManager<UserDao> userManager)
+    public BotController(BotUseCase botUseCase, UserManager<UserDao> userManager, ILogger<CoreUseCase> logger)
     {
         _botUseCase = botUseCase;
         _userManager = userManager;
+        _logger = logger;
     }
 
 
     [HttpGet("PossibleMoves/{gameId:int}")]
     public ActionResult ComputeDoableMoves(int gameId)
     {
-        _logger.Info($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
+        _logger.LogInformation($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
         return new ObjectResult(_botUseCase.ComputeDoableMoves(gameId, UserId));
     }
 }

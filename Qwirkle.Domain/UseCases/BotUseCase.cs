@@ -1,23 +1,35 @@
-﻿namespace Qwirkle.Domain.UseCases;
+﻿using Microsoft.Extensions.Logging;
+
+namespace Qwirkle.Domain.UseCases;
 
 public class BotUseCase
 {
     private readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
+    private readonly ILogger<CoreUseCase> _logger;
     private Game _game;
     private const int TilesNumberPerPlayer = 6;
 
-    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase)
+    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase, ILogger<CoreUseCase> logger = null)
     {
         _infoUseCase = infoUseCase;
         _coreUseCase = coreUseCase;
+        _logger = logger;
     }
 
     public void Play(Game game, Player bot)
     {
         var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
-        if (tilesToPlay.Count > 0) _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
-        else SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
+        if (tilesToPlay.Count > 0)
+        {
+            _logger.LogInformation($"Bot play {tilesToPlay}");
+            _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
+        }
+        else
+        {
+            _logger.LogInformation("Bot swap or skip");
+            SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
+        }
     }
 
     public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)

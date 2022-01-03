@@ -15,7 +15,7 @@ public class ArrangeRackTests
 
         var repository = new Repository(_dbContext);
         _infoUseCase = new InfoUseCase(repository, null);
-        _useCase = new CoreUseCase(repository, null, _infoUseCase);
+        _useCase = new CoreUseCase(repository, null, _infoUseCase, null);
     }
 
 

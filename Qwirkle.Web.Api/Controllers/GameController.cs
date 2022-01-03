@@ -27,7 +27,7 @@ public class GameController : ControllerBase
         usersIdsList.AddRange(usersNames.Select(userName => _infoUseCase.GetUserId(userName)));
         usersIdsList.RemoveAll(id => id == 0);
         var usersIds = new HashSet<int>(usersIdsList);
-        _logger.LogInformation("CreateGame with {usersIds}", usersIds);
+        _logger.LogInformation("CreateGame with users {usersIds}", usersIds);
         return new ObjectResult(_coreUseCase.CreateGame(usersIds));
     }
 

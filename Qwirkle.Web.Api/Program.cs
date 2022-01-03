@@ -1,7 +1,14 @@
-var appBuilder = WebApplication.CreateBuilder(args);
-LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetSection("NLog"));
+using Serilog;
 const string underDevelopment = "CorsPolicyDevelopment";
 const string underStagingOrProduction = "CorsPolicy";
+
+var appBuilder = WebApplication.CreateBuilder(args);
+
+appBuilder.Host.UseSerilog((_, lc) => lc
+    .WriteTo.Console()
+    .WriteTo.SQLite(@"Logs\log.db")
+    .WriteTo.File(@"Logs\log.txt"));
+
 appBuilder.Services.AddCors(options =>
 {
     options.AddPolicy(underStagingOrProduction, builder => builder

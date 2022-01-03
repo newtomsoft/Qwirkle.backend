@@ -1,14 +1,18 @@
-﻿namespace Qwirkle.Domain.UseCases;
+﻿using Microsoft.Extensions.Logging;
+
+namespace Qwirkle.Domain.UseCases;
 
 public class InfoUseCase
 {
     private readonly IRepository _repository;
     private readonly INotification _notification;
+    private readonly ILogger<CoreUseCase> _logger;
 
-    public InfoUseCase(IRepository repository, INotification notification)
+    public InfoUseCase(IRepository repository, INotification notification, ILogger<CoreUseCase> logger = null)
     {
         _repository = repository;
         _notification = notification;
+        _logger = logger;
     }
 
     public int GetUserId(string userName) => _repository.GetUserId(userName);
@@ -25,7 +29,7 @@ public class InfoUseCase
     public Game GetGame(int gameId) => _repository.GetGame(gameId);
     public List<int> GetWinnersPlayersId(int gameId)
     {
-        if (!_repository.IsGameOver(gameId)) return null;
+        if (!_repository.IsGameOver(gameId)) return new List<int>();
         var winnersPlayersIds = _repository.GetLeadersPlayersId(gameId);
         _notification.SendGameOver(gameId, winnersPlayersIds);
         return winnersPlayersIds;
