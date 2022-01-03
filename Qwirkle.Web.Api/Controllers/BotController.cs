@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Qwirkle.Web.Api.Controllers;
+﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Authorize] //todo : only for bot
