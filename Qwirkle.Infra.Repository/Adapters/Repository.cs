@@ -94,7 +94,6 @@ public class Repository : IRepository
             DbContext.TilesOnPlayer.Add(tileOnPlayerDao);
             player.Rack.Tiles.Add(tileOnPlayerDao.ToTileOnPlayer());
         }
-        //todo : modifier player
         DbContext.SaveChanges();
     }
 
