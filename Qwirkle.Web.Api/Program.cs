@@ -1,14 +1,8 @@
-using Serilog;
 const string underDevelopment = "CorsPolicyDevelopment";
 const string underStagingOrProduction = "CorsPolicy";
 
 var appBuilder = WebApplication.CreateBuilder(args);
-
-appBuilder.Host.UseSerilog((_, lc) => lc
-    .WriteTo.Console()
-    .WriteTo.SQLite(@"Logs\log.db")
-    .WriteTo.File(@"Logs\log.txt"));
-
+appBuilder.Host.UseSerilog((_, configuration) => configuration.ReadFrom.Configuration(appBuilder.Configuration));
 appBuilder.Services.AddCors(options =>
 {
     options.AddPolicy(underStagingOrProduction, builder => builder
@@ -25,15 +19,15 @@ appBuilder.Services.AddCors(options =>
     );
 });
 appBuilder.Services.AddSignalR();
-appBuilder.Services.AddScoped<IRepository, Repository>();
 appBuilder.Services.AddSingleton<INotification, SignalRNotification>();
+appBuilder.Services.AddScoped<IRepository, Repository>();
 appBuilder.Services.AddScoped<IAuthentication, Authentication>();
 appBuilder.Services.AddScoped<AuthenticationUseCase>();
 appBuilder.Services.AddScoped<CoreUseCase>();
 appBuilder.Services.AddScoped<InfoUseCase>();
 appBuilder.Services.AddScoped<BotUseCase>();
-appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
 appBuilder.Services.AddScoped<ComputePointsUseCase>();
+appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
 appBuilder.Services.AddControllers();
 switch (appBuilder.Configuration.GetValue<string>("Repository").ToLowerInvariant())
 {
