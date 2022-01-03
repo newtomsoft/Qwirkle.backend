@@ -1,6 +1,4 @@
-﻿using Qwirkle.UltraBoardGames.Player.WebDriverFactory;
-
-var host = Host.CreateDefaultBuilder(args)
+﻿var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((_, services) =>
     {
         services.AddOptions();

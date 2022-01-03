@@ -5,7 +5,7 @@ public record Board(HashSet<TileOnBoard> Tiles)
     public static Board From(IEnumerable<TileOnBoard> tiles) => new(tiles.ToHashSet());
     public static Board From(Board board) => new(board.Tiles.Select(TileOnBoard.From).ToHashSet());
     public static Board Empty() => new(new HashSet<TileOnBoard>());
-    
+
     public void AddTiles(IEnumerable<TileOnBoard> tiles) => Tiles.UnionWith(tiles);
     public bool IsIsolatedTile(TileOnBoard tile) => IsIsolated(Coordinates.From(tile.Coordinates.X, tile.Coordinates.Y));
     public bool IsFreeTile(TileOnBoard tile) => IsFree(tile.Coordinates);
