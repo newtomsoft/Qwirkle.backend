@@ -22,7 +22,7 @@ public class BotController : ControllerBase
     [HttpGet("PossibleMoves/{gameId:int}")]
     public ActionResult ComputeDoableMoves(int gameId)
     {
-        _logger.LogInformation($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
+        _logger?.LogInformation($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
         return new ObjectResult(_botUseCase.ComputeDoableMoves(gameId, UserId));
     }
 }

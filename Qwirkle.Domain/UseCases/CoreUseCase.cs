@@ -24,7 +24,7 @@ public class CoreUseCase
 
     public List<Player> CreateGame(HashSet<int> usersIds)
     {
-        _logger.LogInformation("{applicationEvent} at {dateTime}", "CreateGame", DateTime.Now);
+        _logger?.LogInformation("{applicationEvent} at {dateTime}", "CreateGame", DateTime.Now);
         InitializeEmptyGame();
         CreatePlayers(usersIds);
         CreateTiles();
@@ -204,7 +204,7 @@ public class CoreUseCase
         player.LastTurnPoints = points;
         player.Points += points;
         _repository.UpdatePlayer(player);
-        _logger.LogInformation($"player {player.Id} play {tilesToPlayList.ToLog()} and get {points} points");
+        _logger?.LogInformation($"player {player.Id} play {tilesToPlayList.ToLog()} and get {points} points");
         _game.Board.AddTiles(tilesToPlayList);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();

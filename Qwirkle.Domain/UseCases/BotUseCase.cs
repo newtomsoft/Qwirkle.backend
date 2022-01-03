@@ -20,12 +20,12 @@ public class BotUseCase
         var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
         if (tilesToPlay.Count > 0)
         {
-            _logger.LogInformation($"Bot play {tilesToPlay.ToLog()}");
+            _logger?.LogInformation($"Bot play {tilesToPlay.ToLog()}");
             _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
         }
         else
         {
-            _logger.LogInformation("Bot swap or skip...");
+            _logger?.LogInformation("Bot swap or skip...");
             SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
         }
     }
@@ -159,12 +159,12 @@ public class BotUseCase
         var tilesToSwapMaxNumber = Math.Min(tilesOnBagNumber, TilesNumberPerPlayer);
         if (tilesToSwapMaxNumber > 0)
         {
-            _logger.LogInformation($"Bot swap {tilesToSwapMaxNumber} tiles");
+            _logger?.LogInformation($"Bot swap {tilesToSwapMaxNumber} tiles");
             Swap(bot, tilesToSwapMaxNumber);
         }
         else
         {
-            _logger.LogInformation("Bot skip turn");
+            _logger?.LogInformation("Bot skip turn");
             Skip(bot.Id);
         }
     }
