@@ -15,8 +15,9 @@ public class BotUseCase
 
     public void Play(Game game, Player bot)
     {
+        
         var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
-        if (tilesToPlay.Count > 0) _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
+        if (tilesToPlay.Count > 0 && game.GameOver!=true) _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
         else SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
     }
 

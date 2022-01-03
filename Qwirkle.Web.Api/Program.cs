@@ -1,3 +1,5 @@
+using Qwirkle.Domain.UseCases.Ai;
+
 var appBuilder = WebApplication.CreateBuilder(args);
 LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetSection("NLog"));
 const string underDevelopment = "CorsPolicyDevelopment";
@@ -32,6 +34,7 @@ appBuilder.Services.AddScoped<AuthenticationUseCase>();
 appBuilder.Services.AddScoped<CoreUseCase>();
 appBuilder.Services.AddScoped<InfoUseCase>();
 appBuilder.Services.AddScoped<BotUseCase>();
+appBuilder.Services.AddScoped<Expand>();
 appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
 appBuilder.Services.AddScoped<ComputePointsUseCase>();
 appBuilder.Services.AddControllers();

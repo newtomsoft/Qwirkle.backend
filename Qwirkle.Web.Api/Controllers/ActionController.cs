@@ -37,10 +37,12 @@ public class ActionController : ControllerBase
         return new ObjectResult(_coreUseCase.TrySwapTiles(playerId, tiles.Select(t => t.ToTile())));
     }
 
-    [HttpPost("SkipTurn/")]
+    [HttpPost("SkipTurn/{gameId:int}")]
     public ActionResult<int> SkipTurn(int gameId)
     {
-        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+
+
+        var playerId = _infoUseCase.GetPlayerIdTurn(gameId);
         return new ObjectResult(_coreUseCase.TrySkipTurn(playerId));
     }
 
@@ -50,6 +52,7 @@ public class ActionController : ControllerBase
     {
         var gameId = tiles.First().GameId;
         var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+        
         return new ObjectResult(_coreUseCase.TryArrangeRack(playerId, tiles.Select(t => t.ToTile())));
     }
 }

@@ -4,7 +4,7 @@ public class Expand
 {
 
 
-    public static MonteCarloTreeSearchNode ExpandMcts(MonteCarloTreeSearchNode mcts, List<PlayReturn> playReturns, int indexPlayer)
+    public  MonteCarloTreeSearchNode ExpandMcts(MonteCarloTreeSearchNode mcts, List<PlayReturn> playReturns, int indexPlayer)
     {
         foreach (var coordinate in playReturns)
         {
@@ -47,11 +47,10 @@ public class Expand
         var newgame = new Game(mcts.Game);
 
         var random = new Random();
-        coordinate.TilesPlayed.ForEach(tileBoard =>
-        {
+        
 
-            newgame.Board.Tiles.Add(tileBoard);
-            var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == tileBoard.Color && tile.Shape == tileBoard.Shape).FirstOrDefault();
+            newgame.Board.Tiles.Add( coordinate.TilesPlayed[0]);
+            var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == coordinate.TilesPlayed[0].Color && tile.Shape == coordinate.TilesPlayed[0].Shape).FirstOrDefault();
             newgame.Players[indexPlayer].Rack.Tiles.Remove(removeTile);
 
             if (newgame.Bag.Tiles.Count > 0)
@@ -64,7 +63,7 @@ public class Expand
             }
 
 
-        });
+        
 
         var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed);
        
@@ -103,18 +102,14 @@ public class Expand
 
         return mcts;
     }
-    public static PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game);
-    public static List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game, int randomSel)
+    public static PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game);   
+    public  List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game, int selectFirst)
     {
 
         var rack = player.Rack.WithoutDuplicatesTiles();
         var random = new Random();
         var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles();
-        if (randomSel>8) {
-             var index = random.Next(boardAdjoiningCoordinates.Count);
-             
-             boardAdjoiningCoordinates=boardAdjoiningCoordinates.GetRange(0,index);
-        }
+        
 
         var allPlayReturns = new List<PlayReturn>();
         var playReturnsWith1Tile = new List<PlayReturn>();
@@ -126,7 +121,7 @@ public class Expand
                 var playReturn = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) }, game);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
             }
-        }
+        };
 
         allPlayReturns.AddRange(playReturnsWith1Tile);
         var lastPlayReturn = playReturnsWith1Tile;
@@ -151,7 +146,7 @@ public class Expand
             allPlayReturns.AddRange(currentPlayReturns);
             lastPlayReturn = currentPlayReturns;
         }
-        return allPlayReturns.OrderBy(x => x.Points).Reverse().ToList();
+        return allPlayReturns.OrderByDescending(x => x.Points).ToList();
     }
 
     private static RowType RandomRowType()
@@ -242,8 +237,8 @@ public class Expand
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
         if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
         var computePointsUseCase = new ComputePointsUseCase();
-        var wonPoints = computePointsUseCase.ComputePointsMcts(tilesPlayed, game);
-
+        // var wonPoints = computePointsUseCase.ComputePointsMcts(tilesPlayed, game);
+        var wonPoints = computePointsUseCase.ComputePoints(game,tilesPlayed);
         if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
 
         if (IsGameFinished())
@@ -251,7 +246,7 @@ public class Expand
             const int endGameBonusPoints = 6;
             wonPoints += endGameBonusPoints;
 
-            game = new Game(game.Id, game.Board, game.Players, true);
+            game = game with{GameOver=true};
         }
         return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 
