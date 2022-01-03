@@ -8,8 +8,8 @@
         services.AddSingleton<CoreUseCase>();
         services.AddSingleton<InfoUseCase>();
         services.AddSingleton<GameScraper>();
-        services.AddSingleton<INotification, FakeNotification>();
-        services.AddSingleton<IRepository, FakeRepository>();
+        services.AddSingleton<INotification, NoNotification>();
+        services.AddSingleton<IRepository, NoRepository>();
         services.AddDbContext<DefaultDbContext>();
     })
     .ConfigureLogging((_, builder) =>

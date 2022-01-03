@@ -1,13 +1,13 @@
 ﻿namespace Qwirkle.Domain.Ports;
 
-public class FakeNotification : INotification
+public class NoNotification : INotification
 {
     public void SendGameOver(int gameId, List<int> winnersPlayersIds)
     {
         // Method intentionally left empty.
     }
 
-    public void SendPlayerIdTurn(int gameId, int getPlayerIdToPlay)
+    public void SendPlayerIdTurn(int gameId, int playerId)
     {
         // Method intentionally left empty.
     }

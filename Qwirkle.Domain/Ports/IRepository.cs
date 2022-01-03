@@ -1,4 +1,5 @@
 ﻿namespace Qwirkle.Domain.Ports;
+
 public interface IRepository
 {
     Game CreateGame(DateTime date);

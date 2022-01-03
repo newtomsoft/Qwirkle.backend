@@ -1,6 +1,6 @@
 ﻿namespace Qwirkle.Domain.Ports;
 
-public class FakeRepository : IRepository
+public class NoRepository : IRepository
 {
     public Game CreateGame(DateTime date) => throw new NotSupportedException();
     public Player CreatePlayer(int userId, int gameId) => throw new NotSupportedException();
