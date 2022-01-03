@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-
-namespace Qwirkle.Domain.UseCases;
+﻿namespace Qwirkle.Domain.UseCases;
 
 public class InfoUseCase
 {
