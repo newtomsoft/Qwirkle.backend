@@ -86,10 +86,15 @@ public class Repository : IRepository
     public void TilesFromBagToPlayer(Player player, List<byte> positionsInRack)
     {
         var tilesNumber = positionsInRack.Count;
-        var tilesToGiveToPlayer = DbContext.TilesOnBag.Where(t => t.GameId == player.GameId).ToList().OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
+        var tilesToGiveToPlayer = DbContext.TilesOnBag.Include(t=> t.Tile).Where(t => t.GameId == player.GameId).AsEnumerable().OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
         DbContext.TilesOnBag.RemoveRange(tilesToGiveToPlayer);
         for (var i = 0; i < tilesToGiveToPlayer.Count; i++)
-            DbContext.TilesOnPlayer.Add(new TileOnPlayerDao(tilesToGiveToPlayer[i], positionsInRack[i], player.Id));
+        {
+            var tileOnPlayerDao = tilesToGiveToPlayer[i].ToTileOnPlayerDao(positionsInRack[i], player.Id);
+            DbContext.TilesOnPlayer.Add(tileOnPlayerDao);
+            player.Rack.Tiles.Add(tileOnPlayerDao.ToTileOnPlayer());
+        }
+        //todo : modifier player
         DbContext.SaveChanges();
     }
 

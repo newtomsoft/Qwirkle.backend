@@ -58,10 +58,8 @@ public class Player
             var sameShape = 0;
             for (var j = i + 1; j < tiles.Count; j++)
             {
-                if (tiles[i].Color == tiles[j].Color && tiles[i].Shape != tiles[j].Shape)
-                    sameColor++;
-                if (tiles[i].Color != tiles[j].Color && tiles[i].Shape == tiles[j].Shape)
-                    sameShape++;
+                if (tiles[i].Color == tiles[j].Color && tiles[i].Shape != tiles[j].Shape) sameColor++;
+                if (tiles[i].Color != tiles[j].Color && tiles[i].Shape == tiles[j].Shape) sameShape++;
             }
             maxSameColor = Math.Max(maxSameColor, sameColor);
             maxSameShape = Math.Max(maxSameShape, sameShape);

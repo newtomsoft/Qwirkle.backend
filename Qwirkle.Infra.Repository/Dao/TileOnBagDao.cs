@@ -9,6 +9,4 @@ public class TileOnBagDao
 
     public virtual TileDao Tile { get; set; }
     public virtual GameDao Game { get; set; }
-
-    public TileOnBag ToTileOnBag() => new(Tile.Color, Tile.Shape);
 }

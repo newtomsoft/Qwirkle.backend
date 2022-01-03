@@ -37,7 +37,7 @@ public class ActionController : ControllerBase
         return new ObjectResult(_coreUseCase.TrySwapTiles(playerId, tiles.Select(t => t.ToTile())));
     }
 
-    [HttpPost("SkipTurn/{gameId:int}")]
+    [HttpGet("SkipTurn/{gameId:int}")]
     public ActionResult<int> SkipTurn(int gameId)
     {
 

@@ -30,56 +30,60 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayersWithOrder1234()
+    public void CreateGoodPlayerWithOrder0()
     {
-        var userIds = new HashSet<int> { User1Id, User2Id, User3Id, User4Id };
+        var userIds = new HashSet<int> { User3Id };
         var players = _coreUseCase.CreateGame(userIds);
 
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 3);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 4);
-        Assert.Equal(1, players.Count(p => p.IsTurn));
-        Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-        Assert.Equal(4, players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count());
-
+        players.Count.ShouldBe(1);
+        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(1);
+        players.Count(p => p.Points == 0).ShouldBe(1);
+        players[0].IsTurn.ShouldBe(true);
+        players[0].GamePosition.ShouldBe(0);
     }
 
     [Fact]
-    public void CreateGoodPlayersWithOrder123()
-    {
-        var userIds = new HashSet<int> { User1Id, User3Id, User4Id };
-        var players = _coreUseCase.CreateGame(userIds);
-
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 3);
-        Assert.Equal(1, players.Count(p => p.IsTurn));
-        Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-        Assert.Equal(3, players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count());
-    }
-
-    [Fact]
-    public void CreateGoodPlayersWithOrder12()
+    public void CreateGoodPlayersWithOrder01()
     {
         var userIds = new HashSet<int> { User3Id, User4Id };
         var players = _coreUseCase.CreateGame(userIds);
 
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
-        Assert.Equal(1, players.Count(p => p.IsTurn));
-        Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-        Assert.Equal(2, players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count());
+        players.Count.ShouldBe(2);
+        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(2);
+        players.Count(p => p.Points == 0).ShouldBe(2);
+        players[0].IsTurn.ShouldBe(true);
+        players[0].GamePosition.ShouldBe(0);
+        players[1].GamePosition.ShouldBe(1);
     }
 
     [Fact]
-    public void CreateGoodPlayerWithOrder1()
+    public void CreateGoodPlayersWithOrder012()
     {
-        var userIds = new HashSet<int> { User3Id };
+        var userIds = new HashSet<int> { User1Id, User3Id, User4Id };
         var players = _coreUseCase.CreateGame(userIds);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
-        Assert.Equal(1, players.Count(p => p.IsTurn));
-        Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-        Assert.Single(players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer));
+
+        players.Count.ShouldBe(3);
+        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(3);
+        players.Count(p => p.Points == 0).ShouldBe(3);
+        players[0].IsTurn.ShouldBe(true);
+        players[0].GamePosition.ShouldBe(0);
+        players[1].GamePosition.ShouldBe(1);
+        players[2].GamePosition.ShouldBe(2);
+    }
+
+    [Fact]
+    public void CreateGoodPlayersWithOrder0123()
+    {
+        var userIds = new HashSet<int> { User1Id, User2Id, User3Id, User4Id };
+        var players = _coreUseCase.CreateGame(userIds);
+
+        players.Count.ShouldBe(4);
+        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(4);
+        players.Count(p => p.Points == 0).ShouldBe(4);
+        players[0].IsTurn.ShouldBe(true);
+        players[0].GamePosition.ShouldBe(0);
+        players[1].GamePosition.ShouldBe(1);
+        players[2].GamePosition.ShouldBe(2);
+        players[3].GamePosition.ShouldBe(3);
     }
 }

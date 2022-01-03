@@ -9,7 +9,7 @@ public class CoreUseCase
     private readonly InfoUseCase _infoUseCase;
     private readonly BotUseCase _botUseCase;
 
-    public Game Game { get; set; }
+    private Game _game;
 
     public CoreUseCase(IRepository repository, INotification notification, InfoUseCase infoUseCase)
     {
@@ -17,26 +17,27 @@ public class CoreUseCase
         _notification = notification;
         _infoUseCase = infoUseCase;
         _botUseCase = new BotUseCase(infoUseCase, this);
-#warning grosse dette technique
+#warning dette technique à rembourser
     }
 
     public List<Player> CreateGame(HashSet<int> usersIds)
     {
-        InitializeGame();
+        InitializeEmptyGame();
         CreatePlayers(usersIds);
         CreateTiles();
         DealTilesToPlayers();
-        SelectFirstPlayer();
-        return Game.Players;
+        SortPlayers();
+        return _game.Players;
     }
 
-    public void ResetGame(int gameId) => Game = _repository.GetGame(gameId);
+    public void ResetGame(int gameId) => _game = _repository.GetGame(gameId);
 
     public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<Tile> tiles)
     {
+        var tilesList = tiles.ToList();
         var player = _infoUseCase.GetPlayer(playerId);
-        if (!player.HasTiles(tiles)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
-        ArrangeRack(player, tiles);
+        if (!player.HasTiles(tilesList)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        ArrangeRack(player, tilesList);
         return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
     }
 
@@ -50,14 +51,14 @@ public class CoreUseCase
         if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, PlayReturnCode.PlayerDoesntHaveThisTile, null, null, 0);
 
         var game = _repository.GetGame(player.GameId);
-        Game = game;
+        _game = game;
         var playReturn = Play(tilesToPlay, player, game);
         if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
 
         playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
-        _notification?.SendTilesPlayed(Game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
-        var nextPlayerId = _infoUseCase.GetPlayerIdTurn(Game.Id);
-        _notification?.SendPlayerIdTurn(Game.Id, nextPlayerId);
+        _notification?.SendTilesPlayed(_game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
+        var nextPlayerId = _infoUseCase.GetPlayerIdTurn(_game.Id);
+        _notification?.SendPlayerIdTurn(_game.Id, nextPlayerId);
         var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
         if (nextPlayer.IsBot()) _botUseCase.Play(game, nextPlayer);
         return playReturn;
@@ -68,20 +69,20 @@ public class CoreUseCase
         var tilesList = tiles.ToList();
         var player = _infoUseCase.GetPlayer(playerId);
         if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
-        if (!player.HasTiles(tiles)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        if (!player.HasTiles(tilesList)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
         var swapTilesReturn = SwapTiles(player, tilesList);
-        _notification.SendTilesSwapped(Game.Id, playerId);
-        _notification.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
+        _notification.SendTilesSwapped(_game.Id, playerId);
+        _notification.SendPlayerIdTurn(_game.Id, _infoUseCase.GetPlayerIdTurn(_game.Id));
         return swapTilesReturn;
     }
 
     public SkipTurnReturn TrySkipTurn(int playerId)
     {
         var player = _infoUseCase.GetPlayer(playerId);
-        var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = Game.Id, Code = PlayReturnCode.NotPlayerTurn };
+        var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = _game.Id, Code = PlayReturnCode.NotPlayerTurn };
         if (skipTurnReturn.Code != PlayReturnCode.Ok) return skipTurnReturn;
-        _notification.SendTurnSkipped(Game.Id, playerId);
-        _notification.SendPlayerIdTurn(Game.Id, _infoUseCase.GetPlayerIdTurn(Game.Id));
+        _notification.SendTurnSkipped(_game.Id, playerId);
+        _notification.SendPlayerIdTurn(_game.Id, _infoUseCase.GetPlayerIdTurn(_game.Id));
         return skipTurnReturn;
     }
 
@@ -119,7 +120,7 @@ public class CoreUseCase
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
     }
 
-    private void InitializeGame() => Game = _repository.CreateGame(DateTime.UtcNow);
+    private void InitializeEmptyGame() => _game = _repository.CreateGame(DateTime.UtcNow);
 
     private void DealTilesToPlayers()
     {
@@ -127,42 +128,43 @@ public class CoreUseCase
         for (byte i = 0; i < TilesNumberPerPlayer; i++)
             rackPositions.Add(i);
 
-        foreach (var player in Game.Players)
+        foreach (var player in _game.Players)
             _repository.TilesFromBagToPlayer(player, rackPositions);
     }
 
-    private void CreateTiles() => _repository.CreateTiles(Game.Id);
+    private void CreateTiles() => _repository.CreateTiles(_game.Id);
 
     private void CreatePlayers(HashSet<int> usersIds)
     {
-        Game = Game with { Players = new List<Player>() };
-        foreach (var userId in usersIds) Game.Players.Add(_repository.CreatePlayer(userId, Game.Id));
-        SetPositionsPlayers();
-        Game.Players.ForEach(player => _repository.UpdatePlayer(player));
+        foreach (var userId in usersIds) _game.Players.Add(_repository.CreatePlayer(userId, _game.Id));
     }
 
     private void ArrangeRack(Player player, IEnumerable<Tile> tiles) => _repository.ArrangeRack(player, tiles);
 
-    private void SetPositionsPlayers()
+    private void SortPlayers()
     {
-        Game = Game with { Players = Game.Players.OrderBy(_ => Guid.NewGuid()).ToList() };
-        for (var i = 0; i < Game.Players.Count; i++)
-            Game.Players[i].GamePosition = (byte)(i + 1);
-    }
+        var playersWithCanBePlayedTilesNumber = new Dictionary<int, int>();
+        _game.Players.ForEach(p => playersWithCanBePlayedTilesNumber[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
 
-    private void SelectFirstPlayer()
-    {
-        var playersWithNumberCanBePlayedTiles = new Dictionary<int, int>();
-        Game.Players.ForEach(p => playersWithNumberCanBePlayedTiles[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
-        var playerIdToPlay = playersWithNumberCanBePlayedTiles.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
-        SetPlayerTurn(playerIdToPlay);
+        var playerIdToStart = playersWithCanBePlayedTilesNumber.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
+        var playerToStart = _game.Players.First(p => p.Id == playerIdToStart);
+        var otherPlayers = _game.Players.Where(p => p.Id != playerIdToStart).OrderBy(_ => Guid.NewGuid()).ToList();
+
+        var playersOrdered = new List<Player>();
+        playersOrdered.Add(playerToStart);
+        playersOrdered.AddRange(otherPlayers);
+        _game = _game with { Players = playersOrdered };
+        for (byte i = 0; i < _game.Players.Count; i++) _game.Players[i].GamePosition = i;
+        _game.Players.ForEach(player => _repository.UpdatePlayer(player));
+
+        SetPlayerTurn(playerIdToStart);
     }
 
     private SkipTurnReturn SkipTurn(Player player)
     {
         ResetGame(player.GameId);
         player.LastTurnSkipped = true;
-        if (Game.Bag.Tiles.Count == 0 && Game.Players.Count(p => p.LastTurnSkipped) == Game.Players.Count)
+        if (_game.Bag.Tiles.Count == 0 && _game.Players.Count(p => p.LastTurnSkipped) == _game.Players.Count)
         {
             _repository.UpdatePlayer(player);
             _repository.SetGameOver(player.GameId);
@@ -175,12 +177,13 @@ public class CoreUseCase
 
     private SwapTilesReturn SwapTiles(Player player, IEnumerable<Tile> tiles)
     {
+        var tilesList = tiles.ToList();
         ResetGame(player.GameId);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();
-        for (byte i = 0; i < tiles.Count(); i++) positionsInRack.Add(i);
+        for (byte i = 0; i < tilesList.Count; i++) positionsInRack.Add(i);
         _repository.TilesFromBagToPlayer(player, positionsInRack);
-        _repository.TilesFromPlayerToBag(player, tiles);
+        _repository.TilesFromPlayerToBag(player, tilesList);
         _repository.UpdatePlayer(player);
         return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoUseCase.GetPlayer(player.Id).Rack };
     }
@@ -190,32 +193,32 @@ public class CoreUseCase
         var tilesToPlayList = tilesToPlay.ToList();
         player.LastTurnPoints = points;
         player.Points += points;
-        Game.Board.AddTiles(tilesToPlayList);
+        _game.Board.AddTiles(tilesToPlayList);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();
         for (byte i = 0; i < tilesToPlayList.Count; i++) positionsInRack.Add(i);
         _repository.TilesFromBagToPlayer(player, positionsInRack);
-        _repository.TilesFromPlayerToBoard(Game.Id, player.Id, tilesToPlayList);
+        _repository.TilesFromPlayerToBoard(_game.Id, player.Id, tilesToPlayList);
         return _repository.GetPlayer(player.Id).Rack;
     }
 
     private void SetNextPlayerTurnToPlay(Player player)
     {
-        if (Game.GameOver) return;
+        if (_game.GameOver) return;
 
-        if (Game.Players.Count == 1)
+        if (_game.Players.Count == 1)
         {
             player.SetTurn(true);
             _repository.UpdatePlayer(player);
         }
         else
         {
-            var position = Game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
-            var playersNumber = Game.Players.Count;
-            var nextPlayerPosition = position < playersNumber ? position + 1 : 1;
-            var nextPlayer = Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
+            var position = _game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
+            var playersNumber = _game.Players.Count;
+            var nextPlayerPosition = position < playersNumber - 1 ? position + 1 : 0;
+            var nextPlayer = _game.Players.First(p => p.GamePosition == nextPlayerPosition);
             player.SetTurn(false);
-            nextPlayer!.SetTurn(true);
+            nextPlayer.SetTurn(true);
             _repository.UpdatePlayer(player);
             _repository.UpdatePlayer(nextPlayer);
         }
@@ -224,8 +227,8 @@ public class CoreUseCase
     private void SetPlayerTurn(int playerId)
     {
         _repository.SetPlayerTurn(playerId);
-        var player = Game.Players.First(p => p.Id == playerId);
+        var player = _game.Players.First(p => p.Id == playerId);
         player.SetTurn(true);
-        if (player.IsBot()) _botUseCase.Play(Game, player);
+        if (player.IsBot()) _botUseCase.Play(_game, player);
     }
 }
