@@ -7,7 +7,7 @@ global using Qwirkle.Domain.ValueObjects;
 global using Qwirkle.Infra.Repository;
 global using Qwirkle.Infra.Repository.Adapters;
 global using Qwirkle.Infra.Repository.Dao;
-global using Qwirkle.Infra.Repository.DomainExtensionMethods;
+global using Qwirkle.Infra.Repository.DaoExtensionMethods;
 global using Shouldly;
 global using System;
 global using System.Collections.Generic;
