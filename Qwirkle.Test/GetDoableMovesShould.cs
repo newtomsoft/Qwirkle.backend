@@ -1,6 +1,4 @@
-﻿using Qwirkle.Infra.Repository.DaoExtensionMethods;
-
-namespace Qwirkle.Test;
+﻿namespace Qwirkle.Test;
 
 public class GetDoableMovesShould
 {
