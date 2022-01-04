@@ -19,10 +19,10 @@ public class BotUseCase
     {
         
         var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
-<<<<<<< HEAD
+
         if (tilesToPlay.Count > 0 && game.GameOver!=true) _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
         else SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
-=======
+
         if (tilesToPlay.Count > 0)
         {
             _logger?.LogInformation($"Bot play {tilesToPlay.ToLog()}");
@@ -33,7 +33,7 @@ public class BotUseCase
             _logger?.LogInformation("Bot swap or skip...");
             SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
         }
->>>>>>> d00cc1c5c63b202aeed86759d6a60d8adda87896
+
     }
 
     public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
