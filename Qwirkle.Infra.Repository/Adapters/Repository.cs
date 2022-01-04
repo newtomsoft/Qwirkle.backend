@@ -86,7 +86,7 @@ public class Repository : IRepository
     public void TilesFromBagToPlayer(Player player, List<byte> positionsInRack)
     {
         var tilesNumber = positionsInRack.Count;
-        var tilesToGiveToPlayer = DbContext.TilesOnBag.Include(t=> t.Tile).Where(t => t.GameId == player.GameId).AsEnumerable().OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
+        var tilesToGiveToPlayer = DbContext.TilesOnBag.Include(t => t.Tile).Where(t => t.GameId == player.GameId).AsEnumerable().OrderBy(_ => Guid.NewGuid()).Take(tilesNumber).ToList();
         DbContext.TilesOnBag.RemoveRange(tilesToGiveToPlayer);
         for (var i = 0; i < tilesToGiveToPlayer.Count; i++)
         {
@@ -94,7 +94,6 @@ public class Repository : IRepository
             DbContext.TilesOnPlayer.Add(tileOnPlayerDao);
             player.Rack.Tiles.Add(tileOnPlayerDao.ToTileOnPlayer());
         }
-        //todo : modifier player
         DbContext.SaveChanges();
     }
 
@@ -133,7 +132,16 @@ public class Repository : IRepository
         DbContext.SaveChanges();
     }
 
+<<<<<<< HEAD
     public List<int> GetLeadersPlayersId(int gameId) =>DbContext.Players.Where(player => player.GameId == gameId).OrderByDescending(player => player.Points).Select(p =>p.Id).ToList();
+=======
+    public List<int> GetLeadersPlayersId(int gameId)
+    {
+        var players = DbContext.Players.Where(player => player.GameId == gameId).ToList();
+        var maxPoints = players.Max(player => player.Points);
+        return players.Where(p => p.Points == maxPoints).Select(p => p.Id).ToList();
+    }
+>>>>>>> d00cc1c5c63b202aeed86759d6a60d8adda87896
 
     public bool IsGameOver(int gameId) => DbContext.Games.Any(g => g.Id == gameId && g.GameOver);
 

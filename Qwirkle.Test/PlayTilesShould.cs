@@ -45,7 +45,7 @@ public class PlayTilesShould
         InitDbContext();
         _repository = new Repository(_dbContext);
         _infoUseCase = new InfoUseCase(_repository, null);
-        _coreUseCase = new CoreUseCase(_repository, null, _infoUseCase);
+        _coreUseCase = new CoreUseCase(_repository, null, _infoUseCase, null);
     }
 
     private void AddAllTiles()

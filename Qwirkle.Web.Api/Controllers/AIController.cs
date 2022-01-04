@@ -13,7 +13,7 @@ public class AiController : ControllerBase
     
 
     private readonly UserManager<UserDao> _userManager;
-    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
     private MonteCarloTreeSearchNode _mcts;

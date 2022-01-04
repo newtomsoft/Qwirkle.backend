@@ -1,6 +1,4 @@
-﻿using Qwirkle.Domain.ExtensionMethods;
-
-namespace Qwirkle.Domain.UseCases;
+﻿namespace Qwirkle.Domain.UseCases;
 
 public class ComputePointsUseCase
 {

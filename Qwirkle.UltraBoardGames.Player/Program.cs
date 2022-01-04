@@ -1,6 +1,4 @@
-﻿using Qwirkle.UltraBoardGames.Player.WebDriverFactory;
-
-var host = Host.CreateDefaultBuilder(args)
+﻿var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((_, services) =>
     {
         services.AddOptions();
@@ -10,8 +8,8 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<CoreUseCase>();
         services.AddSingleton<InfoUseCase>();
         services.AddSingleton<GameScraper>();
-        services.AddSingleton<INotification, FakeNotification>();
-        services.AddSingleton<IRepository, FakeRepository>();
+        services.AddSingleton<INotification, NoNotification>();
+        services.AddSingleton<IRepository, NoRepository>();
         services.AddDbContext<DefaultDbContext>();
     })
     .ConfigureLogging((_, builder) =>

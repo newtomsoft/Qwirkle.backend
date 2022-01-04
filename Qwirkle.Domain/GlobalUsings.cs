@@ -5,8 +5,10 @@ global using Qwirkle.Domain.ValueObjects;
 global using System;
 global using System.Collections.Generic;
 global using System.Linq;
+global using System.Text;
 global using System.Threading.Tasks;
 global using RackPosition = System.Byte;
 global using Abscissa = System.SByte;
 global using Ordinate = System.SByte;
-
+global using Microsoft.Extensions.Logging;
+global using Qwirkle.Domain.ExtensionMethods;

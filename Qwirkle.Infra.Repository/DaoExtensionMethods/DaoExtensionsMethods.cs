@@ -1,4 +1,4 @@
-﻿namespace Qwirkle.Infra.Repository.DomainExtensionMethods;
+﻿namespace Qwirkle.Infra.Repository.DaoExtensionMethods;
 
 public static class DaoExtensionsMethods
 {
