@@ -30,7 +30,7 @@ public class AiController : ControllerBase
     [HttpGet("BestMoves/{gameId:int}")]
     public ActionResult BestMoves(int gameId)
     {
-        _logger.Info($"userId:{UserId}  with {gameId}");
+       
         _mcts = new MonteCarloTreeSearchNode(_infoUseCase.GetGame(gameId));
         var playerRoot = _mcts.Game.Players.FirstOrDefault(p => p.IsTurn);
         var playReturns = _expand.ComputeDoableMovesMcts(_mcts.Game.Board, playerRoot, _mcts.Game, 0);
@@ -48,7 +48,7 @@ public class AiController : ControllerBase
        
             Parallel.ForEach(mctsRoot.Children, mcts =>
               {
-                   for (var i = 0; i < 2; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
+                   for (var i = 0; i < 4; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
                      {
                   var searchPath = new List<MonteCarloTreeSearchNode>();
                   var mctsRollout = mcts;

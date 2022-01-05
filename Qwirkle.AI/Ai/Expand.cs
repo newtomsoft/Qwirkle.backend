@@ -91,12 +91,13 @@ public class Expand
         }
         else
         {
-            var position = mcts.Game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
-            var playersNumber = mcts.Game.Players.Count;
-            var nextPlayerPosition = position < playersNumber ? position + 1 : 1;
-            var nextPlayer = mcts.Game.Players.FirstOrDefault(p => p.GamePosition == nextPlayerPosition);
+             var position =  mcts.Game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
+            var playersNumber =  mcts.Game.Players.Count;
+            var nextPlayerPosition = position < playersNumber - 1 ? position + 1 : 0;
+            var nextPlayer =  mcts.Game.Players.First(p => p.GamePosition == nextPlayerPosition);
             player.SetTurn(false);
-            nextPlayer!.SetTurn(true);
+            nextPlayer.SetTurn(true);
+            
 
         }
 
@@ -246,7 +247,7 @@ public class Expand
             const int endGameBonusPoints = 6;
             wonPoints += endGameBonusPoints;
 
-            game = game with{GameOver=true};
+            game = new Game(game.Id, game.Board, game.Players, true);
         }
         return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 
