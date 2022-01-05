@@ -59,14 +59,20 @@ public class CoreUseCase
         if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
 
         playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
-        _notification?.SendTilesPlayed(_game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
-        var nextPlayerId = _infoUseCase.GetPlayerIdTurn(_game.Id);
-        if (nextPlayerId == 0) return playReturn;
+        _notification?.SendTilesPlayed(game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
 
-        _notification?.SendPlayerIdTurn(_game.Id, nextPlayerId);
+        NotifyNextPlayerAndPlayIfBot(game);
+        return playReturn;
+    }
+
+    private void NotifyNextPlayerAndPlayIfBot(Game game)
+    {
+        var nextPlayerId = _infoUseCase.GetPlayerIdTurn(game.Id);
+        if (nextPlayerId == 0) return;
+
+        _notification?.SendPlayerIdTurn(game.Id, nextPlayerId);
         var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
         if (nextPlayer.IsBot()) _botUseCase.Play(game, nextPlayer);
-        return playReturn;
     }
 
     public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<Tile> tiles)
@@ -75,9 +81,12 @@ public class CoreUseCase
         var player = _infoUseCase.GetPlayer(playerId);
         if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
         if (!player.HasTiles(tilesList)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        var game = _repository.GetGame(player.GameId);
+
         var swapTilesReturn = SwapTiles(player, tilesList);
-        _notification.SendTilesSwapped(_game.Id, playerId);
-        _notification.SendPlayerIdTurn(_game.Id, _infoUseCase.GetPlayerIdTurn(_game.Id));
+        _notification.SendTilesSwapped(game.Id, playerId);
+
+        NotifyNextPlayerAndPlayIfBot(game);
         return swapTilesReturn;
     }
 
@@ -86,8 +95,11 @@ public class CoreUseCase
         var player = _infoUseCase.GetPlayer(playerId);
         var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = _game.Id, Code = PlayReturnCode.NotPlayerTurn };
         if (skipTurnReturn.Code != PlayReturnCode.Ok) return skipTurnReturn;
-        _notification.SendTurnSkipped(_game.Id, playerId);
-        _notification.SendPlayerIdTurn(_game.Id, _infoUseCase.GetPlayerIdTurn(_game.Id));
+        
+        var game = _repository.GetGame(player.GameId);
+        _notification.SendTurnSkipped(game.Id, playerId);
+
+        NotifyNextPlayerAndPlayIfBot(game);
         return skipTurnReturn;
     }
 
