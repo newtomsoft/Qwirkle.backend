@@ -1,6 +1,4 @@
-﻿
-
-namespace Qwirkle.Infra.Repository.Dao;
+﻿namespace Qwirkle.Infra.Repository.Dao;
 
 [Table("User")]
 public class UserDao : IdentityUser<int>
