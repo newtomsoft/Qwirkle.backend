@@ -6,10 +6,11 @@ public class AuthenticationUseCase
 
     public AuthenticationUseCase(IAuthentication authentication) => _authentication = authentication;
 
-    public async Task CreateBots() => await _authentication.CreateBotsAsync();
 
+    public bool IsBot(string userName) => _authentication.IsBot(userName);
 
     public async Task<bool> Register(User user, string password) => await _authentication.RegisterAsync(user, password);
+
     public async Task<bool> RegisterGuest() => await _authentication.RegisterGuestAsync();
 
     [Obsolete]

@@ -15,31 +15,6 @@ public class Authentication : IAuthentication
         _roleManager = roleManager;
     }
 
-    public async Task CreateBotsAsync()
-    {
-        //TODO à appeler une seule fois à la création de la base
-        const string botRole = "Bot";
-        var isBotRoleExist = await _roleManager.RoleExistsAsync(botRole);
-        if (!isBotRoleExist) await _roleManager.CreateAsync(new IdentityRole<int> { Name = botRole });
-        for (var i = 1; i <= 4; i++)
-        {
-            var botPseudo = "bot" + i;
-            if (_userStore.FindByNameAsync(botPseudo, CancellationToken.None).Result != null) continue;
-
-            var botUser = new User { Pseudo = botPseudo, Email = botPseudo + "@bot" };
-            var botUserDao = botUser.ToUserDao();
-            await _userStore.SetUserNameAsync(botUserDao, botUser.Pseudo, CancellationToken.None);
-            await _userManager.CreateAsync(botUserDao);
-            await _userManager.AddToRoleAsync(botUserDao, botRole);
-        }
-
-        //TODO mettre ailleurs à la création de la base
-        const string adminRole = "Admin";
-        var isAdminRoleExist = await _roleManager.RoleExistsAsync(adminRole);
-        if (!isAdminRoleExist) await _roleManager.CreateAsync(new IdentityRole<int> { Name = adminRole });
-
-    }
-
     public async Task<bool> RegisterAsync(User user, string password)
     {
         var userDao = user.ToUserDao();
@@ -51,13 +26,13 @@ public class Authentication : IAuthentication
     public async Task<bool> RegisterGuestAsync()
     {
         const string guestNamePrefix = "guest";
-        const string guestRole = "Guest";
+        const string guestRole = "Guest"; //todo defined in other class
 
         string guestPseudo;
         do guestPseudo = guestNamePrefix + Guid.NewGuid().ToString("N")[..6];
         while (_userStore.FindByNameAsync(guestPseudo, CancellationToken.None).Result != null);
 
-        var user = new User { Pseudo = guestPseudo, Email = guestPseudo + "@guest" };
+        var user = new User(guestPseudo, guestPseudo + "@guest");
         var userDao = user.ToUserDao();
         await _userStore.SetUserNameAsync(userDao, user.Pseudo, CancellationToken.None);
         var createGuestResult = await _userManager.CreateAsync(userDao);
@@ -74,4 +49,6 @@ public class Authentication : IAuthentication
     public Task LogoutOutAsync() => _signInManager.SignOutAsync();
 
     public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => (await _signInManager.PasswordSignInAsync(pseudo, password, isRemember, false)).Succeeded;
+
+    public bool IsBot(string userName) => _userManager.IsInRoleAsync(_userManager.FindByNameAsync(userName).Result, "Bot").Result;
 }
