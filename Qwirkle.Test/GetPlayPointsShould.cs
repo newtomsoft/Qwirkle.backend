@@ -2,15 +2,14 @@
 
 public class GetPlayPointsShould
 {
-    private readonly Rack _fakeRack;
     private readonly Player _fakePlayer;
     private const int QwirklePoints = 6;
-    private CoreUseCase UseCase { get; } = new(null, null, null, null);
+    private CoreUseCase UseCase { get; } = new(null, null, null, null, null);
 
     public GetPlayPointsShould()
     {
-        _fakeRack = Rack.From(new List<TileOnPlayer>());
-        _fakePlayer = new Player(0, 0, 1, "", 0, 0, 0, _fakeRack, true, false);
+        var fakeRack = Rack.From(new List<TileOnPlayer>());
+        _fakePlayer = new Player(0, 0, 1, "", 0, 0, 0, fakeRack, true, false);
     }
 
     [Fact]

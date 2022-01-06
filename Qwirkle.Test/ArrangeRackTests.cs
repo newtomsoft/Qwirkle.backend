@@ -12,10 +12,10 @@ public class ArrangeRackTests
         var connectionFactory = new ConnectionFactory();
         _dbContext = connectionFactory.CreateContextForInMemory();
         connectionFactory.Add4DefaultTestUsers();
-
         var repository = new Repository(_dbContext);
-        _infoUseCase = new InfoUseCase(repository, null);
-        _useCase = new CoreUseCase(repository, null, _infoUseCase, null);
+        _infoUseCase = new InfoUseCase(repository, null, new Logger<InfoUseCase>(new LoggerFactory()));
+        var authenticationUseCase = new AuthenticationUseCase(new FakeAuthentication());
+        _useCase = new CoreUseCase(repository, null, _infoUseCase, authenticationUseCase, new Logger<CoreUseCase>(new LoggerFactory()));
     }
 
 

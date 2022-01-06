@@ -1,4 +1,5 @@
 ﻿global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Logging;
 global using Qwirkle.Domain.Entities;
 global using Qwirkle.Domain.Enums;
 global using Qwirkle.Domain.Ports;

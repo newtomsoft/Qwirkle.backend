@@ -44,8 +44,9 @@ public class PlayTilesShould
     {
         InitDbContext();
         _repository = new Repository(_dbContext);
-        _infoUseCase = new InfoUseCase(_repository, null);
-        _coreUseCase = new CoreUseCase(_repository, null, _infoUseCase, null);
+        var authenticationUseCase = new AuthenticationUseCase(new FakeAuthentication());
+        _infoUseCase = new InfoUseCase(_repository, null, new Logger<InfoUseCase>(new LoggerFactory()));
+        _coreUseCase = new CoreUseCase(_repository, null, _infoUseCase, authenticationUseCase, new Logger<CoreUseCase>(new LoggerFactory()));
     }
 
     private void AddAllTiles()
@@ -199,13 +200,13 @@ public class PlayTilesShould
     {
         InitTest();
         List<TileOnBoard> tilesToPlay;
-        List<TileOnBoard> tilesPlayedOrdered = new List<TileOnBoard>();
+        List<TileOnBoard> tilesPlayedOrdered = new();
 
         tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(0, 0)), new(TileColor.Green, TileShape.Square, Coordinates.From(0, 1)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(0, 2)) };
         tilesPlayedOrdered = PlayTilesAndTestPersistence(Player9, tilesToPlay, tilesPlayedOrdered);
 
         tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(1, 0)), new(TileColor.Blue, TileShape.Square, Coordinates.From(1, 1)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(1, 2)) };
-        tilesPlayedOrdered = PlayTilesAndTestPersistence(Player3, tilesToPlay, tilesPlayedOrdered);
+        _ = PlayTilesAndTestPersistence(Player3, tilesToPlay, tilesPlayedOrdered);
     }
 
     private static List<TileOnBoardDao> TileOnBoardDaoOrdered(DefaultDbContext _dbContext) => _dbContext.TilesOnBoard.Where(t => t.GameId == GameId).OrderBy(t => t.PositionX).ThenBy(t => t.PositionY).ToList();
