@@ -8,7 +8,7 @@ public class BotUseCase
     private Game _game;
     private const int TilesNumberPerPlayer = 6;
 
-    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase, ILogger<CoreUseCase> logger = null)
+    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase, ILogger<CoreUseCase> logger)
     {
         _infoUseCase = infoUseCase;
         _coreUseCase = coreUseCase;
