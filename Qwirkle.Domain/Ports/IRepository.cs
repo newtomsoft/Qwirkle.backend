@@ -19,7 +19,7 @@ public interface IRepository
     Tile GetTile(TileColor color, TileShape shape);
     List<int> GetGamesIdsContainingPlayers();
     Player CreatePlayer(int userId, int gameId);
-    void CreateTiles(int gameId);
+    void PutTilesOnBag(int gameId);
     void SetGameOver(int gameId);
     List<int> GetLeadersPlayersId(int gameId);
     bool IsGameOver(int gameId);

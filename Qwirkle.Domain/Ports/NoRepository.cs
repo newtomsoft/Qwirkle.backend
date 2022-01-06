@@ -4,7 +4,7 @@ public class NoRepository : IRepository
 {
     public Game CreateGame(DateTime date) => throw new NotSupportedException();
     public Player CreatePlayer(int userId, int gameId) => throw new NotSupportedException();
-    public void CreateTiles(int gameId) => throw new NotSupportedException();
+    public void PutTilesOnBag(int gameId) => throw new NotSupportedException();
     public List<int> GetAllUsersId() => throw new NotSupportedException();
     public Game GetGame(int gameId) => throw new NotSupportedException();
     public int GetPlayerId(int gameId, int userId) => throw new NotSupportedException();
