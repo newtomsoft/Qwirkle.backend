@@ -7,27 +7,29 @@ public class CoreUseCase
     private readonly IRepository _repository;
     private readonly INotification _notification;
     private readonly InfoUseCase _infoUseCase;
+    private readonly AuthenticationUseCase _authenticationUseCase;
     private readonly ILogger<CoreUseCase> _logger;
     private readonly BotUseCase _botUseCase;
 
     private Game _game;
 
-    public CoreUseCase(IRepository repository, INotification notification, InfoUseCase infoUseCase, ILogger<CoreUseCase> logger)
+    public CoreUseCase(IRepository repository, INotification notification, InfoUseCase infoUseCase, AuthenticationUseCase authenticationUseCase, ILogger<CoreUseCase> logger)
     {
         _repository = repository;
         _notification = notification;
         _infoUseCase = infoUseCase;
+        _authenticationUseCase = authenticationUseCase;
         _logger = logger;
         _botUseCase = new BotUseCase(infoUseCase, this, _logger);
-#warning dette technique à rembourser
+        //todo dette technique à rembourser
     }
 
     public List<Player> CreateGame(HashSet<int> usersIds)
     {
-        _logger?.LogInformation("{applicationEvent} at {dateTime}", "CreateGame", DateTime.Now);
+        _logger.LogInformation("{applicationEvent} at {dateTime}", "CreateGame", DateTime.Now);
         InitializeEmptyGame();
         CreatePlayers(usersIds);
-        CreateTiles();
+        PutTilesOnBag();
         DealTilesToPlayers();
         SortPlayers();
         return _game.Players;
@@ -72,7 +74,7 @@ public class CoreUseCase
 
         _notification?.SendPlayerIdTurn(game.Id, nextPlayerId);
         var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
-        if (nextPlayer.IsBot()) _botUseCase.Play(game, nextPlayer);
+        if (_authenticationUseCase.IsBot(nextPlayer.Pseudo)) _botUseCase.Play(game, nextPlayer);
     }
 
     public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<Tile> tiles)
@@ -95,7 +97,7 @@ public class CoreUseCase
         var player = _infoUseCase.GetPlayer(playerId);
         var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = _game.Id, Code = PlayReturnCode.NotPlayerTurn };
         if (skipTurnReturn.Code != PlayReturnCode.Ok) return skipTurnReturn;
-        
+
         var game = _repository.GetGame(player.GameId);
         _notification.SendTurnSkipped(game.Id, playerId);
 
@@ -154,7 +156,7 @@ public class CoreUseCase
             _repository.TilesFromBagToPlayer(player, rackPositions);
     }
 
-    private void CreateTiles() => _repository.CreateTiles(_game.Id);
+    private void PutTilesOnBag() => _repository.PutTilesOnBag(_game.Id);
 
     private void CreatePlayers(HashSet<int> usersIds)
     {
@@ -216,7 +218,7 @@ public class CoreUseCase
         player.LastTurnPoints = points;
         player.Points += points;
         _repository.UpdatePlayer(player);
-        _logger?.LogInformation($"player {player.Id} play {tilesToPlayList.ToLog()} and get {points} points");
+        _logger.LogInformation($"player {player.Id} play {tilesToPlayList.ToLog()} and get {points} points");
         _game.Board.AddTiles(tilesToPlayList);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();
@@ -253,6 +255,6 @@ public class CoreUseCase
         _repository.SetPlayerTurn(playerId);
         var player = _game.Players.First(p => p.Id == playerId);
         player.SetTurn(true);
-        if (player.IsBot()) _botUseCase.Play(_game, player);
+        if (_authenticationUseCase.IsBot(player.Pseudo)) _botUseCase.Play(_game, player);
     }
 }
