@@ -29,6 +29,13 @@ public class BotUseCase
             SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
         }
     }
+    public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)
+    {
+        _game = game;
+        var doableMoves = ComputeDoableMoves(player, originCoordinates, true);
+        var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
+        return playReturn?.Points ?? 0;
+    }
 
     public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
@@ -44,6 +51,8 @@ public class BotUseCase
         _game = _infoUseCase.GetGame(gameId);
         return ComputeDoableMoves(player);
     }
+
+
 
     private List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
     {
@@ -72,8 +81,7 @@ public class BotUseCase
             {
                 var tilesPlayed = playReturn.TilesPlayed;
                 var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
-                var firstGameMove = _game.Board.Tiles.Count == 0;
-                if (firstGameMove && tilePlayedNumber == 2) // todo ok but can do better
+                if (_game.IsBoardEmpty() && tilePlayedNumber == 2) // todo ok but can do better
                 {
                     currentPlayReturns.AddRange(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true));
                 }
@@ -122,7 +130,7 @@ public class BotUseCase
         }
         else
         {
-            var addOrSubtract1Unit = new Random().Next(2) * 2 - 1;
+            var addOrSubtract1Unit = Random.Shared.Next(2) * 2 - 1;
             boardAdjoiningCoordinatesRow.Add(coordinateChangingMax + addOrSubtract1Unit);
             // we have coordinateChangingMax = coordinateChangingMin
         }

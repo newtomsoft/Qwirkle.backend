@@ -115,14 +115,14 @@ public class CoreUseCase
 
     public PlayReturn Play(List<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
     {
-        if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
+        if (game.IsBoardEmpty() && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
-        if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
+        if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
 
         var computePointsUseCase = new ComputePointsUseCase();
         var wonPoints = computePointsUseCase.ComputePoints(game, tilesPlayed);
         if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
-
+        if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveCompliant()) return new PlayReturn(game.Id, PlayReturnCode.NotMostPointsMove, null, null, 0);
         if (!IsGameFinished()) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 
         const int endGameBonusPoints = 6;
@@ -130,14 +130,13 @@ public class CoreUseCase
         if (!simulationMode) GameOver();
         return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 
-        bool IsGameFinished() => IsBagEmpty() && AreAllTilesInRackPlayed();
+        bool IsGameFinished() => game.IsBagEmpty() && AreAllTilesInRackPlayed();
         bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;
-        bool IsBagEmpty() => game.Bag?.Tiles.Count == 0;
-        bool IsBoardNotEmpty() => game.Board.Tiles.Count > 0;
         bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => game.Board.IsIsolatedTile(tile));
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
+        bool IsFirstMoveCompliant() => wonPoints != _botUseCase.GetMostPointsToPlay(player, game);
     }
-
+    
     private void GameOver()
     {
         _game = _game with { GameOver = true };
