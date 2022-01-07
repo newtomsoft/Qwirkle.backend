@@ -14,35 +14,49 @@ public class GetPlayPointsShould
     }
 
     [Fact]
-    public void ReturnNumberOfTilesWhenGameIsEmptyAndTilesMakeRow()
+    public void Return1WhenGameIsEmptyAndPlayPossibleIs1Tile()
     {
         var game = new Game(1, Board.From(new List<TileOnBoard>()), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(1, 5)) }, _fakePlayer, game).Points.ShouldBe(1);
-        {
-            var tilesToPlay = new List<TileOnBoard>
+        var tilesToPlay = new List<TileOnBoard> {new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0))};
+        var tilesOnPlayer = new List<TileOnPlayer>
+            {new(0, TileColor.Blue, TileShape.Circle)};
+        var rack = Rack.From(tilesOnPlayer);
+        var player = new Player(0, 0, 0, "test", 1, 0, 0, rack, true, false);
+        UseCase.Play(tilesToPlay, player, game).Points.ShouldBe(1);
+    }
+
+    [Fact]
+    public void Return2WhenGameIsEmptyAndTilesMakeRowOf2Tiles()
+    {
+        var game = new Game(1, Board.From(new List<TileOnBoard>()), new List<Player>(), _fakeBag, false);
+
+        var tilesToPlay = new List<TileOnBoard>
             {
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0)),
                 new(TileColor.Purple, TileShape.Circle, new Coordinates(0, 1))
             };
-            var tilesOnPlayer = new List<TileOnPlayer>
+        var tilesOnPlayer = new List<TileOnPlayer>
                 {new(0, TileColor.Blue, TileShape.Circle), new(1, TileColor.Purple, TileShape.Circle)};
-            var rack = Rack.From(tilesOnPlayer);
-            var player = new Player(0, 0, 0, "test", 1, 0, 0, rack, true, false);
-            UseCase.Play(tilesToPlay, player, game).Points.ShouldBe(2);
-        }
+        var rack = Rack.From(tilesOnPlayer);
+        var player = new Player(0, 0, 0, "test", 1, 0, 0, rack, true, false);
+        UseCase.Play(tilesToPlay, player, game).Points.ShouldBe(2);
+    }
+
+    [Fact]
+    public void Return3WhenGameIsEmptyAndTilesMakeRowOf3Tiles()
+    {
+        var game = new Game(1, Board.From(new List<TileOnBoard>()), new List<Player>(), _fakeBag, false);
+        var tilesToPlay = new List<TileOnBoard>
         {
-            var tilesToPlay = new List<TileOnBoard>
-            {
-                new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0)),
-                new(TileColor.Purple, TileShape.Circle, new Coordinates(0, 1)),
-                new(TileColor.Yellow , TileShape.Circle, new Coordinates(0, 2))
-            };
-            var tilesOnPlayer = new List<TileOnPlayer>
-                {new(0, TileColor.Blue, TileShape.Circle), new(1, TileColor.Purple, TileShape.Circle), new(2, TileColor.Yellow, TileShape.Circle)};
-            var rack = Rack.From(tilesOnPlayer);
-            var player = new Player(0, 0, 0, "test", 1, 0, 0, rack, true, false);
-            UseCase.Play(tilesToPlay, player, game).Points.ShouldBe(3);
-        }
+            new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0)),
+            new(TileColor.Purple, TileShape.Circle, new Coordinates(0, 1)),
+            new(TileColor.Yellow , TileShape.Circle, new Coordinates(0, 2))
+        };
+        var tilesOnPlayer = new List<TileOnPlayer>
+            {new(0, TileColor.Blue, TileShape.Circle), new(1, TileColor.Purple, TileShape.Circle), new(2, TileColor.Yellow, TileShape.Circle)};
+        var rack = Rack.From(tilesOnPlayer);
+        var player = new Player(0, 0, 0, "test", 1, 0, 0, rack, true, false);
+        UseCase.Play(tilesToPlay, player, game).Points.ShouldBe(3);
     }
 
     [Fact]

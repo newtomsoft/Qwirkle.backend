@@ -9,6 +9,7 @@ public class ComputePointsUseCase
     public int ComputePoints(Game game, List<TileOnBoard> tiles)
     {
         _game = game;
+        if (game.IsBoardEmpty() && tiles.Count == 1) return 1;
 
         if (tiles.Count(t => t.Coordinates.Y == tiles[0].Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == tiles[0].Coordinates.X) != tiles.Count)
             return 0;
