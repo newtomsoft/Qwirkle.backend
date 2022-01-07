@@ -1,10 +1,10 @@
-﻿namespace Qwirkle.Domain.UseCases;
+﻿namespace Qwirkle.Domain.Services;
 
-public class AuthenticationUseCase
+public class UserService
 {
     private readonly IAuthentication _authentication;
 
-    public AuthenticationUseCase(IAuthentication authentication) => _authentication = authentication;
+    public UserService(IAuthentication authentication) => _authentication = authentication;
 
 
     public bool IsBot(string userName) => _authentication.IsBot(userName);

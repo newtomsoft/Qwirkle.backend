@@ -1,17 +1,17 @@
-﻿namespace Qwirkle.Domain.UseCases;
+﻿namespace Qwirkle.Domain.Services;
 
-public class BotUseCase
+public class BotService
 {
-    private readonly InfoUseCase _infoUseCase;
-    private readonly CoreUseCase _coreUseCase;
-    private readonly ILogger<CoreUseCase> _logger;
+    private readonly InfoService _infoService;
+    private readonly CoreService _coreService;
+    private readonly ILogger<CoreService> _logger;
     private Game _game;
     private const int TilesNumberPerPlayer = 6;
 
-    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase, ILogger<CoreUseCase> logger)
+    public BotService(InfoService infoService, CoreService coreService, ILogger<CoreService> logger)
     {
-        _infoUseCase = infoUseCase;
-        _coreUseCase = coreUseCase;
+        _infoService = infoService;
+        _coreService = coreService;
         _logger = logger;
     }
 
@@ -21,7 +21,7 @@ public class BotUseCase
         if (tilesToPlay.Count > 0)
         {
             _logger?.LogInformation($"Bot play {tilesToPlay.ToLog()}");
-            _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
+            _coreService.TryPlayTiles(bot.Id, tilesToPlay);
         }
         else
         {
@@ -47,8 +47,8 @@ public class BotUseCase
 
     public List<PlayReturn> ComputeDoableMoves(int gameId, int userId)
     {
-        var player = _infoUseCase.GetPlayer(gameId, userId);
-        _game = _infoUseCase.GetGame(gameId);
+        var player = _infoService.GetPlayer(gameId, userId);
+        _game = _infoService.GetGame(gameId);
         return ComputeDoableMoves(player);
     }
 
@@ -56,7 +56,7 @@ public class BotUseCase
 
     private List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
     {
-        if (!simulation) _coreUseCase.ResetGame(player.GameId);
+        if (!simulation) _coreService.ResetGame(player.GameId);
         var rack = player.Rack.WithoutDuplicatesTiles();
 
         var boardAdjoiningCoordinates = _game.Board.GetFreeAdjoiningCoordinatesToTiles(originCoordinates);
@@ -120,8 +120,8 @@ public class BotUseCase
 
         var playReturns = new List<PlayReturn>();
         var boardAdjoiningCoordinatesRow = rowType is RowType.Line ?
-                                            boardAdjoiningCoordinates.Where(c => c.Y == coordinateFixed).Select(c => (int)c.X).ToList()
-                                          : boardAdjoiningCoordinates.Where(c => c.X == coordinateFixed).Select(c => (int)c.Y).ToList();
+            boardAdjoiningCoordinates.Where(c => c.Y == coordinateFixed).Select(c => (int)c.X).ToList()
+            : boardAdjoiningCoordinates.Where(c => c.X == coordinateFixed).Select(c => (int)c.Y).ToList();
 
         if (!firstGameMove)
         {
@@ -153,7 +153,7 @@ public class BotUseCase
         return playReturns;
     }
 
-    private PlayReturn TestPlayTiles(Player player, List<TileOnBoard> tilesToPlay) => _coreUseCase.Play(tilesToPlay, player, _game, true);
+    private PlayReturn TestPlayTiles(Player player, List<TileOnBoard> tilesToPlay) => _coreService.Play(tilesToPlay, player, _game, true);
 
     private static RowType RandomRowType()
     {
@@ -179,9 +179,9 @@ public class BotUseCase
 
     private void Swap(Player bot, int tilesToSwapNumber)
     {
-        _coreUseCase.TrySwapTiles(bot.Id, bot.Rack.Tiles.Take(tilesToSwapNumber));
+        _coreService.TrySwapTiles(bot.Id, bot.Rack.Tiles.Take(tilesToSwapNumber));
         //todo make algorithm to select tiles to swap 
     }
 
-    private void Skip(int botId) => _coreUseCase.TrySkipTurn(botId);
+    private void Skip(int botId) => _coreService.TrySkipTurn(botId);
 }

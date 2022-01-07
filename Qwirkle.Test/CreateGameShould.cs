@@ -2,7 +2,7 @@
 
 public class CreateGameShould
 {
-    private readonly CoreUseCase _coreUseCase;
+    private readonly CoreService _coreService;
     private readonly DefaultDbContext _dbContext;
 
     private const int User1Id = 71;
@@ -16,8 +16,8 @@ public class CreateGameShould
         var connectionFactory = new ConnectionFactory();
         _dbContext = connectionFactory.CreateContextForInMemory();
         IRepository repository = new Repository(_dbContext);
-        var authenticationUseCase = new AuthenticationUseCase(new FakeAuthentication());
-        _coreUseCase = new CoreUseCase(repository, null, null, authenticationUseCase, new Logger<CoreUseCase>(new LoggerFactory()));
+        var authenticationUseCase = new UserService(new FakeAuthentication());
+        _coreService = new CoreService(repository, null, null, authenticationUseCase, new Logger<CoreService>(new LoggerFactory()));
         Add4DefaultTestUsers();
     }
 
@@ -34,7 +34,7 @@ public class CreateGameShould
     public void CreateGoodPlayerWithOrder0()
     {
         var userIds = new HashSet<int> { User3Id };
-        var players = _coreUseCase.CreateGame(userIds);
+        var players = _coreService.CreateGame(userIds);
 
         players.Count.ShouldBe(1);
         players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(1);
@@ -47,7 +47,7 @@ public class CreateGameShould
     public void CreateGoodPlayersWithOrder01()
     {
         var userIds = new HashSet<int> { User3Id, User4Id };
-        var players = _coreUseCase.CreateGame(userIds);
+        var players = _coreService.CreateGame(userIds);
 
         players.Count.ShouldBe(2);
         players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(2);
@@ -61,7 +61,7 @@ public class CreateGameShould
     public void CreateGoodPlayersWithOrder012()
     {
         var userIds = new HashSet<int> { User1Id, User3Id, User4Id };
-        var players = _coreUseCase.CreateGame(userIds);
+        var players = _coreService.CreateGame(userIds);
 
         players.Count.ShouldBe(3);
         players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(3);
@@ -76,7 +76,7 @@ public class CreateGameShould
     public void CreateGoodPlayersWithOrder0123()
     {
         var userIds = new HashSet<int> { User1Id, User2Id, User3Id, User4Id };
-        var players = _coreUseCase.CreateGame(userIds);
+        var players = _coreService.CreateGame(userIds);
 
         players.Count.ShouldBe(4);
         players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(4);

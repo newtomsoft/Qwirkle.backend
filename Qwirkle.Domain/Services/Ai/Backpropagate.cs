@@ -1,4 +1,4 @@
-namespace Qwirkle.Domain.UseCases.Ai;
+namespace Qwirkle.Domain.Services.Ai;
 
 public class Backpropagate
 {

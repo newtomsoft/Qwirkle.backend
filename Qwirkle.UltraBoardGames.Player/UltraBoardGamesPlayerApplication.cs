@@ -4,14 +4,14 @@ public class UltraBoardGamesPlayerApplication
 {
     private const int TilesNumberPerPlayer = 6;
     private readonly ILogger _logger;
-    private readonly BotUseCase _botUseCase;
+    private readonly BotService _botService;
     private readonly GameScraper _scraper;
     private readonly Coordinates _originCoordinates = Coordinates.From(25, 25);
 
-    public UltraBoardGamesPlayerApplication(ILogger<UltraBoardGamesPlayerApplication> logger, BotUseCase botUseCase, GameScraper gameScraper)
+    public UltraBoardGamesPlayerApplication(ILogger<UltraBoardGamesPlayerApplication> logger, BotService botService, GameScraper gameScraper)
     {
         _logger = logger;
-        _botUseCase = botUseCase;
+        _botService = botService;
         _scraper = gameScraper;
     }
 
@@ -51,8 +51,8 @@ public class UltraBoardGamesPlayerApplication
             var players = new List<Domain.Entities.Player> { bot, opponent };
             var game = new Game(board, players);
             var tilesToPlay = board.Tiles.Count > 0
-                ? _botUseCase.GetMostPointsTilesToPlay(bot, game).ToList()
-                : _botUseCase.GetMostPointsTilesToPlay(bot, game, _originCoordinates).ToList();
+                ? _botService.GetMostPointsTilesToPlay(bot, game).ToList()
+                : _botService.GetMostPointsTilesToPlay(bot, game, _originCoordinates).ToList();
 
             _scraper.TakeScreenShot();
 
