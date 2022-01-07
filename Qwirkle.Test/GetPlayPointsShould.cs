@@ -4,7 +4,7 @@ public class GetPlayPointsShould
 {
     private readonly Player _fakePlayer;
     private const int QwirklePoints = 6;
-    private readonly Bag _fakeBag = new (0, new List<TileOnBag> { new(TileColor.Yellow, TileShape.EightPointStar) });
+    private readonly Bag _fakeBag = new(0, new List<TileOnBag> { new(TileColor.Yellow, TileShape.EightPointStar) });
     private CoreUseCase UseCase { get; } = new(null, null, null, null, null);
 
     public GetPlayPointsShould()
@@ -140,10 +140,10 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(7, -3)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> {new(TileColor.Purple, TileShape.Square, new Coordinates(7, -6))}, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
         UseCase.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
         UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> {new(TileColor.Purple, TileShape.Square, new Coordinates(7, -6))}, _fakePlayer, game).Points.ShouldBe(4);
+        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBe(4);
         UseCase.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(4);
         UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(4);
     }
@@ -194,7 +194,7 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> {new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5))}, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
         UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points.ShouldBe(2);
     }
 

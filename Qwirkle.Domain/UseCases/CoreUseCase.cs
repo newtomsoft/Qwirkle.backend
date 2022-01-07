@@ -136,7 +136,7 @@ public class CoreUseCase
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
         bool IsFirstMoveCompliant() => wonPoints != _botUseCase.GetMostPointsToPlay(player, game);
     }
-    
+
     private void GameOver()
     {
         _game = _game with { GameOver = true };
