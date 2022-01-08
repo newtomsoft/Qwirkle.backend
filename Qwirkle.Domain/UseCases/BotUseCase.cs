@@ -8,7 +8,7 @@ public class BotUseCase
     private Game _game;
     private const int TilesNumberPerPlayer = 6;
 
-    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase, ILogger<CoreUseCase> logger = null)
+    public BotUseCase(InfoUseCase infoUseCase, CoreUseCase coreUseCase, ILogger<CoreUseCase> logger)
     {
         _infoUseCase = infoUseCase;
         _coreUseCase = coreUseCase;
@@ -35,6 +35,13 @@ public class BotUseCase
         }
 
     }
+    public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)
+    {
+        _game = game;
+        var doableMoves = ComputeDoableMoves(player, originCoordinates, true);
+        var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
+        return playReturn?.Points ?? 0;
+    }
 
     public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
@@ -51,7 +58,13 @@ public class BotUseCase
         return ComputeDoableMoves(player);
     }
 
+<<<<<<< HEAD
     public List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
+=======
+
+
+    private List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
+>>>>>>> 9f45d2323e3f91f33c6b5d2197df2309e2d80464
     {
         if (!simulation) _coreUseCase.ResetGame(player.GameId);
         var rack = player.Rack.WithoutDuplicatesTiles();
@@ -79,8 +92,7 @@ public class BotUseCase
             {
                 var tilesPlayed = playReturn.TilesPlayed;
                 var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
-                var firstGameMove = _game.Board.Tiles.Count == 0;
-                if (firstGameMove && tilePlayedNumber == 2) // todo ok but can do better
+                if (_game.IsBoardEmpty() && tilePlayedNumber == 2) // todo ok but can do better
                 {
                     currentPlayReturns.AddRange(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true));
                 }
@@ -129,7 +141,7 @@ public class BotUseCase
         }
         else
         {
-            var addOrSubtract1Unit = new Random().Next(2) * 2 - 1;
+            var addOrSubtract1Unit = Random.Shared.Next(2) * 2 - 1;
             boardAdjoiningCoordinatesRow.Add(coordinateChangingMax + addOrSubtract1Unit);
             // we have coordinateChangingMax = coordinateChangingMin
         }

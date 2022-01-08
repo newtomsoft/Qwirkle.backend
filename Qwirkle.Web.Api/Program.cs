@@ -44,6 +44,7 @@ appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>()
 appBuilder.Services.AddScoped<ComputePointsUseCase>();
 
 appBuilder.Services.AddControllers();
+<<<<<<< HEAD
 // switch (appBuilder.Configuration.GetValue<string>("Repository").ToLowerInvariant())
 // {
 //     case "sqlserver":
@@ -51,6 +52,9 @@ appBuilder.Services.AddControllers();
 //         break;
  
 // }
+=======
+appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(appBuilder.Configuration.GetConnectionString("Qwirkle")));
+>>>>>>> 9f45d2323e3f91f33c6b5d2197df2309e2d80464
 appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
 {
     options.Password.RequireDigit = false;
@@ -82,4 +86,5 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
     endpoints.MapHub<HubQwirkle>("/hubGame");
 });
+
 app.Run();

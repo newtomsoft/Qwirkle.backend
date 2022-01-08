@@ -7,7 +7,7 @@ public class CreateGameShould
 
     private const int User1Id = 71;
     private const int User2Id = 21;
-    private const int User3Id = 3;
+    private const int User3Id = 33;
     private const int User4Id = 14;
     private const int TilesNumberPerPlayer = 6;
 
@@ -16,7 +16,8 @@ public class CreateGameShould
         var connectionFactory = new ConnectionFactory();
         _dbContext = connectionFactory.CreateContextForInMemory();
         IRepository repository = new Repository(_dbContext);
-        _coreUseCase = new CoreUseCase(repository, null, null, null);
+        var authenticationUseCase = new AuthenticationUseCase(new FakeAuthentication());
+        _coreUseCase = new CoreUseCase(repository, null, null, authenticationUseCase, new Logger<CoreUseCase>(new LoggerFactory()));
         Add4DefaultTestUsers();
     }
 

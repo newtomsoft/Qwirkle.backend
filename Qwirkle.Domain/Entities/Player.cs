@@ -2,18 +2,19 @@
 
 public class Player
 {
-    public int Id { get; set; }
-    public int UserId { get; set; }
-    public string Pseudo { get; set; }
-    public int GameId { get; set; }
+    public int Id { get; }
+    public int UserId { get; }
+    public string Pseudo { get; }
+    public int GameId { get; }
     public int GamePosition { get; set; }
     public int Points { get; set; }
     public int LastTurnPoints { get; set; }
     public Rack Rack { get; set; }
     public bool LastTurnSkipped { get; set; }
     public bool IsTurn { get; private set; }
+    public User User { get; }
 
-    public Player(int id, int userId, int gameId, string pseudo, int gamePosition, int points, int lastTurnPoints, Rack rack, bool isTurn, bool lastTurnSkipped)
+    public Player(int id, int userId, int gameId, string pseudo, int gamePosition, int points, int lastTurnPoints, Rack rack, bool isTurn, bool lastTurnSkipped, User user = default)
     {
         Id = id;
         UserId = userId;
@@ -25,6 +26,7 @@ public class Player
         Rack = rack;
         IsTurn = isTurn;
         LastTurnSkipped = lastTurnSkipped;
+        User = user;
     }
 
     public Player(Player player)
@@ -39,13 +41,11 @@ public class Player
         Rack = new Rack(player.Rack.Tiles.ConvertAll(x => x));
         IsTurn = player.IsTurn;
         LastTurnSkipped = player.LastTurnSkipped;
+        User = player.User;
     }
     public void SetTurn(bool turn) => IsTurn = turn;
 
     public bool HasTiles(IEnumerable<Tile> tiles) => tiles.All(tile => Rack.Tiles.Select(t => (t.Color, t.Shape)).Contains((tile.Color, tile.Shape)));
-
-    public bool IsBot() => !string.IsNullOrEmpty(Pseudo) && Pseudo.ToLowerInvariant().StartsWith("bot");
-#warning dette technique. Utiliser role
 
     public int TilesNumberCanBePlayedAtGameBeginning()
     {

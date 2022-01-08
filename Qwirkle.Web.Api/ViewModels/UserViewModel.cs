@@ -9,5 +9,5 @@ public class UserViewModel
     public string Email { get; init; }
 
 
-    public User ToUser() => new() { Pseudo = Pseudo, FirstName = Firstname, LastName = Lastname, Email = Email };
+    public User ToUser() => new(Pseudo, Email, Firstname, Lastname);
 }

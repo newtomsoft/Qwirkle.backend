@@ -21,4 +21,9 @@ public record Game(int Id, Board Board, List<Player> Players, Bag Bag, bool Game
         GameOver = game.GameOver;
     }
 
+<<<<<<< HEAD
+=======
+    public bool IsBoardEmpty() => Board.Tiles.Count == 0;
+    public bool IsBagEmpty() => Bag.Tiles.Count == 0;
+>>>>>>> 9f45d2323e3f91f33c6b5d2197df2309e2d80464
 }

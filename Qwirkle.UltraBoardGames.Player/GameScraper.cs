@@ -103,7 +103,7 @@ public class GameScraper : IDisposable
             }
             catch (Exception exception)
             {
-                _logger?.LogError("{applicationEvent} in {methodName} {message} at {dateTime}", "Exception", System.Reflection.MethodBase.GetCurrentMethod()!.Name, exception.Message, DateTime.UtcNow);
+                _logger.LogError("{applicationEvent} in {methodName} {message} at {dateTime}", "Exception", System.Reflection.MethodBase.GetCurrentMethod()!.Name, exception.Message, DateTime.UtcNow);
                 return new HashSet<TileOnBoard>();
             }
         }
@@ -242,7 +242,7 @@ public class GameScraper : IDisposable
         }
         catch (Exception exception)
         {
-            _logger?.LogError("{applicationEvent} in {methodName} {message} at {dateTime}", "Exception", System.Reflection.MethodBase.GetCurrentMethod()!.Name, exception.Message, DateTime.UtcNow);
+            _logger.LogError("{applicationEvent} in {methodName} {message} at {dateTime}", "Exception", System.Reflection.MethodBase.GetCurrentMethod()!.Name, exception.Message, DateTime.UtcNow);
             return null;
         }
     }
@@ -322,6 +322,6 @@ public class GameScraper : IDisposable
         return nickNames[randIndex] + randSuffix;
     }
 
-    private void LogMoveTile(TileOnBoard tile) => _logger?.LogInformation("{applicationEvent} {tile} to {coordinates} at {dateTime}", "Player move tile", tile as Tile, tile.Coordinates, DateTime.UtcNow);
-    private void LogSwapElementMoveFrom(int tileIndex) => _logger?.LogInformation("{applicationEvent} {tilePosition} to bag at {dateTime}", "Move elements", tileIndex, DateTime.UtcNow);
+    private void LogMoveTile(TileOnBoard tile) => _logger.LogInformation("{applicationEvent} {tile} to {coordinates} at {dateTime}", "Player move tile", tile, tile.Coordinates, DateTime.UtcNow);
+    private void LogSwapElementMoveFrom(int tileIndex) => _logger.LogInformation("{applicationEvent} {tilePosition} to bag at {dateTime}", "Move elements", tileIndex, DateTime.UtcNow);
 }

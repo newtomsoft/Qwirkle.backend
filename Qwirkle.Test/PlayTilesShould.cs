@@ -44,8 +44,9 @@ public class PlayTilesShould
     {
         InitDbContext();
         _repository = new Repository(_dbContext);
-        _infoUseCase = new InfoUseCase(_repository, null);
-        _coreUseCase = new CoreUseCase(_repository, null, _infoUseCase, null);
+        var authenticationUseCase = new AuthenticationUseCase(new FakeAuthentication());
+        _infoUseCase = new InfoUseCase(_repository, null, new Logger<InfoUseCase>(new LoggerFactory()));
+        _coreUseCase = new CoreUseCase(_repository, null, _infoUseCase, authenticationUseCase, new Logger<CoreUseCase>(new LoggerFactory()));
     }
 
     private void AddAllTiles()
@@ -131,7 +132,7 @@ public class PlayTilesShould
     #endregion
 
     [Fact]
-    public void Return0WhenItsNotTurnPlayer()
+    public void ReturnNotPlayerTurnWhenItsNotTurnPlayer()
     {
         InitTest();
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Blue, TileShape.Clover, Coordinates.From(-4, 3)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(-4, 2)) };
@@ -141,7 +142,7 @@ public class PlayTilesShould
     }
 
     [Fact]
-    public void Return0After1PlayerHavePlayedNotHisTiles()
+    public void ReturnPlayerDoesntHaveThisTileAfter1PlayerHavePlayedNotHisTiles()
     {
         InitTest();
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-3, 4)) };
@@ -151,17 +152,39 @@ public class PlayTilesShould
     }
 
     [Fact]
-    public void Return3After1PlayerHavePlayedHisTiles()
+    public void Return12After1PlayerHavePlayedHisFullRackForFirstMove()
     {
         InitTest();
-        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Green, TileShape.Square, Coordinates.From(-4, 3)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(-4, 2)) };
+        var tilesToPlay = new List<TileOnBoard>
+            { new(TileColor.Green, TileShape.Circle, Coordinates.From(-4, 4)),
+              new(TileColor.Green, TileShape.Square, Coordinates.From(-4, 3)),
+              new(TileColor.Green, TileShape.Diamond, Coordinates.From(-4, 2)),
+              new(TileColor.Green, TileShape.FourPointStar, Coordinates.From(-4, 1)),
+              new(TileColor.Green, TileShape.EightPointStar, Coordinates.From(-4, 0)),
+              new(TileColor.Green, TileShape.Clover, Coordinates.From(-4, -1))
+            };
         var playReturn = _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
         playReturn.Code.ShouldBe(PlayReturnCode.Ok);
-        playReturn.Points.ShouldBe(3);
+        playReturn.Points.ShouldBe(6 + 6);
     }
 
     [Fact]
-    public void Return5After2PlayersHavePlayed()
+    public void ReturnNotMostPointsMoveAfterFirstPlayerHavePlayedNotMostPointsForFirstMove()
+    {
+        InitTest();
+        var tilesToPlay = new List<TileOnBoard>
+        { new(TileColor.Green, TileShape.Circle, Coordinates.From(-4, 4)),
+            new(TileColor.Green, TileShape.Square, Coordinates.From(-4, 3)),
+            new(TileColor.Green, TileShape.Diamond, Coordinates.From(-4, 2)),
+            new(TileColor.Green, TileShape.FourPointStar, Coordinates.From(-4, 1)),
+            new(TileColor.Green, TileShape.EightPointStar, Coordinates.From(-4, 0)),
+        };
+        var playReturn = _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        playReturn.Code.ShouldBe(PlayReturnCode.NotMostPointsMove);
+    }
+
+    [Fact]
+    public void ReturnOkAnd5PointsAfter2PlayersHavePlayed()
     {
         InitTest();
         InitBoard();
@@ -198,14 +221,26 @@ public class PlayTilesShould
     public void PersistGoodAfter2PlayersMoves()
     {
         InitTest();
-        List<TileOnBoard> tilesToPlay;
-        List<TileOnBoard> tilesPlayedOrdered = new List<TileOnBoard>();
+        List<TileOnBoard> tilesPlayedOrdered = new();
 
-        tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(0, 0)), new(TileColor.Green, TileShape.Square, Coordinates.From(0, 1)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(0, 2)) };
+        var tilesToPlay = new List<TileOnBoard>
+        {
+            new(TileColor.Green, TileShape.Circle, Coordinates.From(-4, 4)),
+            new(TileColor.Green, TileShape.Square, Coordinates.From(-4, 3)),
+            new(TileColor.Green, TileShape.Diamond, Coordinates.From(-4, 2)),
+            new(TileColor.Green, TileShape.FourPointStar, Coordinates.From(-4, 1)),
+            new(TileColor.Green, TileShape.EightPointStar, Coordinates.From(-4, 0)),
+            new(TileColor.Green, TileShape.Clover, Coordinates.From(-4, -1))
+        };
         tilesPlayedOrdered = PlayTilesAndTestPersistence(Player9, tilesToPlay, tilesPlayedOrdered);
 
-        tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(1, 0)), new(TileColor.Blue, TileShape.Square, Coordinates.From(1, 1)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(1, 2)) };
-        tilesPlayedOrdered = PlayTilesAndTestPersistence(Player3, tilesToPlay, tilesPlayedOrdered);
+        tilesToPlay = new List<TileOnBoard>
+        {
+            new(TileColor.Blue, TileShape.Circle, Coordinates.From(-5, 4)),
+            new(TileColor.Blue, TileShape.Square, Coordinates.From(-5, 3)),
+            new(TileColor.Blue, TileShape.Diamond, Coordinates.From(-5, 2))
+        };
+        _ = PlayTilesAndTestPersistence(Player3, tilesToPlay, tilesPlayedOrdered);
     }
 
     private static List<TileOnBoardDao> TileOnBoardDaoOrdered(DefaultDbContext _dbContext) => _dbContext.TilesOnBoard.Where(t => t.GameId == GameId).OrderBy(t => t.PositionX).ThenBy(t => t.PositionY).ToList();

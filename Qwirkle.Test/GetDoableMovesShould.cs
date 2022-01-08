@@ -1,6 +1,4 @@
-﻿using Qwirkle.Infra.Repository.DaoExtensionMethods;
-
-namespace Qwirkle.Test;
+﻿namespace Qwirkle.Test;
 
 public class GetDoableMovesShould
 {
@@ -11,11 +9,12 @@ public class GetDoableMovesShould
         _dbContext = connectionFactory.CreateContextForInMemory();
         connectionFactory.Add4DefaultTestUsers();
         var repository = new Repository(_dbContext);
-        var infoUseCase = new InfoUseCase(repository, null);
-        var useCase = new CoreUseCase(repository, null, infoUseCase, null);
+        var infoUseCase = new InfoUseCase(repository, null, new Logger<InfoUseCase>(new LoggerFactory()));
+        var authenticationUseCase = new AuthenticationUseCase(new FakeAuthentication());
+        var useCase = new CoreUseCase(repository, null, infoUseCase, authenticationUseCase, new Logger<CoreUseCase>(new LoggerFactory()));
         var usersIds = infoUseCase.GetAllUsersId();
         var players = useCase.CreateGame(usersIds.ToHashSet()).OrderBy(p => p.Id).ToList();
-        _botUseCase = new BotUseCase(infoUseCase, useCase);
+        _botUseCase = new BotUseCase(infoUseCase, useCase, new Logger<CoreUseCase>(new LoggerFactory()));
         _player = players[0];
         _userId = usersIds[0];
     }

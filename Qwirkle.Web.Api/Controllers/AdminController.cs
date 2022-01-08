@@ -1,7 +1,7 @@
 ﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
-[Authorize] //todo Role = "Admin"
+[Authorize(Roles = "Admin")]
 [Route("[controller]")]
 public class AdminController : ControllerBase
 {

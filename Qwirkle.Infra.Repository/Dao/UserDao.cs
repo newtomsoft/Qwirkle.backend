@@ -1,8 +1,8 @@
-﻿
-
-namespace Qwirkle.Infra.Repository.Dao;
+﻿namespace Qwirkle.Infra.Repository.Dao;
 
 [Table("User")]
+[Index(nameof(UserName), IsUnique = true)]
+[Index(nameof(Email), IsUnique = true)]
 public class UserDao : IdentityUser<int>
 {
     [Column("Pseudo")]

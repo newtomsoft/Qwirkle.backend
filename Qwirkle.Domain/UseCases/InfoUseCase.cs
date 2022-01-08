@@ -4,9 +4,9 @@ public class InfoUseCase
 {
     private readonly IRepository _repository;
     private readonly INotification _notification;
-    private readonly ILogger<CoreUseCase> _logger;
+    private readonly ILogger<InfoUseCase> _logger;
 
-    public InfoUseCase(IRepository repository, INotification notification, ILogger<CoreUseCase> logger = null)
+    public InfoUseCase(IRepository repository, INotification notification, ILogger<InfoUseCase> logger)
     {
         _repository = repository;
         _notification = notification;
@@ -14,7 +14,6 @@ public class InfoUseCase
     }
 
     public int GetUserId(string userName) => _repository.GetUserId(userName);
-    public int GetUserId(int playerId) => _repository.GetUserId(playerId);
     public int GetPlayerId(int gameId, int userId) => _repository.GetPlayerId(gameId, userId);
     public Player GetPlayer(int playerId) => _repository.GetPlayer(playerId);
     public Player GetPlayer(int gameId, int userId) => _repository.GetPlayer(gameId, userId);

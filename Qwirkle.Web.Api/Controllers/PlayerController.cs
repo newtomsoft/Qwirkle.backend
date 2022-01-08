@@ -15,11 +15,9 @@ public class PlayerController : ControllerBase
         _userManager = userManager;
     }
 
-
     [Obsolete("method soon to be discontinued")]
     [HttpGet("{playerId:int}")]
     public ActionResult GetById(int playerId) => new ObjectResult(_infoUseCase.GetPlayer(playerId));
-
 
     [HttpGet("ByGameId/{gameId:int}")]
     public ActionResult GetByGameId(int gameId) => new ObjectResult(_infoUseCase.GetPlayer(gameId, UserId));

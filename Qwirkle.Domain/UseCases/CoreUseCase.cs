@@ -7,27 +7,29 @@ public class CoreUseCase
     private readonly IRepository _repository;
     private readonly INotification _notification;
     private readonly InfoUseCase _infoUseCase;
+    private readonly AuthenticationUseCase _authenticationUseCase;
     private readonly ILogger<CoreUseCase> _logger;
     private readonly BotUseCase _botUseCase;
 
     private Game _game;
 
-    public CoreUseCase(IRepository repository, INotification notification, InfoUseCase infoUseCase, ILogger<CoreUseCase> logger)
+    public CoreUseCase(IRepository repository, INotification notification, InfoUseCase infoUseCase, AuthenticationUseCase authenticationUseCase, ILogger<CoreUseCase> logger)
     {
         _repository = repository;
         _notification = notification;
         _infoUseCase = infoUseCase;
+        _authenticationUseCase = authenticationUseCase;
         _logger = logger;
         _botUseCase = new BotUseCase(infoUseCase, this, _logger);
-#warning dette technique à rembourser
+        //todo dette technique à rembourser
     }
 
     public List<Player> CreateGame(HashSet<int> usersIds)
     {
-        _logger?.LogInformation("{applicationEvent} at {dateTime}", "CreateGame", DateTime.Now);
+        _logger.LogInformation("{applicationEvent} at {dateTime}", "CreateGame", DateTime.Now);
         InitializeEmptyGame();
         CreatePlayers(usersIds);
-        CreateTiles();
+        PutTilesOnBag();
         DealTilesToPlayers();
         SortPlayers();
         return _game.Players;
@@ -59,14 +61,20 @@ public class CoreUseCase
         if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
 
         playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
-        _notification?.SendTilesPlayed(_game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
-        var nextPlayerId = _infoUseCase.GetPlayerIdTurn(_game.Id);
-        if (nextPlayerId == 0) return playReturn;
+        _notification?.SendTilesPlayed(game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
 
-        _notification?.SendPlayerIdTurn(_game.Id, nextPlayerId);
-        var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
-        if (nextPlayer.IsBot()) _botUseCase.Play(game, nextPlayer);
+        NotifyNextPlayerAndPlayIfBot(game);
         return playReturn;
+    }
+
+    private void NotifyNextPlayerAndPlayIfBot(Game game)
+    {
+        var nextPlayerId = _infoUseCase.GetPlayerIdTurn(game.Id);
+        if (nextPlayerId == 0) return;
+
+        _notification?.SendPlayerIdTurn(game.Id, nextPlayerId);
+        var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
+        if (_authenticationUseCase.IsBot(nextPlayer.Pseudo)) _botUseCase.Play(game, nextPlayer);
     }
 
     public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<Tile> tiles)
@@ -75,9 +83,12 @@ public class CoreUseCase
         var player = _infoUseCase.GetPlayer(playerId);
         if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
         if (!player.HasTiles(tilesList)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        var game = _repository.GetGame(player.GameId);
+
         var swapTilesReturn = SwapTiles(player, tilesList);
-        _notification.SendTilesSwapped(_game.Id, playerId);
-        _notification.SendPlayerIdTurn(_game.Id, _infoUseCase.GetPlayerIdTurn(_game.Id));
+        _notification.SendTilesSwapped(game.Id, playerId);
+
+        NotifyNextPlayerAndPlayIfBot(game);
         return swapTilesReturn;
     }
 
@@ -86,8 +97,11 @@ public class CoreUseCase
         var player = _infoUseCase.GetPlayer(playerId);
         var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = _game.Id, Code = PlayReturnCode.NotPlayerTurn };
         if (skipTurnReturn.Code != PlayReturnCode.Ok) return skipTurnReturn;
-        _notification.SendTurnSkipped(_game.Id, playerId);
-        _notification.SendPlayerIdTurn(_game.Id, _infoUseCase.GetPlayerIdTurn(_game.Id));
+
+        var game = _repository.GetGame(player.GameId);
+        _notification.SendTurnSkipped(game.Id, playerId);
+
+        NotifyNextPlayerAndPlayIfBot(game);
         return skipTurnReturn;
     }
 
@@ -101,14 +115,13 @@ public class CoreUseCase
 
     public PlayReturn Play(List<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
     {
-        if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
-        if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
+        if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
 
         var computePointsUseCase = new ComputePointsUseCase();
         var wonPoints = computePointsUseCase.ComputePoints(game, tilesPlayed);
         if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
-
+        if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveNotCompliant()) return new PlayReturn(game.Id, PlayReturnCode.NotMostPointsMove, null, null, 0);
         if (!IsGameFinished()) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 
         const int endGameBonusPoints = 6;
@@ -116,12 +129,11 @@ public class CoreUseCase
         if (!simulationMode) GameOver();
         return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
 
-        bool IsGameFinished() => IsBagEmpty() && AreAllTilesInRackPlayed();
+        bool IsGameFinished() => game.IsBagEmpty() && AreAllTilesInRackPlayed();
         bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;
-        bool IsBagEmpty() => game.Bag?.Tiles.Count == 0;
-        bool IsBoardNotEmpty() => game.Board.Tiles.Count > 0;
         bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => game.Board.IsIsolatedTile(tile));
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
+        bool IsFirstMoveNotCompliant() => wonPoints != _botUseCase.GetMostPointsToPlay(player, game);
     }
 
     private void GameOver()
@@ -142,7 +154,7 @@ public class CoreUseCase
             _repository.TilesFromBagToPlayer(player, rackPositions);
     }
 
-    private void CreateTiles() => _repository.CreateTiles(_game.Id);
+    private void PutTilesOnBag() => _repository.PutTilesOnBag(_game.Id);
 
     private void CreatePlayers(HashSet<int> usersIds)
     {
@@ -204,7 +216,7 @@ public class CoreUseCase
         player.LastTurnPoints = points;
         player.Points += points;
         _repository.UpdatePlayer(player);
-        _logger?.LogInformation($"player {player.Id} play {tilesToPlayList.ToLog()} and get {points} points");
+        _logger.LogInformation($"player {player.Id} play {tilesToPlayList.ToLog()} and get {points} points");
         _game.Board.AddTiles(tilesToPlayList);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();
@@ -241,6 +253,6 @@ public class CoreUseCase
         _repository.SetPlayerTurn(playerId);
         var player = _game.Players.First(p => p.Id == playerId);
         player.SetTurn(true);
-        if (player.IsBot()) _botUseCase.Play(_game, player);
+        if (_authenticationUseCase.IsBot(player.Pseudo)) _botUseCase.Play(_game, player);
     }
 }
