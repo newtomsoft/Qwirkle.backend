@@ -1,4 +1,6 @@
-﻿namespace Qwirkle.Infra.Repository.Dao;
+﻿using System.Collections.Immutable;
+
+namespace Qwirkle.Infra.Repository.Dao;
 
 [Table("User")]
 [Index(nameof(UserName), IsUnique = true)]
