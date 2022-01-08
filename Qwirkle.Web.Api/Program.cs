@@ -39,6 +39,7 @@ appBuilder.Services.AddScoped<CoreUseCase>();
 appBuilder.Services.AddScoped<InfoUseCase>();
 appBuilder.Services.AddScoped<BotUseCase>();
 appBuilder.Services.AddScoped<Expand>();
+appBuilder.Services.AddScoped<Backpropagate>();
 appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
 
 appBuilder.Services.AddScoped<ComputePointsUseCase>();
