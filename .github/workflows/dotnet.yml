@@ -10,8 +10,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    environment:
-      name: Development
 
     steps:
     - uses: actions/checkout@v2
@@ -22,11 +20,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --no-restore
     - name: Test
-      run: dotnet test
-    - name: Publish  
-      run: dotnet publish Qwirkle.Web.Api -c Release -o ./publish -r linux-x64 --self-contained true /p:UseAppHost=true
-    - name: Archive build
-
-      
+      run: dotnet test --no-build --verbosity normal
