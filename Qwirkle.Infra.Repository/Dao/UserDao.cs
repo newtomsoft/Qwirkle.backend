@@ -13,4 +13,7 @@ public class UserDao : IdentityUser<int>
     public int Points { get; set; }
     public int GamesPlayed { get; set; }
     public int GamesWon { get; set; }
+
+    public virtual List<UserDao> RegisteredOpponents { get; set; } = new();
+    public virtual List<UserDao> RegisteredOpponentBy { get; set; }
 }

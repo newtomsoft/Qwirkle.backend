@@ -14,7 +14,7 @@ public class ArrangeRackTests
         connectionFactory.Add4DefaultTestUsers();
         var repository = new Repository(_dbContext);
         _infoService = new InfoService(repository, null, new Logger<InfoService>(new LoggerFactory()));
-        var authenticationUseCase = new UserService(new FakeAuthentication());
+        var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
         _service = new CoreService(repository, null, _infoService, authenticationUseCase, new Logger<CoreService>(new LoggerFactory()));
     }
 

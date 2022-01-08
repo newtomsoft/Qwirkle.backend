@@ -16,7 +16,7 @@ public class CreateGameShould
         var connectionFactory = new ConnectionFactory();
         _dbContext = connectionFactory.CreateContextForInMemory();
         IRepository repository = new Repository(_dbContext);
-        var authenticationUseCase = new UserService(new FakeAuthentication());
+        var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
         _coreService = new CoreService(repository, null, null, authenticationUseCase, new Logger<CoreService>(new LoggerFactory()));
         Add4DefaultTestUsers();
     }

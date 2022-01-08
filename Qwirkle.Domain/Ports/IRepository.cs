@@ -25,5 +25,6 @@ public interface IRepository
     bool IsGameOver(int gameId);
     void ArrangeRack(Player player, IEnumerable<Tile> tiles);
     List<int> GetAllUsersId();
+    bool AddRegisteredOpponent(int userId, string opponentName);
     List<int> GetUserGamesIds(int userId);
 }

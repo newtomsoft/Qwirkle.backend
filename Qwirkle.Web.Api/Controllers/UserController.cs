@@ -6,8 +6,14 @@
 public class UserController : ControllerBase
 {
     private readonly UserService _userService;
+    private readonly UserManager<UserDao> _userManager;
 
-    public UserController(UserService userService) => _userService = userService;
+    private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
+    public UserController(UserService userService, UserManager<UserDao> userManager)
+    {
+        _userService = userService;
+        _userManager = userManager;
+    }
 
 
     [AllowAnonymous]
@@ -31,6 +37,9 @@ public class UserController : ControllerBase
     [Obsolete]
     [HttpGet("WhoAmI")]
     public ActionResult WhoAmI() => new ObjectResult(_userService.GetUserId(User));
+
+    [HttpGet("AddRegisteredOpponent/{friendName}")]
+    public ActionResult AddRegisteredOpponent(string friendName) => new ObjectResult(_userService.AddRegisteredOpponent(UserId, friendName));
 
     private bool IsAuthenticated() => User.Identity is { IsAuthenticated: true };
     private static BadRequestObjectResult AlreadyAuthenticated() => new("user already authenticated");

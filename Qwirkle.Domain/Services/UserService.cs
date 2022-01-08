@@ -2,9 +2,14 @@
 
 public class UserService
 {
+    private readonly IRepository _repository;
     private readonly IAuthentication _authentication;
 
-    public UserService(IAuthentication authentication) => _authentication = authentication;
+    public UserService(IRepository repository, IAuthentication authentication)
+    {
+        _repository = repository;
+        _authentication = authentication;
+    }
 
 
     public bool IsBot(string userName) => _authentication.IsBot(userName);
@@ -19,4 +24,6 @@ public class UserService
     public async Task LogOutAsync() => await _authentication.LogoutOutAsync();
 
     public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => await _authentication.LoginAsync(pseudo, password, isRemember);
+    
+    public bool AddRegisteredOpponent(int userId, string friendName) => _repository.AddRegisteredOpponent(userId, friendName);
 }

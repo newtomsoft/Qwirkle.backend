@@ -10,7 +10,7 @@ public class GetDoableMovesShould
         connectionFactory.Add4DefaultTestUsers();
         var repository = new Repository(_dbContext);
         var infoUseCase = new InfoService(repository, null, new Logger<InfoService>(new LoggerFactory()));
-        var authenticationUseCase = new UserService(new FakeAuthentication());
+        var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
         var useCase = new CoreService(repository, null, infoUseCase, authenticationUseCase, new Logger<CoreService>(new LoggerFactory()));
         var usersIds = infoUseCase.GetAllUsersId();
         var players = useCase.CreateGame(usersIds.ToHashSet()).OrderBy(p => p.Id).ToList();

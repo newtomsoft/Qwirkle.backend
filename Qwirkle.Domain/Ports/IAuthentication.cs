@@ -9,4 +9,5 @@ public interface IAuthentication
     Task LogoutOutAsync();
     Task<bool> LoginAsync(string pseudo, string password, bool isRemember);
     bool IsBot(string userName);
+    User GetUser(string userName);
 }
