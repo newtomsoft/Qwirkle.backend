@@ -151,11 +151,26 @@ public class Repository : IRepository
 
     public bool AddBookmarkedOpponent(int userId, string opponentName)
     {
-        var user = DbContext.Users.Include(u=>u.BookmarkedOpponents).First(u => u.Id == userId);
+        var user = DbContext.Users.Include(u => u.BookmarkedOpponents).First(u => u.Id == userId);
         var opponent = DbContext.Users.Include(u => u.BookmarkedBy).First(u => u.UserName == opponentName);
         user.BookmarkedOpponents.Add(opponent);
         opponent.BookmarkedBy.Add(user);
         return DbContext.SaveChanges() == 1;
+    }
+
+    public bool RemoveBookmarkedOpponent(int userId, string opponentName)
+    {
+        var user = DbContext.Users.Include(u => u.BookmarkedOpponents).First(u => u.Id == userId);
+        var opponent = DbContext.Users.Include(u => u.BookmarkedBy).First(u => u.UserName == opponentName);
+        user.BookmarkedOpponents.Remove(opponent);
+        opponent.BookmarkedBy.Remove(user);
+        return DbContext.SaveChanges() == 1;
+    }
+
+    public HashSet<string> GetBookmarkedOpponentsNames(int userId)
+    {
+        var opponents = DbContext.Users.Include(u => u.BookmarkedOpponents).First(u => u.Id == userId).BookmarkedOpponents;
+        return opponents.Select(o => o.UserName).ToHashSet();
     }
 }
 
