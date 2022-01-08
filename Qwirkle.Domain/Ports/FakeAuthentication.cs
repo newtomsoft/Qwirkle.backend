@@ -8,5 +8,4 @@ public class FakeAuthentication : IAuthentication
     public bool IsBot(string userName) => false;
     public Task LogoutOutAsync() => throw new NotSupportedException();
     public Task<bool> RegisterAsync(User user, string password) => throw new NotSupportedException();
-    public User GetUser(string userName) => throw new NotSupportedException();
 }
