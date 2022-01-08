@@ -48,5 +48,3 @@ jobs:
         REMOTE_PORT: ${{ secrets.PORT }}
         SOURCE: 'publish'
         TARGET: ${{ secrets.TARGET_PATH }}
-        strip_components: 1  
-      
