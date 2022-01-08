@@ -39,12 +39,14 @@ jobs:
       working-directory: ${{ github.workspace }}
       run: ls -la
       
-    - name: Deploy to Server
-      uses: easingthemes/ssh-deploy@main
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@master
       with:
-        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-        REMOTE_HOST: ${{ secrets.SERVER }}
-        REMOTE_USER: ${{ secrets.USER }}
-        REMOTE_PORT: ${{ secrets.PORT }}
-        SOURCE: 'publish'
-        TARGET: ${{ secrets.TARGET_PATH }}
+        host: ${{ secrets.SERVER }}
+        username: ${{ secrets.USER }}
+        password: ${{ secrets.PASSWORD }}
+        PORT: ${{ secrets.PORT }}
+        source: 'publish'
+        target: ${{ secrets.TARGET_PATH }}
+        strip_components: 1  
+      
