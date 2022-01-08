@@ -26,5 +26,5 @@ public class NoRepository : IRepository
     public void ArrangeRack(Player player, IEnumerable<Tile> tiles) => throw new NotSupportedException();
     public void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<TileOnBoard> tilesOnBoard) => throw new NotSupportedException();
     public void TilesFromPlayerToBag(Player player, IEnumerable<Tile> tiles) => throw new NotSupportedException();
-    public bool AddRegisteredOpponent(int userId, string opponentName) => throw new NotSupportedException();
+    public bool AddBookmarkedOpponent(int userId, string opponentName) => throw new NotSupportedException();
 }

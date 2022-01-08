@@ -149,12 +149,12 @@ public class Repository : IRepository
         return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.Single(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Color, tileDao.Shape, new Coordinates(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
     }
 
-    public bool AddRegisteredOpponent(int userId, string opponentName)
+    public bool AddBookmarkedOpponent(int userId, string opponentName)
     {
-        var user = DbContext.Users.Include(u=>u.RegisteredOpponents).First(u => u.Id == userId);
-        var opponent = DbContext.Users.Include(u => u.RegisteredOpponentBy).First(u => u.UserName == opponentName);
-        user.RegisteredOpponents.Add(opponent);
-        opponent.RegisteredOpponentBy.Add(user);
+        var user = DbContext.Users.Include(u=>u.BookmarkedOpponents).First(u => u.Id == userId);
+        var opponent = DbContext.Users.Include(u => u.BookmarkedBy).First(u => u.UserName == opponentName);
+        user.BookmarkedOpponents.Add(opponent);
+        opponent.BookmarkedBy.Add(user);
         return DbContext.SaveChanges() == 1;
     }
 }

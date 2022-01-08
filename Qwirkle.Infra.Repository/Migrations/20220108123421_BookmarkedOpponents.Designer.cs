@@ -12,8 +12,8 @@ using Qwirkle.Infra.Repository;
 namespace Qwirkle.Infra.Repository.Migrations
 {
     [DbContext(typeof(DefaultDbContext))]
-    [Migration("20220107215144_Opponent")]
-    partial class Opponent
+    [Migration("20220108123421_BookmarkedOpponents")]
+    partial class BookmarkedOpponents
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,28 +57,28 @@ namespace Qwirkle.Infra.Repository.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "b1cc66bd-0af1-4a64-b2b2-cb53c36ded62",
+                            ConcurrencyStamp = "743c446f-3a40-4879-a389-5f4120284133",
                             Name = "Bot",
                             NormalizedName = "BOT"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "a9d7de2f-7b67-47a6-908c-6c14554296b0",
+                            ConcurrencyStamp = "4218c4ad-95c8-40c3-9521-957dc984ea9a",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "e47ef09e-69de-4ad5-8f66-5e7691f8ebf7",
+                            ConcurrencyStamp = "01df5356-a8da-4813-9de8-0cf1ab29a64c",
                             Name = "Guest",
                             NormalizedName = "GUEST"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "e791442a-e1e3-42d6-bbbc-253df0a2b23b",
+                            ConcurrencyStamp = "1c5b787f-1852-4d3c-a484-ad08975c5e5e",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -1125,7 +1125,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "240021a3-bd7f-4ba8-83a2-5c5fc1ac3d33",
+                            ConcurrencyStamp = "11ea4ca2-ef23-4820-af8c-c34b34eca13c",
                             Email = "bot1@bot",
                             EmailConfirmed = false,
                             GamesPlayed = 0,
@@ -1141,7 +1141,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d6687b01-d940-4a7e-9cda-7454a58b0128",
+                            ConcurrencyStamp = "4a847d5e-d6cb-4ca2-b76a-34d320adfc12",
                             Email = "bot2@bot",
                             EmailConfirmed = false,
                             GamesPlayed = 0,
@@ -1157,7 +1157,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "87efbbaf-b90b-483d-8551-374da00c0b22",
+                            ConcurrencyStamp = "a1285a56-ec5a-48d7-bf3a-50436ffc6f43",
                             Email = "bot3@bot",
                             EmailConfirmed = false,
                             GamesPlayed = 0,
@@ -1173,7 +1173,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "aed73f53-8103-4f96-ad8b-c5e9f4bf73b4",
+                            ConcurrencyStamp = "bbb32ebb-34a6-40d8-8e79-288475e81e73",
                             Email = "bot4@bot",
                             EmailConfirmed = false,
                             GamesPlayed = 0,
@@ -1189,7 +1189,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f4f7a323-d344-45eb-a608-c3144da7368b",
+                            ConcurrencyStamp = "0c458274-9b06-4522-8814-ceab1321eb72",
                             Email = "thomas@newtomsoft.fr",
                             EmailConfirmed = false,
                             FirstName = "Thomas",
@@ -1203,7 +1203,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                             PasswordHash = "AQAAAAEAACcQAAAAED29kKSVgjTdA6s6pXQ0a+7iy9MJ5Y1byxFl2MWZnX4WE6lw1SsR9FGeGypraM3G+g==",
                             PhoneNumberConfirmed = false,
                             Points = 0,
-                            SecurityStamp = "B69E08FAF5F24E339FE9B41847EC3EDB",
+                            SecurityStamp = "9F016EFFE03B49B28E1E20CA38EDCE3A",
                             TwoFactorEnabled = false,
                             UserName = "Tom"
                         },
@@ -1211,7 +1211,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bd6221c7-6bc2-4d34-abe4-de4e0ae89388",
+                            ConcurrencyStamp = "d7b8a386-96e7-4486-8f34-00d88ba43567",
                             Email = "jc@jc.fr",
                             EmailConfirmed = false,
                             FirstName = "Jean Charles",
@@ -1225,7 +1225,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                             PasswordHash = "AQAAAAEAACcQAAAAEJOr0iSf9bL59UJqwWyCpcjdampHsvulqOZ/NTApuuwLJsc1Sf9xRquQWPIz2S8rUQ==",
                             PhoneNumberConfirmed = false,
                             Points = 0,
-                            SecurityStamp = "30386978C4FE4096B7EBF17EE0AE843B",
+                            SecurityStamp = "CC952740949B42409175E35F0299D44C",
                             TwoFactorEnabled = false,
                             UserName = "JC"
                         });
@@ -1233,15 +1233,15 @@ namespace Qwirkle.Infra.Repository.Migrations
 
             modelBuilder.Entity("UserDaoUserDao", b =>
                 {
-                    b.Property<int>("RegisteredOpponentById")
+                    b.Property<int>("BookmarkedById")
                         .HasColumnType("int");
 
-                    b.Property<int>("RegisteredOpponentsId")
+                    b.Property<int>("BookmarkedOpponentsId")
                         .HasColumnType("int");
 
-                    b.HasKey("RegisteredOpponentById", "RegisteredOpponentsId");
+                    b.HasKey("BookmarkedById", "BookmarkedOpponentsId");
 
-                    b.HasIndex("RegisteredOpponentsId");
+                    b.HasIndex("BookmarkedOpponentsId");
 
                     b.ToTable("UserDaoUserDao");
                 });
@@ -1377,13 +1377,13 @@ namespace Qwirkle.Infra.Repository.Migrations
                 {
                     b.HasOne("Qwirkle.Infra.Repository.Dao.UserDao", null)
                         .WithMany()
-                        .HasForeignKey("RegisteredOpponentById")
+                        .HasForeignKey("BookmarkedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Qwirkle.Infra.Repository.Dao.UserDao", null)
                         .WithMany()
-                        .HasForeignKey("RegisteredOpponentsId")
+                        .HasForeignKey("BookmarkedOpponentsId")
                         .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });

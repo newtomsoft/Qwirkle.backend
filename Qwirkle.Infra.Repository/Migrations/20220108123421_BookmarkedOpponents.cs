@@ -4,7 +4,7 @@
 
 namespace Qwirkle.Infra.Repository.Migrations
 {
-    public partial class Opponent : Migration
+    public partial class BookmarkedOpponents : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,21 +12,21 @@ namespace Qwirkle.Infra.Repository.Migrations
                 name: "UserDaoUserDao",
                 columns: table => new
                 {
-                    RegisteredOpponentById = table.Column<int>(type: "int", nullable: false),
-                    RegisteredOpponentsId = table.Column<int>(type: "int", nullable: false)
+                    BookmarkedById = table.Column<int>(type: "int", nullable: false),
+                    BookmarkedOpponentsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserDaoUserDao", x => new { x.RegisteredOpponentById, x.RegisteredOpponentsId });
+                    table.PrimaryKey("PK_UserDaoUserDao", x => new { x.BookmarkedById, x.BookmarkedOpponentsId });
                     table.ForeignKey(
-                        name: "FK_UserDaoUserDao_AspNetUsers_RegisteredOpponentById",
-                        column: x => x.RegisteredOpponentById,
+                        name: "FK_UserDaoUserDao_AspNetUsers_BookmarkedById",
+                        column: x => x.BookmarkedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserDaoUserDao_AspNetUsers_RegisteredOpponentsId",
-                        column: x => x.RegisteredOpponentsId,
+                        name: "FK_UserDaoUserDao_AspNetUsers_BookmarkedOpponentsId",
+                        column: x => x.BookmarkedOpponentsId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
@@ -36,75 +36,75 @@ namespace Qwirkle.Infra.Repository.Migrations
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "ConcurrencyStamp",
-                value: "b1cc66bd-0af1-4a64-b2b2-cb53c36ded62");
+                value: "743c446f-3a40-4879-a389-5f4120284133");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "ConcurrencyStamp",
-                value: "a9d7de2f-7b67-47a6-908c-6c14554296b0");
+                value: "4218c4ad-95c8-40c3-9521-957dc984ea9a");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: 3,
                 column: "ConcurrencyStamp",
-                value: "e47ef09e-69de-4ad5-8f66-5e7691f8ebf7");
+                value: "01df5356-a8da-4813-9de8-0cf1ab29a64c");
 
             migrationBuilder.UpdateData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
                 keyValue: 4,
                 column: "ConcurrencyStamp",
-                value: "e791442a-e1e3-42d6-bbbc-253df0a2b23b");
+                value: "1c5b787f-1852-4d3c-a484-ad08975c5e5e");
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "ConcurrencyStamp",
-                value: "240021a3-bd7f-4ba8-83a2-5c5fc1ac3d33");
+                value: "11ea4ca2-ef23-4820-af8c-c34b34eca13c");
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "ConcurrencyStamp",
-                value: "d6687b01-d940-4a7e-9cda-7454a58b0128");
+                value: "4a847d5e-d6cb-4ca2-b76a-34d320adfc12");
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: 3,
                 column: "ConcurrencyStamp",
-                value: "87efbbaf-b90b-483d-8551-374da00c0b22");
+                value: "a1285a56-ec5a-48d7-bf3a-50436ffc6f43");
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: 4,
                 column: "ConcurrencyStamp",
-                value: "aed73f53-8103-4f96-ad8b-c5e9f4bf73b4");
+                value: "bbb32ebb-34a6-40d8-8e79-288475e81e73");
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: 5,
                 columns: new[] { "ConcurrencyStamp", "SecurityStamp" },
-                values: new object[] { "f4f7a323-d344-45eb-a608-c3144da7368b", "B69E08FAF5F24E339FE9B41847EC3EDB" });
+                values: new object[] { "0c458274-9b06-4522-8814-ceab1321eb72", "9F016EFFE03B49B28E1E20CA38EDCE3A" });
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: 6,
                 columns: new[] { "ConcurrencyStamp", "SecurityStamp" },
-                values: new object[] { "bd6221c7-6bc2-4d34-abe4-de4e0ae89388", "30386978C4FE4096B7EBF17EE0AE843B" });
+                values: new object[] { "d7b8a386-96e7-4486-8f34-00d88ba43567", "CC952740949B42409175E35F0299D44C" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserDaoUserDao_RegisteredOpponentsId",
+                name: "IX_UserDaoUserDao_BookmarkedOpponentsId",
                 table: "UserDaoUserDao",
-                column: "RegisteredOpponentsId");
+                column: "BookmarkedOpponentsId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

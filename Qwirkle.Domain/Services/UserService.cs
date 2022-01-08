@@ -25,5 +25,5 @@ public class UserService
 
     public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => await _authentication.LoginAsync(pseudo, password, isRemember);
     
-    public bool AddRegisteredOpponent(int userId, string friendName) => _repository.AddRegisteredOpponent(userId, friendName);
+    public bool AddBookmarkedOpponent(int userId, string friendName) => _repository.AddBookmarkedOpponent(userId, friendName);
 }

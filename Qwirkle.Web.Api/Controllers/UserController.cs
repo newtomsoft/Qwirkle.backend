@@ -38,8 +38,8 @@ public class UserController : ControllerBase
     [HttpGet("WhoAmI")]
     public ActionResult WhoAmI() => new ObjectResult(_userService.GetUserId(User));
 
-    [HttpGet("AddRegisteredOpponent/{friendName}")]
-    public ActionResult AddRegisteredOpponent(string friendName) => new ObjectResult(_userService.AddRegisteredOpponent(UserId, friendName));
+    [HttpGet("AddBookmarkedOpponent/{friendName}")]
+    public ActionResult AddBookmarkedOpponent(string friendName) => new ObjectResult(_userService.AddBookmarkedOpponent(UserId, friendName));
 
     private bool IsAuthenticated() => User.Identity is { IsAuthenticated: true };
     private static BadRequestObjectResult AlreadyAuthenticated() => new("user already authenticated");
