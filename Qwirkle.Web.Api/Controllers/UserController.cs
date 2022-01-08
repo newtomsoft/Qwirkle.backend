@@ -32,14 +32,27 @@ public class UserController : ControllerBase
 
 
     [HttpGet("Logout")]
-    public async void LogoutAsync() => await _userService.LogOutAsync();
+    public async Task LogoutAsync() => await _userService.LogOutAsync();
 
     [Obsolete]
     [HttpGet("WhoAmI")]
     public ActionResult WhoAmI() => new ObjectResult(_userService.GetUserId(User));
 
-    [HttpGet("AddBookmarkedOpponent/{friendName}")]
+    [Authorize(Roles = "Admin")]
+    [HttpGet("IsAdmin")]
+    public ActionResult IsAdmin() => StatusCode(StatusCodes.Status200OK);
+
+
+    [HttpPost("AddBookmarkedOpponent/{friendName}")]
     public ActionResult AddBookmarkedOpponent(string friendName) => new ObjectResult(_userService.AddBookmarkedOpponent(UserId, friendName));
+
+
+    [HttpDelete("RemoveBookmarkedOpponent/{friendName}")]
+    public ActionResult RemoveBookmarkedOpponent(string friendName) => new ObjectResult(_userService.RemoveBookmarkedOpponent(UserId, friendName));
+
+
+    [HttpGet("BookmarkedOpponents")]
+    public ActionResult GetBookmarkedOpponentsNames() => new ObjectResult(_userService.GetBookmarkedOpponentsNames(UserId));
 
     private bool IsAuthenticated() => User.Identity is { IsAuthenticated: true };
     private static BadRequestObjectResult AlreadyAuthenticated() => new("user already authenticated");
