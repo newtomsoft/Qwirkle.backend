@@ -1,10 +1,15 @@
-﻿namespace Qwirkle.Domain.UseCases;
+﻿namespace Qwirkle.Domain.Services;
 
-public class AuthenticationUseCase
+public class UserService
 {
+    private readonly IRepository _repository;
     private readonly IAuthentication _authentication;
 
-    public AuthenticationUseCase(IAuthentication authentication) => _authentication = authentication;
+    public UserService(IRepository repository, IAuthentication authentication)
+    {
+        _repository = repository;
+        _authentication = authentication;
+    }
 
 
     public bool IsBot(string userName) => _authentication.IsBot(userName);
@@ -19,4 +24,8 @@ public class AuthenticationUseCase
     public async Task LogOutAsync() => await _authentication.LogoutOutAsync();
 
     public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => await _authentication.LoginAsync(pseudo, password, isRemember);
+    
+    public bool AddBookmarkedOpponent(int userId, string friendName) => _repository.AddBookmarkedOpponent(userId, friendName);
+    public bool RemoveBookmarkedOpponent(int userId, string friendName) => _repository.RemoveBookmarkedOpponent(userId, friendName);
+    public HashSet<string> GetBookmarkedOpponentsNames(int userId) => _repository.GetBookmarkedOpponentsNames(userId);
 }

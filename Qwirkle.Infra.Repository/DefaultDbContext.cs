@@ -9,8 +9,9 @@ public class DefaultDbContext : IdentityDbContext<UserDao, IdentityRole<int>, in
     public DbSet<GameDao> Games { get; set; }
     public DbSet<PlayerDao> Players { get; set; }
     public override DbSet<UserDao> Users { get; set; }
-    public override DbSet<IdentityRole<int>> Roles { get; set; }
-    public override DbSet<IdentityUserRole<int>> UserRoles { get; set; }
+    //public override DbSet<IdentityRole<int>> Roles { get; set; }
+    //public override DbSet<IdentityUserRole<int>> UserRoles { get; set; }
+
 
     public DefaultDbContext(DbContextOptions<DefaultDbContext> options) : base(options)
     {
@@ -34,7 +35,7 @@ public class DefaultDbContext : IdentityDbContext<UserDao, IdentityRole<int>, in
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
+        
         CreateTiles(builder);
         CreateBots(builder, 1, 4);
         CreateAdmins(builder, 5);

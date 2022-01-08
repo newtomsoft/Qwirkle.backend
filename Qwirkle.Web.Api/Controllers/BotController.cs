@@ -5,15 +5,15 @@
 [Route("[controller]")]
 public class BotController : ControllerBase
 {
-    private readonly BotUseCase _botUseCase;
+    private readonly BotService _botService;
     private readonly UserManager<UserDao> _userManager;
-    private readonly ILogger<CoreUseCase> _logger;
+    private readonly ILogger<CoreService> _logger;
 
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    public BotController(BotUseCase botUseCase, UserManager<UserDao> userManager, ILogger<CoreUseCase> logger)
+    public BotController(BotService botService, UserManager<UserDao> userManager, ILogger<CoreService> logger)
     {
-        _botUseCase = botUseCase;
+        _botService = botService;
         _userManager = userManager;
         _logger = logger;
     }
@@ -23,6 +23,6 @@ public class BotController : ControllerBase
     public ActionResult ComputeDoableMoves(int gameId)
     {
         _logger?.LogInformation($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
-        return new ObjectResult(_botUseCase.ComputeDoableMoves(gameId, UserId));
+        return new ObjectResult(_botService.ComputeDoableMoves(gameId, UserId));
     }
 }

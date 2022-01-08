@@ -1,6 +1,6 @@
-﻿namespace Qwirkle.Domain.UseCases;
+﻿namespace Qwirkle.Domain.Services;
 
-public class ComputePointsUseCase
+public class ComputePointsService
 {
     private const int TilesNumberForAQwirkle = 6;
     private const int PointsForAQwirkle = 12;

@@ -1,4 +1,4 @@
-﻿using Qwirkle.Domain.UseCases.Ai;
+﻿using Qwirkle.Domain.Services.Ai;
 
 namespace Qwirkle.Web.Api.Controllers;
 
@@ -7,7 +7,7 @@ namespace Qwirkle.Web.Api.Controllers;
 [Route("[controller]")]
 public class AiController : ControllerBase
 {
-    private readonly BotUseCase _botUseCase;
+    private readonly BotService _botService;
     private readonly InfoUseCase _infoUseCase;
     private readonly Expand _expand;
     private readonly Backpropagate _backpropagate;
@@ -17,9 +17,9 @@ public class AiController : ControllerBase
 
     private MonteCarloTreeSearchNode _mcts;
 
-    public AiController(BotUseCase botUseCase, UserManager<UserDao> userManager, Expand expand,Backpropagate backpropagate)
+    public AiController(BotService botService, UserManager<UserDao> userManager)
     {
-        _botUseCase = botUseCase;
+        _botService = botService;
         _userManager = userManager;
         _infoUseCase = _botUseCase._infoUseCase;
         _expand=expand;

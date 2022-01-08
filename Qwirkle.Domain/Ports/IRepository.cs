@@ -25,5 +25,8 @@ public interface IRepository
     bool IsGameOver(int gameId);
     void ArrangeRack(Player player, IEnumerable<Tile> tiles);
     List<int> GetAllUsersId();
+    bool AddBookmarkedOpponent(int userId, string opponentName);
+    bool RemoveBookmarkedOpponent(int userId, string opponentName);
     List<int> GetUserGamesIds(int userId);
+    HashSet<string> GetBookmarkedOpponentsNames(int userId);
 }

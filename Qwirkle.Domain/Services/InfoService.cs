@@ -1,12 +1,12 @@
-﻿namespace Qwirkle.Domain.UseCases;
+﻿namespace Qwirkle.Domain.Services;
 
-public class InfoUseCase
+public class InfoService
 {
     private readonly IRepository _repository;
     private readonly INotification _notification;
-    private readonly ILogger<InfoUseCase> _logger;
+    private readonly ILogger<InfoService> _logger;
 
-    public InfoUseCase(IRepository repository, INotification notification, ILogger<InfoUseCase> logger)
+    public InfoService(IRepository repository, INotification notification, ILogger<InfoService> logger)
     {
         _repository = repository;
         _notification = notification;

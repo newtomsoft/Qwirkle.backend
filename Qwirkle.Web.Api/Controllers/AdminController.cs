@@ -5,27 +5,27 @@
 [Route("[controller]")]
 public class AdminController : ControllerBase
 {
-    private readonly InfoUseCase _infoUseCase;
+    private readonly InfoService _infoService;
 
-    public AdminController(InfoUseCase infoUseCase) => _infoUseCase = infoUseCase;
+    public AdminController(InfoService infoService) => _infoService = infoService;
 
 
     [HttpGet("Player/{playerId:int}")]
-    public ActionResult GetPlayerById(int playerId) => new ObjectResult(_infoUseCase.GetPlayer(playerId));
+    public ActionResult GetPlayerById(int playerId) => new ObjectResult(_infoService.GetPlayer(playerId));
 
 
     [HttpGet("AllUsersIds")]
-    public ActionResult GetAllUsersId() => new ObjectResult(_infoUseCase.GetAllUsersId());
+    public ActionResult GetAllUsersId() => new ObjectResult(_infoService.GetAllUsersId());
 
 
     [HttpGet("GamesByUserId/{userId:int}")]
-    public ActionResult GetGamesByUserId(int userId) => new ObjectResult(_infoUseCase.GetUserGames(userId));
+    public ActionResult GetGamesByUserId(int userId) => new ObjectResult(_infoService.GetUserGames(userId));
 
 
     [HttpGet("GamesIds")]
-    public ActionResult GetGamesIdsContainingPlayers() => new ObjectResult(_infoUseCase.GetGamesIdsContainingPlayers());
+    public ActionResult GetGamesIdsContainingPlayers() => new ObjectResult(_infoService.GetGamesIdsContainingPlayers());
 
 
     [HttpGet("Game/{gameId:int}")]
-    public ActionResult GetGame(int gameId) => new ObjectResult(_infoUseCase.GetGameForSuperUser(gameId));
+    public ActionResult GetGame(int gameId) => new ObjectResult(_infoService.GetGameForSuperUser(gameId));
 }
