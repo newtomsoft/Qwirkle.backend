@@ -4,7 +4,7 @@ public class Backpropagate
 {
 
 
-    public static MonteCarloTreeSearchNode BackPropagate(MonteCarloTreeSearchNode mcts, MonteCarloTreeSearchNode node)
+    public  MonteCarloTreeSearchNode BackPropagate(MonteCarloTreeSearchNode mcts, MonteCarloTreeSearchNode node)
     {
 
 

@@ -40,7 +40,7 @@ public class Expand
 
         return mcts;
     }
-    public static MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mcts, PlayReturn coordinate, int indexPlayer)
+    public  MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mcts, PlayReturn coordinate, int indexPlayer)
     {
 
 
@@ -79,7 +79,7 @@ public class Expand
     }
 
 
-    public static MonteCarloTreeSearchNode SetNextPlayerTurnToPlay(MonteCarloTreeSearchNode mcts, Player player)
+    public  MonteCarloTreeSearchNode SetNextPlayerTurnToPlay(MonteCarloTreeSearchNode mcts, Player player)
     {
         if (mcts.Game.GameOver) return mcts;
 
@@ -110,7 +110,10 @@ public class Expand
         var rack = player.Rack.WithoutDuplicatesTiles();
         var random = new Random();
         var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles();
-        
+        if (selectFirst>10){
+            var index = random.Next(boardAdjoiningCoordinates.Count);
+            boardAdjoiningCoordinates=boardAdjoiningCoordinates.GetRange(index,1);
+        }
 
         var allPlayReturns = new List<PlayReturn>();
         var playReturnsWith1Tile = new List<PlayReturn>();
@@ -258,7 +261,7 @@ public class Expand
         bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => game.Board.IsIsolatedTile(tile));
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
     }
-    public static MonteCarloTreeSearchNode SwapTilesMcts(MonteCarloTreeSearchNode mcts, int playerIndex)
+    public  MonteCarloTreeSearchNode SwapTilesMcts(MonteCarloTreeSearchNode mcts, int playerIndex)
     {
         var random = new Random();
         var rackToSwap = mcts.Game.Players[playerIndex].Rack.Tiles;
