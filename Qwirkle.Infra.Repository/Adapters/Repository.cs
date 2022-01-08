@@ -134,12 +134,15 @@ public class Repository : IRepository
         DbContext.SaveChanges();
     }
 
+
+
     public List<int> GetLeadersPlayersId(int gameId)
     {
         var players = DbContext.Players.Where(player => player.GameId == gameId).ToList();
         var maxPoints = players.Max(player => player.Points);
         return players.Where(p => p.Points == maxPoints).Select(p => p.Id).ToList();
     }
+
 
     public bool IsGameOver(int gameId) => DbContext.Games.Any(g => g.Id == gameId && g.GameOver);
 

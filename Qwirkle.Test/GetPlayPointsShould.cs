@@ -211,7 +211,17 @@ public class GetPlayPointsShould
         UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
         UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points.ShouldBe(2);
     }
-
+    [Fact]
+    public void Return1When1GoodTileTouch1TileInGameOnSide()
+    {
+        var game = new Game(1, Board.From(new List<TileOnBoard> {
+            new(TileColor.Green, TileShape.Square, new Coordinates(7, -4)),
+                new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
+                new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
+            }), new List<Player>(), false);
+        Assert.True(0 < UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points);
+        Assert.Equal(2, UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points);
+    }
     [Fact]
     public void Return5When2TilesWithFirstTouchTileInGame()
     {

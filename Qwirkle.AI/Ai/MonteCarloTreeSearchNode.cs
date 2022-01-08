@@ -21,4 +21,5 @@ public class MonteCarloTreeSearchNode
         Wins = 0;
         Looses = 0;
     }
+
 }

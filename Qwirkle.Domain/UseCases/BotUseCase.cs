@@ -2,7 +2,7 @@
 
 public class BotUseCase
 {
-    private readonly InfoUseCase _infoUseCase;
+    public readonly InfoUseCase _infoUseCase;
     private readonly CoreUseCase _coreUseCase;
     private readonly ILogger<CoreUseCase> _logger;
     private Game _game;
@@ -17,7 +17,12 @@ public class BotUseCase
 
     public void Play(Game game, Player bot)
     {
+        
         var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
+
+        if (tilesToPlay.Count > 0 && game.GameOver!=true) _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
+        else SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
+
         if (tilesToPlay.Count > 0)
         {
             _logger?.LogInformation($"Bot play {tilesToPlay.ToLog()}");
@@ -28,6 +33,7 @@ public class BotUseCase
             _logger?.LogInformation("Bot swap or skip...");
             SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
         }
+
     }
     public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
@@ -52,9 +58,13 @@ public class BotUseCase
         return ComputeDoableMoves(player);
     }
 
+<<<<<<< HEAD
+    public List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
+=======
 
 
     private List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
+>>>>>>> 9f45d2323e3f91f33c6b5d2197df2309e2d80464
     {
         if (!simulation) _coreUseCase.ResetGame(player.GameId);
         var rack = player.Rack.WithoutDuplicatesTiles();
@@ -68,6 +78,7 @@ public class BotUseCase
             foreach (var tile in rack.Tiles)
             {
                 var playReturn = TestPlayTiles(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) });
+                Console.WriteLine(playReturn.Code);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
             }
         }

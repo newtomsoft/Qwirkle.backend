@@ -45,7 +45,9 @@ public class ActionController : ControllerBase
     [HttpGet("SkipTurn/{gameId:int}")]
     public ActionResult<int> SkipTurn(int gameId)
     {
-        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+
+
+        var playerId = _infoUseCase.GetPlayerIdTurn(gameId);
         return new ObjectResult(_coreUseCase.TrySkipTurn(playerId));
     }
 
@@ -56,6 +58,7 @@ public class ActionController : ControllerBase
         if (tiles.Count == 0) return StatusCode(StatusCodes.Status400BadRequest);
         var gameId = tiles.First().GameId;
         var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
+        
         return new ObjectResult(_coreUseCase.TryArrangeRack(playerId, tiles.Select(t => t.ToTile())));
     }
 }
