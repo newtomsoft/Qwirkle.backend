@@ -17,11 +17,11 @@ public class AiController : ControllerBase
 
     private MonteCarloTreeSearchNode _mcts;
 
-    public AiController(BotUseCase botUseCase, UserManager<UserDao> userManager, Expand expand,Backpropagate backpropagate)
+    public AiController(BotUseCase botUseCase, UserManager<UserDao> userManager, Expand expand,Backpropagate backpropagate, InfoUseCase infoUseCase)
     {
         _botUseCase = botUseCase;
         _userManager = userManager;
-        _infoUseCase = _botUseCase._infoUseCase;
+        _infoUseCase = infoUseCase;
         _expand=expand;
         
         _backpropagate =backpropagate;
