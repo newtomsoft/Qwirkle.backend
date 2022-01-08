@@ -2,15 +2,10 @@
 
 public class BotService
 {
-<<<<<<< HEAD:Qwirkle.Domain/UseCases/BotUseCase.cs
-    public readonly InfoUseCase _infoUseCase;
-    private readonly CoreUseCase _coreUseCase;
-    private readonly ILogger<CoreUseCase> _logger;
-=======
     private readonly InfoService _infoService;
     private readonly CoreService _coreService;
     private readonly ILogger<CoreService> _logger;
->>>>>>> friends:Qwirkle.Domain/Services/BotService.cs
+
     private Game _game;
     private const int TilesNumberPerPlayer = 6;
 
@@ -23,12 +18,8 @@ public class BotService
 
     public void Play(Game game, Player bot)
     {
-        
+
         var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
-
-        if (tilesToPlay.Count > 0 && game.GameOver!=true) _coreUseCase.TryPlayTiles(bot.Id, tilesToPlay);
-        else SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
-
         if (tilesToPlay.Count > 0)
         {
             _logger?.LogInformation($"Bot play {tilesToPlay.ToLog()}");

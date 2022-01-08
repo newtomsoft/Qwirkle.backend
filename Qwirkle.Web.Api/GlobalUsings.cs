@@ -1,5 +1,6 @@
 ﻿global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
@@ -26,4 +27,3 @@ global using System.Collections.Generic;
 global using System.Linq;
 global using System.Reflection;
 global using System.Threading.Tasks;
-global using Microsoft.AspNetCore.Http;

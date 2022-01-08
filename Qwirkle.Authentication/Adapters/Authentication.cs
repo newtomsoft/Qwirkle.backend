@@ -1,6 +1,4 @@
-﻿using Qwirkle.Infra.Repository.DaoExtensionMethods;
-
-namespace Qwirkle.Authentication.Adapters;
+﻿namespace Qwirkle.Authentication.Adapters;
 
 public class Authentication : IAuthentication
 {
@@ -47,7 +45,7 @@ public class Authentication : IAuthentication
 
     [Obsolete]
     public int GetUserId(object user) => int.Parse(_userManager.GetUserId(user as ClaimsPrincipal) ?? "0");
-    
+
     public Task LogoutOutAsync() => _signInManager.SignOutAsync();
 
     public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => (await _signInManager.PasswordSignInAsync(pseudo, password, isRemember, false)).Succeeded;

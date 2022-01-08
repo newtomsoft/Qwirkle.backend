@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Qwirkle.Web.Api.Controllers;
+﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]

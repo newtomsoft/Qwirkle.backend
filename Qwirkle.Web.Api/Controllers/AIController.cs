@@ -1,4 +1,5 @@
 ﻿using Qwirkle.Domain.Services.Ai;
+using Qwirkle.Domain.UseCases.Ai;
 
 namespace Qwirkle.Web.Api.Controllers;
 
@@ -8,7 +9,7 @@ namespace Qwirkle.Web.Api.Controllers;
 public class AiController : ControllerBase
 {
     private readonly BotService _botService;
-    private readonly InfoUseCase _infoUseCase;
+    private readonly InfoService _infoUseCase;
     private readonly Expand _expand;
     private readonly Backpropagate _backpropagate;
     private readonly UserManager<UserDao> _userManager;
@@ -17,21 +18,22 @@ public class AiController : ControllerBase
 
     private MonteCarloTreeSearchNode _mcts;
 
-    public AiController(BotService botService, UserManager<UserDao> userManager)
+
+    public AiController(BotService botUseCase, InfoService infoService, UserManager<UserDao> userManager, Expand expand, Backpropagate backpropagate)
     {
-        _botService = botService;
+        _botService = botUseCase;
         _userManager = userManager;
-        _infoUseCase = _botUseCase._infoUseCase;
-        _expand=expand;
-        
-        _backpropagate =backpropagate;
+        _infoUseCase = infoService;
+        _expand = expand;
+
+        _backpropagate = backpropagate;
 
     }
 
     [HttpGet("BestMoves/{gameId:int}")]
     public ActionResult BestMoves(int gameId)
     {
-       
+
         _mcts = new MonteCarloTreeSearchNode(_infoUseCase.GetGame(gameId));
         var playerRoot = _mcts.Game.Players.FirstOrDefault(p => p.IsTurn);
         var playReturns = _expand.ComputeDoableMovesMcts(_mcts.Game.Board, playerRoot, _mcts.Game, 0);
@@ -46,16 +48,16 @@ public class AiController : ControllerBase
 
         var nbSimulation = 0;
         var dateOne = DateTime.Now;
-       
-            mctsRoot.Children.ForEach(mcts =>
+
+        mctsRoot.Children.ForEach(mcts =>
+          {
+              for (var i = 0; i < 35; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
               {
-                   for (var i = 0; i < 35; i++) //todo nommer le i plus explicitement iMctsTry ou un truc du genre ?
-                     {
                   var searchPath = new List<MonteCarloTreeSearchNode>();
                   var mctsRollout = mcts;
                   searchPath.Add(mctsRoot);
-                  var randomselect=0;
-                 
+                  var randomselect = 0;
+
 
                   while (!mctsRollout.Game.GameOver)
                   {
@@ -63,16 +65,16 @@ public class AiController : ControllerBase
                       var player = mctsRollout.Game.Players.FirstOrDefault(p => p.IsTurn);
                       var playerIndex = mctsRollout.Game.Players.FindIndex(p => p.IsTurn == true);
                       List<PlayReturn> currentPlayReturns;
-                      
-                        currentPlayReturns = _expand.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game,randomselect);
-                        randomselect++;
-                            
-                            
+
+                      currentPlayReturns = _expand.ComputeDoableMovesMcts(mctsRollout.Game.Board, player, mctsRollout.Game, randomselect);
+                      randomselect++;
+
+
 
                       if (currentPlayReturns.Count > 0)
                       {
 
-                            
+
 
                           mctsRollout = _expand.ExpandMctsOne(mctsRollout, currentPlayReturns[0], playerIndex);
                           mctsRollout.Children.First().Game.Players[playerIndex].Points += currentPlayReturns[0].Points;
@@ -125,14 +127,15 @@ public class AiController : ControllerBase
 
                       mctsRollout = mctsRollout.Parent;
 
-                  }  }
-              });
+                  }
+              }
+          });
 
-      
+
         var dateTwo = DateTime.Now;
-        
+
         var val = BestChildUCB.BestChildUcb(mctsRoot, 0.1);
-        Console.WriteLine("time:"+(dateTwo)+" wins:% " + (mctsRoot.Wins * 100 / nbSimulation) + " num sim: " + nbSimulation);
+        Console.WriteLine("time:" + (dateTwo) + " wins:% " + (mctsRoot.Wins * 100 / nbSimulation) + " num sim: " + nbSimulation);
         return new ObjectResult(val.ParentAction);
     }
 

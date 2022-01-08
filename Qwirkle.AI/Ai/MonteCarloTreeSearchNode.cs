@@ -21,9 +21,5 @@ public class MonteCarloTreeSearchNode
         Wins = 0;
         Looses = 0;
     }
-<<<<<<< HEAD:Qwirkle.AI/Ai/MonteCarloTreeSearchNode.cs
+}
 
-}
-=======
-}
->>>>>>> friends:Qwirkle.Domain/Services/Ai/MonteCarloTreeSearchNode.cs

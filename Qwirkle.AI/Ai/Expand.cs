@@ -1,10 +1,13 @@
+using Qwirkle.Domain.Services;
+using Qwirkle.Domain.Services.Ai;
+
 namespace Qwirkle.Domain.UseCases.Ai;
 
 public class Expand
 {
 
 
-    public  MonteCarloTreeSearchNode ExpandMcts(MonteCarloTreeSearchNode mcts, List<PlayReturn> playReturns, int indexPlayer)
+    public MonteCarloTreeSearchNode ExpandMcts(MonteCarloTreeSearchNode mcts, List<PlayReturn> playReturns, int indexPlayer)
     {
         foreach (var coordinate in playReturns)
         {
@@ -40,33 +43,33 @@ public class Expand
 
         return mcts;
     }
-    public  MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mcts, PlayReturn coordinate, int indexPlayer)
+    public MonteCarloTreeSearchNode ExpandMctsOne(MonteCarloTreeSearchNode mcts, PlayReturn coordinate, int indexPlayer)
     {
 
 
         var newgame = new Game(mcts.Game);
 
         var random = new Random();
-        
-
-            newgame.Board.Tiles.Add( coordinate.TilesPlayed[0]);
-            var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == coordinate.TilesPlayed[0].Color && tile.Shape == coordinate.TilesPlayed[0].Shape).FirstOrDefault();
-            newgame.Players[indexPlayer].Rack.Tiles.Remove(removeTile);
-
-            if (newgame.Bag.Tiles.Count > 0)
-            {
-                var index = random.Next(newgame.Bag.Tiles.Count);
-                var addTile = newgame.Bag.Tiles[index];
-
-                newgame.Bag.Tiles.Remove(addTile);
-                newgame.Players[indexPlayer].Rack.Tiles.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
-            }
 
 
-        
+        newgame.Board.Tiles.Add(coordinate.TilesPlayed[0]);
+        var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == coordinate.TilesPlayed[0].Color && tile.Shape == coordinate.TilesPlayed[0].Shape).FirstOrDefault();
+        newgame.Players[indexPlayer].Rack.Tiles.Remove(removeTile);
+
+        if (newgame.Bag.Tiles.Count > 0)
+        {
+            var index = random.Next(newgame.Bag.Tiles.Count);
+            var addTile = newgame.Bag.Tiles[index];
+
+            newgame.Bag.Tiles.Remove(addTile);
+            newgame.Players[indexPlayer].Rack.Tiles.Add(new TileOnPlayer(0, addTile.Color, addTile.Shape));
+        }
+
+
+
 
         var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed);
-       
+
 
         childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.Game.Players[indexPlayer]);
         mcts.Children.Add(childrenNode);
@@ -79,7 +82,7 @@ public class Expand
     }
 
 
-    public  MonteCarloTreeSearchNode SetNextPlayerTurnToPlay(MonteCarloTreeSearchNode mcts, Player player)
+    public MonteCarloTreeSearchNode SetNextPlayerTurnToPlay(MonteCarloTreeSearchNode mcts, Player player)
     {
         if (mcts.Game.GameOver) return mcts;
 
@@ -91,28 +94,29 @@ public class Expand
         }
         else
         {
-             var position =  mcts.Game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
-            var playersNumber =  mcts.Game.Players.Count;
+            var position = mcts.Game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
+            var playersNumber = mcts.Game.Players.Count;
             var nextPlayerPosition = position < playersNumber - 1 ? position + 1 : 0;
-            var nextPlayer =  mcts.Game.Players.First(p => p.GamePosition == nextPlayerPosition);
+            var nextPlayer = mcts.Game.Players.First(p => p.GamePosition == nextPlayerPosition);
             player.SetTurn(false);
             nextPlayer.SetTurn(true);
-            
+
 
         }
 
         return mcts;
     }
-    public static PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game);   
-    public  List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game, int selectFirst)
+    public static PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game);
+    public List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game, int selectFirst)
     {
 
         var rack = player.Rack.WithoutDuplicatesTiles();
         var random = new Random();
         var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles();
-        if (selectFirst>10){
+        if (selectFirst > 10)
+        {
             var index = random.Next(boardAdjoiningCoordinates.Count);
-            boardAdjoiningCoordinates=boardAdjoiningCoordinates.GetRange(index,1);
+            boardAdjoiningCoordinates = boardAdjoiningCoordinates.GetRange(index, 1);
         }
 
         var allPlayReturns = new List<PlayReturn>();
@@ -240,9 +244,9 @@ public class Expand
         if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
         if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
-        var computePointsUseCase = new ComputePointsUseCase();
+        var computePointsUseCase = new ComputePointsService();
         // var wonPoints = computePointsUseCase.ComputePointsMcts(tilesPlayed, game);
-        var wonPoints = computePointsUseCase.ComputePoints(game,tilesPlayed);
+        var wonPoints = computePointsUseCase.ComputePoints(game, tilesPlayed);
         if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
 
         if (IsGameFinished())
@@ -261,7 +265,7 @@ public class Expand
         bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => game.Board.IsIsolatedTile(tile));
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
     }
-    public  MonteCarloTreeSearchNode SwapTilesMcts(MonteCarloTreeSearchNode mcts, int playerIndex)
+    public MonteCarloTreeSearchNode SwapTilesMcts(MonteCarloTreeSearchNode mcts, int playerIndex)
     {
         var random = new Random();
         var rackToSwap = mcts.Game.Players[playerIndex].Rack.Tiles;

@@ -4,7 +4,7 @@
 
 namespace Qwirkle.Domain.UseCases.Ai;
 
-    public class ConvBlock
+public class ConvBlock
 {
     private static int _epochs = 1;
     private static int _trainBatchSize = 64;

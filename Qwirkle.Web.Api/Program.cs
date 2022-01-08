@@ -1,6 +1,3 @@
-
-using Qwirkle.Domain.UseCases.Ai;
-
 var appBuilder = WebApplication.CreateBuilder(args);
 
 

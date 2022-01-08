@@ -35,7 +35,7 @@ public class DefaultDbContext : IdentityDbContext<UserDao, IdentityRole<int>, in
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
+
         CreateTiles(builder);
         CreateBots(builder, 1, 4);
         CreateAdmins(builder, 5);

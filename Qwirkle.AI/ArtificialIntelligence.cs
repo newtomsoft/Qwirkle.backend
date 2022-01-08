@@ -1,6 +1,4 @@
-﻿using Qwirkle.Domain.Ports;
-
-namespace Qwirkle.AI;
+﻿namespace Qwirkle.AI;
 
 public class ArtificialIntelligence : IArtificialIntelligence
 {
