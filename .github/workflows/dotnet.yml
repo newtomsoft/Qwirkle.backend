@@ -45,7 +45,7 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
         REMOTE_HOST: ${{ secrets.SERVER }}
         REMOTE_USER: ${{ secrets.USER }}
-        PORT: ${{ secrets.PORT }}
+        REMOTE_PORT: ${{ secrets.PORT }}
         SOURCE: 'publish'
         TARGET: ${{ secrets.TARGET_PATH }}
         strip_components: 1  
