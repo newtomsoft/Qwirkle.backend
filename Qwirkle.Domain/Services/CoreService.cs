@@ -1,26 +1,26 @@
-﻿namespace Qwirkle.Domain.UseCases;
+﻿namespace Qwirkle.Domain.Services;
 
-public class CoreUseCase
+public class CoreService
 {
     private const int TilesNumberPerPlayer = 6;
 
     private readonly IRepository _repository;
     private readonly INotification _notification;
-    private readonly InfoUseCase _infoUseCase;
-    private readonly AuthenticationUseCase _authenticationUseCase;
-    private readonly ILogger<CoreUseCase> _logger;
-    private readonly BotUseCase _botUseCase;
+    private readonly InfoService _infoService;
+    private readonly UserService _service;
+    private readonly ILogger<CoreService> _logger;
+    private readonly BotService _botService;
 
     private Game _game;
 
-    public CoreUseCase(IRepository repository, INotification notification, InfoUseCase infoUseCase, AuthenticationUseCase authenticationUseCase, ILogger<CoreUseCase> logger)
+    public CoreService(IRepository repository, INotification notification, InfoService infoService, UserService service, ILogger<CoreService> logger)
     {
         _repository = repository;
         _notification = notification;
-        _infoUseCase = infoUseCase;
-        _authenticationUseCase = authenticationUseCase;
+        _infoService = infoService;
+        _service = service;
         _logger = logger;
-        _botUseCase = new BotUseCase(infoUseCase, this, _logger);
+        _botService = new BotService(infoService, this, _logger);
         //todo dette technique à rembourser
     }
 
@@ -40,7 +40,7 @@ public class CoreUseCase
     public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<Tile> tiles)
     {
         var tilesList = tiles.ToList();
-        var player = _infoUseCase.GetPlayer(playerId);
+        var player = _infoService.GetPlayer(playerId);
         if (!player.HasTiles(tilesList)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
         ArrangeRack(player, tilesList);
         return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
@@ -48,7 +48,7 @@ public class CoreUseCase
 
     public PlayReturn TryPlayTiles(int playerId, IEnumerable<TileOnBoard> tiles)
     {
-        var player = _infoUseCase.GetPlayer(playerId);
+        var player = _infoService.GetPlayer(playerId);
         if (!player.IsTurn) return new PlayReturn(player.GameId, PlayReturnCode.NotPlayerTurn, null, null, 0);
 
         var tilesToPlay = tiles.ToList();
@@ -69,18 +69,18 @@ public class CoreUseCase
 
     private void NotifyNextPlayerAndPlayIfBot(Game game)
     {
-        var nextPlayerId = _infoUseCase.GetPlayerIdTurn(game.Id);
+        var nextPlayerId = _infoService.GetPlayerIdTurn(game.Id);
         if (nextPlayerId == 0) return;
 
         _notification?.SendPlayerIdTurn(game.Id, nextPlayerId);
         var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
-        if (_authenticationUseCase.IsBot(nextPlayer.Pseudo)) _botUseCase.Play(game, nextPlayer);
+        if (_service.IsBot(nextPlayer.Pseudo)) _botService.Play(game, nextPlayer);
     }
 
     public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<Tile> tiles)
     {
         var tilesList = tiles.ToList();
-        var player = _infoUseCase.GetPlayer(playerId);
+        var player = _infoService.GetPlayer(playerId);
         if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
         if (!player.HasTiles(tilesList)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
         var game = _repository.GetGame(player.GameId);
@@ -94,7 +94,7 @@ public class CoreUseCase
 
     public SkipTurnReturn TrySkipTurn(int playerId)
     {
-        var player = _infoUseCase.GetPlayer(playerId);
+        var player = _infoService.GetPlayer(playerId);
         var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = _game.Id, Code = PlayReturnCode.NotPlayerTurn };
         if (skipTurnReturn.Code != PlayReturnCode.Ok) return skipTurnReturn;
 
@@ -107,7 +107,7 @@ public class CoreUseCase
 
     public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<TileOnBoard> tiles)
     {
-        var player = _infoUseCase.GetPlayer(playerId);
+        var player = _infoService.GetPlayer(playerId);
         var tilesToPlay = tiles.ToList();
         var game = _repository.GetGame(player.GameId);
         return Play(tilesToPlay, player, game, true);
@@ -118,8 +118,8 @@ public class CoreUseCase
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
         if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
 
-        var computePointsUseCase = new ComputePointsUseCase();
-        var wonPoints = computePointsUseCase.ComputePoints(game, tilesPlayed);
+        var computePointsService = new ComputePointsService();
+        var wonPoints = computePointsService.ComputePoints(game, tilesPlayed);
         if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
         if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveNotCompliant()) return new PlayReturn(game.Id, PlayReturnCode.NotMostPointsMove, null, null, 0);
         if (!IsGameFinished()) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
@@ -133,7 +133,7 @@ public class CoreUseCase
         bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;
         bool IsAnyTileIsolated() => !tilesPlayed.Any(tile => game.Board.IsIsolatedTile(tile));
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
-        bool IsFirstMoveNotCompliant() => wonPoints != _botUseCase.GetMostPointsToPlay(player, game);
+        bool IsFirstMoveNotCompliant() => wonPoints != _botService.GetMostPointsToPlay(player, game);
     }
 
     private void GameOver()
@@ -207,7 +207,7 @@ public class CoreUseCase
         _repository.TilesFromBagToPlayer(player, positionsInRack);
         _repository.TilesFromPlayerToBag(player, tilesList);
         _repository.UpdatePlayer(player);
-        return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoUseCase.GetPlayer(player.Id).Rack };
+        return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoService.GetPlayer(player.Id).Rack };
     }
 
     private Rack PlayTiles(Player player, IEnumerable<TileOnBoard> tilesToPlay, int points)
@@ -253,6 +253,6 @@ public class CoreUseCase
         _repository.SetPlayerTurn(playerId);
         var player = _game.Players.First(p => p.Id == playerId);
         player.SetTurn(true);
-        if (_authenticationUseCase.IsBot(player.Pseudo)) _botUseCase.Play(_game, player);
+        if (_service.IsBot(player.Pseudo)) _botService.Play(_game, player);
     }
 }

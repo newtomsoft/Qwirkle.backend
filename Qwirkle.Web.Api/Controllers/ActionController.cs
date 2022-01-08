@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Qwirkle.Web.Api.Controllers;
+﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class ActionController : ControllerBase
 {
-    private readonly InfoUseCase _infoUseCase;
-    private readonly CoreUseCase _coreUseCase;
+    private readonly InfoService _infoService;
+    private readonly CoreService _coreService;
     private readonly UserManager<UserDao> _userManager;
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    public ActionController(CoreUseCase coreUseCase, InfoUseCase infoUseCase, UserManager<UserDao> userManager) => (_coreUseCase, _infoUseCase, _userManager) = (coreUseCase, infoUseCase, userManager);
+    public ActionController(CoreService coreService, InfoService infoService, UserManager<UserDao> userManager) => (_coreService, _infoService, _userManager) = (coreService, infoService, userManager);
 
 
     [HttpPost("PlayTiles/")]
@@ -19,8 +17,8 @@ public class ActionController : ControllerBase
     {
         if (tiles.Count == 0) return StatusCode(StatusCodes.Status400BadRequest);
         var gameId = tiles.First().GameId;
-        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
-        return new ObjectResult(_coreUseCase.TryPlayTiles(playerId, tiles.Select(t => t.ToTileOnBoard())));
+        var playerId = _infoService.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreService.TryPlayTiles(playerId, tiles.Select(t => t.ToTileOnBoard())));
     }
 
 
@@ -29,8 +27,8 @@ public class ActionController : ControllerBase
     {
         if (tiles.Count == 0) return StatusCode(StatusCodes.Status400BadRequest);
         var gameId = tiles.First().GameId;
-        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
-        return new ObjectResult(_coreUseCase.TryPlayTilesSimulation(playerId, tiles.Select(t => t.ToTileOnBoard())));
+        var playerId = _infoService.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreService.TryPlayTilesSimulation(playerId, tiles.Select(t => t.ToTileOnBoard())));
     }
 
     [HttpPost("SwapTiles/")]
@@ -38,17 +36,15 @@ public class ActionController : ControllerBase
     {
         if (tiles.Count == 0) return StatusCode(StatusCodes.Status400BadRequest);
         var gameId = tiles.First().GameId;
-        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
-        return new ObjectResult(_coreUseCase.TrySwapTiles(playerId, tiles.Select(t => t.ToTile())));
+        var playerId = _infoService.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreService.TrySwapTiles(playerId, tiles.Select(t => t.ToTile())));
     }
 
     [HttpGet("SkipTurn/{gameId:int}")]
     public ActionResult<int> SkipTurn(int gameId)
     {
-
-
-        var playerId = _infoUseCase.GetPlayerIdTurn(gameId);
-        return new ObjectResult(_coreUseCase.TrySkipTurn(playerId));
+        var playerId = _infoService.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreService.TrySkipTurn(playerId));
     }
 
 
@@ -57,8 +53,7 @@ public class ActionController : ControllerBase
     {
         if (tiles.Count == 0) return StatusCode(StatusCodes.Status400BadRequest);
         var gameId = tiles.First().GameId;
-        var playerId = _infoUseCase.GetPlayerId(gameId, UserId);
-        
-        return new ObjectResult(_coreUseCase.TryArrangeRack(playerId, tiles.Select(t => t.ToTile())));
+        var playerId = _infoService.GetPlayerId(gameId, UserId);
+        return new ObjectResult(_coreService.TryArrangeRack(playerId, tiles.Select(t => t.ToTile())));
     }
 }

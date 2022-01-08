@@ -6,8 +6,8 @@ public class PlayTilesShould
 
     private DefaultDbContext _dbContext = null!;
     private Repository _repository = null!;
-    private InfoUseCase _infoUseCase = null!;
-    private CoreUseCase _coreUseCase = null!;
+    private InfoService _infoService = null!;
+    private CoreService _coreService = null!;
 
     private const int TotalTiles = 108;
     private const int GameId = 7;
@@ -44,9 +44,9 @@ public class PlayTilesShould
     {
         InitDbContext();
         _repository = new Repository(_dbContext);
-        var authenticationUseCase = new AuthenticationUseCase(new FakeAuthentication());
-        _infoUseCase = new InfoUseCase(_repository, null, new Logger<InfoUseCase>(new LoggerFactory()));
-        _coreUseCase = new CoreUseCase(_repository, null, _infoUseCase, authenticationUseCase, new Logger<CoreUseCase>(new LoggerFactory()));
+        var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
+        _infoService = new InfoService(_repository, null, new Logger<InfoService>(new LoggerFactory()));
+        _coreService = new CoreService(_repository, null, _infoService, authenticationUseCase, new Logger<CoreService>(new LoggerFactory()));
     }
 
     private void AddAllTiles()
@@ -136,7 +136,7 @@ public class PlayTilesShould
     {
         InitTest();
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Blue, TileShape.Clover, Coordinates.From(-4, 3)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(-4, 2)) };
-        var playReturn = _coreUseCase.TryPlayTiles(Player3, tilesToPlay);
+        var playReturn = _coreService.TryPlayTiles(Player3, tilesToPlay);
         playReturn.Code.ShouldBe(PlayReturnCode.NotPlayerTurn);
         playReturn.Points.ShouldBe(0);
     }
@@ -146,7 +146,7 @@ public class PlayTilesShould
     {
         InitTest();
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-3, 4)) };
-        var playReturn = _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        var playReturn = _coreService.TryPlayTiles(Player9, tilesToPlay);
         playReturn.Code.ShouldBe(PlayReturnCode.PlayerDoesntHaveThisTile);
         playReturn.Points.ShouldBe(0);
     }
@@ -163,7 +163,7 @@ public class PlayTilesShould
               new(TileColor.Green, TileShape.EightPointStar, Coordinates.From(-4, 0)),
               new(TileColor.Green, TileShape.Clover, Coordinates.From(-4, -1))
             };
-        var playReturn = _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        var playReturn = _coreService.TryPlayTiles(Player9, tilesToPlay);
         playReturn.Code.ShouldBe(PlayReturnCode.Ok);
         playReturn.Points.ShouldBe(6 + 6);
     }
@@ -179,7 +179,7 @@ public class PlayTilesShould
             new(TileColor.Green, TileShape.FourPointStar, Coordinates.From(-4, 1)),
             new(TileColor.Green, TileShape.EightPointStar, Coordinates.From(-4, 0)),
         };
-        var playReturn = _coreUseCase.TryPlayTiles(Player9, tilesToPlay);
+        var playReturn = _coreService.TryPlayTiles(Player9, tilesToPlay);
         playReturn.Code.ShouldBe(PlayReturnCode.NotMostPointsMove);
     }
 
@@ -190,7 +190,7 @@ public class PlayTilesShould
         InitBoard();
 
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(-3, 4)), new(TileColor.Green, TileShape.Square, Coordinates.From(-3, 5)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(-3, 6)) };
-        _coreUseCase.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(5);
+        _coreService.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(5);
 
         void InitBoard()
         {
@@ -208,7 +208,7 @@ public class PlayTilesShould
         InitBoard();
 
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(5, 7)) };
-        _coreUseCase.TryPlayTiles(Player9, tilesToPlay).Code.ShouldBe(PlayReturnCode.NotFree);
+        _coreService.TryPlayTiles(Player9, tilesToPlay).Code.ShouldBe(PlayReturnCode.NotFree);
 
         void InitBoard()
         {
@@ -257,7 +257,7 @@ public class PlayTilesShould
 
     private List<TileOnBoard> PlayTilesAndTestPersistence(int playerId, List<TileOnBoard> tilesToPlay, List<TileOnBoard> tilesPlayedOrdered)
     {
-        var playReturn = _coreUseCase.TryPlayTiles(playerId, tilesToPlay);
+        var playReturn = _coreService.TryPlayTiles(playerId, tilesToPlay);
         playReturn.Code.ShouldBe(PlayReturnCode.Ok);
         tilesPlayedOrdered.AddRange(tilesToPlay);
         tilesPlayedOrdered = Order(tilesPlayedOrdered);

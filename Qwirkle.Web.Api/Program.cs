@@ -1,49 +1,36 @@
-
 using Qwirkle.Domain.UseCases.Ai;
-
-var appBuilder = WebApplication.CreateBuilder(args);
-
 
 const string underDevelopment = "CorsPolicyDevelopment";
 const string underStagingOrProduction = "CorsPolicy";
 
+var appBuilder = WebApplication.CreateBuilder(args);
 appBuilder.Host.UseSerilog((_, configuration) => configuration.ReadFrom.Configuration(appBuilder.Configuration));
 appBuilder.Services.AddCors(options =>
 {
-    // options.AddPolicy(underStagingOrProduction, builder => builder
-    //         .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
-    //         .AllowCredentials()
-    //         .AllowAnyHeader()
-    //         .AllowAnyMethod()
-    // );
+    options.AddPolicy(underStagingOrProduction, builder => builder
+            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr", "https://localhost", "http://localhost", "https://localhost:4200", "http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
+            .AllowCredentials()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
     options.AddPolicy(underDevelopment, builder => builder
-         .SetIsOriginAllowed(origin => true)
-         .AllowCredentials()
-         .AllowAnyHeader()
-         .AllowAnyMethod()
- );
-    // options.AddPolicy(underDevelopment, builder => builder
-    //         .WithOrigins("https://localhost")
-    //         .SetIsOriginAllowedToAllowWildcardSubdomains()
-    //         .AllowAnyHeader()
-    //         .AllowAnyMethod()
-    //         .AllowCredentials()
-    // );
+            .WithOrigins("http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
+            .AllowCredentials()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+    );
 });
 appBuilder.Services.AddSignalR();
 appBuilder.Services.AddSingleton<INotification, SignalRNotification>();
 appBuilder.Services.AddScoped<IRepository, Repository>();
 appBuilder.Services.AddScoped<IAuthentication, Authentication>();
-appBuilder.Services.AddScoped<AuthenticationUseCase>();
-appBuilder.Services.AddScoped<CoreUseCase>();
-appBuilder.Services.AddScoped<InfoUseCase>();
-appBuilder.Services.AddScoped<BotUseCase>();
+appBuilder.Services.AddScoped<UserService>();
+appBuilder.Services.AddScoped<CoreService>();
+appBuilder.Services.AddScoped<InfoService>();
+appBuilder.Services.AddScoped<BotService>();
+appBuilder.Services.AddScoped<ComputePointsService>();
 appBuilder.Services.AddScoped<Expand>();
-appBuilder.Services.AddScoped<Backpropagate>();
 appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
-
-appBuilder.Services.AddScoped<ComputePointsUseCase>();
-
 appBuilder.Services.AddControllers();
 appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(appBuilder.Configuration.GetConnectionString("Qwirkle")));
 appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>

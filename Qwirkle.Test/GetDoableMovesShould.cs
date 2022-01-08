@@ -9,18 +9,18 @@ public class GetDoableMovesShould
         _dbContext = connectionFactory.CreateContextForInMemory();
         connectionFactory.Add4DefaultTestUsers();
         var repository = new Repository(_dbContext);
-        var infoUseCase = new InfoUseCase(repository, null, new Logger<InfoUseCase>(new LoggerFactory()));
-        var authenticationUseCase = new AuthenticationUseCase(new FakeAuthentication());
-        var useCase = new CoreUseCase(repository, null, infoUseCase, authenticationUseCase, new Logger<CoreUseCase>(new LoggerFactory()));
+        var infoUseCase = new InfoService(repository, null, new Logger<InfoService>(new LoggerFactory()));
+        var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
+        var useCase = new CoreService(repository, null, infoUseCase, authenticationUseCase, new Logger<CoreService>(new LoggerFactory()));
         var usersIds = infoUseCase.GetAllUsersId();
         var players = useCase.CreateGame(usersIds.ToHashSet()).OrderBy(p => p.Id).ToList();
-        _botUseCase = new BotUseCase(infoUseCase, useCase, new Logger<CoreUseCase>(new LoggerFactory()));
+        _botService = new BotService(infoUseCase, useCase, new Logger<CoreService>(new LoggerFactory()));
         _player = players[0];
         _userId = usersIds[0];
     }
 
     private readonly DefaultDbContext _dbContext;
-    private readonly BotUseCase _botUseCase;
+    private readonly BotService _botService;
     private readonly Player _player;
     private readonly int _userId;
 
@@ -46,7 +46,7 @@ public class GetDoableMovesShould
         var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2!, constTile3!, constTile4!, constTile5! }.OrderBy(t => t.Id).ToList();
         ChangePlayerTilesBy(_player.Id, constTiles);
 
-        var playReturns = _botUseCase.ComputeDoableMoves(_player.GameId, _userId);
+        var playReturns = _botService.ComputeDoableMoves(_player.GameId, _userId);
 
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
@@ -72,7 +72,7 @@ public class GetDoableMovesShould
         var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2!, constTile3!, constTile4!, constTile5! }.OrderBy(t => t.Id).ToList();
         ChangePlayerTilesBy(_player.Id, constTiles);
 
-        var playReturns = _botUseCase.ComputeDoableMoves(_player.GameId, _userId);
+        var playReturns = _botService.ComputeDoableMoves(_player.GameId, _userId);
 
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
@@ -113,7 +113,7 @@ public class GetDoableMovesShould
         var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2!, constTile3!, constTile4!, constTile5! }.OrderBy(t => t.Id).ToList();
         ChangePlayerTilesBy(_player.Id, constTiles);
 
-        var playReturns = _botUseCase.ComputeDoableMoves(_player.GameId, _userId);
+        var playReturns = _botService.ComputeDoableMoves(_player.GameId, _userId);
 
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
@@ -143,7 +143,7 @@ public class GetDoableMovesShould
         var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2!, constTile3!, constTile4!, constTile5! }.OrderBy(t => t.Id).ToList();
         ChangePlayerTilesBy(_player.Id, constTiles);
 
-        var playReturns = _botUseCase.ComputeDoableMoves(_player.GameId, _userId);
+        var playReturns = _botService.ComputeDoableMoves(_player.GameId, _userId);
 
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
@@ -174,7 +174,7 @@ public class GetDoableMovesShould
         var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2!, constTile3!, constTile4!, constTile5! }.OrderBy(t => t.Id).ToList();
         ChangePlayerTilesBy(_player.Id, constTiles);
 
-        var playReturns = _botUseCase.ComputeDoableMoves(_player.GameId, _userId);
+        var playReturns = _botService.ComputeDoableMoves(_player.GameId, _userId);
 
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(4); // 4 tiles from the rack are doable because 2 other are sames

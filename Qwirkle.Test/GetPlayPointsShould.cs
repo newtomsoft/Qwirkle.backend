@@ -5,7 +5,7 @@ public class GetPlayPointsShould
     private readonly Player _fakePlayer;
     private const int QwirklePoints = 6;
     private readonly Bag _fakeBag = new(0, new List<TileOnBag> { new(TileColor.Yellow, TileShape.EightPointStar) });
-    private CoreUseCase UseCase { get; } = new(null, null, null, null, null);
+    private CoreService Service { get; } = new(null, null, null, null, null);
 
     public GetPlayPointsShould()
     {
@@ -17,12 +17,12 @@ public class GetPlayPointsShould
     public void Return1WhenGameIsEmptyAndPlayPossibleIs1Tile()
     {
         var game = new Game(1, Board.From(new List<TileOnBoard>()), new List<Player>(), _fakeBag, false);
-        var tilesToPlay = new List<TileOnBoard> {new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0))};
+        var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0)) };
         var tilesOnPlayer = new List<TileOnPlayer>
             {new(0, TileColor.Blue, TileShape.Circle)};
         var rack = Rack.From(tilesOnPlayer);
         var player = new Player(0, 0, 0, "test", 1, 0, 0, rack, true, false);
-        UseCase.Play(tilesToPlay, player, game).Points.ShouldBe(1);
+        Service.Play(tilesToPlay, player, game).Points.ShouldBe(1);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class GetPlayPointsShould
                 {new(0, TileColor.Blue, TileShape.Circle), new(1, TileColor.Purple, TileShape.Circle)};
         var rack = Rack.From(tilesOnPlayer);
         var player = new Player(0, 0, 0, "test", 1, 0, 0, rack, true, false);
-        UseCase.Play(tilesToPlay, player, game).Points.ShouldBe(2);
+        Service.Play(tilesToPlay, player, game).Points.ShouldBe(2);
     }
 
     [Fact]
@@ -56,37 +56,37 @@ public class GetPlayPointsShould
             {new(0, TileColor.Blue, TileShape.Circle), new(1, TileColor.Purple, TileShape.Circle), new(2, TileColor.Yellow, TileShape.Circle)};
         var rack = Rack.From(tilesOnPlayer);
         var player = new Player(0, 0, 0, "test", 1, 0, 0, rack, true, false);
-        UseCase.Play(tilesToPlay, player, game).Points.ShouldBe(3);
+        Service.Play(tilesToPlay, player, game).Points.ShouldBe(3);
     }
 
     [Fact]
     public void Return0WhenGameIsEmptyAndTilesNotInRow()
     {
         var game = new Game(1, Board.From(new List<TileOnBoard>()), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(1, 5)), new(TileColor.Purple, TileShape.Circle, new Coordinates(2, 4)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(8, 12)), new(TileColor.Yellow, TileShape.Circle, new Coordinates(9, 12)), new(TileColor.Purple, TileShape.Circle, new Coordinates(6, 12)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(1, 5)), new(TileColor.Purple, TileShape.Circle, new Coordinates(2, 4)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(8, 12)), new(TileColor.Yellow, TileShape.Circle, new Coordinates(9, 12)), new(TileColor.Purple, TileShape.Circle, new Coordinates(6, 12)) }, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
     public void Return0WhenTilesAreInTheSamePlace()
     {
         var game = new Game(1, Board.From(new List<TileOnBoard>()), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, new Coordinates(6, -3)), new(TileColor.Green, TileShape.FourPointStar, new Coordinates(6, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, new Coordinates(6, -3)), new(TileColor.Green, TileShape.FourPointStar, new Coordinates(6, -3)), new(TileColor.Green, TileShape.Diamond, new Coordinates(5, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, new Coordinates(6, -3)), new(TileColor.Green, TileShape.FourPointStar, new Coordinates(6, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, new Coordinates(6, -3)), new(TileColor.Green, TileShape.FourPointStar, new Coordinates(6, -3)), new(TileColor.Green, TileShape.Diamond, new Coordinates(5, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
 
         game = new Game(1, Board.From(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(7, -3)), }), new List<Player>(), false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, new Coordinates(6, -3)), new(TileColor.Green, TileShape.FourPointStar, new Coordinates(6, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, new Coordinates(6, -3)), new(TileColor.Green, TileShape.FourPointStar, new Coordinates(6, -3)), new(TileColor.Green, TileShape.Diamond, new Coordinates(5, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, new Coordinates(6, -3)), new(TileColor.Green, TileShape.FourPointStar, new Coordinates(6, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, new Coordinates(6, -3)), new(TileColor.Green, TileShape.FourPointStar, new Coordinates(6, -3)), new(TileColor.Green, TileShape.Diamond, new Coordinates(5, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
     public void Return2When1GoodTileIsAround1TileOnGame()
     {
         var game = new Game(1, Board.From(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(7, -3)) }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(8, -3)) }, _fakePlayer, game).Points.ShouldBe(2);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(6, -3)) }, _fakePlayer, game).Points.ShouldBe(2);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -4)) }, _fakePlayer, game).Points.ShouldBe(2);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(2);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(8, -3)) }, _fakePlayer, game).Points.ShouldBe(2);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(6, -3)) }, _fakePlayer, game).Points.ShouldBe(2);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -4)) }, _fakePlayer, game).Points.ShouldBe(2);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(2);
     }
 
     [Fact]
@@ -102,10 +102,10 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Circle, coordinatesNotFree3),
                 new(TileColor.Blue, TileShape.Circle, coordinatesNotFree4),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, coordinatesNotFree1) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, coordinatesNotFree2) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, coordinatesNotFree3) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, coordinatesNotFree4) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, coordinatesNotFree1) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, coordinatesNotFree2) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, coordinatesNotFree3) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, coordinatesNotFree4) }, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
@@ -115,14 +115,14 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 0)),
                 new(TileColor.Green, TileShape.Square, new Coordinates(7, -3)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, new Coordinates(1, 7)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, new Coordinates(-1, 9)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, new Coordinates(0, 2)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, new Coordinates(0, -2)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(3, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(1, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(2, -2)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, new Coordinates(1, 7)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, new Coordinates(-1, 9)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, new Coordinates(0, 2)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Diamond, new Coordinates(0, -2)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(3, -3)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(1, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(2, -2)) }, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
@@ -136,14 +136,14 @@ public class GetPlayPointsShould
                 new(TileColor.Green, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Green, TileShape.Square, new Coordinates(7, -3)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 3)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(0, -1)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.EightPointStar, new Coordinates(0, 3)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Clover, new Coordinates(0, -1)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Circle, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.FourPointStar, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 3)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(0, -1)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.EightPointStar, new Coordinates(0, 3)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Clover, new Coordinates(0, -1)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Circle, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.FourPointStar, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
@@ -154,12 +154,12 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Square, new Coordinates(7, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(7, -3)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBe(4);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(4);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(4);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(7, -6)) }, _fakePlayer, game).Points.ShouldBe(4);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(4);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(7, -2)) }, _fakePlayer, game).Points.ShouldBe(4);
     }
 
     [Fact]
@@ -173,14 +173,14 @@ public class GetPlayPointsShould
                 new(TileColor.Green, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Green, TileShape.Square, new Coordinates(9, -4)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(-1, 0)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(3, 0)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.EightPointStar, new Coordinates(-1, 0)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Clover, new Coordinates(3, 0)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(6, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Circle, new Coordinates(6, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.FourPointStar, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(-1, 0)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, new Coordinates(3, 0)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.EightPointStar, new Coordinates(-1, 0)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Clover, new Coordinates(3, 0)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(6, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Green, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Circle, new Coordinates(6, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.FourPointStar, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
@@ -191,12 +191,12 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(6, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(6, -4)) }, _fakePlayer, game).Points.ShouldBe(4);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(4);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(4);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(6, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(6, -4)) }, _fakePlayer, game).Points.ShouldBe(4);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Red, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(4);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(4);
 
     }
 
@@ -208,8 +208,8 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points.ShouldBe(2);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points.ShouldBe(2);
     }
     [Fact]
     public void Return1When1GoodTileTouch1TileInGameOnSide()
@@ -219,8 +219,8 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
             }), new List<Player>(), false);
-        Assert.True(0 < UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points);
-        Assert.Equal(2, UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points);
+        Assert.True(0 < Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points);
+        Assert.Equal(2, Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(9, -5)) }, _fakePlayer, game).Points);
     }
     [Fact]
     public void Return5When2TilesWithFirstTouchTileInGame()
@@ -230,8 +230,8 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(10, -4)), new(TileColor.Yellow, TileShape.Square, new Coordinates(11, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(10, -4)), new(TileColor.Yellow, TileShape.Square, new Coordinates(11, -4)) }, _fakePlayer, game).Points.ShouldBe(5);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(10, -4)), new(TileColor.Yellow, TileShape.Square, new Coordinates(11, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(10, -4)), new(TileColor.Yellow, TileShape.Square, new Coordinates(11, -4)) }, _fakePlayer, game).Points.ShouldBe(5);
     }
 
     [Fact]
@@ -242,8 +242,8 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(11, -4)), new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(11, -4)), new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(5);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(11, -4)), new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Purple, TileShape.Square, new Coordinates(11, -4)), new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)) }, _fakePlayer, game).Points.ShouldBe(5);
     }
 
     [Fact]
@@ -254,8 +254,8 @@ public class GetPlayPointsShould
                 new(TileColor.Blue, TileShape.Square, new Coordinates(8, -4)),
                 new(TileColor.Orange, TileShape.Square, new Coordinates(9, -4)),
             }), new List<Player>(), _fakeBag, false);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Clover, new Coordinates(10, -5)), new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)), new(TileColor.Yellow, TileShape.EightPointStar, new Coordinates(10, -3)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Clover, new Coordinates(10, -5)), new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)), new(TileColor.Yellow, TileShape.EightPointStar, new Coordinates(10, -3)) }, _fakePlayer, game).Points.ShouldBe(7);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Clover, new Coordinates(10, -5)), new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)), new(TileColor.Yellow, TileShape.EightPointStar, new Coordinates(10, -3)) }, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(new List<TileOnBoard> { new(TileColor.Yellow, TileShape.Clover, new Coordinates(10, -5)), new(TileColor.Yellow, TileShape.Square, new Coordinates(10, -4)), new(TileColor.Yellow, TileShape.EightPointStar, new Coordinates(10, -3)) }, _fakePlayer, game).Points.ShouldBe(7);
     }
 
     [Fact]
@@ -277,8 +277,8 @@ public class GetPlayPointsShould
                 new(TileColor.Yellow, TileShape.EightPointStar, new Coordinates(11, -3)),
                 new(TileColor.Yellow, TileShape.Clover, new Coordinates(12, -3)),
             };
-        UseCase.Play(tilesTested, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
-        UseCase.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(6 + 6 + 2 * QwirklePoints);
+        Service.Play(tilesTested, _fakePlayer, game).Points.ShouldBeGreaterThan(0);
+        Service.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(6 + 6 + 2 * QwirklePoints);
     }
 
     [Fact]
@@ -300,7 +300,7 @@ public class GetPlayPointsShould
                 new(TileColor.Yellow, TileShape.EightPointStar, new Coordinates(11, -3)),
                 new(TileColor.Yellow, TileShape.Clover, new Coordinates(12, -3)),
             };
-        UseCase.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
@@ -313,7 +313,7 @@ public class GetPlayPointsShould
                 new(TileColor.Yellow, TileShape.Square, new Coordinates(7, -3)),
                 new(TileColor.Purple, TileShape.Circle, new Coordinates(8, -4)),
             };
-        UseCase.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
@@ -329,7 +329,7 @@ public class GetPlayPointsShould
                 new(TileColor.Purple, TileShape.EightPointStar, new Coordinates(7, 1)),
                 new(TileColor.Purple, TileShape.Circle, new Coordinates(7, -5)),
             };
-        UseCase.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
@@ -349,8 +349,8 @@ public class GetPlayPointsShould
                 new(TileColor.Purple, TileShape.EightPointStar, new Coordinates(-5, 7)),
                 new(TileColor.Purple, TileShape.Circle, new Coordinates(1, 7)),
             };
-        UseCase.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
-        UseCase.Play(tilesTested2, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(tilesTested2, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
@@ -370,10 +370,10 @@ public class GetPlayPointsShould
                 new(TileColor.Purple, TileShape.EightPointStar, new Coordinates(7, -5)),
                 new(TileColor.Purple, TileShape.Circle, new Coordinates(7, -2)),
             };
-        Assert.True(0 < UseCase.Play(tilesTested, _fakePlayer, game).Points);
-        Assert.True(0 < UseCase.Play(tilesTested2, _fakePlayer, game).Points);
-        Assert.Equal(6 + QwirklePoints, UseCase.Play(tilesTested, _fakePlayer, game).Points);
-        Assert.Equal(6 + QwirklePoints, UseCase.Play(tilesTested2, _fakePlayer, game).Points);
+        Assert.True(0 < Service.Play(tilesTested, _fakePlayer, game).Points);
+        Assert.True(0 < Service.Play(tilesTested2, _fakePlayer, game).Points);
+        Assert.Equal(6 + QwirklePoints, Service.Play(tilesTested, _fakePlayer, game).Points);
+        Assert.Equal(6 + QwirklePoints, Service.Play(tilesTested2, _fakePlayer, game).Points);
     }
 
     [Fact]
@@ -393,10 +393,10 @@ public class GetPlayPointsShould
                 new(TileColor.Yellow, TileShape.Diamond, new Coordinates(18, 3)),
                 new(TileColor.Yellow, TileShape.Circle, new Coordinates(15, 3)),
             };
-        Assert.True(0 < UseCase.Play(tilesTested, _fakePlayer, game).Points);
-        Assert.True(0 < UseCase.Play(tilesTested2, _fakePlayer, game).Points);
-        Assert.Equal(6 + QwirklePoints, UseCase.Play(tilesTested, _fakePlayer, game).Points);
-        Assert.Equal(6 + QwirklePoints, UseCase.Play(tilesTested2, _fakePlayer, game).Points);
+        Assert.True(0 < Service.Play(tilesTested, _fakePlayer, game).Points);
+        Assert.True(0 < Service.Play(tilesTested2, _fakePlayer, game).Points);
+        Assert.Equal(6 + QwirklePoints, Service.Play(tilesTested, _fakePlayer, game).Points);
+        Assert.Equal(6 + QwirklePoints, Service.Play(tilesTested2, _fakePlayer, game).Points);
     }
 
     [Fact]
@@ -410,7 +410,7 @@ public class GetPlayPointsShould
         var tilesTested = new List<TileOnBoard> {
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(7, 0)),
             };
-        UseCase.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
     }
 
     [Fact]
@@ -424,6 +424,6 @@ public class GetPlayPointsShould
         var tilesTested = new List<TileOnBoard> {
                 new(TileColor.Blue, TileShape.Circle, new Coordinates(0, 7)),
             };
-        UseCase.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
+        Service.Play(tilesTested, _fakePlayer, game).Points.ShouldBe(0);
     }
 }

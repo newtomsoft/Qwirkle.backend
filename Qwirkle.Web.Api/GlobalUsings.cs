@@ -1,5 +1,6 @@
 ﻿global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ global using Qwirkle.Authentication.Adapters;
 global using Qwirkle.Domain.Entities;
 global using Qwirkle.Domain.Enums;
 global using Qwirkle.Domain.Ports;
-global using Qwirkle.Domain.UseCases;
+global using Qwirkle.Domain.Services;
 global using Qwirkle.Domain.ValueObjects;
 global using Qwirkle.Infra.Repository;
 global using Qwirkle.Infra.Repository.Adapters;

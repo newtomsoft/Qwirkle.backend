@@ -1,6 +1,6 @@
-﻿namespace Qwirkle.Domain.UseCases;
+﻿namespace Qwirkle.Domain.Services;
 
-public class ComputePointsUseCase
+public class ComputePointsService
 {
     private const int TilesNumberForAQwirkle = 6;
     private const int PointsForAQwirkle = 12;
@@ -83,7 +83,7 @@ public class ComputePointsUseCase
 
         return allTilesAlongReferenceTiles.Count != TilesNumberForAQwirkle ? allTilesAlongReferenceTiles.Count : PointsForAQwirkle;
     }
-   
+
     private static bool AreNumbersConsecutive(IReadOnlyCollection<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();
 
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Qwirkle.UltraBoardGames.Player;
+﻿namespace Qwirkle.UltraBoardGames.Player;
 
 public class GameScraper : IDisposable
 {
