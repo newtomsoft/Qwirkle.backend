@@ -30,6 +30,7 @@ appBuilder.Services.AddScoped<InfoService>();
 appBuilder.Services.AddScoped<BotService>();
 appBuilder.Services.AddScoped<ComputePointsService>();
 appBuilder.Services.AddScoped<Expand>();
+appBuilder.Services.AddScoped<Backpropagate>();
 appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
 appBuilder.Services.AddControllers();
 appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(appBuilder.Configuration.GetConnectionString("Qwirkle")));
