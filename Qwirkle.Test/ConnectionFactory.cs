@@ -9,7 +9,7 @@ public sealed class ConnectionFactory : IDisposable
 
     private const int User1Id = 71;
     private const int User2Id = 21;
-    private const int User3Id = 3;
+    private const int User3Id = 33;
     private const int User4Id = 14;
 
     public DefaultDbContext CreateContextForInMemory()

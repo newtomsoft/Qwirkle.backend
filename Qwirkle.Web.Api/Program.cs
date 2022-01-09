@@ -1,42 +1,46 @@
-var appBuilder = WebApplication.CreateBuilder(args);
-LogManager.Configuration = new NLogLoggingConfiguration(appBuilder.Configuration.GetSection("NLog"));
+using Qwirkle.Domain.UseCases.Ai;
+
 const string underDevelopment = "CorsPolicyDevelopment";
-const string underStagingOrProduction = "CorsPolicy";
+const string underStaging = "CorsPolicyStaging";
+const string underProduction = "CorsPolicyProduction";
+
+var appBuilder = WebApplication.CreateBuilder(args);
+appBuilder.Host.UseSerilog((_, configuration) => configuration.ReadFrom.Configuration(appBuilder.Configuration));
 appBuilder.Services.AddCors(options =>
 {
-    options.AddPolicy(underStagingOrProduction, builder => builder
-            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
+    options.AddPolicy(underProduction, builder => builder
+        .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
+        .AllowCredentials()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+    );
+    options.AddPolicy(underStaging, builder => builder
+            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr", "http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod()
     );
     options.AddPolicy(underDevelopment, builder => builder
-            .WithOrigins("https://localhost:5001", "http://localhost:4200")
+            .WithOrigins("http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod()
     );
 });
 appBuilder.Services.AddSignalR();
-appBuilder.Services.AddScoped<IRepository, Repository>();
 appBuilder.Services.AddSingleton<INotification, SignalRNotification>();
+appBuilder.Services.AddScoped<IRepository, Repository>();
 appBuilder.Services.AddScoped<IAuthentication, Authentication>();
-appBuilder.Services.AddScoped<AuthenticationUseCase>();
-appBuilder.Services.AddScoped<CoreUseCase>();
-appBuilder.Services.AddScoped<InfoUseCase>();
-appBuilder.Services.AddScoped<BotUseCase>();
+appBuilder.Services.AddScoped<UserService>();
+appBuilder.Services.AddScoped<CoreService>();
+appBuilder.Services.AddScoped<InfoService>();
+appBuilder.Services.AddScoped<BotService>();
+appBuilder.Services.AddScoped<ComputePointsService>();
+appBuilder.Services.AddScoped<Expand>();
+appBuilder.Services.AddScoped<Backpropagate>();
 appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
-appBuilder.Services.AddScoped<ComputePointsUseCase>();
 appBuilder.Services.AddControllers();
-switch (appBuilder.Configuration.GetValue<string>("Repository").ToLowerInvariant())
-{
-    case "sqlserver":
-        appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(appBuilder.Configuration.GetConnectionString("Qwirkle")));
-        break;
-    case "postgres":
-        appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseNpgsql(appBuilder.Configuration.GetConnectionString("Qwirkle")));
-        break;
-}
+appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(appBuilder.Configuration.GetConnectionString("Qwirkle")));
 appBuilder.Services.AddIdentity<UserDao, IdentityRole<int>>(options =>
 {
     options.Password.RequireDigit = false;
@@ -59,7 +63,7 @@ var app = appBuilder.Build();
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors(app.Environment.IsDevelopment() ? underDevelopment : underStagingOrProduction);
+app.UseCors(app.Environment.IsDevelopment() ? underDevelopment : app.Environment.IsStaging() ? underStaging : underProduction);
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
@@ -68,4 +72,5 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
     endpoints.MapHub<HubQwirkle>("/hubGame");
 });
+
 app.Run();

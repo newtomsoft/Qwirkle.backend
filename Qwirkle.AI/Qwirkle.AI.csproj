@@ -9,6 +9,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Qwirkle.Domain\Qwirkle.Domain.csproj" />
+     <PackageReference Include="libtorch-cpu-linux-x64" Version="1.10.0.1" />
+   
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+   
+    <PackageReference Include="TorchSharp" Version="0.95.4" />
+  
   </ItemGroup>
 
 </Project>

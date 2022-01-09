@@ -1,12 +1,14 @@
 ﻿global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Logging;
 global using Qwirkle.Domain.Entities;
 global using Qwirkle.Domain.Enums;
 global using Qwirkle.Domain.Ports;
-global using Qwirkle.Domain.UseCases;
+global using Qwirkle.Domain.Services;
 global using Qwirkle.Domain.ValueObjects;
 global using Qwirkle.Infra.Repository;
 global using Qwirkle.Infra.Repository.Adapters;
 global using Qwirkle.Infra.Repository.Dao;
+global using Qwirkle.Infra.Repository.DaoExtensionMethods;
 global using Shouldly;
 global using System;
 global using System.Collections.Generic;

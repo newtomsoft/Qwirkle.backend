@@ -8,4 +8,5 @@ public enum PlayReturnCode
     TileIsolated,
     TilesDoesntMakedValidRow,
     NotFree,
+    NotMostPointsMove,
 }

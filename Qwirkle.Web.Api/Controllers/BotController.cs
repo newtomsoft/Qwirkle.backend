@@ -1,28 +1,28 @@
-﻿using System.Reflection;
-
-namespace Qwirkle.Web.Api.Controllers;
+﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
-[Authorize] //todo : only for bot
-[Route("Bot")]
+[Authorize(Roles = "Bot")]
+[Route("[controller]")]
 public class BotController : ControllerBase
 {
-    private readonly BotUseCase _botUseCase;
+    private readonly BotService _botService;
     private readonly UserManager<UserDao> _userManager;
-    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private readonly ILogger<CoreService> _logger;
+
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    public BotController(BotUseCase botUseCase, UserManager<UserDao> userManager)
+    public BotController(BotService botService, UserManager<UserDao> userManager, ILogger<CoreService> logger)
     {
-        _botUseCase = botUseCase;
+        _botService = botService;
         _userManager = userManager;
+        _logger = logger;
     }
 
 
     [HttpGet("PossibleMoves/{gameId:int}")]
     public ActionResult ComputeDoableMoves(int gameId)
     {
-        _logger.Info($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
-        return new ObjectResult(_botUseCase.ComputeDoableMoves(gameId, UserId));
+        _logger?.LogInformation($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
+        return new ObjectResult(_botService.ComputeDoableMoves(gameId, UserId));
     }
 }

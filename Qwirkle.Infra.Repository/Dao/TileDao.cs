@@ -6,8 +6,4 @@ public class TileDao
     public int Id { get; set; }
     public TileShape Shape { get; set; }
     public TileColor Color { get; set; }
-
-
-    public Tile ToTile() => new(Color, Shape);
-
 }

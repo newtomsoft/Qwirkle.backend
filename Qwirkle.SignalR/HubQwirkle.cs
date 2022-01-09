@@ -28,5 +28,4 @@ public class HubQwirkle : Hub
     }
 
     private Task SendPlayersInGame(int gameId) => Clients.Group(gameId.ToString()).SendAsync("ReceivePlayersInGame", GameIdWithPlayers[gameId]);
-
 }

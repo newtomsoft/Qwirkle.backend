@@ -17,7 +17,7 @@ namespace Qwirkle.Infra.Repository.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -50,6 +50,36 @@ namespace Qwirkle.Infra.Repository.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = "901cc0e1-cb99-49e5-900a-9641cced5627",
+                            Name = "Bot",
+                            NormalizedName = "BOT"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = "fbbbdaec-afb3-49fb-b2cf-159d829c1c94",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ConcurrencyStamp = "c32e0c39-8097-4654-907c-2917fe3b201e",
+                            Name = "Guest",
+                            NormalizedName = "GUEST"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ConcurrencyStamp = "cc51e338-3be0-4879-a7c1-91b23370843b",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -134,6 +164,38 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 1,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = 2,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = 3,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = 4,
+                            RoleId = 1
+                        },
+                        new
+                        {
+                            UserId = 5,
+                            RoleId = 2
+                        },
+                        new
+                        {
+                            UserId = 6,
+                            RoleId = 2
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -164,8 +226,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreatDate");
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("GameOver")
                         .HasColumnType("bit");
@@ -201,8 +262,8 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.Property<bool>("LastTurnSkipped")
                         .HasColumnType("bit");
 
-                    b.Property<byte>("Points")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Points")
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -233,6 +294,656 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tile");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Color = 1,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Color = 1,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Color = 1,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Color = 1,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Color = 1,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Color = 1,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Color = 2,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Color = 2,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Color = 2,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Color = 2,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Color = 2,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Color = 2,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Color = 3,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Color = 3,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Color = 3,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Color = 3,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Color = 3,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Color = 3,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Color = 4,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Color = 4,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Color = 4,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Color = 4,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Color = 4,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Color = 4,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Color = 5,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Color = 5,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Color = 5,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Color = 5,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Color = 5,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Color = 5,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Color = 6,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Color = 6,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Color = 6,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Color = 6,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Color = 6,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Color = 6,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Color = 1,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Color = 1,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Color = 1,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Color = 1,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Color = 1,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Color = 1,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Color = 2,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Color = 2,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Color = 2,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Color = 2,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Color = 2,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Color = 2,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Color = 3,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Color = 3,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Color = 3,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 52,
+                            Color = 3,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 53,
+                            Color = 3,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Color = 3,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 55,
+                            Color = 4,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 56,
+                            Color = 4,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 57,
+                            Color = 4,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 58,
+                            Color = 4,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 59,
+                            Color = 4,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 60,
+                            Color = 4,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 61,
+                            Color = 5,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 62,
+                            Color = 5,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 63,
+                            Color = 5,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 64,
+                            Color = 5,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 65,
+                            Color = 5,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 66,
+                            Color = 5,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 67,
+                            Color = 6,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 68,
+                            Color = 6,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 69,
+                            Color = 6,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 70,
+                            Color = 6,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 71,
+                            Color = 6,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 72,
+                            Color = 6,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 73,
+                            Color = 1,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 74,
+                            Color = 1,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 75,
+                            Color = 1,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 76,
+                            Color = 1,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 77,
+                            Color = 1,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 78,
+                            Color = 1,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 79,
+                            Color = 2,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 80,
+                            Color = 2,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 81,
+                            Color = 2,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 82,
+                            Color = 2,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 83,
+                            Color = 2,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 84,
+                            Color = 2,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 85,
+                            Color = 3,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 86,
+                            Color = 3,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 87,
+                            Color = 3,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 88,
+                            Color = 3,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 89,
+                            Color = 3,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 90,
+                            Color = 3,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 91,
+                            Color = 4,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 92,
+                            Color = 4,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 93,
+                            Color = 4,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 94,
+                            Color = 4,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 95,
+                            Color = 4,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 96,
+                            Color = 4,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 97,
+                            Color = 5,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 98,
+                            Color = 5,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 99,
+                            Color = 5,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 100,
+                            Color = 5,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 101,
+                            Color = 5,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 102,
+                            Color = 5,
+                            Shape = 6
+                        },
+                        new
+                        {
+                            Id = 103,
+                            Color = 6,
+                            Shape = 1
+                        },
+                        new
+                        {
+                            Id = 104,
+                            Color = 6,
+                            Shape = 2
+                        },
+                        new
+                        {
+                            Id = 105,
+                            Color = 6,
+                            Shape = 3
+                        },
+                        new
+                        {
+                            Id = 106,
+                            Color = 6,
+                            Shape = 4
+                        },
+                        new
+                        {
+                            Id = 107,
+                            Color = 6,
+                            Shape = 5
+                        },
+                        new
+                        {
+                            Id = 108,
+                            Color = 6,
+                            Shape = 6
+                        });
                 });
 
             modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnBagDao", b =>
@@ -389,6 +1100,10 @@ namespace Qwirkle.Infra.Repository.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -397,7 +1112,140 @@ namespace Qwirkle.Infra.Repository.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("UserName")
+                        .IsUnique()
+                        .HasFilter("[Pseudo] IS NOT NULL");
+
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "35c7b56a-8421-4b24-a643-2a7102b6b4f7",
+                            Email = "bot1@bot",
+                            EmailConfirmed = false,
+                            GamesPlayed = 0,
+                            GamesWon = 0,
+                            Help = 0,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "BOT1",
+                            PhoneNumberConfirmed = false,
+                            Points = 0,
+                            TwoFactorEnabled = false,
+                            UserName = "bot1"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "bd1c7b7c-dd06-4a1b-b81d-5ac43806e664",
+                            Email = "bot2@bot",
+                            EmailConfirmed = false,
+                            GamesPlayed = 0,
+                            GamesWon = 0,
+                            Help = 0,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "BOT2",
+                            PhoneNumberConfirmed = false,
+                            Points = 0,
+                            TwoFactorEnabled = false,
+                            UserName = "bot2"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "e033c747-415b-4876-8f18-bc4ce5bef251",
+                            Email = "bot3@bot",
+                            EmailConfirmed = false,
+                            GamesPlayed = 0,
+                            GamesWon = 0,
+                            Help = 0,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "BOT3",
+                            PhoneNumberConfirmed = false,
+                            Points = 0,
+                            TwoFactorEnabled = false,
+                            UserName = "bot3"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "15e63213-9731-4d0d-9a45-aacf66e1e594",
+                            Email = "bot4@bot",
+                            EmailConfirmed = false,
+                            GamesPlayed = 0,
+                            GamesWon = 0,
+                            Help = 0,
+                            LockoutEnabled = false,
+                            NormalizedUserName = "BOT4",
+                            PhoneNumberConfirmed = false,
+                            Points = 0,
+                            TwoFactorEnabled = false,
+                            UserName = "bot4"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "052289b0-655b-46c2-b0c9-320968937ccd",
+                            Email = "thomas@newtomsoft.fr",
+                            EmailConfirmed = false,
+                            FirstName = "Thomas",
+                            GamesPlayed = 0,
+                            GamesWon = 0,
+                            Help = 0,
+                            LastName = "Vuille",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "THOMAS@NEWTOMSOFT.FR",
+                            NormalizedUserName = "TOM",
+                            PasswordHash = "AQAAAAEAACcQAAAAED29kKSVgjTdA6s6pXQ0a+7iy9MJ5Y1byxFl2MWZnX4WE6lw1SsR9FGeGypraM3G+g==",
+                            PhoneNumberConfirmed = false,
+                            Points = 0,
+                            SecurityStamp = "67F10AA8D20A4E3FBEF5A7CF76F1EBC7",
+                            TwoFactorEnabled = false,
+                            UserName = "Tom"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "766e8c52-c884-4e4e-9c52-d7249be2efb1",
+                            Email = "jc@jc.fr",
+                            EmailConfirmed = false,
+                            FirstName = "Jean Charles",
+                            GamesPlayed = 0,
+                            GamesWon = 0,
+                            Help = 0,
+                            LastName = "Gouleau",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "JC@JC.FR",
+                            NormalizedUserName = "JC",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJOr0iSf9bL59UJqwWyCpcjdampHsvulqOZ/NTApuuwLJsc1Sf9xRquQWPIz2S8rUQ==",
+                            PhoneNumberConfirmed = false,
+                            Points = 0,
+                            SecurityStamp = "09DDB5FB2D0C4416A7887F6301CEBF17",
+                            TwoFactorEnabled = false,
+                            UserName = "JC"
+                        });
+                });
+
+            modelBuilder.Entity("UserDaoUserDao", b =>
+                {
+                    b.Property<int>("BookmarkedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookmarkedOpponentsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookmarkedById", "BookmarkedOpponentsId");
+
+                    b.HasIndex("BookmarkedOpponentsId");
+
+                    b.ToTable("UserDaoUserDao");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -525,6 +1373,21 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.Navigation("Player");
 
                     b.Navigation("Tile");
+                });
+
+            modelBuilder.Entity("UserDaoUserDao", b =>
+                {
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.UserDao", null)
+                        .WithMany()
+                        .HasForeignKey("BookmarkedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Qwirkle.Infra.Repository.Dao.UserDao", null)
+                        .WithMany()
+                        .HasForeignKey("BookmarkedOpponentsId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.GameDao", b =>

@@ -7,6 +7,7 @@ global using Qwirkle.Domain.Enums;
 global using Qwirkle.Domain.Ports;
 global using Qwirkle.Domain.ValueObjects;
 global using Qwirkle.Infra.Repository.Dao;
+global using Qwirkle.Infra.Repository.DaoExtensionMethods;
 global using Qwirkle.Infra.Repository.DomainExtensionMethods;
 global using System;
 global using System.Collections.Generic;

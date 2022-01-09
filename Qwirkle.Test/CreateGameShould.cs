@@ -2,12 +2,12 @@
 
 public class CreateGameShould
 {
-    private readonly CoreUseCase _coreUseCase;
+    private readonly CoreService _coreService;
     private readonly DefaultDbContext _dbContext;
 
     private const int User1Id = 71;
     private const int User2Id = 21;
-    private const int User3Id = 3;
+    private const int User3Id = 33;
     private const int User4Id = 14;
     private const int TilesNumberPerPlayer = 6;
 
@@ -16,7 +16,8 @@ public class CreateGameShould
         var connectionFactory = new ConnectionFactory();
         _dbContext = connectionFactory.CreateContextForInMemory();
         IRepository repository = new Repository(_dbContext);
-        _coreUseCase = new CoreUseCase(repository, null, null);
+        var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
+        _coreService = new CoreService(repository, null, null, authenticationUseCase, new Logger<CoreService>(new LoggerFactory()));
         Add4DefaultTestUsers();
     }
 
@@ -30,56 +31,60 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayersWithOrder1234()
-    {
-        var userIds = new HashSet<int> { User1Id, User2Id, User3Id, User4Id };
-        var players = _coreUseCase.CreateGame(userIds);
-
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 3);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 4);
-        Assert.Equal(1, players.Count(p => p.IsTurn));
-        Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-        Assert.Equal(4, players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count());
-
-    }
-
-    [Fact]
-    public void CreateGoodPlayersWithOrder123()
-    {
-        var userIds = new HashSet<int> { User1Id, User3Id, User4Id };
-        var players = _coreUseCase.CreateGame(userIds);
-
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 3);
-        Assert.Equal(1, players.Count(p => p.IsTurn));
-        Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-        Assert.Equal(3, players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count());
-    }
-
-    [Fact]
-    public void CreateGoodPlayersWithOrder12()
-    {
-        var userIds = new HashSet<int> { User3Id, User4Id };
-        var players = _coreUseCase.CreateGame(userIds);
-
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 2);
-        Assert.Equal(1, players.Count(p => p.IsTurn));
-        Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-        Assert.Equal(2, players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count());
-    }
-
-    [Fact]
-    public void CreateGoodPlayerWithOrder1()
+    public void CreateGoodPlayerWithOrder0()
     {
         var userIds = new HashSet<int> { User3Id };
-        var players = _coreUseCase.CreateGame(userIds);
-        Assert.Contains(players.Select(p => p.GamePosition), value => value == 1);
-        Assert.Equal(1, players.Count(p => p.IsTurn));
-        Assert.DoesNotContain(players.Select(p => p.Points), points => points > 0);
-        Assert.Single(players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer));
+        var players = _coreService.CreateGame(userIds);
+
+        players.Count.ShouldBe(1);
+        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(1);
+        players.Count(p => p.Points == 0).ShouldBe(1);
+        players[0].IsTurn.ShouldBe(true);
+        players[0].GamePosition.ShouldBe(0);
+    }
+
+    [Fact]
+    public void CreateGoodPlayersWithOrder01()
+    {
+        var userIds = new HashSet<int> { User3Id, User4Id };
+        var players = _coreService.CreateGame(userIds);
+
+        players.Count.ShouldBe(2);
+        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(2);
+        players.Count(p => p.Points == 0).ShouldBe(2);
+        players[0].IsTurn.ShouldBe(true);
+        players[0].GamePosition.ShouldBe(0);
+        players[1].GamePosition.ShouldBe(1);
+    }
+
+    [Fact]
+    public void CreateGoodPlayersWithOrder012()
+    {
+        var userIds = new HashSet<int> { User1Id, User3Id, User4Id };
+        var players = _coreService.CreateGame(userIds);
+
+        players.Count.ShouldBe(3);
+        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(3);
+        players.Count(p => p.Points == 0).ShouldBe(3);
+        players[0].IsTurn.ShouldBe(true);
+        players[0].GamePosition.ShouldBe(0);
+        players[1].GamePosition.ShouldBe(1);
+        players[2].GamePosition.ShouldBe(2);
+    }
+
+    [Fact]
+    public void CreateGoodPlayersWithOrder0123()
+    {
+        var userIds = new HashSet<int> { User1Id, User2Id, User3Id, User4Id };
+        var players = _coreService.CreateGame(userIds);
+
+        players.Count.ShouldBe(4);
+        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(4);
+        players.Count(p => p.Points == 0).ShouldBe(4);
+        players[0].IsTurn.ShouldBe(true);
+        players[0].GamePosition.ShouldBe(0);
+        players[1].GamePosition.ShouldBe(1);
+        players[2].GamePosition.ShouldBe(2);
+        players[3].GamePosition.ShouldBe(3);
     }
 }
