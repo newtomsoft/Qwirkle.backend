@@ -66,17 +66,7 @@ public class CoreService
         NotifyNextPlayerAndPlayIfBot(game);
         return playReturn;
     }
-
-    private void NotifyNextPlayerAndPlayIfBot(Game game)
-    {
-        var nextPlayerId = _infoService.GetPlayerIdTurn(game.Id);
-        if (nextPlayerId == 0) return;
-
-        _notification?.SendPlayerIdTurn(game.Id, nextPlayerId);
-        var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
-        if (_service.IsBot(nextPlayer.Pseudo)) _botService.Play(game, nextPlayer);
-    }
-
+    
     public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<Tile> tiles)
     {
         var tilesList = tiles.ToList();
@@ -103,6 +93,16 @@ public class CoreService
 
         NotifyNextPlayerAndPlayIfBot(game);
         return skipTurnReturn;
+    }
+
+    private void NotifyNextPlayerAndPlayIfBot(Game game)
+    {
+        var nextPlayerId = _infoService.GetPlayerIdTurn(game.Id);
+        if (nextPlayerId == 0) return;
+
+        _notification?.SendPlayerIdTurn(game.Id, nextPlayerId);
+        var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
+        if (_service.IsBot(nextPlayer.Pseudo)) _botService.Play(game, nextPlayer);
     }
 
     public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<TileOnBoard> tiles)
