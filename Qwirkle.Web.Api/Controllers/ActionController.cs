@@ -1,6 +1,7 @@
 ﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("[controller]")]
 public class ActionController : ControllerBase
 {
@@ -40,14 +41,13 @@ public class ActionController : ControllerBase
         return new ObjectResult(_coreService.TrySwapTiles(playerId, tiles.Select(t => t.ToTile())));
     }
 
-    [HttpGet("SkipTurn/{gameId:int}")]
-    public ActionResult<int> SkipTurn(int gameId)
+    [HttpPost("SkipTurn/")]
+    public ActionResult<int> SkipTurn(SkipTurnViewModel skipTurnViewModel)
     {
-        var playerId = _infoService.GetPlayerId(gameId, UserId);
+        var playerId = _infoService.GetPlayerId(skipTurnViewModel.GameId, UserId);
         return new ObjectResult(_coreService.TrySkipTurn(playerId));
     }
-
-
+    
     [HttpPost("ArrangeRack/")]
     public ActionResult ArrangeRack(List<TileViewModel> tiles)
     {
