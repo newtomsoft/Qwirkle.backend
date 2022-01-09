@@ -18,7 +18,6 @@ public class BotService
 
     public void Play(Game game, Player bot)
     {
-
         var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
         if (tilesToPlay.Count > 0)
         {

@@ -1,14 +1,21 @@
 using Qwirkle.Domain.UseCases.Ai;
 
 const string underDevelopment = "CorsPolicyDevelopment";
-const string underStagingOrProduction = "CorsPolicy";
+const string underStaging = "CorsPolicyStaging";
+const string underProduction = "CorsPolicyProduction";
 
 var appBuilder = WebApplication.CreateBuilder(args);
 appBuilder.Host.UseSerilog((_, configuration) => configuration.ReadFrom.Configuration(appBuilder.Configuration));
 appBuilder.Services.AddCors(options =>
 {
-    options.AddPolicy(underStagingOrProduction, builder => builder
-            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr", "https://localhost", "http://localhost", "https://localhost:4200", "http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
+    options.AddPolicy(underProduction, builder => builder
+        .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
+        .AllowCredentials()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+    );
+    options.AddPolicy(underStaging, builder => builder
+            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr", "http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
             .AllowCredentials()
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -30,6 +37,7 @@ appBuilder.Services.AddScoped<InfoService>();
 appBuilder.Services.AddScoped<BotService>();
 appBuilder.Services.AddScoped<ComputePointsService>();
 appBuilder.Services.AddScoped<Expand>();
+appBuilder.Services.AddScoped<Backpropagate>();
 appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();
 appBuilder.Services.AddControllers();
 appBuilder.Services.AddDbContext<DefaultDbContext>(options => options.UseSqlServer(appBuilder.Configuration.GetConnectionString("Qwirkle")));
@@ -55,7 +63,7 @@ var app = appBuilder.Build();
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseCors(app.Environment.IsDevelopment() ? underDevelopment : underStagingOrProduction);
+app.UseCors(app.Environment.IsDevelopment() ? underDevelopment : app.Environment.IsStaging() ? underStaging : underProduction);
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
