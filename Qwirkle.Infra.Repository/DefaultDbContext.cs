@@ -60,7 +60,7 @@ public class DefaultDbContext : IdentityDbContext<UserDao, IdentityRole<int>, in
         {
             var botName = "bot" + userId;
             var botEmail = botName + "@bot";
-            builder.Entity<UserDao>().HasData(new UserDao { Id = userId, UserName = botName, Email = botEmail });
+            builder.Entity<UserDao>().HasData(new UserDao { Id = userId, UserName = botName, NormalizedUserName = botName.ToUpper(), Email = botEmail });
             builder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int> { UserId = userId, RoleId = RoleBotId });
         }
     }
