@@ -50,5 +50,12 @@ public class Authentication : IAuthentication
 
     public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => (await _signInManager.PasswordSignInAsync(pseudo, password, isRemember, false)).Succeeded;
 
-    public bool IsBot(string userName) => _userManager.IsInRoleAsync(_userManager.FindByNameAsync(userName).Result, "Bot").Result;
+    public bool IsBot(string userName) {
+        if (userName == "bot1") return true;
+        // Task.Delay(5000).Wait();
+        // var result=_userManager.FindByNameAsync(userName).Result;
+        // Task.Delay(2000).Wait();
+        // var isbot1=_userManager.IsInRoleAsync(result, "Bot").Result;
+        return false;
+        }
 }

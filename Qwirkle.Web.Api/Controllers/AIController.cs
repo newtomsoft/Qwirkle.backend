@@ -19,7 +19,7 @@ public class AiController : ControllerBase
     private MonteCarloTreeSearchNode _mcts;
 
 
-    public AiController(BotService botUseCase, InfoService infoService, UserManager<UserDao> userManager, Expand expand, Backpropagate backpropagate)
+    public AiController(BotService botUseCase, InfoService infoService, UserManager<UserDao> userManager, Expand expand, Backpropagate backpropagate )
     {
         _botService = botUseCase;
         _userManager = userManager;
@@ -37,10 +37,10 @@ public class AiController : ControllerBase
         _mcts = new MonteCarloTreeSearchNode(_infoUseCase.GetGame(gameId));
         var playerRoot = _mcts.Game.Players.FirstOrDefault(p => p.IsTurn);
         var playReturns = _expand.ComputeDoableMovesMcts(_mcts.Game.Board, playerRoot, _mcts.Game, 0);
-        // var playReturnsNew = _botUseCase.GetMostPointsTilesToPlay(playerRoot, _mcts.Game,null);
+        
         if (playReturns.Count == 0) return new ObjectResult(null);
         if (playReturns.Count > 2) playReturns = playReturns.GetRange(0, 3);
-
+       playReturns[0].TilesPlayed.ForEach(tile=>Console.WriteLine("%:  "+ tile)) ;
         var random = new Random();
         var playerIndexRoot = _mcts.Game.Players.FindIndex(player => player.IsTurn);
         var mctsRoot = _expand.ExpandMcts(_mcts, playReturns, playerIndexRoot);
