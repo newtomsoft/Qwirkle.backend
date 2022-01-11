@@ -2,7 +2,6 @@
 
 public class UltraBoardGamesPlayerApplication
 {
-    private const int TilesNumberPerPlayer = 6;
     private readonly ILogger _logger;
     private readonly BotService _botService;
     private readonly GameScraper _scraper;
@@ -96,7 +95,7 @@ public class UltraBoardGamesPlayerApplication
     private void SwapOrSkipTurn()
     {
         var tilesOnBagNumber = _scraper.GetTilesOnBag();
-        var tilesToSwapNumber = Math.Min(tilesOnBagNumber, TilesNumberPerPlayer);
+        var tilesToSwapNumber = Math.Min(tilesOnBagNumber, CoreService.TilesNumberPerPlayer);
         if (tilesToSwapNumber > 0) _scraper.Swap(tilesToSwapNumber);
         else _scraper.Skip();
         _scraper.TakeScreenShot();
@@ -118,15 +117,15 @@ public class UltraBoardGamesPlayerApplication
 
     private void LogTilesPlayedByOpponent(HashSet<TileOnBoard> tilesPlayedByOpponent)
     {
-        foreach (var tile in tilesPlayedByOpponent)
+        foreach (var (tile, coordinates) in tilesPlayedByOpponent)
         {
-            _logger?.LogInformation("{applicationEvent} {tile} to {coordinates} at {dateTime}", "Opponent move tile", tile.Tile, tile.Coordinates, DateTime.UtcNow);
+            _logger?.LogInformation("{applicationEvent} {tile} to {coordinates} at {dateTime}", "Opponent move tile", tile, coordinates, DateTime.Now);
         }
     }
 
-    private void LogStartApplication() => _logger?.LogInformation("{applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
-    private void LogStartGame() => _logger?.LogInformation("{applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
-    private void LogEndGame(GameInformation gameInformation) => _logger?.LogInformation("{wonOrLost} by {playerPoints} vs {opponentPoints} at {dateTime}", gameInformation.Status, gameInformation.PlayerPoints, gameInformation.OpponentPoints, DateTime.UtcNow);
-    private void LogEndApplication() => _logger?.LogInformation("{applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
+    private void LogStartApplication() => _logger.LogInformation("{applicationEvent} at {dateTime}", "Started", DateTime.Now);
+    private void LogStartGame() => _logger.LogInformation("{applicationEvent} at {dateTime}", "Started", DateTime.Now);
+    private void LogEndGame(GameInformation gameInformation) => _logger?.LogInformation("{wonOrLost} by {playerPoints} vs {opponentPoints} at {dateTime}", gameInformation.Status, gameInformation.PlayerPoints, gameInformation.OpponentPoints, DateTime.Now);
+    private void LogEndApplication() => _logger.LogInformation("{applicationEvent} at {dateTime}", "Ended", DateTime.Now);
     private static Domain.Entities.Player Player(int playerPoints, List<TileOnPlayer> tilesOnPlayer, bool isTurn) => new(0, 0, 0, "", 0, playerPoints, 0, Rack.From(tilesOnPlayer), isTurn, false);
 }

@@ -2,7 +2,7 @@
 
 public class CoreService
 {
-    private const int TilesNumberPerPlayer = 6;
+    public const int TilesNumberPerPlayer = 6;
 
     private readonly IRepository _repository;
     private readonly INotification _notification;

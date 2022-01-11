@@ -7,7 +7,6 @@ public class BotService
     private readonly ILogger<CoreService> _logger;
 
     private Game _game;
-    private const int TilesNumberPerPlayer = 6;
 
     public BotService(InfoService infoService, CoreService coreService, ILogger<CoreService> logger)
     {
@@ -77,7 +76,7 @@ public class BotService
 
         allPlayReturns.AddRange(playReturnsWith1Tile);
         var lastPlayReturn = playReturnsWith1Tile;
-        for (var tilePlayedNumber = 2; tilePlayedNumber <= TilesNumberPerPlayer; tilePlayedNumber++)
+        for (var tilePlayedNumber = 2; tilePlayedNumber <= CoreService.TilesNumberPerPlayer; tilePlayedNumber++)
         {
             var currentPlayReturns = new List<PlayReturn>();
             foreach (var playReturn in lastPlayReturn)
@@ -167,7 +166,7 @@ public class BotService
 
     private void SwapOrSkipTurn(Player bot, int tilesOnBagNumber)
     {
-        var tilesToSwapMaxNumber = Math.Min(tilesOnBagNumber, TilesNumberPerPlayer);
+        var tilesToSwapMaxNumber = Math.Min(tilesOnBagNumber, CoreService.TilesNumberPerPlayer);
         if (tilesToSwapMaxNumber > 0)
         {
             _logger?.LogInformation($"Bot swap {tilesToSwapMaxNumber} tiles");

@@ -9,7 +9,6 @@ public class CreateGameShould
     private const int User2Id = 21;
     private const int User3Id = 33;
     private const int User4Id = 14;
-    private const int TilesNumberPerPlayer = 6;
 
     public CreateGameShould()
     {
@@ -37,7 +36,7 @@ public class CreateGameShould
         var players = _coreService.CreateGame(userIds);
 
         players.Count.ShouldBe(1);
-        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(1);
+        players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(1);
         players.Count(p => p.Points == 0).ShouldBe(1);
         players[0].IsTurn.ShouldBe(true);
         players[0].GamePosition.ShouldBe(0);
@@ -50,7 +49,7 @@ public class CreateGameShould
         var players = _coreService.CreateGame(userIds);
 
         players.Count.ShouldBe(2);
-        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(2);
+        players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(2);
         players.Count(p => p.Points == 0).ShouldBe(2);
         players[0].IsTurn.ShouldBe(true);
         players[0].GamePosition.ShouldBe(0);
@@ -64,7 +63,7 @@ public class CreateGameShould
         var players = _coreService.CreateGame(userIds);
 
         players.Count.ShouldBe(3);
-        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(3);
+        players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(3);
         players.Count(p => p.Points == 0).ShouldBe(3);
         players[0].IsTurn.ShouldBe(true);
         players[0].GamePosition.ShouldBe(0);
@@ -79,7 +78,7 @@ public class CreateGameShould
         var players = _coreService.CreateGame(userIds);
 
         players.Count.ShouldBe(4);
-        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(4);
+        players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(4);
         players.Count(p => p.Points == 0).ShouldBe(4);
         players[0].IsTurn.ShouldBe(true);
         players[0].GamePosition.ShouldBe(0);
