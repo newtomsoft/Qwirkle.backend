@@ -27,7 +27,8 @@ public class GetDoableMovesShould
     private void ChangePlayerTilesBy(int playerId, IReadOnlyList<TileDao> newTiles)
     {
         var tilesOnPlayer = _dbContext.TilesOnPlayer.Where(t => t.PlayerId == playerId).ToList();
-        for (var i = 0; i < 6; i++) tilesOnPlayer[i].TileId = newTiles[i].Id;
+        for (var i = 0; i < newTiles.Count; i++) tilesOnPlayer[i].TileId = newTiles[i].Id;
+        for (var i = newTiles.Count; i < CoreService.TilesNumberPerPlayer; i++) _dbContext.TilesOnPlayer.Remove(tilesOnPlayer[i]);
         _dbContext.SaveChanges();
     }
 
@@ -51,6 +52,27 @@ public class GetDoableMovesShould
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
         noComboTile.Select(t => t[0].Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
+        noComboTile.Select(t => t[0].ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
+
+        TilesCombination(2, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(3, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(4, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(5, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(6, playReturns).Count.ShouldBe(0); // no combination possible
+    }
+
+    [Fact]
+    public void Return1WhenBoardIsEmptyAnd1TileInRack()
+    {
+        var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
+        var constTiles = new List<TileDao> { constTile0! }.OrderBy(t => t.Id).ToList();
+        ChangePlayerTilesBy(_player.Id, constTiles);
+
+        var playReturns = _botService.ComputeDoableMoves(_player.GameId, _userId);
+
+        var noComboTile = TilesCombination(1, playReturns);
+        noComboTile.Count.ShouldBe(1); // just 1 tile from the rack is doable
+        noComboTile.Select(t => t[0].Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // in coordinates (0,0)
         noComboTile.Select(t => t[0].ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
 
         TilesCombination(2, playReturns).Count.ShouldBe(0); // no combination possible
@@ -102,6 +124,28 @@ public class GetDoableMovesShould
     }
 
     [Fact]
+    public void Return2CombosWhenBoardIsEmptyAndOnly2TilesInRackWitchCanMakeRow()
+    {
+        var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
+        var constTile1 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Diamond);
+        var constTiles = new List<TileDao> { constTile0!, constTile1! }.OrderBy(t => t.Id).ToList();
+        ChangePlayerTilesBy(_player.Id, constTiles);
+
+        var playReturns = _botService.ComputeDoableMoves(_player.GameId, _userId);
+
+        var noComboTile = TilesCombination(1, playReturns);
+        noComboTile.Count.ShouldBe(2); // 2 tiles from the rack are all doable
+        noComboTile.Select(t => t[0].Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // in coordinates (0,0)
+        noComboTile.Select(t => t[0].ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
+
+        TilesCombination(2, playReturns).Count.ShouldBe(2); // 2 first tile x 1 second tiles
+        TilesCombination(3, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(4, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(5, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(6, playReturns).Count.ShouldBe(0); // no combination possible
+    }
+
+    [Fact]
     public void ReturnOtherItemsWhenBoardIsEmptyAndOtherRack()
     {
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
@@ -132,7 +176,7 @@ public class GetDoableMovesShould
     }
 
     [Fact]
-    public void Return3Combos2GreenTiles()
+    public void Return3Combos3GreenTiles()
     {
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
         var constTile1 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Yellow && t.Shape == TileShape.Clover);
@@ -156,6 +200,29 @@ public class GetDoableMovesShould
         var combo3Tiles = TilesCombination(3, playReturns);
         combo3Tiles.Count.ShouldBe(3 * 2 * 1 * 2); // 3 first tile x 2 second tile x 1 third tile * 2 positions for last tile
 
+        TilesCombination(4, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(5, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(6, playReturns).Count.ShouldBe(0); // no combination possible
+    }
+
+    [Fact]
+    public void Return3CombosWhenBoardIsEmptyAndOnly3TileInRackWitchCanMakeRow()
+    {
+        var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Circle);
+        var constTile1 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Diamond);
+        var constTile2 = _dbContext.Tiles.FirstOrDefault(t => t.Color == TileColor.Green && t.Shape == TileShape.Square);
+        var constTiles = new List<TileDao> { constTile0!, constTile1!, constTile2! }.OrderBy(t => t.Id).ToList();
+        ChangePlayerTilesBy(_player.Id, constTiles);
+
+        var playReturns = _botService.ComputeDoableMoves(_player.GameId, _userId);
+
+        var noComboTile = TilesCombination(1, playReturns);
+        noComboTile.Count.ShouldBe(3); // 3 tiles from the rack are all doable
+        noComboTile.Select(t => t[0].Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // in coordinates (0,0)
+        noComboTile.Select(t => t[0].ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
+
+        TilesCombination(2, playReturns).Count.ShouldBe(6); // 3 first tile x 2 second tiles
+        TilesCombination(3, playReturns).Count.ShouldBe(12); // 3 first tile x 2 second tile x 1 third tile * 2 positions for last
         TilesCombination(4, playReturns).Count.ShouldBe(0); // no combination possible
         TilesCombination(5, playReturns).Count.ShouldBe(0); // no combination possible
         TilesCombination(6, playReturns).Count.ShouldBe(0); // no combination possible
@@ -187,6 +254,11 @@ public class GetDoableMovesShould
         TilesCombination(5, playReturns).Count.ShouldBe(0); // no combination possible
         TilesCombination(6, playReturns).Count.ShouldBe(0); // no combination possible
     }
+
+
+
+
+
 
 
     //Todo test with board not empty
