@@ -9,22 +9,22 @@ appBuilder.Host.UseSerilog((_, configuration) => configuration.ReadFrom.Configur
 appBuilder.Services.AddCors(options =>
 {
     options.AddPolicy(underProduction, builder => builder
-        .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
-        .AllowCredentials()
-        .AllowAnyHeader()
-        .AllowAnyMethod()
+           .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr")
+           .AllowCredentials()
+           .AllowAnyHeader()
+           .AllowAnyMethod()
     );
     options.AddPolicy(underStaging, builder => builder
-            .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr", "http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
-            .AllowCredentials()
-            .AllowAnyHeader()
-            .AllowAnyMethod()
+           .WithOrigins("https://qwirkle.newtomsoft.fr", "http://qwirkle.newtomsoft.fr", "https://qwirkleapi.newtomsoft.fr", "http://qwirkleapi.newtomsoft.fr", "http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
+           .AllowCredentials()
+           .AllowAnyHeader()
+           .AllowAnyMethod()
     );
     options.AddPolicy(underDevelopment, builder => builder
-            .WithOrigins("http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
-            .AllowCredentials()
-            .AllowAnyHeader()
-            .AllowAnyMethod()
+           .WithOrigins("http://localhost:4200", "http://localhost:5000", "https://localhost:5001")
+           .AllowCredentials()
+           .AllowAnyHeader()
+           .AllowAnyMethod()
     );
 });
 appBuilder.Services.AddSignalR();

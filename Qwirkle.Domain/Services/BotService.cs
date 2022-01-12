@@ -30,6 +30,7 @@ public class BotService
         }
 
     }
+
     public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
         _game = game;
@@ -52,7 +53,6 @@ public class BotService
         _game = _infoService.GetGame(gameId);
         return ComputeDoableMoves(player);
     }
-
 
 
     private List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
