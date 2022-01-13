@@ -172,8 +172,7 @@ public class CoreService
         var playerToStart = _game.Players.First(p => p.Id == playerIdToStart);
         var otherPlayers = _game.Players.Where(p => p.Id != playerIdToStart).OrderBy(_ => Guid.NewGuid()).ToList();
 
-        var playersOrdered = new List<Player>();
-        playersOrdered.Add(playerToStart);
+        var playersOrdered = new List<Player> {playerToStart};
         playersOrdered.AddRange(otherPlayers);
         _game = _game with { Players = playersOrdered };
         for (byte i = 0; i < _game.Players.Count; i++) _game.Players[i].GamePosition = i;
