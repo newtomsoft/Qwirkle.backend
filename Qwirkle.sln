@@ -16,8 +16,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Web.Api", "Qwirkle.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Infra.Repository", "Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj", "{8419EFC2-8FF7-4E23-92DE-15CA3A6C6531}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{991FDE2D-D8CE-4BF0-819C-8DA20DB1B267}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.SignalR", "Qwirkle.SignalR\Qwirkle.SignalR.csproj", "{9C7C489A-C73B-426E-83A5-E9CEA165DA22}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Authentication", "Qwirkle.Authentication\Qwirkle.Authentication.csproj", "{754EEC74-46CB-4382-8572-5F92238A9860}"
