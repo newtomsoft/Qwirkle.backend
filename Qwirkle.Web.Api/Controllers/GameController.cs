@@ -1,6 +1,4 @@
-﻿using Player = Qwirkle.Domain.Entities.Player;
-
-namespace Qwirkle.Web.Api.Controllers;
+﻿namespace Qwirkle.Web.Api.Controllers;
 
 [ApiController]
 [Authorize]
