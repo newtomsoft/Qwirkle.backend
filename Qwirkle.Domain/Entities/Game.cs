@@ -22,5 +22,8 @@ public record Game(int Id, Board Board, List<Player> Players, Bag Bag, bool Game
     }
 
     public bool IsBoardEmpty() => Board.Tiles.Count == 0;
+    
     public bool IsBagEmpty() => Bag.Tiles.Count == 0;
+
+    public List<Player> GetPlayersWithoutTiles() => Players.Select(player => player.GetWithoutTiles()).ToList();
 }

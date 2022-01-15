@@ -60,7 +60,7 @@ public class SwapTilesShould
     public void ReturnNotPlayerTurnWhenItsNotTurnPlayer()
     {
         InitTest();
-        var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+        var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id }).Players;
         var player = players[1];
         var swapReturn = _coreService.TrySwapTiles(player.Id, new List<Tile> { player.Rack.Tiles[0] });
         swapReturn.Code.ShouldBe(PlayReturnCode.NotPlayerTurn);
@@ -70,7 +70,7 @@ public class SwapTilesShould
     public void ReturnPlayerDoesntHaveThisTileAfter1PlayerHaveSwapTiles()
     {
         InitTest();
-        var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+        var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id }).Players;
         var player = players[0];
         Tile? tileToSwap;
         do
@@ -90,7 +90,7 @@ public class SwapTilesShould
         for (var i = 0; i < CoreService.TilesNumberPerPlayer; i++)
         {
             InitTest();
-            var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+            var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id }).Players;
             var player = players[0];
 
             var tileToSwap = player.Rack.Tiles[i];
@@ -120,7 +120,7 @@ public class SwapTilesShould
             for (var secondTileIndex = firstTileIndex + 1; secondTileIndex < CoreService.TilesNumberPerPlayer; secondTileIndex++)
             {
                 InitTest();
-                var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+                var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id }).Players;
                 var player = players[0];
 
                 var tileToSwap0 = player.Rack.Tiles[firstTileIndex];
@@ -156,7 +156,7 @@ public class SwapTilesShould
                 for (var thirdTileIndex = secondTileIndex + 1; thirdTileIndex < CoreService.TilesNumberPerPlayer; thirdTileIndex++)
                 {
                     InitTest();
-                    var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+                    var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id }).Players;
                     var player = players[0];
 
                     var tileToSwap0 = player.Rack.Tiles[firstTileIndex];
@@ -197,7 +197,7 @@ public class SwapTilesShould
                     for (var fourthTileIndex = thirdTileIndex + 1; fourthTileIndex < CoreService.TilesNumberPerPlayer; fourthTileIndex++)
                     {
                         InitTest();
-                        var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+                        var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id }).Players;
                         var player = players[0];
 
                         var tileToSwap0 = player.Rack.Tiles[firstTileIndex];
@@ -243,7 +243,7 @@ public class SwapTilesShould
                         for (var fifthTileIndex = fourthTileIndex + 1; fifthTileIndex < CoreService.TilesNumberPerPlayer; fifthTileIndex++)
                         {
                             InitTest();
-                            var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+                            var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id }).Players;
                             var player = players[0];
 
                             var tileToSwap0 = player.Rack.Tiles[firstTileIndex];
@@ -282,7 +282,7 @@ public class SwapTilesShould
     public void ReturnOkAfter1PlayerHaveSwap6Tiles()
     {
         InitTest();
-        var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+        var players = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id }).Players;
         var player = players[0];
 
         var tileToSwap0 = player.Rack.Tiles[0];

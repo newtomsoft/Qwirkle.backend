@@ -1,6 +1,6 @@
 ﻿namespace Qwirkle.Domain.Entities;
 
-public class Player
+public record Player
 {
     public int Id { get; }
     public int UserId { get; }
@@ -66,4 +66,6 @@ public class Player
         }
         return Math.Max(maxSameColor, maxSameShape) + 1;
     }
+
+    public Player GetWithoutTiles() => this with {Rack = new Rack(new List<TileOnPlayer>())};
 }

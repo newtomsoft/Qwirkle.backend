@@ -13,7 +13,7 @@ public class GetDoableMovesShould
         var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
         var useCase = new CoreService(repository, null, infoUseCase, new Logger<CoreService>(new LoggerFactory()));
         var usersIds = infoUseCase.GetAllUsersId();
-        var players = useCase.CreateGame(usersIds.ToHashSet()).OrderBy(p => p.Id).ToList();
+        var players = useCase.CreateGame(usersIds.ToHashSet()).Players.OrderBy(p => p.Id).ToList();
         _botService = new BotService(infoUseCase, useCase, new Logger<CoreService>(new LoggerFactory()));
         _player = players[0];
         _userId = usersIds[0];

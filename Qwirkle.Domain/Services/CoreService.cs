@@ -22,7 +22,7 @@ public class CoreService
         //todo dette technique à rembourser
     }
 
-    public List<Player> CreateGame(HashSet<int> usersIds)
+    public Game CreateGame(HashSet<int> usersIds)
     {
         _logger.LogInformation("{applicationEvent} at {dateTime}", "CreateGame", DateTime.Now);
         InitializeEmptyGame();
@@ -30,7 +30,7 @@ public class CoreService
         PutTilesOnBag();
         DealTilesToPlayers();
         SortPlayers();
-        return _game.Players;
+        return _game;
     }
 
     public void ResetGame(int gameId) => _game = _repository.GetGame(gameId);
@@ -119,7 +119,7 @@ public class CoreService
         bool IsCoordinatesNotFree() => tilesPlayed.Any(tile => !game.Board.IsFreeTile(tile));
         bool IsFirstMoveNotCompliant() => wonPoints != _botService.GetMostPointsToPlay(player, game);
     }
-
+    
     private void GameOver()
     {
         _game = _game with { GameOver = true };

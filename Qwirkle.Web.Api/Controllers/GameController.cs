@@ -31,21 +31,8 @@ public class GameController : ControllerBase
         usersIdsList.AddRange(usersNames.Select(userName => _infoService.GetUserId(userName)));
         usersIdsList.RemoveAll(id => id == 0);
         var usersIds = new HashSet<int>(usersIdsList);
-        _logger?.LogInformation("CreateGame with users {usersIds}", usersIds);
-        var players = _coreService.CreateGame(usersIds);
-        PlayIfBot(_infoService.GetGame(players[0].GameId));
-        return new ObjectResult(players);
+        return CreateGameWithUsersIds(usersIds);
     }
-
-    [HttpPost("NewRandom")]
-    public ActionResult CreateRandomGame()
-    {
-        var usersIds = new HashSet<int> { UserId };
-        //todo : add user waiting or wait...
-        _logger?.LogInformation("CreateGame with {usersIds}", usersIds);
-        return new ObjectResult(_coreService.CreateGame(usersIds));
-    }
-
 
     [HttpGet("{gameId:int}")]
     public ActionResult GetGame(int gameId)
@@ -58,6 +45,20 @@ public class GameController : ControllerBase
     [HttpGet("UserGamesIds")]
     public ActionResult GetUserGamesIds() => new ObjectResult(_infoService.GetUserGames(UserId));
 
+    public ActionResult CreateInstantGame(string serializedUsersIds)
+    {
+        var usersIds = JsonConvert.DeserializeObject<HashSet<int>>(serializedUsersIds);
+        return CreateGameWithUsersIds(usersIds);
+    }
+
+    private ActionResult CreateGameWithUsersIds(HashSet<int> usersIds)
+    {
+        if (!usersIds.Contains(UserId)) return new BadRequestObjectResult("user not in the game");
+        _logger?.LogInformation("CreateGame with users {usersIds}", usersIds);
+        var players = _coreService.CreateGame(usersIds).Players;
+        PlayIfBot(_infoService.GetGame(players[0].GameId));
+        return new ObjectResult(players);
+    }
 
     private void PlayIfBot(Game game)
     {
