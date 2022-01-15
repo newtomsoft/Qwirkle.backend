@@ -7,18 +7,16 @@ public class CoreService
     private readonly IRepository _repository;
     private readonly INotification _notification;
     private readonly InfoService _infoService;
-    private readonly UserService _service;
     private readonly ILogger<CoreService> _logger;
     private readonly BotService _botService;
 
     private Game _game;
 
-    public CoreService(IRepository repository, INotification notification, InfoService infoService, UserService service, ILogger<CoreService> logger)
+    public CoreService(IRepository repository, INotification notification, InfoService infoService, ILogger<CoreService> logger)
     {
         _repository = repository;
         _notification = notification;
         _infoService = infoService;
-        _service = service;
         _logger = logger;
         _botService = new BotService(infoService, this, _logger);
         //todo dette technique à rembourser
@@ -63,7 +61,6 @@ public class CoreService
         playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
         _notification?.SendTilesPlayed(game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
 
-        NotifyNextPlayerAndPlayIfBot(game);
         return playReturn;
     }
     
@@ -78,7 +75,6 @@ public class CoreService
         var swapTilesReturn = SwapTiles(player, tilesList);
         _notification.SendTilesSwapped(game.Id, playerId);
 
-        NotifyNextPlayerAndPlayIfBot(game);
         return swapTilesReturn;
     }
 
@@ -91,18 +87,7 @@ public class CoreService
         var game = _repository.GetGame(player.GameId);
         _notification.SendTurnSkipped(game.Id, playerId);
 
-        NotifyNextPlayerAndPlayIfBot(game);
         return skipTurnReturn;
-    }
-
-    private void NotifyNextPlayerAndPlayIfBot(Game game)
-    {
-        var nextPlayerId = _infoService.GetPlayerIdTurn(game.Id);
-        if (nextPlayerId == 0) return;
-
-        _notification?.SendPlayerIdTurn(game.Id, nextPlayerId);
-        var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
-        if (_service.IsBot(nextPlayer.Pseudo)) _botService.Play(game, nextPlayer);
     }
 
     public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<TileOnBoard> tiles)
@@ -118,8 +103,7 @@ public class CoreService
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
         if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
 
-        var computePointsService = new ComputePointsService();
-        var wonPoints = computePointsService.ComputePoints(game, tilesPlayed);
+        var wonPoints = ComputePoints.Compute(game, tilesPlayed);
         if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
         if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveNotCompliant()) return new PlayReturn(game.Id, PlayReturnCode.NotMostPointsMove, null, null, 0);
         if (!IsGameFinished()) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
@@ -147,11 +131,8 @@ public class CoreService
     private void DealTilesToPlayers()
     {
         var rackPositions = new List<byte>();
-        for (byte i = 0; i < TilesNumberPerPlayer; i++)
-            rackPositions.Add(i);
-
-        foreach (var player in _game.Players)
-            _repository.TilesFromBagToPlayer(player, rackPositions);
+        for (byte i = 0; i < TilesNumberPerPlayer; i++) rackPositions.Add(i);
+        foreach (var player in _game.Players) _repository.TilesFromBagToPlayer(player, rackPositions);
     }
 
     private void PutTilesOnBag() => _repository.PutTilesOnBag(_game.Id);
@@ -178,7 +159,7 @@ public class CoreService
         for (byte i = 0; i < _game.Players.Count; i++) _game.Players[i].GamePosition = i;
         _game.Players.ForEach(player => _repository.UpdatePlayer(player));
 
-        SetPlayerTurn(playerIdToStart);
+        SetPlayerTurn(playerToStart);
     }
 
     private SkipTurnReturn SkipTurn(Player player)
@@ -241,17 +222,15 @@ public class CoreService
             var nextPlayerPosition = position < playersNumber - 1 ? position + 1 : 0;
             var nextPlayer = _game.Players.First(p => p.GamePosition == nextPlayerPosition);
             player.SetTurn(false);
-            nextPlayer.SetTurn(true);
             _repository.UpdatePlayer(player);
+            nextPlayer.SetTurn(true);
             _repository.UpdatePlayer(nextPlayer);
         }
     }
 
-    private void SetPlayerTurn(int playerId)
+    private void SetPlayerTurn(Player player)
     {
-        _repository.SetPlayerTurn(playerId);
-        var player = _game.Players.First(p => p.Id == playerId);
         player.SetTurn(true);
-        if (_service.IsBot(player.Pseudo)) _botService.Play(_game, player);
+        _repository.SetPlayerTurn(player.Id);
     }
 }

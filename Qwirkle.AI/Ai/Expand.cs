@@ -244,9 +244,8 @@ public class Expand
         if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
         if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
-        var computePointsUseCase = new ComputePointsService();
         // var wonPoints = computePointsUseCase.ComputePointsMcts(tilesPlayed, game);
-        var wonPoints = computePointsUseCase.ComputePoints(game, tilesPlayed);
+        var wonPoints = ComputePoints.Compute(game, tilesPlayed);
         if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
 
         if (IsGameFinished())

@@ -35,7 +35,6 @@ appBuilder.Services.AddScoped<UserService>();
 appBuilder.Services.AddScoped<CoreService>();
 appBuilder.Services.AddScoped<InfoService>();
 appBuilder.Services.AddScoped<BotService>();
-appBuilder.Services.AddScoped<ComputePointsService>();
 appBuilder.Services.AddScoped<Expand>();
 appBuilder.Services.AddScoped<Backpropagate>();
 appBuilder.Services.AddScoped<IArtificialIntelligence, ArtificialIntelligence>();

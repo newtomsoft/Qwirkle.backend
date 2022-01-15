@@ -6,8 +6,6 @@ public class BotService
     private readonly CoreService _coreService;
     private readonly ILogger<CoreService> _logger;
 
-    private Game _game;
-
     public BotService(InfoService infoService, CoreService coreService, ILogger<CoreService> logger)
     {
         _infoService = infoService;
@@ -28,21 +26,18 @@ public class BotService
             _logger?.LogInformation("Bot swap or skip...");
             SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
         }
-
     }
 
     public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
-        _game = game;
-        var doableMoves = ComputeDoableMoves(player, originCoordinates, true);
+        var doableMoves = ComputeDoableMoves(player, game, originCoordinates, true);
         var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
         return playReturn?.Points ?? 0;
     }
 
     public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
-        _game = game;
-        var doableMoves = ComputeDoableMoves(player, originCoordinates, true);
+        var doableMoves = ComputeDoableMoves(player, game, originCoordinates, true);
         var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
         return playReturn?.TilesPlayed ?? new List<TileOnBoard>();
     }
@@ -50,17 +45,17 @@ public class BotService
     public List<PlayReturn> ComputeDoableMoves(int gameId, int userId)
     {
         var player = _infoService.GetPlayer(gameId, userId);
-        _game = _infoService.GetGame(gameId);
-        return ComputeDoableMoves(player);
+        var game = _infoService.GetGame(gameId);
+        return ComputeDoableMoves(player, game);
     }
 
 
-    private List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
+    private List<PlayReturn> ComputeDoableMoves(Player player, Game game, Coordinates originCoordinates = null, bool simulation = false)
     {
         if (!simulation) _coreService.ResetGame(player.GameId);
         var rack = player.Rack.WithoutDuplicatesTiles();
 
-        var boardAdjoiningCoordinates = _game.Board.GetFreeAdjoiningCoordinatesToTiles(originCoordinates);
+        var boardAdjoiningCoordinates =game.Board.GetFreeAdjoiningCoordinatesToTiles(originCoordinates);
 
         var allPlayReturns = new List<PlayReturn>();
         var playReturnsWith1Tile = new List<PlayReturn>();
@@ -68,7 +63,7 @@ public class BotService
         {
             foreach (var tile in rack.Tiles)
             {
-                var playReturn = TestPlayTiles(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) });
+                var playReturn = TestPlayTiles(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) }, game);
                 Console.WriteLine(playReturn.Code);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
             }
@@ -83,14 +78,14 @@ public class BotService
             {
                 var tilesPlayed = playReturn.TilesPlayed;
                 var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
-                if (_game.IsBoardEmpty() && tilePlayedNumber == 2) // todo ok but can do better
+                if (game.IsBoardEmpty() && tilePlayedNumber == 2) // todo ok but can do better
                 {
-                    currentPlayReturns.AddRange(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true));
+                    currentPlayReturns.AddRange(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true, game));
                 }
                 else
                 {
                     foreach (RowType rowType in Enum.GetValues(typeof(RowType)))
-                        currentPlayReturns.AddRange(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false));
+                        currentPlayReturns.AddRange(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false, game));
                 }
             }
             allPlayReturns.AddRange(currentPlayReturns);
@@ -99,7 +94,7 @@ public class BotService
         return allPlayReturns;
     }
 
-    private IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, List<TileOnBoard> tilesAlreadyPlayed, bool firstGameMove)
+    private IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, List<TileOnBoard> tilesAlreadyPlayed, bool firstGameMove, Game game)
     {
         int tilesPlayedNumber = tilesAlreadyPlayed.Count;
         var coordinatesPlayed = tilesAlreadyPlayed.Select(tilePlayed => tilePlayed.Coordinates).ToList();
@@ -148,14 +143,14 @@ public class BotService
                 var currentTilesToTest = new List<TileOnBoard>();
                 currentTilesToTest.AddRange(tilesAlreadyPlayed);
                 currentTilesToTest.Add(testedTile);
-                var playReturn = TestPlayTiles(player, currentTilesToTest);
+                var playReturn = TestPlayTiles(player, currentTilesToTest, game);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturns.Add(playReturn);
             }
         }
         return playReturns;
     }
 
-    private PlayReturn TestPlayTiles(Player player, List<TileOnBoard> tilesToPlay) => _coreService.Play(tilesToPlay, player, _game, true);
+    private PlayReturn TestPlayTiles(Player player, List<TileOnBoard> tilesToPlay, Game game) => _coreService.Play(tilesToPlay, player, game, true);
 
     private static RowType RandomRowType()
     {

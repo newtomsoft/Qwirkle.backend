@@ -5,7 +5,7 @@ public class GetPlayPointsShould
     private readonly Player _fakePlayer;
     private const int QwirklePoints = 6;
     private readonly Bag _fakeBag = new(0, new List<TileOnBag> { new(TileColor.Yellow, TileShape.EightPointStar) });
-    private CoreService Service { get; } = new(null, null, null, null, null);
+    private CoreService Service { get; } = new(null, null, null, null);
 
     public GetPlayPointsShould()
     {
