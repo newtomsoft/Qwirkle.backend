@@ -29,6 +29,7 @@ appBuilder.Services.AddCors(options =>
 });
 appBuilder.Services.AddSignalR();
 appBuilder.Services.AddSingleton<INotification, SignalRNotification>();
+appBuilder.Services.AddSingleton<InstantGameService>();
 appBuilder.Services.AddScoped<IRepository, Repository>();
 appBuilder.Services.AddScoped<IAuthentication, Authentication>();
 appBuilder.Services.AddScoped<UserService>();
