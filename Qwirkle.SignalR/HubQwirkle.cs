@@ -3,13 +3,13 @@
 public class HubQwirkle : Hub
 {
     private static readonly Dictionary<int, List<Player>> GameIdWithPlayers = new();
-    private static readonly Dictionary<int, HashSet<User>> InstantGameWaitingUsers = new();
+    private static readonly Dictionary<int, HashSet<NotificationUser>> InstantGameWaitingUsers = new();
 
     public HubQwirkle()
     {
-        InstantGameWaitingUsers.Add(2, new HashSet<User>());
-        InstantGameWaitingUsers.Add(3, new HashSet<User>());
-        InstantGameWaitingUsers.Add(4, new HashSet<User>());
+        InstantGameWaitingUsers.Add(2, new HashSet<NotificationUser>());
+        InstantGameWaitingUsers.Add(3, new HashSet<NotificationUser>());
+        InstantGameWaitingUsers.Add(4, new HashSet<NotificationUser>());
     }
 
     public override Task OnDisconnectedAsync(Exception exception)
@@ -48,7 +48,7 @@ public class HubQwirkle : Hub
 
     public async Task UserWaitingInstantGame(int playerNumberForStartGame, string userName)
     {
-        var user = new User(Context.ConnectionId, userName);
+        var user = new NotificationUser(Context.ConnectionId, userName);
         var userInGame = InstantGameWaitingUsers[playerNumberForStartGame].Any(u => u.UserName == userName);
         if (!userInGame)
         {
