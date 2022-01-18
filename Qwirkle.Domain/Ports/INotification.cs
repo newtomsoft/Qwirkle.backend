@@ -7,4 +7,5 @@ public interface INotification
     void SendTilesPlayed(int gameId, int playerId, int scoredPoints, List<TileOnBoard> tilesOnBoardPlayed);
     void SendTilesSwapped(int gameId, int playerId);
     void SendGameOver(int gameId, List<int> winnersPlayersIds);
+    void SendInstantGameStarted(int playersNumberForStartGame);
 }

@@ -14,4 +14,5 @@ public class SignalRNotification : INotification
     public void SendTilesPlayed(int gameId, int playerId, int scoredPoints, List<TileOnBoard> tilesOnBoardPlayed) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesPlayed", playerId, scoredPoints, tilesOnBoardPlayed);
     public void SendTilesSwapped(int gameId, int playerId) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveTilesSwapped", playerId);
     public void SendGameOver(int gameId, List<int> winnersPlayersIds) => _hubContextQwirkle.Clients.Group(gameId.ToString()).SendAsync("ReceiveGameOver", winnersPlayersIds);
+    public void SendInstantGameStarted(int playersNumberForStartGame) => _hubContextQwirkle.Clients.Group(HubQwirkle.InstantGameGroupName(playersNumberForStartGame)).SendAsync("ReceiveInstantGameStarted", playersNumberForStartGame);
 }

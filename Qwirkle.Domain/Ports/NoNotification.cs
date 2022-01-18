@@ -26,4 +26,9 @@ public class NoNotification : INotification
     {
         // Method intentionally left empty.
     }
+
+    public void SendInstantGameStarted(int playersNumberForStartGame)
+    {
+        // Method intentionally left empty.
+    }
 }

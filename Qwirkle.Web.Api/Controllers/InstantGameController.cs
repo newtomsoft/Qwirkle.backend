@@ -19,15 +19,14 @@ public class InstantGameController : ControllerBase
         _instantGameService = instantGameService;
     }
 
-    [HttpGet("Join/{playersNumber:int}")]
-    public ActionResult JoinInstantGame(int playersNumber)
+    [HttpGet("Join/{playersNumberForStartGame:int}")]
+    public ActionResult JoinInstantGame(int playersNumberForStartGame)
     {
-        _logger?.LogInformation("JoinInstantGame with {playersNumber}", playersNumber);
-        var usersIds = _instantGameService.JoinInstantGame(UserId, playersNumber);
-        if (usersIds.Count != playersNumber) return new ObjectResult($"waiting for {playersNumber - usersIds.Count} player(s)");
+        _logger?.LogInformation("JoinInstantGame with {playersNumber}", playersNumberForStartGame);
+        var usersIds = _instantGameService.JoinInstantGame(UserId, playersNumberForStartGame);
+        if (usersIds.Count != playersNumberForStartGame) return new ObjectResult($"waiting for {playersNumberForStartGame - usersIds.Count} player(s)");
 
-        //_notification.SendInstantGameCreated(usersIds);
-        var serializedUsersIds = JsonConvert.SerializeObject(usersIds);
-        return RedirectToAction("CreateInstantGame", "Game", new { serializedUsersIds });
+        _notification.SendInstantGameStarted(playersNumberForStartGame); //TODO same thing for 1 player join to show progress ui
+        return RedirectToAction("CreateInstantGame", "Game", new { serializedUsersIds = JsonConvert.SerializeObject(usersIds) });
     }
 }

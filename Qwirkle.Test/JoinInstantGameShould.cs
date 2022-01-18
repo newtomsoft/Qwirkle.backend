@@ -7,7 +7,7 @@ public class JoinInstantGameShould
 
     private void InitTest()
     {
-        _instantGameService = new InstantGameService(new NoNotification(), null);
+        _instantGameService = new InstantGameService(null);
     }
 
     #endregion
@@ -119,5 +119,26 @@ public class JoinInstantGameShould
             resultUsersIds.Count.ShouldBe(userNumber % playersNumberInGame == 0 ? playersNumberInGame : userNumber % playersNumberInGame);
             gamesNumberToCreate.ShouldBe(userNumber / playersNumberInGame);
         }
+    }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public void ReturnUsersIdsWhenLotOffUsersJoinGameInParallel(int playersNumberInGame)
+    {
+        InitTest();
+        const int userNumber = 234567;
+        var usersIds = Enumerable.Range(1, userNumber).ToArray();
+        var resultUsersIds = new HashSet<int>[userNumber + 1];
+        var badGamesNumber = 0;
+        Parallel.ForEach(usersIds, id =>
+        {
+            resultUsersIds[id] = _instantGameService.JoinInstantGame(id, playersNumberInGame);
+            if (resultUsersIds[id].Count > playersNumberInGame) badGamesNumber++;
+        });
+        resultUsersIds[0] = new HashSet<int>();
+        resultUsersIds.Count(e => e.Count == playersNumberInGame).ShouldBe(userNumber / playersNumberInGame);
+        badGamesNumber.ShouldBe(0);
     }
 }

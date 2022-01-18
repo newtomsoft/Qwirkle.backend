@@ -3,14 +3,33 @@
 public class HubQwirkle : Hub
 {
     private static readonly Dictionary<int, List<Player>> GameIdWithPlayers = new();
+    private static readonly Dictionary<int, HashSet<User>> InstantGameWaitingUsers = new();
+
+    public HubQwirkle()
+    {
+        InstantGameWaitingUsers.Add(2, new HashSet<User>());
+        InstantGameWaitingUsers.Add(3, new HashSet<User>());
+        InstantGameWaitingUsers.Add(4, new HashSet<User>());
+    }
 
     public override Task OnDisconnectedAsync(Exception exception)
     {
+        var waitingGamePlayerNumber = InstantGameWaitingUsers.Where(item => item.Value.Count(p => p.ConnectionId == Context.ConnectionId) == 1).Select(item => item.Key).FirstOrDefault();
+        if (waitingGamePlayerNumber != 0)
+        {
+            var user = InstantGameWaitingUsers[waitingGamePlayerNumber].FirstOrDefault(player => player.ConnectionId == Context.ConnectionId);
+            InstantGameWaitingUsers[waitingGamePlayerNumber].Remove(user);
+            SendUserWaitingInstantGame(waitingGamePlayerNumber);
+        }
+
         var gameId = GameIdWithPlayers.Where(item => item.Value.Count(p => p.ConnectionId == Context.ConnectionId) == 1).Select(item => item.Key).FirstOrDefault();
-        if (gameId == 0) return base.OnDisconnectedAsync(exception);
-        var player = GameIdWithPlayers[gameId].FirstOrDefault(player => player.ConnectionId == Context.ConnectionId);
-        GameIdWithPlayers[gameId].Remove(player);
-        SendPlayersInGame(gameId);
+        if (gameId != 0)
+        {
+            var player = GameIdWithPlayers[gameId].FirstOrDefault(player => player.ConnectionId == Context.ConnectionId);
+            GameIdWithPlayers[gameId].Remove(player);
+            SendPlayersInGame(gameId);
+        }
+
         return base.OnDisconnectedAsync(exception);
     }
 
@@ -18,7 +37,7 @@ public class HubQwirkle : Hub
     {
         GameIdWithPlayers.TryAdd(gameId, new List<Player>());
         var player = new Player(Context.ConnectionId, playerId);
-        var playerInGame = GameIdWithPlayers[gameId].Any(p => p.PlayerId == player.PlayerId);
+        var playerInGame = GameIdWithPlayers[gameId].Any(p => p.PlayerId == playerId);
         if (!playerInGame)
         {
             GameIdWithPlayers[gameId].Add(player);
@@ -27,5 +46,19 @@ public class HubQwirkle : Hub
         }
     }
 
+    public async Task UserWaitingInstantGame(int playerNumberForStartGame, string userName)
+    {
+        var user = new User(Context.ConnectionId, userName);
+        var userInGame = InstantGameWaitingUsers[playerNumberForStartGame].Any(u => u.UserName == userName);
+        if (!userInGame)
+        {
+            InstantGameWaitingUsers[playerNumberForStartGame].Add(user);
+            await Groups.AddToGroupAsync(Context.ConnectionId, InstantGameGroupName(playerNumberForStartGame));
+            await SendUserWaitingInstantGame(playerNumberForStartGame);
+        }
+    }
+
     private Task SendPlayersInGame(int gameId) => Clients.Group(gameId.ToString()).SendAsync("ReceivePlayersInGame", GameIdWithPlayers[gameId]);
+    private Task SendUserWaitingInstantGame(int instantGamePlayerNumber) => Clients.Group(InstantGameGroupName(instantGamePlayerNumber)).SendAsync("ReceiveUsersWaitingInstantGame", InstantGameWaitingUsers[instantGamePlayerNumber]);
+    public static string InstantGameGroupName(int playerNumberForStartGame) => "instantGame" + playerNumberForStartGame;
 }
