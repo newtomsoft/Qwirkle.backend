@@ -367,11 +367,11 @@ public class GetDoableMovesShould
 
         var playReturns = _botService.ComputeDoableMoves(gameId, _userId);
         var noComboTile = TilesCombination(1, playReturns);
-        noComboTile.Count.ShouldBe(4);
+        noComboTile.Count.ShouldBe(expectedCoordinatesForNoComboTile.Count);
         noComboTile.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedCoordinatesForNoComboTile.OrderBy(c => c.X).ThenBy(c => c.Y));
 
         var twoTilesCombination = TilesCombination(2, playReturns);
-        twoTilesCombination.Count.ShouldBe(4);
+        twoTilesCombination.Count.ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.Count);
         twoTilesCombination.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
         twoTilesCombination.Select(t => t.Last().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedSecondCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
     }
@@ -404,48 +404,28 @@ public class GetDoableMovesShould
 
         var expectedCoordinatesForNoComboTile = new List<Coordinates>
         {
-            Coordinates.From(9, 49),
-            Coordinates.From(9, 50), Coordinates.From(12, 50)
+            Coordinates.From(9, 49), Coordinates.From(9, 50), Coordinates.From(12, 50)
         };
 
-        var expectedCoordinatesForTwoTilesCombination = new List<Coordinates>
+        var expectedFirstCoordinatesForTwoTilesCombination = new List<Coordinates>
         {
-            Coordinates.From(10, 52), Coordinates.From(09, 52),
-            Coordinates.From(10, 49), Coordinates.From(09, 49),
+            Coordinates.From(09, 49), Coordinates.From(09, 49), Coordinates.From(9, 50), Coordinates.From(12, 50),
+        };
+
+        var expectedSecondCoordinatesForTwoTilesCombination = new List<Coordinates>
+        {
+            Coordinates.From(09, 48), Coordinates.From(09, 50), Coordinates.From(9, 49), Coordinates.From(12, 49),
         };
 
         var playReturns = _botService.ComputeDoableMoves(gameId, _userId);
         var noComboTile = TilesCombination(1, playReturns);
-        noComboTile.Count.ShouldBe(3);
+        noComboTile.Count.ShouldBe(expectedCoordinatesForNoComboTile.Count);
         noComboTile.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedCoordinatesForNoComboTile.OrderBy(c => c.X).ThenBy(c => c.Y));
 
-        //var twoTilesCombination = TilesCombination(2, playReturns);
-
-
-        //var cy = new Tile(TileColor.Yellow, TileShape.Circle);
-        //var cr = new Tile(TileColor.Red, TileShape.Circle);
-        //var cy949 = new TileOnBoard(cy, Coordinates.From(9, 49));
-        //var cr950 = new TileOnBoard(cr, Coordinates.From(9, 50));
-
-
-        //var group0 = new HashSet<TileOnBoard> { cr950, cy949 };
-        //var group1 = new HashSet<TileOnBoard> { cy949, cr950 };
-
-        //var group0Ordered = group0.OrderBy(t => t.Coordinates.X).ThenBy(t => t.Coordinates.Y).ToList();
-        //var group1Ordered = group1.OrderBy(t => t.Coordinates.X).ThenBy(t => t.Coordinates.Y).ToList();
-
-        //group0Ordered.ShouldBeEquivalentTo(group1Ordered);
-
-        //twoTilesCombination.Add(group0);
-        //twoTilesCombination.Add(group1);
-
-        //twoTilesCombination.ShouldBeUnique();
-
-        //twoTilesCombination.Remove(group0);
-        //twoTilesCombination.Remove(group1);
-
-        //twoTilesCombination.Count.ShouldBe(3);
-        //noComboTile.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
+        var twoTilesCombination = TilesCombination(2, playReturns);
+        twoTilesCombination.Count.ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.Count);
+        twoTilesCombination.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
+        twoTilesCombination.Select(t => t.Last().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedSecondCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
 
     }
 }
