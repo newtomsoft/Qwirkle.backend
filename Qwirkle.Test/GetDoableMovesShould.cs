@@ -10,7 +10,6 @@ public class GetDoableMovesShould
         connectionFactory.Add4DefaultTestUsers();
         var repository = new Repository(_dbContext);
         var infoUseCase = new InfoService(repository, null, new Logger<InfoService>(new LoggerFactory()));
-        var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
         var useCase = new CoreService(repository, null, infoUseCase, new Logger<CoreService>(new LoggerFactory()));
         var usersIds = infoUseCase.GetAllUsersId();
         var players = useCase.CreateGame(usersIds.ToHashSet()).Players.OrderBy(p => p.Id).ToList();
@@ -33,6 +32,9 @@ public class GetDoableMovesShould
     }
 
     private static List<List<TileOnBoard>> TilesCombination(int tilesNumberInCombo, IEnumerable<PlayReturn> playReturns) => playReturns.Where(p => p.TilesPlayed.Count == tilesNumberInCombo).Select(p => p.TilesPlayed).ToList();
+    private int TileId(TileShape shape, TileColor color, int idIndex = 0) => Tile(shape, color, idIndex).Id;
+    private TileDao Tile(TileShape shape, TileColor color, int idIndex = 0) => _dbContext.Tiles.Where(t => t.Shape == shape && t.Color == color).OrderBy(t => t.Id).AsEnumerable().ElementAt(idIndex);
+
     #endregion
 
     [Fact]
@@ -255,11 +257,120 @@ public class GetDoableMovesShould
         TilesCombination(6, playReturns).Count.ShouldBe(0); // no combination possible
     }
 
+    [Fact]
+    public void BoardNotEmptyScenario01()
+    {
+        var gameId = _player.GameId;
+        var constTile0 = Tile(TileShape.Circle, TileColor.Orange);
+        var expectedTilePlayable = constTile0;
+        var playerTiles = new List<TileDao> { constTile0! }.OrderBy(t => t.Id).ToList();
+        ChangePlayerTilesBy(_player.Id, playerTiles);
 
+        //board construction
+        var tilesOnBoard = new List<TileOnBoardDao>
+        {
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Blue), PositionX = 10, PositionY = 50},
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Red), PositionX = 11, PositionY = 50},
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Yellow), PositionX = 12, PositionY = 50}
+        };
+        _dbContext.TilesOnBoard.AddRange(tilesOnBoard);
+        _dbContext.SaveChanges();
 
+        var expectedCoordinates = new List<Coordinates>
+        {
+            Coordinates.From(10, 51), Coordinates.From(11, 51), Coordinates.From(12, 51),
+            Coordinates.From(9, 50), Coordinates.From(13, 50),
+            Coordinates.From(10, 49), Coordinates.From(11, 49), Coordinates.From(12, 49),
+        };
 
+        var playReturns = _botService.ComputeDoableMoves(gameId, _userId);
 
+        var noComboTile = TilesCombination(1, playReturns);
+        noComboTile.Count.ShouldBe(8);
+        noComboTile.Select(t => t[0].Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedCoordinates.OrderBy(c => c.X).ThenBy(c => c.Y));
+        noComboTile.Select(t => t[0].ToTile()).ShouldAllBe(t => t == expectedTilePlayable.ToTile());
+        TilesCombination(2, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(3, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(4, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(5, playReturns).Count.ShouldBe(0); // no combination possible
+        TilesCombination(6, playReturns).Count.ShouldBe(0); // no combination possible
+    }
 
+    [Fact]
+    public void BoardNotEmptyScenario02()
+    {
+        var gameId = _player.GameId;
+        var constTile0 = Tile(TileShape.Square, TileColor.Orange);
+        var constTile1 = Tile(TileShape.Square, TileColor.Blue);
+        var constTile2 = Tile(TileShape.EightPointStar, TileColor.Blue);
+        var constTile3 = Tile(TileShape.FourPointStar, TileColor.Red);
+        var constTile4 = Tile(TileShape.Circle, TileColor.Yellow);
+        var constTile5 = Tile(TileShape.Diamond, TileColor.Purple);
 
-    //Todo test with board not empty
+        var playerTiles = new List<TileDao> { constTile0, constTile1, constTile2, constTile3, constTile4, constTile5 }.OrderBy(t => t.Id).ToList();
+        ChangePlayerTilesBy(_player.Id, playerTiles);
+
+        //board construction
+        var tilesOnBoard = new List<TileOnBoardDao>
+        {
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Green), PositionX = 10, PositionY = 50},
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Yellow), PositionX = 11, PositionY = 50},
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Yellow, 1), PositionX = 10, PositionY = 51},
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Red), PositionX = 11, PositionY = 51},
+        };
+        _dbContext.TilesOnBoard.AddRange(tilesOnBoard);
+        _dbContext.SaveChanges();
+
+        var playReturns = _botService.ComputeDoableMoves(gameId, _userId);
+        playReturns.Count.ShouldBe(0);
+    }
+
+    [Fact]
+    public void BoardNotEmptyScenario03()
+    {
+        var gameId = _player.GameId;
+        var constTile0 = Tile(TileShape.Square, TileColor.Orange);
+        var constTile1 = Tile(TileShape.Square, TileColor.Blue);
+        var constTile2 = Tile(TileShape.EightPointStar, TileColor.Blue);
+        var constTile3 = Tile(TileShape.Circle, TileColor.Red);
+        var constTile4 = Tile(TileShape.Circle, TileColor.Yellow);
+        var constTile5 = Tile(TileShape.Diamond, TileColor.Purple);
+
+        var playerTiles = new List<TileDao> { constTile0, constTile1, constTile2, constTile3, constTile4, constTile5 }.OrderBy(t => t.Id).ToList();
+        ChangePlayerTilesBy(_player.Id, playerTiles);
+
+        //board construction
+        var tilesOnBoard = new List<TileOnBoardDao>
+        {
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Green), PositionX = 10, PositionY = 50},
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Yellow), PositionX = 11, PositionY = 50},
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Yellow, 1), PositionX = 10, PositionY = 51},
+            new() {GameId = gameId, TileId = TileId(TileShape.Circle, TileColor.Red), PositionX = 11, PositionY = 51},
+        };
+        _dbContext.TilesOnBoard.AddRange(tilesOnBoard);
+        _dbContext.SaveChanges();
+
+        var expectedCoordinatesForNoComboTile = new List<Coordinates>
+        {
+            Coordinates.From(10, 52), Coordinates.From(10, 49), Coordinates.From(9, 50), Coordinates.From(12, 50),
+        };
+
+        var expectedCoordinatesForTwoTilesCombination = new List<Coordinates>
+        {
+            Coordinates.From(10, 52), Coordinates.From(09, 52),
+            Coordinates.From(10, 49), Coordinates.From(09, 49),
+            Coordinates.From(09, 50), Coordinates.From(09, 49),
+            Coordinates.From(12, 50), Coordinates.From(12, 49),
+        };
+
+        var playReturns = _botService.ComputeDoableMoves(gameId, _userId);
+        var noComboTile = TilesCombination(1, playReturns);
+        noComboTile.Count.ShouldBe(4);
+        noComboTile.Select(t => t[0].Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedCoordinatesForNoComboTile.OrderBy(c => c.X).ThenBy(c => c.Y));
+
+        var twoTilesCombination = TilesCombination(2, playReturns);
+        //twoTilesCombination.Count.ShouldBe(4);
+        noComboTile.Select(t => t[0].Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
+
+    }
 }
