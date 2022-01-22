@@ -15,7 +15,7 @@ public class Expand
             var newgame = new Game(mcts.Game);
 
             var random = new Random();
-            coordinate.TilesPlayed.ForEach(tileBoard =>
+            coordinate.TilesPlayed.ToList().ForEach(tileBoard =>
             {
 
                 newgame.Board.Tiles.Add(tileBoard);
@@ -52,8 +52,8 @@ public class Expand
         var random = new Random();
 
 
-        newgame.Board.Tiles.Add(coordinate.TilesPlayed[0]);
-        var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == coordinate.TilesPlayed[0].Color && tile.Shape == coordinate.TilesPlayed[0].Shape).FirstOrDefault();
+        newgame.Board.Tiles.Add(coordinate.TilesPlayed.First());
+        var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == coordinate.TilesPlayed.First().Color && tile.Shape == coordinate.TilesPlayed.First().Shape).FirstOrDefault();
         newgame.Players[indexPlayer].Rack.Tiles.Remove(removeTile);
 
         if (newgame.Bag.Tiles.Count > 0)
@@ -106,7 +106,7 @@ public class Expand
 
         return mcts;
     }
-    public static PlayReturn TryPlayTilesSimulationMCTS(Player player, List<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game);
+    public static PlayReturn TryPlayTilesSimulationMCTS(Player player, HashSet<TileOnBoard> tilesToPlay, Game game) => GetPlayReturnMCTS(tilesToPlay, player, game);
     public List<PlayReturn> ComputeDoableMovesMcts(Board board, Player player, Game game, int selectFirst)
     {
 
@@ -120,13 +120,13 @@ public class Expand
         }
 
         var allPlayReturns = new List<PlayReturn>();
-        var playReturnsWith1Tile = new List<PlayReturn>();
+        var playReturnsWith1Tile = new HashSet<PlayReturn>();
         foreach (var coordinates in boardAdjoiningCoordinates)
         {
             for (int i = 0; i < rack.Tiles.Count; i++)
             {
                 TileOnPlayer tile = rack.Tiles[i];
-                var playReturn = TryPlayTilesSimulationMCTS(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) }, game);
+                var playReturn = TryPlayTilesSimulationMCTS(player, new HashSet<TileOnBoard> { TileOnBoard.From(tile, coordinates) }, game);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
             }
         };
@@ -135,7 +135,7 @@ public class Expand
         var lastPlayReturn = playReturnsWith1Tile;
         for (var tilePlayedNumber = 2; tilePlayedNumber <= 6; tilePlayedNumber++)
         {
-            var currentPlayReturns = new List<PlayReturn>();
+            var currentPlayReturns = new HashSet<PlayReturn>();
             foreach (var playReturn in lastPlayReturn)
             {
                 var tilesPlayed = playReturn.TilesPlayed;
@@ -143,12 +143,12 @@ public class Expand
                 var firstGameMove = game.Board.Tiles.Count == 0;
                 if (firstGameMove && tilePlayedNumber == 2) // todo ok but can do better
                 {
-                    currentPlayReturns.AddRange(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true, game));
+                    currentPlayReturns.UnionWith(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true, game));
                 }
                 else
                 {
                     foreach (RowType rowType in Enum.GetValues(typeof(RowType)))
-                        currentPlayReturns.AddRange(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false, game));
+                        currentPlayReturns.UnionWith(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false, game));
                 }
             }
             allPlayReturns.AddRange(currentPlayReturns);
@@ -184,7 +184,7 @@ public class Expand
 
 
 
-    private static IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, List<TileOnBoard> tilesAlreadyPlayed, bool firstGameMove, Game game)
+    private static IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, HashSet<TileOnBoard> tilesAlreadyPlayed, bool firstGameMove, Game game)
     {
         int tilesPlayedNumber = tilesAlreadyPlayed.Count;
         var coordinatesPlayed = tilesAlreadyPlayed.Select(tilePlayed => tilePlayed.Coordinates).ToList();
@@ -230,8 +230,8 @@ public class Expand
             {
                 var testedCoordinates = rowType is RowType.Line ? Coordinates.From(currentCoordinate, coordinateFixed) : Coordinates.From(coordinateFixed, currentCoordinate);
                 var testedTile = TileOnBoard.From(tile, testedCoordinates);
-                var currentTilesToTest = new List<TileOnBoard>();
-                currentTilesToTest.AddRange(tilesAlreadyPlayed);
+                var currentTilesToTest = new HashSet<TileOnBoard>();
+                currentTilesToTest.UnionWith(tilesAlreadyPlayed);
                 currentTilesToTest.Add(testedTile);
                 var playReturn = TryPlayTilesSimulationMCTS(player, currentTilesToTest, game);
                 if (playReturn.Code == PlayReturnCode.Ok) playReturns.Add(playReturn);
@@ -239,7 +239,7 @@ public class Expand
         }
         return playReturns;
     }
-    public static PlayReturn GetPlayReturnMCTS(List<TileOnBoard> tilesPlayed, Player player, Game game)
+    public static PlayReturn GetPlayReturnMCTS(HashSet<TileOnBoard> tilesPlayed, Player player, Game game)
     {
         if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);

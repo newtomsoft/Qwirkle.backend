@@ -12,7 +12,7 @@ public class NoNotification : INotification
         // Method intentionally left empty.
     }
 
-    public void SendTilesPlayed(int gameId, int playerId, int scoredPoints, List<TileOnBoard> tilesOnBoardPlayed)
+    public void SendTilesPlayed(int gameId, int playerId, int scoredPoints, HashSet<TileOnBoard> tilesOnBoardPlayed)
     {
         // Method intentionally left empty.
     }

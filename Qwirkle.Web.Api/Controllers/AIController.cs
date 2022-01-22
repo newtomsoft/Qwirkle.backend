@@ -40,7 +40,7 @@ public class AiController : ControllerBase
         
         if (playReturns.Count == 0) return new ObjectResult(null);
         if (playReturns.Count > 2) playReturns = playReturns.GetRange(0, 3);
-       playReturns[0].TilesPlayed.ForEach(tile=>Console.WriteLine("%:  "+ tile)) ;
+       playReturns[0].TilesPlayed.ToList().ForEach(tile=>Console.WriteLine("%:  "+ tile)) ;
         var random = new Random();
         var playerIndexRoot = _mcts.Game.Players.FindIndex(player => player.IsTurn);
         var mctsRoot = _expand.ExpandMcts(_mcts, playReturns, playerIndexRoot);

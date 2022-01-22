@@ -49,7 +49,7 @@ public class CoreService
         var player = _infoService.GetPlayer(playerId);
         if (!player.IsTurn) return new PlayReturn(player.GameId, PlayReturnCode.NotPlayerTurn, null, null, 0);
 
-        var tilesToPlay = tiles.ToList();
+        var tilesToPlay = tiles.ToHashSet();
 
         if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, PlayReturnCode.PlayerDoesntHaveThisTile, null, null, 0);
 
@@ -93,12 +93,12 @@ public class CoreService
     public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<TileOnBoard> tiles)
     {
         var player = _infoService.GetPlayer(playerId);
-        var tilesToPlay = tiles.ToList();
+        var tilesToPlay = tiles.ToHashSet();
         var game = _repository.GetGame(player.GameId);
         return Play(tilesToPlay, player, game, true);
     }
 
-    public PlayReturn Play(List<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
+    public PlayReturn Play(HashSet<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
     {
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
         if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
