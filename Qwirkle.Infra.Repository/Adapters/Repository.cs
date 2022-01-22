@@ -149,7 +149,7 @@ public class Repository : IRepository
     private List<TileOnBoard> TilesOnBoardDaoToEntity(IReadOnlyCollection<TileOnBoardDao> tilesOnBoard)
     {
         var tilesDao = _dbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
-        return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.Single(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Color, tileDao.Shape, new Coordinates(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
+        return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.First(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Color, tileDao.Shape, new Coordinates(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
     }
 
     public bool AddBookmarkedOpponent(int userId, string opponentName)
