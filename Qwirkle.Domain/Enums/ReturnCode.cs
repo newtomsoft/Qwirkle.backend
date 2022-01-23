@@ -1,6 +1,6 @@
 ﻿namespace Qwirkle.Domain.Enums;
 
-public enum PlayReturnCode
+public enum ReturnCode
 {
     Ok = 1,
     NotPlayerTurn,

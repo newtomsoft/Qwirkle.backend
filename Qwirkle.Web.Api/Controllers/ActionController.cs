@@ -28,7 +28,7 @@ public class ActionController : ControllerBase
         var gameId = tiles.First().GameId;
         var playerId = _infoService.GetPlayerId(gameId, UserId);
         var playReturn = _coreService.TryPlayTiles(playerId, tiles.Select(t => t.ToTileOnBoard()));
-        if (playReturn.Code == PlayReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(gameId));
+        if (playReturn.Code == ReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(gameId));
         return new ObjectResult(playReturn);
     }
 
@@ -49,7 +49,7 @@ public class ActionController : ControllerBase
         var gameId = tiles.First().GameId;
         var playerId = _infoService.GetPlayerId(gameId, UserId);
         var swapTilesReturn = _coreService.TrySwapTiles(playerId, tiles.Select(t => t.ToTile()));
-        if (swapTilesReturn.Code == PlayReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(gameId));
+        if (swapTilesReturn.Code == ReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(gameId));
         return new ObjectResult(swapTilesReturn);
     }
 
@@ -58,7 +58,7 @@ public class ActionController : ControllerBase
     {
         var playerId = _infoService.GetPlayerId(skipTurnViewModel.GameId, UserId);
         var skipTurnReturn = _coreService.TrySkipTurn(playerId);
-        if (skipTurnReturn.Code == PlayReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(skipTurnViewModel.GameId));
+        if (skipTurnReturn.Code == ReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(skipTurnViewModel.GameId));
         return new ObjectResult(skipTurnReturn);
     }
     

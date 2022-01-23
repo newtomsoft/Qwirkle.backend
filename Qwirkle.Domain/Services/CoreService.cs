@@ -39,24 +39,24 @@ public class CoreService
     {
         var tilesList = tiles.ToList();
         var player = _infoService.GetPlayer(playerId);
-        if (!player.HasTiles(tilesList)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        if (!player.HasTiles(tilesList)) return new ArrangeRackReturn(ReturnCode.PlayerDoesntHaveThisTile);
         ArrangeRack(player, tilesList);
-        return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
+        return new ArrangeRackReturn(ReturnCode.Ok);
     }
 
     public PlayReturn TryPlayTiles(int playerId, IEnumerable<TileOnBoard> tiles)
     {
         var player = _infoService.GetPlayer(playerId);
-        if (!player.IsTurn) return new PlayReturn(player.GameId, PlayReturnCode.NotPlayerTurn, null, null, 0);
+        if (!player.IsTurn) return new PlayReturn(player.GameId, ReturnCode.NotPlayerTurn, null, null, 0);
 
         var tilesToPlay = tiles.ToHashSet();
 
-        if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, PlayReturnCode.PlayerDoesntHaveThisTile, null, null, 0);
+        if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, ReturnCode.PlayerDoesntHaveThisTile, null, null, 0);
 
         var game = _repository.GetGame(player.GameId);
         _game = game;
         var playReturn = Play(tilesToPlay, player, game);
-        if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
+        if (playReturn.Code != ReturnCode.Ok) return playReturn;
 
         playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
         _notification?.SendTilesPlayed(game.Id, playerId, playReturn.Points, playReturn.TilesPlayed.ToHashSet());
@@ -68,8 +68,8 @@ public class CoreService
     {
         var tilesList = tiles.ToList();
         var player = _infoService.GetPlayer(playerId);
-        if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
-        if (!player.HasTiles(tilesList)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = ReturnCode.NotPlayerTurn };
+        if (!player.HasTiles(tilesList)) return new SwapTilesReturn { GameId = player.GameId, Code = ReturnCode.PlayerDoesntHaveThisTile };
         var game = _repository.GetGame(player.GameId);
 
         var swapTilesReturn = SwapTiles(player, tilesList);
@@ -81,8 +81,8 @@ public class CoreService
     public SkipTurnReturn TrySkipTurn(int playerId)
     {
         var player = _infoService.GetPlayer(playerId);
-        var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
-        if (skipTurnReturn.Code != PlayReturnCode.Ok) return skipTurnReturn;
+        var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = player.GameId, Code = ReturnCode.NotPlayerTurn };
+        if (skipTurnReturn.Code != ReturnCode.Ok) return skipTurnReturn;
 
         var game = _repository.GetGame(player.GameId);
         _notification.SendTurnSkipped(game.Id, playerId);
@@ -101,18 +101,18 @@ public class CoreService
     public PlayReturn Play(HashSet<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
     {
         var orderedTilesPlayed = tilesPlayed.OrderBy(t => t.Coordinates).ToList();
-        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
-        if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
+        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, ReturnCode.NotFree, null, null, 0);
+        if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, ReturnCode.TileIsolated, null, null, 0);
 
         var wonPoints = ComputePoints.Compute(game, tilesPlayed);
-        if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
-        if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveNotCompliant()) return new PlayReturn(game.Id, PlayReturnCode.NotMostPointsMove, null, null, 0);
-        if (!IsGameFinished()) return new PlayReturn(game.Id, PlayReturnCode.Ok, orderedTilesPlayed, null, wonPoints);
+        if (wonPoints == 0) return new PlayReturn(game.Id, ReturnCode.TilesDoesntMakedValidRow, null, null, 0);
+        if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveNotCompliant()) return new PlayReturn(game.Id, ReturnCode.NotMostPointsMove, null, null, 0);
+        if (!IsGameFinished()) return new PlayReturn(game.Id, ReturnCode.Ok, orderedTilesPlayed, null, wonPoints);
 
         const int endGameBonusPoints = 6;
         wonPoints += endGameBonusPoints;
         if (!simulationMode) GameOver();
-        return new PlayReturn(game.Id, PlayReturnCode.Ok, orderedTilesPlayed, null, wonPoints);
+        return new PlayReturn(game.Id, ReturnCode.Ok, orderedTilesPlayed, null, wonPoints);
 
         bool IsGameFinished() => game.IsBagEmpty() && AreAllTilesInRackPlayed();
         bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;
@@ -175,7 +175,7 @@ public class CoreService
         else
             SetNextPlayerTurnToPlay(player);
 
-        return new SkipTurnReturn { GameId = player.GameId, Code = PlayReturnCode.Ok };
+        return new SkipTurnReturn { GameId = player.GameId, Code = ReturnCode.Ok };
     }
 
     private SwapTilesReturn SwapTiles(Player player, IEnumerable<Tile> tiles)
@@ -188,7 +188,7 @@ public class CoreService
         _repository.TilesFromBagToPlayer(player, positionsInRack);
         _repository.TilesFromPlayerToBag(player, tilesList);
         _repository.UpdatePlayer(player);
-        return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoService.GetPlayer(player.Id).Rack };
+        return new SwapTilesReturn { GameId = player.GameId, Code = ReturnCode.Ok, NewRack = _infoService.GetPlayer(player.Id).Rack };
     }
 
     private Rack PlayTiles(Player player, IEnumerable<TileOnBoard> tilesToPlay, int points)

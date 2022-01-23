@@ -3,5 +3,5 @@
 public struct SkipTurnReturn
 {
     public int GameId { get; set; }
-    public PlayReturnCode Code { get; set; }
+    public ReturnCode Code { get; set; }
 }

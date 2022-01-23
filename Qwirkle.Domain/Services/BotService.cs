@@ -63,7 +63,7 @@ public class BotService
             foreach (var tile in rack.Tiles)
             {
                 var playReturn = TestPlayTiles(player, new HashSet<TileOnBoard> { TileOnBoard.From(tile, coordinates) }, game);
-                if (playReturn.Code == PlayReturnCode.Ok) with1TilePlayReturns.Add(playReturn);
+                if (playReturn.Code == ReturnCode.Ok) with1TilePlayReturns.Add(playReturn);
             }
         }
         var allPlayReturns = new HashSet<PlayReturn>(with1TilePlayReturns);
@@ -138,7 +138,7 @@ public class BotService
                 currentTilesToTest.UnionWith(tilesAlreadyPlayed);
                 currentTilesToTest.Add(testedTile);
                 var playReturn = TestPlayTiles(player, currentTilesToTest, game);
-                if (playReturn.Code == PlayReturnCode.Ok) playReturns.Add(playReturn);
+                if (playReturn.Code == ReturnCode.Ok) playReturns.Add(playReturn);
             }
         }
         return playReturns;
