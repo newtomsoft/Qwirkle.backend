@@ -15,7 +15,7 @@ public class Expand
             var newgame = new Game(mcts.Game);
 
             var random = new Random();
-            coordinate.TilesPlayed.ToList().ForEach(tileBoard =>
+            coordinate.Move.Tiles.ToList().ForEach(tileBoard =>
             {
 
                 newgame.Board.Tiles.Add(tileBoard);
@@ -33,7 +33,7 @@ public class Expand
 
 
             });
-            var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed.ToHashSet());
+            var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.Move.Tiles.ToHashSet());
             childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.Game.Players[indexPlayer]);
             mcts.Children.Add(childrenNode);
 
@@ -52,8 +52,8 @@ public class Expand
         var random = new Random();
 
 
-        newgame.Board.Tiles.Add(coordinate.TilesPlayed.First());
-        var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == coordinate.TilesPlayed.First().Color && tile.Shape == coordinate.TilesPlayed.First().Shape).FirstOrDefault();
+        newgame.Board.Tiles.Add(coordinate.Move.Tiles.First());
+        var removeTile = newgame.Players[indexPlayer].Rack.Tiles.Where(tile => tile.Color == coordinate.Move.Tiles.First().Color && tile.Shape == coordinate.Move.Tiles.First().Shape).FirstOrDefault();
         newgame.Players[indexPlayer].Rack.Tiles.Remove(removeTile);
 
         if (newgame.Bag.Tiles.Count > 0)
@@ -68,7 +68,7 @@ public class Expand
 
 
 
-        var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed.ToHashSet());
+        var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.Move.Tiles.ToHashSet());
 
 
         childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.Game.Players[indexPlayer]);
@@ -138,7 +138,7 @@ public class Expand
             var currentPlayReturns = new HashSet<PlayReturn>();
             foreach (var playReturn in lastPlayReturn)
             {
-                var tilesPlayed = playReturn.TilesPlayed;
+                var tilesPlayed = playReturn.Move.Tiles;
                 var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
                 var firstGameMove = game.Board.Tiles.Count == 0;
                 if (firstGameMove && tilePlayedNumber == 2) // todo ok but can do better
@@ -154,7 +154,7 @@ public class Expand
             allPlayReturns.AddRange(currentPlayReturns);
             lastPlayReturn = currentPlayReturns;
         }
-        return allPlayReturns.OrderByDescending(x => x.Points).ToList();
+        return allPlayReturns.OrderByDescending(x => x.Move.Points).ToList();
     }
 
     private static RowType RandomRowType()
@@ -241,12 +241,12 @@ public class Expand
     }
     public static PlayReturn GetPlayReturnMCTS(HashSet<TileOnBoard> tilesPlayed, Player player, Game game)
     {
-        if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, ReturnCode.Ok, tilesPlayed.ToList(), null, 1);
-        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, ReturnCode.NotFree, null, null, 0);
-        if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, ReturnCode.TileIsolated, null, null, 0);
+        if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, ReturnCode.Ok, new Move(tilesPlayed.ToList(), 1), null);
+        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, ReturnCode.NotFree, null, null);
+        if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, ReturnCode.TileIsolated, null, null);
         // var wonPoints = computePointsUseCase.ComputePointsMcts(tilesPlayed, game);
         var wonPoints = ComputePoints.Compute(game, tilesPlayed);
-        if (wonPoints == 0) return new PlayReturn(game.Id, ReturnCode.TilesDoesntMakedValidRow, null, null, 0);
+        if (wonPoints == 0) return new PlayReturn(game.Id, ReturnCode.TilesDoesntMakedValidRow, null, null);
 
         if (IsGameFinished())
         {
@@ -255,7 +255,7 @@ public class Expand
 
             game = new Game(game.Id, game.Board, game.Players, true);
         }
-        return new PlayReturn(game.Id, ReturnCode.Ok, tilesPlayed.ToList(), null, wonPoints);
+        return new PlayReturn(game.Id, ReturnCode.Ok, new Move(tilesPlayed.ToList(), wonPoints), null);
 
         bool IsGameFinished() => IsBagEmpty() && AreAllTilesInRackPlayed();
         bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;

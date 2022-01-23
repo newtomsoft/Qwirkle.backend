@@ -40,7 +40,7 @@ public class AiController : ControllerBase
         
         if (playReturns.Count == 0) return new ObjectResult(null);
         if (playReturns.Count > 2) playReturns = playReturns.GetRange(0, 3);
-       playReturns[0].TilesPlayed.ToList().ForEach(tile=>Console.WriteLine("%:  "+ tile)) ;
+       playReturns[0].Move.Tiles.ToList().ForEach(tile=>Console.WriteLine("%:  "+ tile)) ;
         var random = new Random();
         var playerIndexRoot = _mcts.Game.Players.FindIndex(player => player.IsTurn);
         var mctsRoot = _expand.ExpandMcts(_mcts, playReturns, playerIndexRoot);
@@ -77,11 +77,11 @@ public class AiController : ControllerBase
 
 
                           mctsRollout = _expand.ExpandMctsOne(mctsRollout, currentPlayReturns[0], playerIndex);
-                          mctsRollout.Children.First().Game.Players[playerIndex].Points += currentPlayReturns[0].Points;
+                          mctsRollout.Children.First().Game.Players[playerIndex].Points += currentPlayReturns[0].Move.Points;
 
                           mctsRollout.Children.First().NumberOfVisits++;
                           searchPath.Add(mctsRollout);
-                          mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children.First().Game, mctsRollout, currentPlayReturns[0].TilesPlayed.ToHashSet());
+                          mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children.First().Game, mctsRollout, currentPlayReturns[0].Move.Tiles.ToHashSet());
 
 
 

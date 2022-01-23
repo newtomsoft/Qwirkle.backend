@@ -15,7 +15,7 @@ public class BotService
 
     public void Play(Game game, Player bot)
     {
-        var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
+        var tilesToPlay = GetMostPointsTilesToPlay(bot, game).Tiles.ToList();
         if (tilesToPlay.Count > 0)
         {
             _logger?.LogInformation($"Bot play {tilesToPlay.ToLog()}");
@@ -31,15 +31,15 @@ public class BotService
     public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
         var doableMoves = ComputeDoableMoves(player, game, originCoordinates, true);
-        var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
-        return playReturn?.Points ?? 0;
+        var playReturn = doableMoves.OrderByDescending(m => m.Move.Points).FirstOrDefault();
+        return playReturn?.Move.Points ?? 0;
     }
 
-    public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
+    public Move GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
         var doableMoves = ComputeDoableMoves(player, game, originCoordinates, true);
-        var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
-        return playReturn?.TilesPlayed ?? new List<TileOnBoard>();
+        var playReturn = doableMoves.OrderByDescending(m => m.Move.Points).FirstOrDefault();
+        return playReturn?.Move ?? new Move(new List<TileOnBoard>(), 0);
     }
 
     public HashSet<PlayReturn> ComputeDoableMoves(int gameId, int userId)
@@ -75,7 +75,7 @@ public class BotService
             for (var tilePlayedNumber = 2; tilePlayedNumber <= CoreService.TilesNumberPerPlayer; tilePlayedNumber++)
             {
                 var currentPlayReturns = new HashSet<PlayReturn>();
-                foreach (var tilesPlayed in lastPlayReturn.Select(p => p.TilesPlayed))
+                foreach (var tilesPlayed in lastPlayReturn.Select(p => p.Move.Tiles))
                 {
                     var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
                     currentPlayReturns.UnionWith(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed.ToHashSet(), game));

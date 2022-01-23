@@ -138,7 +138,7 @@ public class PlayTilesShould
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-4, 4)), new(TileColor.Blue, TileShape.Clover, Coordinates.From(-4, 3)), new(TileColor.Blue, TileShape.Diamond, Coordinates.From(-4, 2)) };
         var playReturn = _coreService.TryPlayTiles(Player3, tilesToPlay);
         playReturn.Code.ShouldBe(ReturnCode.NotPlayerTurn);
-        playReturn.Points.ShouldBe(0);
+        playReturn.Move.Points.ShouldBe(0);
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class PlayTilesShould
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Blue, TileShape.Circle, Coordinates.From(-3, 4)) };
         var playReturn = _coreService.TryPlayTiles(Player9, tilesToPlay);
         playReturn.Code.ShouldBe(ReturnCode.PlayerDoesntHaveThisTile);
-        playReturn.Points.ShouldBe(0);
+        playReturn.Move.Points.ShouldBe(0);
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public class PlayTilesShould
             };
         var playReturn = _coreService.TryPlayTiles(Player9, tilesToPlay);
         playReturn.Code.ShouldBe(ReturnCode.Ok);
-        playReturn.Points.ShouldBe(6 + 6);
+        playReturn.Move.Points.ShouldBe(6 + 6);
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public class PlayTilesShould
         InitBoard();
 
         var tilesToPlay = new List<TileOnBoard> { new(TileColor.Green, TileShape.Circle, Coordinates.From(-3, 4)), new(TileColor.Green, TileShape.Square, Coordinates.From(-3, 5)), new(TileColor.Green, TileShape.Diamond, Coordinates.From(-3, 6)) };
-        _coreService.TryPlayTiles(Player9, tilesToPlay).Points.ShouldBe(5);
+        _coreService.TryPlayTiles(Player9, tilesToPlay).Move.Points.ShouldBe(5);
 
         void InitBoard()
         {

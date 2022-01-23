@@ -47,19 +47,19 @@ public class CoreService
     public PlayReturn TryPlayTiles(int playerId, IEnumerable<TileOnBoard> tiles)
     {
         var player = _infoService.GetPlayer(playerId);
-        if (!player.IsTurn) return new PlayReturn(player.GameId, ReturnCode.NotPlayerTurn, null, null, 0);
+        if (!player.IsTurn) return new PlayReturn(player.GameId, ReturnCode.NotPlayerTurn, Move.Empty, null);
 
         var tilesToPlay = tiles.ToHashSet();
 
-        if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, ReturnCode.PlayerDoesntHaveThisTile, null, null, 0);
+        if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, ReturnCode.PlayerDoesntHaveThisTile, Move.Empty, null);
 
         var game = _repository.GetGame(player.GameId);
         _game = game;
         var playReturn = Play(tilesToPlay, player, game);
         if (playReturn.Code != ReturnCode.Ok) return playReturn;
 
-        playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
-        _notification?.SendTilesPlayed(game.Id, playerId, playReturn.Points, playReturn.TilesPlayed.ToHashSet());
+        playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Move.Points) };
+        _notification?.SendTilesPlayed(game.Id, playerId, playReturn.Move);
 
         return playReturn;
     }
@@ -101,18 +101,18 @@ public class CoreService
     public PlayReturn Play(HashSet<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
     {
         var orderedTilesPlayed = tilesPlayed.OrderBy(t => t.Coordinates).ToList();
-        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, ReturnCode.NotFree, null, null, 0);
-        if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, ReturnCode.TileIsolated, null, null, 0);
+        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, ReturnCode.NotFree, Move.Empty, Rack.Empty);
+        if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, ReturnCode.TileIsolated, Move.Empty, Rack.Empty);
 
         var wonPoints = ComputePoints.Compute(game, tilesPlayed);
-        if (wonPoints == 0) return new PlayReturn(game.Id, ReturnCode.TilesDoesntMakedValidRow, null, null, 0);
-        if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveNotCompliant()) return new PlayReturn(game.Id, ReturnCode.NotMostPointsMove, null, null, 0);
-        if (!IsGameFinished()) return new PlayReturn(game.Id, ReturnCode.Ok, orderedTilesPlayed, null, wonPoints);
+        if (wonPoints == 0) return new PlayReturn(game.Id, ReturnCode.TilesDoesntMakedValidRow, Move.Empty, Rack.Empty);
+        if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveNotCompliant()) return new PlayReturn(game.Id, ReturnCode.NotMostPointsMove, Move.Empty, Rack.Empty);
+        if (!IsGameFinished()) return new PlayReturn(game.Id, ReturnCode.Ok, new Move(orderedTilesPlayed, wonPoints), Rack.Empty);
 
         const int endGameBonusPoints = 6;
         wonPoints += endGameBonusPoints;
         if (!simulationMode) GameOver();
-        return new PlayReturn(game.Id, ReturnCode.Ok, orderedTilesPlayed, null, wonPoints);
+        return new PlayReturn(game.Id, ReturnCode.Ok, new Move(orderedTilesPlayed, wonPoints), Rack.Empty);
 
         bool IsGameFinished() => game.IsBagEmpty() && AreAllTilesInRackPlayed();
         bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;

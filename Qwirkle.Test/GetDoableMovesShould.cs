@@ -31,7 +31,7 @@ public class GetDoableMovesShould
         _dbContext.SaveChanges();
     }
 
-    private static HashSet<HashSet<TileOnBoard>> TilesCombination(int tilesNumberInCombo, IEnumerable<PlayReturn> playReturns) => playReturns.Where(p => p.TilesPlayed.Count == tilesNumberInCombo).Select(p => p.TilesPlayed.ToHashSet()).ToHashSet();
+    private static HashSet<HashSet<TileOnBoard>> TilesCombination(int tilesNumberInCombo, IEnumerable<PlayReturn> playReturns) => playReturns.Where(p => p.Move.Tiles.Count == tilesNumberInCombo).Select(p => p.Move.Tiles.ToHashSet()).ToHashSet();
     private int TileId(TileShape shape, TileColor color, int idIndex = 0) => Tile(shape, color, idIndex).Id;
     private TileDao Tile(TileShape shape, TileColor color, int idIndex = 0) => _dbContext.Tiles.Where(t => t.Shape == shape && t.Color == color).OrderBy(t => t.Id).AsEnumerable().ElementAt(idIndex);
 

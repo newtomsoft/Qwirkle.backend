@@ -50,8 +50,8 @@ public class UltraBoardGamesPlayerApplication
             var players = new List<Domain.Entities.Player> { bot, opponent };
             var game = new Game(board, players);
             var tilesToPlay = board.Tiles.Count > 0
-                ? _botService.GetMostPointsTilesToPlay(bot, game).ToList()
-                : _botService.GetMostPointsTilesToPlay(bot, game, _originCoordinates).ToList();
+                ? _botService.GetMostPointsTilesToPlay(bot, game).Tiles
+                : _botService.GetMostPointsTilesToPlay(bot, game, _originCoordinates).Tiles;
 
             _scraper.TakeScreenShot();
 
