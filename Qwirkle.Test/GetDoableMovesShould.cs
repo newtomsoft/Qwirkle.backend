@@ -31,7 +31,7 @@ public class GetDoableMovesShould
         _dbContext.SaveChanges();
     }
 
-    private static HashSet<HashSet<TileOnBoard>> TilesCombination(int tilesNumberInCombo, IEnumerable<PlayReturn> playReturns) => playReturns.Where(p => p.TilesPlayed.Count == tilesNumberInCombo).Select(p => p.TilesPlayed).ToHashSet();
+    private static HashSet<HashSet<TileOnBoard>> TilesCombination(int tilesNumberInCombo, IEnumerable<PlayReturn> playReturns) => playReturns.Where(p => p.TilesPlayed.Count == tilesNumberInCombo).Select(p => p.TilesPlayed.ToHashSet()).ToHashSet();
     private int TileId(TileShape shape, TileColor color, int idIndex = 0) => Tile(shape, color, idIndex).Id;
     private TileDao Tile(TileShape shape, TileColor color, int idIndex = 0) => _dbContext.Tiles.Where(t => t.Shape == shape && t.Color == color).OrderBy(t => t.Id).AsEnumerable().ElementAt(idIndex);
 
@@ -54,7 +54,7 @@ public class GetDoableMovesShould
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
         noComboTile.Select(t => t.First().Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
-        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
+        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t).ShouldBe(constTiles.Select(t => t.ToTile()).OrderBy(t => t));// each of tile from rack
 
         TilesCombination(2, playReturns).Count.ShouldBe(0); // no combination possible
         TilesCombination(3, playReturns).Count.ShouldBe(0); // no combination possible
@@ -75,7 +75,7 @@ public class GetDoableMovesShould
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(1); // just 1 tile from the rack is doable
         noComboTile.Select(t => t.First().Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // in coordinates (0,0)
-        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
+        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t).ShouldBe(constTiles.Select(t => t.ToTile()).OrderBy(t => t));// each of tile from rack
 
         TilesCombination(2, playReturns).Count.ShouldBe(0); // no combination possible
         TilesCombination(3, playReturns).Count.ShouldBe(0); // no combination possible
@@ -101,7 +101,7 @@ public class GetDoableMovesShould
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
         noComboTile.Select(t => t.First().Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
-        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
+        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t).ShouldBe(constTiles.Select(t => t.ToTile()).OrderBy(t => t));// each of tile from rack
 
         var combo2Tiles = TilesCombination(2, playReturns);
         combo2Tiles.Count.ShouldBe(6 * 5); // 6 first tile x 5 second tile
@@ -138,7 +138,7 @@ public class GetDoableMovesShould
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(2); // 2 tiles from the rack are all doable
         noComboTile.Select(t => t.First().Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // in coordinates (0,0)
-        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
+        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t).ShouldBe(constTiles.Select(t => t.ToTile()).OrderBy(t => t));// each of tile from rack
 
         TilesCombination(2, playReturns).Count.ShouldBe(2); // 2 first tile x 1 second tiles
         TilesCombination(3, playReturns).Count.ShouldBe(0); // no combination possible
@@ -164,8 +164,8 @@ public class GetDoableMovesShould
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
         noComboTile.Select(t => t.First().Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
-        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
-                                                                                                                                                                                                           // 
+        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t).ShouldBe(constTiles.Select(t => t.ToTile()).OrderBy(t => t));// each of tile from rack
+                                                                                                                                 // 
         var combo2Tiles = TilesCombination(2, playReturns);
         combo2Tiles.Count.ShouldBe(3 * 2); // 3 first tile x 2 second tile
 
@@ -194,7 +194,7 @@ public class GetDoableMovesShould
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(6); // 6 tiles from the rack are all doable
         noComboTile.Select(t => t.First().Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
-        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
+        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t).ShouldBe(constTiles.Select(t => t.ToTile()).OrderBy(t => t));// each of tile from rack
 
         var combo2Tiles = TilesCombination(2, playReturns);
         combo2Tiles.Count.ShouldBe((3 + 1 + 1) * 2); // (3 combo greens + 1 combo circle + 1 combo diamond) *2
@@ -221,7 +221,7 @@ public class GetDoableMovesShould
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(3); // 3 tiles from the rack are all doable
         noComboTile.Select(t => t.First().Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // in coordinates (0,0)
-        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(constTiles.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();// each of tile from rack
+        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t).ShouldBe(constTiles.Select(t => t.ToTile()).OrderBy(t => t));// each of tile from rack
 
         TilesCombination(2, playReturns).Count.ShouldBe(6); // 3 first tile x 2 second tiles
         TilesCombination(3, playReturns).Count.ShouldBe(12); // 3 first tile x 2 second tile x 1 third tile * 2 positions for last
@@ -248,7 +248,7 @@ public class GetDoableMovesShould
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(4); // 4 tiles from the rack are doable because 2 other are sames
         noComboTile.Select(t => t.First().Coordinates).ShouldAllBe(c => c == Coordinates.From(0, 0)); // all in coordinates (0,0)
-        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape).SequenceEqual(expectedTilesPlayable.Select(t => t.ToTile()).OrderBy(t => t.Color).ThenBy(t => t.Shape)).ShouldBeTrue();
+        noComboTile.Select(t => t.First().ToTile()).OrderBy(t => t).ShouldBe(expectedTilesPlayable.Select(t => t.ToTile()).OrderBy(t => t));
 
         TilesCombination(2, playReturns).Count.ShouldBe(0); // no combination possible
         TilesCombination(3, playReturns).Count.ShouldBe(0); // no combination possible
@@ -287,7 +287,7 @@ public class GetDoableMovesShould
 
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(8);
-        noComboTile.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedCoordinates.OrderBy(c => c.X).ThenBy(c => c.Y));
+        noComboTile.Select(t => t.First().Coordinates).OrderBy(c => c).ShouldBe(expectedCoordinates.OrderBy(c => c));
         noComboTile.Select(t => t.First().ToTile()).ShouldAllBe(t => t == expectedTilePlayable.ToTile());
         TilesCombination(2, playReturns).Count.ShouldBe(0); // no combination possible
         TilesCombination(3, playReturns).Count.ShouldBe(0); // no combination possible
@@ -352,28 +352,37 @@ public class GetDoableMovesShould
 
         var expectedCoordinatesForNoComboTile = new List<Coordinates>
         {
-            Coordinates.From(10, 52), Coordinates.From(10, 49), Coordinates.From(9, 50), Coordinates.From(12, 50),
+            Coordinates.From(9, 50), Coordinates.From(10, 49), Coordinates.From(10, 52), Coordinates.From(12, 50),
         };
 
         var expectedFirstCoordinatesForTwoTilesCombination = new List<Coordinates>
         {
-            Coordinates.From(10, 52), Coordinates.From(10, 49), Coordinates.From(09, 50), Coordinates.From(12, 50),
+            Coordinates.From(09, 49), Coordinates.From(09, 49), Coordinates.From(09, 52), Coordinates.From(12, 49),
         };
 
         var expectedSecondCoordinatesForTwoTilesCombination = new List<Coordinates>
         {
-            Coordinates.From(09, 52), Coordinates.From(09, 49), Coordinates.From(09, 49), Coordinates.From(12, 49),
+            Coordinates.From(09, 50), Coordinates.From(10, 49), Coordinates.From(10, 52), Coordinates.From(12, 50),
+        };
+
+        var expectedCoordinatesForTwoTilesCombination = new List<List<Coordinates>>
+        {
+            new() {Coordinates.From(09, 49), Coordinates.From(09, 50)},
+            new() {Coordinates.From(09, 49), Coordinates.From(10, 49)},
+            new() {Coordinates.From(09, 52), Coordinates.From(10, 50)},
+            new() {Coordinates.From(12, 49), Coordinates.From(12, 52)},
         };
 
         var playReturns = _botService.ComputeDoableMoves(gameId, _userId);
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(expectedCoordinatesForNoComboTile.Count);
-        noComboTile.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedCoordinatesForNoComboTile.OrderBy(c => c.X).ThenBy(c => c.Y));
+        noComboTile.Select(t => t.First().Coordinates).OrderBy(c => c).ShouldBe(expectedCoordinatesForNoComboTile);
 
         var twoTilesCombination = TilesCombination(2, playReturns);
         twoTilesCombination.Count.ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.Count);
-        twoTilesCombination.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
-        twoTilesCombination.Select(t => t.Last().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedSecondCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
+        twoTilesCombination.Select(comb => comb.Min(t => t.Coordinates)).OrderBy(c => c).ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.OrderBy(c => c));
+        twoTilesCombination.Select(comb => comb.Max(t => t.Coordinates)).OrderBy(c => c).ShouldBe(expectedSecondCoordinatesForTwoTilesCombination.OrderBy(c => c));
+        //twoTilesCombination.Select(comb => comb.Select(t => t.Coordinates)).OrderBy(c => c).ShouldBe(expectedCoordinatesForTwoTilesCombination.OrderBy(c => c));
     }
 
     [Fact]
@@ -409,23 +418,25 @@ public class GetDoableMovesShould
 
         var expectedFirstCoordinatesForTwoTilesCombination = new List<Coordinates>
         {
-            Coordinates.From(09, 49), Coordinates.From(09, 49), Coordinates.From(9, 50), Coordinates.From(12, 50),
+            Coordinates.From(09, 48),Coordinates.From(09, 49), Coordinates.From(09, 49), Coordinates.From(12, 49),
         };
 
         var expectedSecondCoordinatesForTwoTilesCombination = new List<Coordinates>
         {
-            Coordinates.From(09, 48), Coordinates.From(09, 50), Coordinates.From(9, 49), Coordinates.From(12, 49),
+            Coordinates.From(9, 49), Coordinates.From(09, 50), Coordinates.From(9, 50), Coordinates.From(12, 50)
         };
 
         var playReturns = _botService.ComputeDoableMoves(gameId, _userId);
         var noComboTile = TilesCombination(1, playReturns);
         noComboTile.Count.ShouldBe(expectedCoordinatesForNoComboTile.Count);
-        noComboTile.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedCoordinatesForNoComboTile.OrderBy(c => c.X).ThenBy(c => c.Y));
+        noComboTile.Select(t => t.First().Coordinates).OrderBy(c => c).ShouldBe(expectedCoordinatesForNoComboTile.OrderBy(c => c));
 
         var twoTilesCombination = TilesCombination(2, playReturns);
         twoTilesCombination.Count.ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.Count);
-        twoTilesCombination.Select(t => t.First().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
-        twoTilesCombination.Select(t => t.Last().Coordinates).OrderBy(c => c.X).ThenBy(c => c.Y).ShouldBe(expectedSecondCoordinatesForTwoTilesCombination.OrderBy(c => c.X).ThenBy(c => c.Y));
+
+        var toto = twoTilesCombination.Select(t => t.First().Coordinates).OrderBy(c => c).ToList();
+        twoTilesCombination.Select(comb => comb.Min(t => t.Coordinates)).OrderBy(c => c).ShouldBe(expectedFirstCoordinatesForTwoTilesCombination.OrderBy(c => c));
+        twoTilesCombination.Select(comb => comb.Max(t => t.Coordinates)).OrderBy(c => c).ShouldBe(expectedSecondCoordinatesForTwoTilesCombination.OrderBy(c => c));
 
     }
 }

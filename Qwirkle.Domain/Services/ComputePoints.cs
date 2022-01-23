@@ -41,19 +41,19 @@ public static class ComputePoints
         return totalPoints;
     }
 
-    private static int ComputePointsInLine(HashSet<TileOnBoard> tiles, Game game)
+    private static int ComputePointsInLine(IReadOnlyCollection<TileOnBoard> tiles, Game game)
     {
-        var firstTile = tiles.First();
+        var (_, (_, y)) = tiles.First();
         var allTilesAlongReferenceTiles = tiles.ToList();
         var min = tiles.Min(t => t.Coordinates.X); var max = tiles.Max(t => t.Coordinates.X);
-        var tilesBetweenReference = game.Board.Tiles.Where(t => t.Coordinates.Y == firstTile.Coordinates.Y && min <= t.Coordinates.X && t.Coordinates.X <= max);
+        var tilesBetweenReference = game.Board.Tiles.Where(t => t.Coordinates.Y == y && min <= t.Coordinates.X && t.Coordinates.X <= max);
         allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
-        var tilesRight = game.Board.Tiles.Where(t => t.Coordinates.Y == firstTile.Coordinates.Y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
+        var tilesRight = game.Board.Tiles.Where(t => t.Coordinates.Y == y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
         var tilesRightConsecutive = tilesRight.FirstConsecutives(Direction.Right, max);
         allTilesAlongReferenceTiles.AddRange(tilesRightConsecutive);
 
-        var tilesLeft = game.Board.Tiles.Where(t => t.Coordinates.Y == firstTile.Coordinates.Y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
+        var tilesLeft = game.Board.Tiles.Where(t => t.Coordinates.Y == y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
         var tilesLeftConsecutive = tilesLeft.FirstConsecutives(Direction.Left, min);
         allTilesAlongReferenceTiles.AddRange(tilesLeftConsecutive);
 
@@ -63,19 +63,19 @@ public static class ComputePoints
         return allTilesAlongReferenceTiles.Count != TilesNumberForAQwirkle ? allTilesAlongReferenceTiles.Count : PointsForAQwirkle;
     }
 
-    private static int ComputePointsInColumn(HashSet<TileOnBoard> tiles, Game game)
+    private static int ComputePointsInColumn(IReadOnlyCollection<TileOnBoard> tiles, Game game)
     {
-        var firstTile = tiles.First();
+        var (_, (x, _)) = tiles.First();
         var allTilesAlongReferenceTiles = tiles.ToList();
         var min = tiles.Min(t => t.Coordinates.Y); var max = tiles.Max(t => t.Coordinates.Y);
-        var tilesBetweenReference = game.Board.Tiles.Where(t => t.Coordinates.X == firstTile.Coordinates.X && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
+        var tilesBetweenReference = game.Board.Tiles.Where(t => t.Coordinates.X == x && min <= t.Coordinates.Y && t.Coordinates.Y <= max);
         allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
-        var tilesUp = game.Board.Tiles.Where(t => t.Coordinates.X == firstTile.Coordinates.X && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
+        var tilesUp = game.Board.Tiles.Where(t => t.Coordinates.X == x && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
         var tilesUpConsecutive = tilesUp.FirstConsecutives(Direction.Top, max);
         allTilesAlongReferenceTiles.AddRange(tilesUpConsecutive);
 
-        var tilesBottom = game.Board.Tiles.Where(t => t.Coordinates.X == firstTile.Coordinates.X && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
+        var tilesBottom = game.Board.Tiles.Where(t => t.Coordinates.X == x && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
         var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
         allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
 

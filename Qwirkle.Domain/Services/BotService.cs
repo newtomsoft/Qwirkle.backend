@@ -39,7 +39,7 @@ public class BotService
     {
         var doableMoves = ComputeDoableMoves(player, game, originCoordinates, true);
         var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
-        return playReturn?.TilesPlayed ?? new HashSet<TileOnBoard>();
+        return playReturn?.TilesPlayed ?? new List<TileOnBoard>();
     }
 
     public HashSet<PlayReturn> ComputeDoableMoves(int gameId, int userId)
@@ -78,7 +78,7 @@ public class BotService
                 foreach (var tilesPlayed in lastPlayReturn.Select(p => p.TilesPlayed))
                 {
                     var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
-                    currentPlayReturns.UnionWith(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, game));
+                    currentPlayReturns.UnionWith(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed.ToHashSet(), game));
                 }
                 allPlayReturns.UnionWith(currentPlayReturns);
                 lastPlayReturn = currentPlayReturns;
@@ -89,7 +89,7 @@ public class BotService
 
     private IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, HashSet<TileOnBoard> tilesAlreadyPlayed, Game game)
     {
-        int tilesPlayedNumber = tilesAlreadyPlayed.Count;
+        var tilesPlayedNumber = tilesAlreadyPlayed.Count;
         var coordinatesPlayed = tilesAlreadyPlayed.Select(tilePlayed => tilePlayed.Coordinates).ToList();
 
         sbyte coordinateChangingMin, coordinateChangingMax;
@@ -108,7 +108,6 @@ public class BotService
 
         var coordinateFixed = rowType is RowType.Line ? coordinatesPlayed.First().Y : coordinatesPlayed.First().X;
 
-        var playReturns = new List<PlayReturn>();
         var boardAdjoiningCoordinatesRow = rowType is RowType.Line ?
             boardAdjoiningCoordinates.Where(c => c.Y == coordinateFixed).Select(c => (int)c.X).ToList()
             : boardAdjoiningCoordinates.Where(c => c.X == coordinateFixed).Select(c => (int)c.Y).ToList();
@@ -128,6 +127,7 @@ public class BotService
         boardAdjoiningCoordinatesRow.Remove(coordinateChangingMax);
         boardAdjoiningCoordinatesRow.Remove(coordinateChangingMin);
 
+        var playReturns = new HashSet<PlayReturn>();
         foreach (var currentCoordinate in boardAdjoiningCoordinatesRow)
         {
             foreach (var tile in tilesToTest)

@@ -96,7 +96,7 @@ public class SwapTilesShould
             var tileToSwap = player.Rack.Tiles[i];
             var oldRackWithoutSwappedTile = new List<TileOnPlayer>(player.Rack.Tiles);
             oldRackWithoutSwappedTile.Remove(tileToSwap);
-            var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t.Shape).ThenBy(t => t.Color).ToList();
+            var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t).ToList();
 
             var tilesToSwap = new List<Tile> { tileToSwap };
             var swapReturn = _coreService.TrySwapTiles(player.Id, tilesToSwap);
@@ -129,7 +129,7 @@ public class SwapTilesShould
                 var oldRackWithoutSwappedTile = new List<TileOnPlayer>(player.Rack.Tiles);
                 oldRackWithoutSwappedTile.Remove(tileToSwap0);
                 oldRackWithoutSwappedTile.Remove(tileToSwap1);
-                var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t.Shape).ThenBy(t => t.Color).ToList();
+                var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t).ToList();
 
                 var tilesToSwap = new List<Tile> { tileToSwap0, tileToSwap1 };
                 var swapReturn = _coreService.TrySwapTiles(player.Id, tilesToSwap);
@@ -167,7 +167,7 @@ public class SwapTilesShould
                     oldRackWithoutSwappedTile.Remove(tileToSwap0);
                     oldRackWithoutSwappedTile.Remove(tileToSwap1);
                     oldRackWithoutSwappedTile.Remove(tileToSwap2);
-                    var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t.Shape).ThenBy(t => t.Color).ToList();
+                    var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t).ToList();
 
                     var tilesToSwap = new List<Tile> { tileToSwap0, tileToSwap1, tileToSwap2 };
                     var swapReturn = _coreService.TrySwapTiles(player.Id, tilesToSwap);
@@ -210,7 +210,7 @@ public class SwapTilesShould
                         oldRackWithoutSwappedTile.Remove(tileToSwap1);
                         oldRackWithoutSwappedTile.Remove(tileToSwap2);
                         oldRackWithoutSwappedTile.Remove(tileToSwap3);
-                        var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t.Shape).ThenBy(t => t.Color).ToList();
+                        var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t).ToList();
 
                         var tilesToSwap = new List<Tile> { tileToSwap0, tileToSwap1, tileToSwap2, tileToSwap3 };
                         var swapReturn = _coreService.TrySwapTiles(player.Id, tilesToSwap);
@@ -258,7 +258,7 @@ public class SwapTilesShould
                             oldRackWithoutSwappedTile.Remove(tileToSwap2);
                             oldRackWithoutSwappedTile.Remove(tileToSwap3);
                             oldRackWithoutSwappedTile.Remove(tileToSwap4);
-                            var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t.Shape).ThenBy(t => t.Color).ToList();
+                            var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t).ToList();
 
                             var tilesToSwap = new List<Tile> { tileToSwap0, tileToSwap1, tileToSwap2, tileToSwap3, tileToSwap4 };
                             var swapReturn = _coreService.TrySwapTiles(player.Id, tilesToSwap);
@@ -301,7 +301,7 @@ public class SwapTilesShould
         oldRackWithoutSwappedTile.Remove(tileToSwap4);
         oldRackWithoutSwappedTile.Remove(tileToSwap5);
 
-        var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t.Shape).ThenBy(t => t.Color).ToList();
+        var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t).ToList();
 
         var swapReturn = _coreService.TrySwapTiles(player.Id, tilesToSwap);
         swapReturn.Code.ShouldBe(PlayReturnCode.Ok);

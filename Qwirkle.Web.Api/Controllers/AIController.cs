@@ -81,7 +81,7 @@ public class AiController : ControllerBase
 
                           mctsRollout.Children.First().NumberOfVisits++;
                           searchPath.Add(mctsRollout);
-                          mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children.First().Game, mctsRollout, currentPlayReturns[0].TilesPlayed);
+                          mctsRollout = new MonteCarloTreeSearchNode(mctsRollout.Children.First().Game, mctsRollout, currentPlayReturns[0].TilesPlayed.ToHashSet());
 
 
 

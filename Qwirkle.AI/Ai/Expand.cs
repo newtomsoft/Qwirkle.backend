@@ -33,7 +33,7 @@ public class Expand
 
 
             });
-            var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed);
+            var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed.ToHashSet());
             childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.Game.Players[indexPlayer]);
             mcts.Children.Add(childrenNode);
 
@@ -68,7 +68,7 @@ public class Expand
 
 
 
-        var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed);
+        var childrenNode = new MonteCarloTreeSearchNode(newgame, mcts, coordinate.TilesPlayed.ToHashSet());
 
 
         childrenNode = SetNextPlayerTurnToPlay(childrenNode, childrenNode.Game.Players[indexPlayer]);
@@ -143,12 +143,12 @@ public class Expand
                 var firstGameMove = game.Board.Tiles.Count == 0;
                 if (firstGameMove && tilePlayedNumber == 2) // todo ok but can do better
                 {
-                    currentPlayReturns.UnionWith(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true, game));
+                    currentPlayReturns.UnionWith(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed.ToHashSet(), true, game));
                 }
                 else
                 {
                     foreach (RowType rowType in Enum.GetValues(typeof(RowType)))
-                        currentPlayReturns.UnionWith(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false, game));
+                        currentPlayReturns.UnionWith(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed.ToHashSet(), false, game));
                 }
             }
             allPlayReturns.AddRange(currentPlayReturns);
@@ -241,7 +241,7 @@ public class Expand
     }
     public static PlayReturn GetPlayReturnMCTS(HashSet<TileOnBoard> tilesPlayed, Player player, Game game)
     {
-        if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, 1);
+        if (game.Board.Tiles.Count == 0 && tilesPlayed.Count == 1) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed.ToList(), null, 1);
         if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
         if (IsBoardNotEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
         // var wonPoints = computePointsUseCase.ComputePointsMcts(tilesPlayed, game);
@@ -255,7 +255,7 @@ public class Expand
 
             game = new Game(game.Id, game.Board, game.Players, true);
         }
-        return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
+        return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed.ToList(), null, wonPoints);
 
         bool IsGameFinished() => IsBagEmpty() && AreAllTilesInRackPlayed();
         bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;
