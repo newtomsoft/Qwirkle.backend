@@ -7,6 +7,8 @@ public record TileOnBoard(Tile Tile, Coordinates Coordinates) : Tile(Tile)
     public static TileOnBoard From(Tile tile, Coordinates coordinates) => new(tile, coordinates);
     public static TileOnBoard From(TileOnPlayer tileOnPlayer, Coordinates coordinates) => new(tileOnPlayer, coordinates);
     public static TileOnBoard From(TileOnBoard tile) => new(tile, tile.Coordinates);
+    public static TileOnBoard From(TileShape shape, TileColor color, Coordinates coordinates) => new(new Tile(color, shape), coordinates);
+    public static TileOnBoard From(TileShape shape, TileColor color, Abscissa x, Ordinate y) => new(new Tile(color, shape), Coordinates.From(x, y));
 
     public Tile ToTile() => new(Color, Shape);
 }
