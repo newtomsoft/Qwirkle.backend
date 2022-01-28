@@ -15,7 +15,7 @@ public class BotService
 
     public void Play(Game game, Player bot)
     {
-        var tilesToPlay = GetMostPointsTilesToPlay(bot, game).Tiles.ToList();
+        var tilesToPlay = GetBestMove(bot, game).Tiles.ToList();
         if (tilesToPlay.Count > 0)
         {
             _logger?.LogInformation($"Bot play {tilesToPlay.ToLog()}");
@@ -35,11 +35,25 @@ public class BotService
         return playReturn?.Move.Points ?? 0;
     }
 
-    public Move GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
+    public Move GetBestMove(Player player, Game game, Coordinates originCoordinates = null)
     {
-        var doableMoves = ComputeDoableMoves(player, game, originCoordinates, true);
-        var playReturn = doableMoves.OrderByDescending(m => m.Move.Points).FirstOrDefault();
-        return playReturn?.Move ?? new Move(new List<TileOnBoard>(), 0);
+        var moves = ComputeDoableMoves(player, game, originCoordinates, true).Select(r => r.Move).OrderByDescending(m => m.Points).ToList();
+
+        if (moves.Count == 0) return Move.Empty;
+
+        var moveWithMaxPoints = moves.First();
+        var moveWithMaxTilesAndPoint = moves.OrderByDescending(m => m.TilesNumber).ThenByDescending(m => m.Points).First();
+
+        if (player.Rack.TilesNumber == moveWithMaxTilesAndPoint.TilesNumber) return moveWithMaxTilesAndPoint;
+        if (moveWithMaxPoints!.Points >= CoreService.PointsForAQwirkle) return moveWithMaxPoints;
+
+        var tilesInBagNumber = game.Bag.TilesNumber;
+        if (tilesInBagNumber == 0 || moveWithMaxTilesAndPoint!.TilesNumber > tilesInBagNumber + 1) return moveWithMaxTilesAndPoint;
+
+        var moveUsingDuplicateTile = MoveUsingDuplicateTile(moves, player.Rack);
+        if (moveUsingDuplicateTile.TilesNumber > 0 && moveUsingDuplicateTile.Points >= moveWithMaxPoints.Points * 2 / 3) return moveUsingDuplicateTile;
+
+        return moveWithMaxPoints;
     }
 
     public HashSet<PlayReturn> ComputeDoableMoves(int gameId, int userId)
@@ -48,7 +62,6 @@ public class BotService
         var game = _infoService.GetGame(gameId);
         return ComputeDoableMoves(player, game);
     }
-
 
     private HashSet<PlayReturn> ComputeDoableMoves(Player player, Game game, Coordinates originCoordinates = null, bool simulation = false)
     {
@@ -166,6 +179,20 @@ public class BotService
             _logger?.LogInformation("Bot skip turn");
             Skip(bot.Id);
         }
+    }
+
+    private static Move MoveUsingDuplicateTile(IEnumerable<Move> moves, Rack rack)
+    {
+        foreach (var move in moves)
+        {
+            foreach (var tile in move.Tiles)
+            {
+                var tilesInRack = rack.Tiles.Select(t => t.ToTile()).ToList();
+                tilesInRack.Remove(tile.ToTile());
+                if (tilesInRack.Contains(tile.ToTile())) return move;
+            }
+        }
+        return Move.Empty;
     }
 
     private void Swap(Player bot, int tilesToSwapNumber)

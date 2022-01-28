@@ -8,4 +8,5 @@ public interface INotification
     void SendTilesSwapped(int gameId, int playerId);
     void SendGameOver(int gameId, List<int> winnersPlayersIds);
     void SendInstantGameStarted(int playersNumberForStartGame);
+    void SendInstantGameExpected(int playersNumberForStartGame, string userName);
 }

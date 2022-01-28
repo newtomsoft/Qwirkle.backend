@@ -7,9 +7,9 @@ public class HubQwirkle : Hub
 
     public HubQwirkle()
     {
-        InstantGameWaitingUsers.Add(2, new HashSet<NotificationUser>());
-        InstantGameWaitingUsers.Add(3, new HashSet<NotificationUser>());
-        InstantGameWaitingUsers.Add(4, new HashSet<NotificationUser>());
+        InstantGameWaitingUsers.TryAdd(2, new HashSet<NotificationUser>());
+        InstantGameWaitingUsers.TryAdd(3, new HashSet<NotificationUser>());
+        InstantGameWaitingUsers.TryAdd(4, new HashSet<NotificationUser>());
     }
 
     public override Task OnDisconnectedAsync(Exception exception)

@@ -2,15 +2,12 @@
 
 public static class ComputePoints
 {
-    private const int TilesNumberForAQwirkle = 6;
-    private const int PointsForAQwirkle = 12;
-
     public static int Compute(Game game, HashSet<TileOnBoard> tiles)
     {
         if (game.IsBoardEmpty() && tiles.Count == 1) return 1;
 
-        var firstTile = tiles.First();
-        if (tiles.Count(t => t.Coordinates.Y == firstTile.Coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == firstTile.Coordinates.X) != tiles.Count)
+        var (_, coordinates) = tiles.First();
+        if (tiles.Count(t => t.Coordinates.Y == coordinates.Y) != tiles.Count && tiles.Count(t => t.Coordinates.X == coordinates.X) != tiles.Count)
             return 0;
 
         var totalPoints = 0;
@@ -29,7 +26,7 @@ public static class ComputePoints
             }
         }
 
-        if (tiles.Count(t => t.Coordinates.X == firstTile.Coordinates.X) != tiles.Count) return totalPoints;
+        if (tiles.Count(t => t.Coordinates.X == coordinates.X) != tiles.Count) return totalPoints;
         if ((points = ComputePointsInColumn(tiles, game)) == 0) return 0;
         if (points != 1) totalPoints += points;
         if (tiles.Count <= 1) return totalPoints;
@@ -60,7 +57,7 @@ public static class ComputePoints
         if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.FormCompliantRow())
             return 0;
 
-        return allTilesAlongReferenceTiles.Count != TilesNumberForAQwirkle ? allTilesAlongReferenceTiles.Count : PointsForAQwirkle;
+        return allTilesAlongReferenceTiles.Count != CoreService.TilesNumberForAQwirkle ? allTilesAlongReferenceTiles.Count : CoreService.PointsForAQwirkle;
     }
 
     private static int ComputePointsInColumn(IReadOnlyCollection<TileOnBoard> tiles, Game game)
@@ -82,7 +79,7 @@ public static class ComputePoints
         if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.FormCompliantRow())
             return 0;
 
-        return allTilesAlongReferenceTiles.Count != TilesNumberForAQwirkle ? allTilesAlongReferenceTiles.Count : PointsForAQwirkle;
+        return allTilesAlongReferenceTiles.Count != CoreService.TilesNumberForAQwirkle ? allTilesAlongReferenceTiles.Count : CoreService.PointsForAQwirkle;
     }
 
     private static bool AreNumbersConsecutive(IReadOnlyCollection<sbyte> numbers) => numbers.Count > 0 && numbers.Distinct().Count() == numbers.Count && numbers.Min() + numbers.Count - 1 == numbers.Max();

@@ -11,8 +11,7 @@ public class UserService
         _authentication = authentication;
     }
 
-
-    public bool IsBot(string userName) => _authentication.IsBot(userName);
+    public bool IsBot(int nextPlayerId) => _authentication.IsBot(nextPlayerId);
 
     public async Task<bool> Register(User user, string password) => await _authentication.RegisterAsync(user, password);
 

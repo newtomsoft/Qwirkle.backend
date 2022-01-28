@@ -1,25 +1,25 @@
 ﻿namespace Qwirkle.UltraBoardGames.Player;
 
-public class GameScraper : IDisposable
+public sealed class GameScraper
 {
     private const string GamePageUrlPlaySecond = "https://www.ultraboardgames.com/qwirkle/game.php?startcomputer";
     private const string GamePageUrlPlayFirst = "https://www.ultraboardgames.com/qwirkle/game.php?startplayer";
     private static string QwirkleGamePageWithRandomFirstPlayer => new Random().Next(2) == 0 ? GamePageUrlPlayFirst : GamePageUrlPlaySecond;
     private readonly IWebDriver _webDriver;
+
     private readonly ILogger<UltraBoardGamesPlayerApplication> _logger;
-    private string _pathToGameImages = string.Empty;
+    private ScreenShotMaker? _screenShotMaker;
 
     public GameScraper(ILogger<UltraBoardGamesPlayerApplication> logger, IWebDriverFactory webDriverFactory)
     {
         _logger = logger;
         _webDriver = webDriverFactory.CreateDriver();
-        _ = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(5));
+        _ = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(2));
     }
 
     public void GoToGame()
     {
-        _pathToGameImages = DateTime.Now.ToString("yyyy-MM-dd-HH_mm_ss");
-        Directory.CreateDirectory(_pathToGameImages);
+        _screenShotMaker = new ScreenShotMaker();
         _webDriver.Navigate().GoToUrl(QwirkleGamePageWithRandomFirstPlayer);
         _webDriver.Manage().Window.Maximize();
     }
@@ -58,30 +58,37 @@ public class GameScraper : IDisposable
         }
     }
 
+    public void CleanWindow()
+    {
+        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('header').style.display = 'none';");
+        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('.breadcrumb').style.display = 'none';");
+        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('.post-title').style.display = 'none';");
+        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('.nextpage').style.display = 'none';");
+        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('.bg-danger').style.display = 'none';");
+        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('footer').style.display = 'none';");
+        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.getElementById('main').style.marginTop = '-65px';");
+    }
+
     public int GetTilesOnBag()
     {
         var brutTilesOnBag = _webDriver.FindElement(By.Id("bag_status")).Text;
         return ConvertToInt(brutTilesOnBag);
     }
 
-    public int GetPlayerPoints()
+    public void AdjustBoardView()
     {
-        var brutPoints = _webDriver.FindElement(By.Id("score_player")).Text;
-        return ConvertToInt(brutPoints, '(');
+        var scorePlayer = _webDriver.FindElement(By.Id("score_player"));
+        var scoreComputer = _webDriver.FindElement(By.Id("score_player"));
+        var scoreBoard = _webDriver.FindElement(By.Id("scoreboard1"));
+        while (!IsVisibleInViewport(scoreBoard) || !IsVisibleInViewport(scorePlayer) || !IsVisibleInViewport(scoreComputer))
+            ((IJavaScriptExecutor)_webDriver).ExecuteScript("Qwirkle.adjustMapSize(0,-1)");
     }
 
-    public int GetOpponentPoints()
-    {
-        var brutPoints = _webDriver.FindElement(By.Id("score_computer")).Text;
-        return ConvertToInt(brutPoints, '(');
-    }
+    public int GetPlayerPoints() => ConvertToInt(_webDriver.FindElement(By.Id("score_player")).Text, '(');
 
-    public List<TileOnPlayer> GetTilesOnPlayer()
-    {
-        var tilesCodes = GetTilesOnPlayerCodes();
-        return tilesCodes.Select(positionTile => new TileOnPlayer(positionTile.Key, positionTile.Value.ToTile())).ToList();
-    }
+    public int GetOpponentPoints() => ConvertToInt(_webDriver.FindElement(By.Id("score_computer")).Text, '(');
 
+    public List<TileOnPlayer> GetTilesOnPlayer() => TilesOnPlayerCodes().Select(positionTile => new TileOnPlayer(positionTile.Key, positionTile.Value.ToTile())).ToList();
 
     /// <returns>0 tiles if error</returns>
     public HashSet<TileOnBoard> GetTilesPlayedByOpponent()
@@ -99,28 +106,8 @@ public class GameScraper : IDisposable
             }
             catch (Exception exception)
             {
-                _logger.LogError("{applicationEvent} in {methodName} {message} at {dateTime}", "Exception", System.Reflection.MethodBase.GetCurrentMethod()!.Name, exception.Message, DateTime.Now);
+                _logger.LogError("Exception in {methodName} {message}", MethodBase.GetCurrentMethod()!.Name, exception.Message);
                 return new HashSet<TileOnBoard>();
-            }
-        }
-        return tilesOnBoard;
-    }
-
-    public List<TileOnBoard> GetTilesOnBoard()
-    {
-        var tilesOnBoard = new List<TileOnBoard>();
-        var domTiles = _webDriver.FindElements(By.ClassName("ui-droppable")).ToList();
-        foreach (var domTile in domTiles)
-        {
-            try
-            {
-                var fullImageName = domTile.FindElement(By.TagName("img")).GetAttribute("src");
-                var coordinates = Coordinates.From(int.Parse(domTile.GetAttribute("mapx")), int.Parse(domTile.GetAttribute("mapy")));
-                tilesOnBoard.Add(TileOnBoard.From(GetImageCode(fullImageName).ToTile(), coordinates));
-            }
-            catch
-            {
-                // ignored
             }
         }
         return tilesOnBoard;
@@ -144,7 +131,31 @@ public class GameScraper : IDisposable
         ((IJavaScriptExecutor)_webDriver).ExecuteScript("Qwirkle.passConfirmation(1)");
     }
 
-    private Dictionary<RackPosition, UltraBoardGamesTileImageCode> GetTilesOnPlayerCodes()
+    public void CloseEndWindow()
+    {
+        try
+        {
+            var inputNameElement = _webDriver.FindElement(By.Id("nicknamepop"));
+            inputNameElement.SendKeys(RandomNickName());
+        }
+        catch
+        {
+            // ignored
+        }
+        _webDriver.FindElement(By.ClassName("messageboard_button")).Click();
+        ((IJavaScriptExecutor)_webDriver).ExecuteScript("Qwirkle.removeMessageBoard()");
+        TakeScreenShot();
+    }
+
+    public void TakeScreenShot()
+    {
+        byte[] GetByteArrayScreenShot() => ((ITakesScreenshot)_webDriver).GetScreenshot().AsByteArray;
+
+        var elements = new List<IWebElement> { _webDriver.FindElement(By.Id("board")), _webDriver.FindElement(By.Id("scoreboard1")), _webDriver.FindElement(By.Id("score_computer_div")) };
+        _screenShotMaker!.SaveCroppedScreenShot(GetByteArrayScreenShot, elements);
+    }
+
+    private Dictionary<RackPosition, UltraBoardGamesTileImageCode> TilesOnPlayerCodes()
     {
         var tilesCodes = new Dictionary<RackPosition, UltraBoardGamesTileImageCode>();
         for (var i = 0; i < CoreService.TilesNumberPerPlayer; i++)
@@ -174,7 +185,7 @@ public class GameScraper : IDisposable
             }
             catch (Exception exception)
             {
-                _logger?.LogError("{applicationEvent} in {methodName} {message} at {dateTime}", "Exception", System.Reflection.MethodBase.GetCurrentMethod()!.Name, exception.Message, DateTime.Now);
+                _logger?.LogError("Exception in {methodName} {message}", MethodBase.GetCurrentMethod()!.Name, exception.Message);
                 ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.getElementById('ezmobfooter').style.display='none';");
             }
         }
@@ -182,7 +193,7 @@ public class GameScraper : IDisposable
 
     private void PlaceTilesOnBoard(List<TileOnBoard> tiles)
     {
-        var playerTilesCodes = GetTilesOnPlayerCodes();
+        var playerTilesCodes = TilesOnPlayerCodes();
         foreach (var tile in tiles)
         {
             var elementFrom = FindElementMoveFrom(tile, playerTilesCodes);
@@ -195,7 +206,7 @@ public class GameScraper : IDisposable
             }
             catch (Exception exception)
             {
-                _logger?.LogError("{applicationEvent} in {methodName} {message} at {dateTime}", "Exception", System.Reflection.MethodBase.GetCurrentMethod()!.Name, exception.Message, DateTime.Now);
+                _logger?.LogError("Exception in {methodName} {message}", MethodBase.GetCurrentMethod()!.Name, exception.Message);
                 Task.Delay(100);
                 PlaceTilesOnBoard(tiles);
             }
@@ -216,7 +227,7 @@ public class GameScraper : IDisposable
             }
             catch (Exception exception)
             {
-                _logger?.LogError("{applicationEvent} in {methodName} {message} at {dateTime}", "Exception", System.Reflection.MethodBase.GetCurrentMethod()!.Name, exception.Message, DateTime.Now);
+                _logger?.LogError("Exception in {methodName} {message}", MethodBase.GetCurrentMethod()!.Name, exception.Message);
                 Task.Delay(100);
                 PlaceTilesOnBag(number);
             }
@@ -238,7 +249,7 @@ public class GameScraper : IDisposable
         }
         catch (Exception exception)
         {
-            _logger.LogError("{applicationEvent} in {methodName} {message} at {dateTime}", "Exception", System.Reflection.MethodBase.GetCurrentMethod()!.Name, exception.Message, DateTime.Now);
+            _logger.LogError("Exception in {methodName} {message}", MethodBase.GetCurrentMethod()!.Name, exception.Message);
             return null;
         }
     }
@@ -258,58 +269,6 @@ public class GameScraper : IDisposable
     private static UltraBoardGamesTileImageCode GetImageCode(string fullImageName) => new(GetStringImageCode(fullImageName));
     private static string GetStringImageCode(string fullImageName) => fullImageName[(fullImageName.LastIndexOf('/') + 1)..fullImageName.LastIndexOf('.')];
 
-
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-    }
-
-    public void CloseEndWindow()
-    {
-        try
-        {
-            var inputNameElement = _webDriver.FindElement(By.Id("nicknamepop"));
-            inputNameElement.SendKeys(RandomNickName());
-        }
-        catch
-        {
-            // ignored
-        }
-        _webDriver.FindElement(By.ClassName("messageboard_button")).Click();
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("Qwirkle.removeMessageBoard()");
-        TakeScreenShot();
-    }
-
-    [SuppressMessage("Interoperability", "CA1416:Valider la compatibilité de la plateforme", Justification = "<En attente>")]
-    public void TakeScreenShot()
-    {
-        const int margin = 5;
-        var boardElement = _webDriver.FindElement(By.Id("board"));
-        var scoresElement = _webDriver.FindElement(By.Id("scores"));
-        var rackElement = _webDriver.FindElement(By.Id("scoreboard1"));
-        var totalHeight = boardElement.Size.Height + scoresElement.Size.Height + rackElement.Size.Height;
-        var totalWidth = boardElement.Size.Width;
-        var size = new Size(totalWidth + 2 * margin, totalHeight + 2 * margin);
-        var originLocation = scoresElement.Location;
-        originLocation.Offset(-margin, -margin);
-        var screenShot = ((ITakesScreenshot)_webDriver).GetScreenshot();
-        //screenShot.SaveAsFile(screenShotFilename, ScreenshotImageFormat.Png);
-        using var memStream = new MemoryStream(screenShot.AsByteArray);
-        var screenShotImage = Image.FromStream(memStream);
-        var bitmap = CropImage(screenShotImage, new Rectangle(originLocation, size));
-        var screenShotFilename = Path.Combine(_pathToGameImages, DateTime.Now.ToString("yyyy-MM-dd-HH_mm_ss") + ".png");
-        bitmap.Save(screenShotFilename, ImageFormat.Png);
-
-        static Bitmap CropImage(Image originImage, Rectangle sourceRectange)
-        {
-            var destRect = new Rectangle(Point.Empty, sourceRectange.Size);
-            var cropImage = new Bitmap(destRect.Width, destRect.Height);
-            using var graphics = Graphics.FromImage(cropImage);
-            graphics.DrawImage(originImage, destRect, sourceRectange, GraphicsUnit.Pixel);
-            return cropImage;
-        }
-    }
-
     private static string RandomNickName()
     {
         var nickNames = new List<string> { "newtom", "newtomsoft", "thomas", "tom" };
@@ -318,6 +277,7 @@ public class GameScraper : IDisposable
         return nickNames[randIndex] + randSuffix;
     }
 
-    private void LogMoveTile(TileOnBoard tile) => _logger.LogInformation("{applicationEvent} {tile} to {coordinates} at {dateTime}", "Player move tile", tile, tile.Coordinates, DateTime.Now);
-    private void LogSwapElementMoveFrom(int tileIndex) => _logger.LogInformation("{applicationEvent} {tilePosition} to bag at {dateTime}", "Move elements", tileIndex, DateTime.Now);
+    private void LogMoveTile(TileOnBoard tile) => _logger.LogInformation("Player move {tile}", tile);
+    private void LogSwapElementMoveFrom(int tileIndex) => _logger.LogInformation("Move elements {tilePosition} to bag", tileIndex);
+    private bool IsVisibleInViewport(IWebElement element) => (bool)((IJavaScriptExecutor)_webDriver).ExecuteScript("var elem = arguments[0], box = elem.getBoundingClientRect(), cx = box.left + box.width / 2,  cy = box.top + box.height / 2,  e = document.elementFromPoint(cx, cy); for (; e; e = e.parentElement) { if (e === elem) return true;} return false;", element);
 }

@@ -17,7 +17,6 @@ public class SwapTilesShould
         InitDbContext();
         InitData();
         _repository = new Repository(_dbContext);
-        var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
         _infoService = new InfoService(_repository, null, new Logger<InfoService>(new LoggerFactory()));
         _coreService = new CoreService(_repository, new NoNotification(), _infoService, new Logger<CoreService>(new LoggerFactory()));
     }

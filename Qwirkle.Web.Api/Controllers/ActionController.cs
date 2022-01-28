@@ -61,7 +61,7 @@ public class ActionController : ControllerBase
         if (skipTurnReturn.Code == ReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(skipTurnViewModel.GameId));
         return new ObjectResult(skipTurnReturn);
     }
-    
+
     [HttpPost("ArrangeRack/")]
     public ActionResult ArrangeRack(List<TileViewModel> tiles)
     {
@@ -78,6 +78,6 @@ public class ActionController : ControllerBase
 
         _notification?.SendPlayerIdTurn(game.Id, nextPlayerId);
         var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
-        if (_userService.IsBot(nextPlayer.Pseudo)) _botService.Play(game, nextPlayer);
+        if (_userService.IsBot(nextPlayer.UserId)) _botService.Play(game, nextPlayer);
     }
 }

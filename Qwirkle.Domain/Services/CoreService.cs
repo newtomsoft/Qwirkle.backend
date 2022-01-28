@@ -3,6 +3,8 @@
 public class CoreService
 {
     public const int TilesNumberPerPlayer = 6;
+    public const int TilesNumberForAQwirkle = 6;
+    public const int PointsForAQwirkle = 12;
 
     private readonly IRepository _repository;
     private readonly INotification _notification;
@@ -24,7 +26,7 @@ public class CoreService
 
     public Game CreateGame(HashSet<int> usersIds)
     {
-        _logger.LogInformation("{applicationEvent} at {dateTime}", "CreateGame", DateTime.Now);
+        _logger.LogInformation("CreateGame");
         InitializeEmptyGame();
         CreatePlayers(usersIds);
         PutTilesOnBag();
@@ -197,7 +199,7 @@ public class CoreService
         player.LastTurnPoints = points;
         player.Points += points;
         _repository.UpdatePlayer(player);
-        _logger.LogInformation($"player {player.Id} play {tilesToPlayList.ToLog()} and get {points} points");
+        _logger.LogInformation("player {playerId} play {tiles} and get {pointsNumber} points", player.Id, tilesToPlayList.ToLog(), points);
         _game.Board.AddTiles(tilesToPlayList);
         SetNextPlayerTurnToPlay(player);
         var positionsInRack = new List<byte>();

@@ -63,6 +63,6 @@ public class GameController : ControllerBase
     private void PlayIfBot(Game game)
     {
         var player = game.Players.First(p => p.IsTurn);
-        if (_userService.IsBot(player.Pseudo)) _botService.Play(game, player);
+        if (_userService.IsBot(player.UserId)) _botService.Play(game, player);
     }
 }
