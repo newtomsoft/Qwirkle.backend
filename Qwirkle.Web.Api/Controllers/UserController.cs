@@ -34,9 +34,6 @@ public class UserController : ControllerBase
     [HttpGet("Logout")]
     public async Task LogoutAsync() => await _userService.LogOutAsync();
 
-    [Obsolete]
-    [HttpGet("WhoAmI")]
-    public ActionResult WhoAmI() => new ObjectResult(_userService.GetUserId(User));
 
     [Authorize(Roles = "Admin")]
     [HttpGet("IsAdmin")]

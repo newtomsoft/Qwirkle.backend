@@ -42,10 +42,7 @@ public class Authentication : IAuthentication
         await _signInManager.SignInAsync(userDao, false);
         return createGuestResult.Succeeded;
     }
-
-    [Obsolete]
-    public int GetUserId(object user) => int.Parse(_userManager.GetUserId(user as ClaimsPrincipal) ?? "0");
-
+    
     public Task LogoutOutAsync() => _signInManager.SignOutAsync();
 
     public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => (await _signInManager.PasswordSignInAsync(pseudo, password, isRemember, false)).Succeeded;
