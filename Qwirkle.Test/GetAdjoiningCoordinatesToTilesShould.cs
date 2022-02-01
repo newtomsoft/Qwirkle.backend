@@ -53,7 +53,7 @@ public class GetAdjoiningCoordinatesToTilesShould
     readonly Coordinates _coord64 = Coordinates.From(6, 4);
     readonly Coordinates _coord65 = Coordinates.From(6, 5);
     readonly Coordinates _coord66 = Coordinates.From(6, 6);
-    private static List<Coordinates> Sort(List<Coordinates> coordinates) => coordinates.OrderBy(c => c.X).ThenBy(c => c.Y).ToList();
+    private static List<Coordinates> Sort(List<Coordinates> coordinates) => coordinates.OrderBy(c => c).ToList();
     #endregion
 
     [Fact]

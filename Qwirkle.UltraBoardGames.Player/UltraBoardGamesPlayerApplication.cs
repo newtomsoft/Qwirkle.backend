@@ -2,7 +2,6 @@
 
 public class UltraBoardGamesPlayerApplication
 {
-    private const int TilesNumberPerPlayer = 6;
     private readonly ILogger _logger;
     private readonly BotService _botService;
     private readonly GameScraper _scraper;
@@ -23,7 +22,6 @@ public class UltraBoardGamesPlayerApplication
             PlayGame();
         }
         LogEndApplication();
-        _scraper.Dispose();
     }
 
     private void PlayGame()
@@ -31,34 +29,36 @@ public class UltraBoardGamesPlayerApplication
         LogStartGame();
         _scraper.GoToGame();
         _scraper.AcceptPolicies();
+        _scraper.CleanWindow();
         var board = Board.Empty();
         GameStatus gameStatus;
         var lastTilesPlayedByOpponent = new HashSet<TileOnBoard>();
-        int playerPoints = 0, opponentPoints = 0;
+        int playerPoints, opponentPoints;
         while (true)
         {
+            _scraper.AdjustBoardView();
             var tilesPlayedByOpponent = TilesPlayedByOpponent(lastTilesPlayedByOpponent);
             lastTilesPlayedByOpponent = new HashSet<TileOnBoard>();
             lastTilesPlayedByOpponent.UnionWith(tilesPlayedByOpponent);
             board.AddTiles(tilesPlayedByOpponent);
             gameStatus = _scraper.GetGameStatus();
-            if (gameStatus != GameStatus.InProgress) break;
             playerPoints = _scraper.GetPlayerPoints();
             opponentPoints = _scraper.GetOpponentPoints();
+
+            if (gameStatus != GameStatus.InProgress) break;
+
             var tilesOnPlayer = _scraper.GetTilesOnPlayer();
+            var tilesNumberOnBag = _scraper.GetTilesOnBag();
             var bot = Player(playerPoints, tilesOnPlayer, true);
             var opponent = Player(opponentPoints, tilesOnPlayer, false);
             var players = new List<Domain.Entities.Player> { bot, opponent };
-            var game = new Game(board, players);
-            var tilesToPlay = board.Tiles.Count > 0
-                ? _botService.GetMostPointsTilesToPlay(bot, game).ToList()
-                : _botService.GetMostPointsTilesToPlay(bot, game, _originCoordinates).ToList();
+            var game = new Game(board, players, tilesNumberOnBag);
+            var tilesToPlay = board.Tiles.Count > 0 ? _botService.GetBestMove(bot, game).Tiles : _botService.GetBestMove(bot, game, _originCoordinates).Tiles;
 
             _scraper.TakeScreenShot();
-
             if (tilesToPlay.Count == 0)
             {
-                SwapOrSkipTurn();
+                SwapOrSkipTurn(tilesNumberOnBag);
                 continue;
             }
             var tilesToPlayOrdered = TilesToPlayOrdered(tilesToPlay, board);
@@ -71,7 +71,7 @@ public class UltraBoardGamesPlayerApplication
         LogEndGame(gameInformation);
     }
 
-    private List<TileOnBoard> TilesToPlayOrdered(List<TileOnBoard> tilesToPlay, Board board)
+    private List<TileOnBoard> TilesToPlayOrdered(IEnumerable<TileOnBoard> tilesToPlay, Board board)
     {
         List<TileOnBoard> otherTilesToPlay;
         var tilesToPlayStillHere = new List<TileOnBoard>();
@@ -93,10 +93,9 @@ public class UltraBoardGamesPlayerApplication
         return tilesToPlayOrdered;
     }
 
-    private void SwapOrSkipTurn()
+    private void SwapOrSkipTurn(int tilesNumberOnBag)
     {
-        var tilesOnBagNumber = _scraper.GetTilesOnBag();
-        var tilesToSwapNumber = Math.Min(tilesOnBagNumber, TilesNumberPerPlayer);
+        var tilesToSwapNumber = Math.Min(tilesNumberOnBag, CoreService.TilesNumberPerPlayer);
         if (tilesToSwapNumber > 0) _scraper.Swap(tilesToSwapNumber);
         else _scraper.Skip();
         _scraper.TakeScreenShot();
@@ -118,15 +117,11 @@ public class UltraBoardGamesPlayerApplication
 
     private void LogTilesPlayedByOpponent(HashSet<TileOnBoard> tilesPlayedByOpponent)
     {
-        foreach (var tile in tilesPlayedByOpponent)
-        {
-            _logger?.LogInformation("{applicationEvent} {tile} to {coordinates} at {dateTime}", "Opponent move tile", tile.Tile, tile.Coordinates, DateTime.UtcNow);
-        }
+        foreach (var tile in tilesPlayedByOpponent) _logger?.LogInformation("Opponent move {tile}", tile);
     }
-
-    private void LogStartApplication() => _logger?.LogInformation("{applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
-    private void LogStartGame() => _logger?.LogInformation("{applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
-    private void LogEndGame(GameInformation gameInformation) => _logger?.LogInformation("{wonOrLost} by {playerPoints} vs {opponentPoints} at {dateTime}", gameInformation.Status, gameInformation.PlayerPoints, gameInformation.OpponentPoints, DateTime.UtcNow);
-    private void LogEndApplication() => _logger?.LogInformation("{applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
+    private void LogStartApplication() => _logger.LogInformation("Application started");
+    private void LogStartGame() => _logger.LogInformation("Game started");
+    private void LogEndGame(GameInformation gameInformation) => _logger.LogInformation("{wonOrLost} by {playerPoints} vs {opponentPoints}", gameInformation.Status, gameInformation.PlayerPoints, gameInformation.OpponentPoints);
+    private void LogEndApplication() => _logger.LogInformation("Ended");
     private static Domain.Entities.Player Player(int playerPoints, List<TileOnPlayer> tilesOnPlayer, bool isTurn) => new(0, 0, 0, "", 0, playerPoints, 0, Rack.From(tilesOnPlayer), isTurn, false);
 }

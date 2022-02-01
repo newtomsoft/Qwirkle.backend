@@ -8,7 +8,7 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
-global using Qwirkle.AI;
+global using Newtonsoft.Json;
 global using Qwirkle.Authentication.Adapters;
 global using Qwirkle.Domain.Entities;
 global using Qwirkle.Domain.Enums;

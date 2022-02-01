@@ -6,9 +6,6 @@ public class BotService
     private readonly CoreService _coreService;
     private readonly ILogger<CoreService> _logger;
 
-    private Game _game;
-    private const int TilesNumberPerPlayer = 6;
-
     public BotService(InfoService infoService, CoreService coreService, ILogger<CoreService> logger)
     {
         _infoService = infoService;
@@ -18,7 +15,7 @@ public class BotService
 
     public void Play(Game game, Player bot)
     {
-        var tilesToPlay = GetMostPointsTilesToPlay(bot, game).ToList();
+        var tilesToPlay = GetBestMove(bot, game).Tiles.ToList();
         if (tilesToPlay.Count > 0)
         {
             _logger?.LogInformation($"Bot play {tilesToPlay.ToLog()}");
@@ -29,80 +26,83 @@ public class BotService
             _logger?.LogInformation("Bot swap or skip...");
             SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
         }
-
     }
+
     public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
-        _game = game;
-        var doableMoves = ComputeDoableMoves(player, originCoordinates, true);
-        var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
-        return playReturn?.Points ?? 0;
+        var doableMoves = ComputeDoableMoves(player, game, originCoordinates, true);
+        var playReturn = doableMoves.OrderByDescending(m => m.Move.Points).FirstOrDefault();
+        return playReturn?.Move.Points ?? 0;
     }
 
-    public IEnumerable<TileOnBoard> GetMostPointsTilesToPlay(Player player, Game game, Coordinates originCoordinates = null)
+    public Move GetBestMove(Player player, Game game, Coordinates originCoordinates = null)
     {
-        _game = game;
-        var doableMoves = ComputeDoableMoves(player, originCoordinates, true);
-        var playReturn = doableMoves.OrderByDescending(m => m.Points).FirstOrDefault();
-        return playReturn?.TilesPlayed ?? new List<TileOnBoard>();
+        var moves = ComputeDoableMoves(player, game, originCoordinates, true).Select(r => r.Move).OrderByDescending(m => m.Points).ToList();
+
+        if (moves.Count == 0) return Move.Empty;
+
+        var moveWithMaxPoints = moves.First();
+        var moveWithMaxTilesAndPoint = moves.OrderByDescending(m => m.TilesNumber).ThenByDescending(m => m.Points).First();
+
+        if (player.Rack.TilesNumber == moveWithMaxTilesAndPoint.TilesNumber) return moveWithMaxTilesAndPoint;
+        if (moveWithMaxPoints!.Points >= CoreService.PointsForAQwirkle) return moveWithMaxPoints;
+
+        var tilesInBagNumber = game.Bag.TilesNumber;
+        if (tilesInBagNumber == 0 || moveWithMaxTilesAndPoint!.TilesNumber > tilesInBagNumber + 1) return moveWithMaxTilesAndPoint;
+
+        var moveUsingDuplicateTile = MoveUsingDuplicateTile(moves, player.Rack);
+        if (moveUsingDuplicateTile.TilesNumber > 0 && moveUsingDuplicateTile.Points >= moveWithMaxPoints.Points * 2 / 3) return moveUsingDuplicateTile;
+
+        return moveWithMaxPoints;
     }
 
-    public List<PlayReturn> ComputeDoableMoves(int gameId, int userId)
+    public HashSet<PlayReturn> ComputeDoableMoves(int gameId, int userId)
     {
         var player = _infoService.GetPlayer(gameId, userId);
-        _game = _infoService.GetGame(gameId);
-        return ComputeDoableMoves(player);
+        var game = _infoService.GetGame(gameId);
+        return ComputeDoableMoves(player, game);
     }
 
-
-
-    private List<PlayReturn> ComputeDoableMoves(Player player, Coordinates originCoordinates = null, bool simulation = false)
+    private HashSet<PlayReturn> ComputeDoableMoves(Player player, Game game, Coordinates originCoordinates = null, bool simulation = false)
     {
         if (!simulation) _coreService.ResetGame(player.GameId);
         var rack = player.Rack.WithoutDuplicatesTiles();
 
-        var boardAdjoiningCoordinates = _game.Board.GetFreeAdjoiningCoordinatesToTiles(originCoordinates);
+        var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles(originCoordinates);
 
-        var allPlayReturns = new List<PlayReturn>();
-        var playReturnsWith1Tile = new List<PlayReturn>();
+        var with1TilePlayReturns = new HashSet<PlayReturn>();
         foreach (var coordinates in boardAdjoiningCoordinates)
         {
             foreach (var tile in rack.Tiles)
             {
-                var playReturn = TestPlayTiles(player, new List<TileOnBoard> { TileOnBoard.From(tile, coordinates) });
-                Console.WriteLine(playReturn.Code);
-                if (playReturn.Code == PlayReturnCode.Ok) playReturnsWith1Tile.Add(playReturn);
+                var playReturn = TestPlayTiles(player, new HashSet<TileOnBoard> { TileOnBoard.From(tile, coordinates) }, game);
+                if (playReturn.Code == ReturnCode.Ok) with1TilePlayReturns.Add(playReturn);
             }
         }
+        var allPlayReturns = new HashSet<PlayReturn>(with1TilePlayReturns);
 
-        allPlayReturns.AddRange(playReturnsWith1Tile);
-        var lastPlayReturn = playReturnsWith1Tile;
-        for (var tilePlayedNumber = 2; tilePlayedNumber <= TilesNumberPerPlayer; tilePlayedNumber++)
+        var rowTypes = game.IsBoardEmpty() ? new List<RowType> { RandomRowType() } : ((RowType[])Enum.GetValues(typeof(RowType))).ToList();
+        foreach (var rowType in rowTypes)
         {
-            var currentPlayReturns = new List<PlayReturn>();
-            foreach (var playReturn in lastPlayReturn)
+            var lastPlayReturn = with1TilePlayReturns;
+            for (var tilePlayedNumber = 2; tilePlayedNumber <= CoreService.TilesNumberPerPlayer; tilePlayedNumber++)
             {
-                var tilesPlayed = playReturn.TilesPlayed;
-                var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
-                if (_game.IsBoardEmpty() && tilePlayedNumber == 2) // todo ok but can do better
+                var currentPlayReturns = new HashSet<PlayReturn>();
+                foreach (var tilesPlayed in lastPlayReturn.Select(p => p.Move.Tiles))
                 {
-                    currentPlayReturns.AddRange(ComputePlayReturnInRow(RandomRowType(), player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, true));
+                    var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
+                    currentPlayReturns.UnionWith(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed.ToHashSet(), game));
                 }
-                else
-                {
-                    foreach (RowType rowType in Enum.GetValues(typeof(RowType)))
-                        currentPlayReturns.AddRange(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed, false));
-                }
+                allPlayReturns.UnionWith(currentPlayReturns);
+                lastPlayReturn = currentPlayReturns;
             }
-            allPlayReturns.AddRange(currentPlayReturns);
-            lastPlayReturn = currentPlayReturns;
         }
         return allPlayReturns;
     }
 
-    private IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, List<TileOnBoard> tilesAlreadyPlayed, bool firstGameMove)
+    private IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, HashSet<TileOnBoard> tilesAlreadyPlayed, Game game)
     {
-        int tilesPlayedNumber = tilesAlreadyPlayed.Count;
+        var tilesPlayedNumber = tilesAlreadyPlayed.Count;
         var coordinatesPlayed = tilesAlreadyPlayed.Select(tilePlayed => tilePlayed.Coordinates).ToList();
 
         sbyte coordinateChangingMin, coordinateChangingMax;
@@ -121,42 +121,43 @@ public class BotService
 
         var coordinateFixed = rowType is RowType.Line ? coordinatesPlayed.First().Y : coordinatesPlayed.First().X;
 
-        var playReturns = new List<PlayReturn>();
         var boardAdjoiningCoordinatesRow = rowType is RowType.Line ?
             boardAdjoiningCoordinates.Where(c => c.Y == coordinateFixed).Select(c => (int)c.X).ToList()
             : boardAdjoiningCoordinates.Where(c => c.X == coordinateFixed).Select(c => (int)c.Y).ToList();
 
-        if (!firstGameMove)
-        {
-            if (coordinateChangingMax >= boardAdjoiningCoordinatesRow.Max()) boardAdjoiningCoordinatesRow.Add(coordinateChangingMax + 1);
-            if (coordinateChangingMin <= boardAdjoiningCoordinatesRow.Min()) boardAdjoiningCoordinatesRow.Add(coordinateChangingMin - 1);
-        }
-        else
+        if (game.IsBoardEmpty() && tilesAlreadyPlayed.Count == 1)
         {
             var addOrSubtract1Unit = Random.Shared.Next(2) * 2 - 1;
             boardAdjoiningCoordinatesRow.Add(coordinateChangingMax + addOrSubtract1Unit);
             // we have coordinateChangingMax = coordinateChangingMin
         }
+        else
+        {
+            if (coordinateChangingMax >= boardAdjoiningCoordinatesRow.Max()) boardAdjoiningCoordinatesRow.Add(coordinateChangingMax + 1);
+            if (coordinateChangingMin <= boardAdjoiningCoordinatesRow.Min()) boardAdjoiningCoordinatesRow.Add(coordinateChangingMin - 1);
+        }
+
         boardAdjoiningCoordinatesRow.Remove(coordinateChangingMax);
         boardAdjoiningCoordinatesRow.Remove(coordinateChangingMin);
 
+        var playReturns = new HashSet<PlayReturn>();
         foreach (var currentCoordinate in boardAdjoiningCoordinatesRow)
         {
             foreach (var tile in tilesToTest)
             {
                 var testedCoordinates = rowType is RowType.Line ? Coordinates.From(currentCoordinate, coordinateFixed) : Coordinates.From(coordinateFixed, currentCoordinate);
                 var testedTile = TileOnBoard.From(tile, testedCoordinates);
-                var currentTilesToTest = new List<TileOnBoard>();
-                currentTilesToTest.AddRange(tilesAlreadyPlayed);
+                var currentTilesToTest = new HashSet<TileOnBoard>();
+                currentTilesToTest.UnionWith(tilesAlreadyPlayed);
                 currentTilesToTest.Add(testedTile);
-                var playReturn = TestPlayTiles(player, currentTilesToTest);
-                if (playReturn.Code == PlayReturnCode.Ok) playReturns.Add(playReturn);
+                var playReturn = TestPlayTiles(player, currentTilesToTest, game);
+                if (playReturn.Code == ReturnCode.Ok) playReturns.Add(playReturn);
             }
         }
         return playReturns;
     }
 
-    private PlayReturn TestPlayTiles(Player player, List<TileOnBoard> tilesToPlay) => _coreService.Play(tilesToPlay, player, _game, true);
+    private PlayReturn TestPlayTiles(Player player, HashSet<TileOnBoard> tilesToPlay, Game game) => _coreService.Play(tilesToPlay, player, game, true);
 
     private static RowType RandomRowType()
     {
@@ -167,7 +168,7 @@ public class BotService
 
     private void SwapOrSkipTurn(Player bot, int tilesOnBagNumber)
     {
-        var tilesToSwapMaxNumber = Math.Min(tilesOnBagNumber, TilesNumberPerPlayer);
+        var tilesToSwapMaxNumber = Math.Min(tilesOnBagNumber, CoreService.TilesNumberPerPlayer);
         if (tilesToSwapMaxNumber > 0)
         {
             _logger?.LogInformation($"Bot swap {tilesToSwapMaxNumber} tiles");
@@ -178,6 +179,20 @@ public class BotService
             _logger?.LogInformation("Bot skip turn");
             Skip(bot.Id);
         }
+    }
+
+    private static Move MoveUsingDuplicateTile(IEnumerable<Move> moves, Rack rack)
+    {
+        foreach (var move in moves)
+        {
+            foreach (var tile in move.Tiles)
+            {
+                var tilesInRack = rack.Tiles.Select(t => t.ToTile()).ToList();
+                tilesInRack.Remove(tile.ToTile());
+                if (tilesInRack.Contains(tile.ToTile())) return move;
+            }
+        }
+        return Move.Empty;
     }
 
     private void Swap(Player bot, int tilesToSwapNumber)

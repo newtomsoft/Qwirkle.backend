@@ -103,10 +103,14 @@ public class Repository : IRepository
     {
         var game = _dbContext.Games.Single(g => g.Id == player.GameId);
         game.LastPlayDate = DateTime.UtcNow;
-        var tilesOnPlayerDao = tiles.Select(tile => _dbContext.TilesOnPlayer.Include(t => t.Tile).First(t => t.PlayerId == player.Id && t.Tile.Color == tile.Color && t.Tile.Shape == tile.Shape)).ToList();
-        _dbContext.TilesOnPlayer.RemoveRange(tilesOnPlayerDao);
-        foreach (var tileOnPlayerDao in tilesOnPlayerDao) _dbContext.TilesOnBag.Add(tileOnPlayerDao.ToTileOnBagDao(player.GameId));
-        _dbContext.SaveChanges();
+
+        foreach (var tile in tiles)
+        {
+            var tileOnPlayerDao = _dbContext.TilesOnPlayer.Include(t => t.Tile).First(t => t.PlayerId == player.Id && t.Tile.Color == tile.Color && t.Tile.Shape == tile.Shape);
+            _dbContext.TilesOnPlayer.Remove(tileOnPlayerDao);
+            _dbContext.TilesOnBag.Add(tileOnPlayerDao.ToTileOnBagDao(player.GameId));
+            _dbContext.SaveChanges();
+        }
     }
 
     public void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<TileOnBoard> tilesOnBoard)
@@ -145,7 +149,7 @@ public class Repository : IRepository
     private List<TileOnBoard> TilesOnBoardDaoToEntity(IReadOnlyCollection<TileOnBoardDao> tilesOnBoard)
     {
         var tilesDao = _dbContext.Tiles.Where(t => tilesOnBoard.Select(tb => tb.TileId).Contains(t.Id)).ToList();
-        return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.Single(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Color, tileDao.Shape, new Coordinates(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
+        return (from tileDao in tilesDao let tileOnBoardDao = tilesOnBoard.First(tb => tb.TileId == tileDao.Id) select new TileOnBoard(tileDao.Color, tileDao.Shape, new Coordinates(tileOnBoardDao.PositionX, tileOnBoardDao.PositionY))).ToList();
     }
 
     public bool AddBookmarkedOpponent(int userId, string opponentName)

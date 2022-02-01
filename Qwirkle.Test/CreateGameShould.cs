@@ -9,7 +9,6 @@ public class CreateGameShould
     private const int User2Id = 21;
     private const int User3Id = 33;
     private const int User4Id = 14;
-    private const int TilesNumberPerPlayer = 6;
 
     public CreateGameShould()
     {
@@ -17,7 +16,7 @@ public class CreateGameShould
         _dbContext = connectionFactory.CreateContextForInMemory();
         IRepository repository = new Repository(_dbContext);
         var authenticationUseCase = new UserService(new NoRepository(), new FakeAuthentication());
-        _coreService = new CoreService(repository, null, null, authenticationUseCase, new Logger<CoreService>(new LoggerFactory()));
+        _coreService = new CoreService(repository, null, null, new Logger<CoreService>(new LoggerFactory()));
         Add4DefaultTestUsers();
     }
 
@@ -34,57 +33,57 @@ public class CreateGameShould
     public void CreateGoodPlayerWithOrder0()
     {
         var userIds = new HashSet<int> { User3Id };
-        var players = _coreService.CreateGame(userIds);
+        var game = _coreService.CreateGame(userIds);
 
-        players.Count.ShouldBe(1);
-        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(1);
-        players.Count(p => p.Points == 0).ShouldBe(1);
-        players[0].IsTurn.ShouldBe(true);
-        players[0].GamePosition.ShouldBe(0);
+        game.Players.Count.ShouldBe(1);
+        game.Players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(1);
+        game.Players.Count(p => p.Points == 0).ShouldBe(1);
+        game.Players[0].IsTurn.ShouldBe(true);
+        game.Players[0].GamePosition.ShouldBe(0);
     }
 
     [Fact]
     public void CreateGoodPlayersWithOrder01()
     {
         var userIds = new HashSet<int> { User3Id, User4Id };
-        var players = _coreService.CreateGame(userIds);
+        var game = _coreService.CreateGame(userIds);
 
-        players.Count.ShouldBe(2);
-        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(2);
-        players.Count(p => p.Points == 0).ShouldBe(2);
-        players[0].IsTurn.ShouldBe(true);
-        players[0].GamePosition.ShouldBe(0);
-        players[1].GamePosition.ShouldBe(1);
+        game.Players.Count.ShouldBe(2);
+        game.Players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(2);
+        game.Players.Count(p => p.Points == 0).ShouldBe(2);
+        game.Players[0].IsTurn.ShouldBe(true);
+        game.Players[0].GamePosition.ShouldBe(0);
+        game.Players[1].GamePosition.ShouldBe(1);
     }
 
     [Fact]
     public void CreateGoodPlayersWithOrder012()
     {
         var userIds = new HashSet<int> { User1Id, User3Id, User4Id };
-        var players = _coreService.CreateGame(userIds);
+        var game = _coreService.CreateGame(userIds);
 
-        players.Count.ShouldBe(3);
-        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(3);
-        players.Count(p => p.Points == 0).ShouldBe(3);
-        players[0].IsTurn.ShouldBe(true);
-        players[0].GamePosition.ShouldBe(0);
-        players[1].GamePosition.ShouldBe(1);
-        players[2].GamePosition.ShouldBe(2);
+        game.Players.Count.ShouldBe(3);
+        game.Players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(3);
+        game.Players.Count(p => p.Points == 0).ShouldBe(3);
+        game.Players[0].IsTurn.ShouldBe(true);
+        game.Players[0].GamePosition.ShouldBe(0);
+        game.Players[1].GamePosition.ShouldBe(1);
+        game.Players[2].GamePosition.ShouldBe(2);
     }
 
     [Fact]
     public void CreateGoodPlayersWithOrder0123()
     {
         var userIds = new HashSet<int> { User1Id, User2Id, User3Id, User4Id };
-        var players = _coreService.CreateGame(userIds);
+        var game = _coreService.CreateGame(userIds);
 
-        players.Count.ShouldBe(4);
-        players.Select(p => p.Rack.Tiles.Count == TilesNumberPerPlayer).Count().ShouldBe(4);
-        players.Count(p => p.Points == 0).ShouldBe(4);
-        players[0].IsTurn.ShouldBe(true);
-        players[0].GamePosition.ShouldBe(0);
-        players[1].GamePosition.ShouldBe(1);
-        players[2].GamePosition.ShouldBe(2);
-        players[3].GamePosition.ShouldBe(3);
+        game.Players.Count.ShouldBe(4);
+        game.Players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(4);
+        game.Players.Count(p => p.Points == 0).ShouldBe(4);
+        game.Players[0].IsTurn.ShouldBe(true);
+        game.Players[0].GamePosition.ShouldBe(0);
+        game.Players[1].GamePosition.ShouldBe(1);
+        game.Players[2].GamePosition.ShouldBe(2);
+        game.Players[3].GamePosition.ShouldBe(3);
     }
 }
