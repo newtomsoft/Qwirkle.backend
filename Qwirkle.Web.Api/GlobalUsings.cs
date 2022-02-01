@@ -19,6 +19,8 @@ global using Qwirkle.Infra.Repository.Adapters;
 global using Qwirkle.Infra.Repository.Dao;
 global using Qwirkle.SignalR;
 global using Qwirkle.SignalR.Adapters;
+global using Qwirkle.Web.Api.ExtensionMethods;
+global using Qwirkle.Web.Api.Securities;
 global using Qwirkle.Web.Api.ViewModels;
 global using Serilog;
 global using System;
