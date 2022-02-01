@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Qwirkle.Web.Api.ExtensionMethods;
+﻿namespace Qwirkle.Web.Api.ExtensionMethods;
 
 public static class StartupExtensionMethods
 {
@@ -21,7 +19,7 @@ public static class StartupExtensionMethods
     }
 
     public static void UseQwirkleCors(this WebApplication application) => application.UseCors(CorsPolicy);
-    
+
     public static void AddQwirkleIdentity(this IServiceCollection services) =>
         services.AddIdentity<UserDao, IdentityRole<int>>(options =>
         {
