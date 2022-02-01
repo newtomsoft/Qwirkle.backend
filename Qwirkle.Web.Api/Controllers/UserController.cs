@@ -2,13 +2,13 @@
 
 [ApiController]
 [Authorize]
-[Route("[controller]")]
+[Route("User")]
 public class UserController : ControllerBase
 {
     private readonly UserService _userService;
     private readonly UserManager<UserDao> _userManager;
-
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
+
     public UserController(UserService userService, UserManager<UserDao> userManager)
     {
         _userService = userService;

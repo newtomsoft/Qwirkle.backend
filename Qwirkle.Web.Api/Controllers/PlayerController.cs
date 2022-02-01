@@ -2,7 +2,7 @@
 
 [ApiController]
 [Authorize]
-[Route("[controller]")]
+[Route("Player")]
 public class PlayerController : ControllerBase
 {
     private readonly InfoService _infoService;
