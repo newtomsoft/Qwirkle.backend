@@ -32,8 +32,6 @@ public class InstantGameController : ControllerBase
             _notification.SendInstantGameExpected(playersNumberForStartGame, UserName);
             return new ObjectResult($"waiting for {playersNumberForStartGame - usersIds.Count} player(s)");
         }
-
-        _notification.SendInstantGameStarted(playersNumberForStartGame);
         return RedirectToAction("CreateInstantGame", "Game", new { serializedUsersIds = JsonConvert.SerializeObject(usersIds) });
     }
 }
