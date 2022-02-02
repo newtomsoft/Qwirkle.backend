@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace Qwirkle.Domain.Services;
+﻿namespace Qwirkle.Domain.Services;
 
 public class InstantGameService
 {

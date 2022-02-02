@@ -9,17 +9,17 @@ public class InstantGameController : ControllerBase
     private readonly INotification _notification;
     private readonly UserManager<UserDao> _userManager;
     private readonly InstantGameService _instantGameService;
-    private readonly InfoService _infoService;
+    private readonly CoreService _coreService;
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
     private string UserName => _userManager.GetUserName(User) ?? string.Empty;
 
-    public InstantGameController(ILogger<InstantGameController> logger, INotification notification, UserManager<UserDao> userManager, InstantGameService instantGameService, InfoService infoService)
+    public InstantGameController(INotification notification, UserManager<UserDao> userManager, InstantGameService instantGameService, CoreService coreService, ILogger<InstantGameController> logger)
     {
         _logger = logger;
         _notification = notification;
         _userManager = userManager;
         _instantGameService = instantGameService;
-        _infoService = infoService;
+        _coreService = coreService;
     }
 
     [HttpGet("Join/{playersNumberForStartGame:int}")]
@@ -32,6 +32,8 @@ public class InstantGameController : ControllerBase
             _notification.SendInstantGameExpected(playersNumberForStartGame, UserName);
             return new ObjectResult($"waiting for {playersNumberForStartGame - usersIds.Count} player(s)");
         }
-        return RedirectToAction("CreateInstantGame", "Game", new { serializedUsersIds = JsonConvert.SerializeObject(usersIds) });
+        var gameId = _coreService.CreateGameWithUsersIds(usersIds);
+        _notification.SendInstantGameStarted(playersNumberForStartGame, gameId);
+        return new ObjectResult(gameId);
     }
 }

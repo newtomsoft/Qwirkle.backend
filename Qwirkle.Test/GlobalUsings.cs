@@ -10,7 +10,6 @@ global using Qwirkle.Infra.Repository.Adapters;
 global using Qwirkle.Infra.Repository.Dao;
 global using Qwirkle.Infra.Repository.DaoExtensionMethods;
 global using Qwirkle.Test.Factories;
-global using Qwirkle.Test.Fakes;
 global using Shouldly;
 global using System;
 global using System.Collections.Generic;

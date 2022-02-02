@@ -1,10 +1,7 @@
 ﻿namespace Qwirkle.Test.Factories;
 
-public sealed class ConnectionFactory : IDisposable
+public sealed class ConnectionFactory
 {
-
-    #region IDisposable Support
-    private bool _disposedValue; // To detect redundant calls
     private DefaultDbContext _dbContext = null!;
 
     private const int User1Id = 71;
@@ -29,17 +26,4 @@ public sealed class ConnectionFactory : IDisposable
         _dbContext.Users.Add(new UserDao { Id = User4Id });
         _dbContext.SaveChanges();
     }
-
-    private void Dispose(bool disposing)
-    {
-        if (_disposedValue) return;
-        if (disposing)
-        {
-        }
-        _disposedValue = true;
-    }
-
-    public void Dispose() => Dispose(true);
-
-    #endregion
 }

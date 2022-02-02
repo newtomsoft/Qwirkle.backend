@@ -14,7 +14,7 @@ public class ArrangeRackTests
         connectionFactory.Add4DefaultTestUsers();
         var repository = new Repository(_dbContext);
         _infoService = new InfoService(repository, null, new Logger<InfoService>(new LoggerFactory()));
-        _service = new CoreService(repository, null, _infoService, new Logger<CoreService>(new LoggerFactory()));
+        _service = new CoreService(repository, null, _infoService, null, new Logger<CoreService>(new LoggerFactory()));
     }
 
 
@@ -31,7 +31,8 @@ public class ArrangeRackTests
     public void TryArrangeRackShouldArrangeRackWhenItsPossible()
     {
         var usersIds = _infoService.GetAllUsersId();
-        var players = _service.CreateGame(usersIds.ToHashSet()).Players;
+        var gameId = _service.CreateGame(usersIds.ToHashSet());
+        var players = _infoService.GetGame(gameId).Players;
         players = players.OrderBy(p => p.Id).ToList();
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Shape == TileShape.Circle && t.Color == TileColor.Green);
         var constTile1 = _dbContext.Tiles.FirstOrDefault(t => t.Shape == TileShape.Clover && t.Color == TileColor.Blue);
@@ -43,7 +44,6 @@ public class ArrangeRackTests
 
         var playerId = players[0].Id;
         ChangePlayerTilesBy(playerId, constTiles);
-
         {
             _service.TryArrangeRack(playerId, new List<Tile> { constTile0!.ToTile(), constTile1!.ToTile(), constTile2!.ToTile(), constTile3!.ToTile(), constTile4!.ToTile(), constTile5!.ToTile() });
             var tilesOrderedByPosition = _infoService.GetPlayer(playerId).Rack.Tiles.OrderBy(t => t.RackPosition).ToList();

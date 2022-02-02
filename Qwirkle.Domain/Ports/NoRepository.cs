@@ -8,7 +8,6 @@ public class NoRepository : IRepository
     public List<int> GetAllUsersId() => throw new NotSupportedException();
     public Game GetGame(int gameId) => throw new NotSupportedException();
     public int GetPlayerId(int gameId, int userId) => throw new NotSupportedException();
-    public Tile GetTile(TileColor color, TileShape shape) => throw new NotSupportedException();
     public List<int> GetGamesIdsContainingPlayers() => throw new NotSupportedException();
     public List<int> GetLeadersPlayersId(int gameId) => throw new NotSupportedException();
     public Player GetPlayer(int playerId) => throw new NotSupportedException();
@@ -16,7 +15,6 @@ public class NoRepository : IRepository
     public int GetPlayerIdToPlay(int gameId) => throw new NotSupportedException();
     public string GetPlayerNameTurn(int gameId) => throw new NotSupportedException();
     public List<int> GetUserGamesIds(int userId) => throw new NotSupportedException();
-    public int GetUserId(int playerId) => throw new NotSupportedException();
     public int GetUserId(string userName) => throw new NotSupportedException();
     public bool IsGameOver(int gameId) => throw new NotSupportedException();
     public void SetGameOver(int gameId) => throw new NotSupportedException();

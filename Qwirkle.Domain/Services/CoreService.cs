@@ -9,22 +9,37 @@ public class CoreService
     private readonly IRepository _repository;
     private readonly INotification _notification;
     private readonly InfoService _infoService;
+    private readonly UserService _userService;
     private readonly ILogger<CoreService> _logger;
     private readonly BotService _botService;
 
     private Game _game;
 
-    public CoreService(IRepository repository, INotification notification, InfoService infoService, ILogger<CoreService> logger)
+    public CoreService(IRepository repository, INotification notification, InfoService infoService, UserService userService, ILogger<CoreService> logger)
     {
         _repository = repository;
         _notification = notification;
         _infoService = infoService;
+        _userService = userService;
         _logger = logger;
-        _botService = new BotService(infoService, this, _logger);
-        //todo dette technique à rembourser
+        _botService = new BotService(infoService, this, _logger); //todo dette technique
     }
 
-    public Game CreateGame(HashSet<int> usersIds)
+    public int CreateGameWithUsersIds(HashSet<int> usersIds)
+    {
+        _logger?.LogInformation("CreateGame with users {usersIds}", usersIds);
+        var gameId = CreateGame(usersIds);
+        PlayIfBot(_infoService.GetGame(gameId));
+        return gameId;
+    }
+
+    private void PlayIfBot(Game game)
+    {
+        var player = game.Players.First(p => p.IsTurn);
+        if (_userService.IsBot(player.UserId)) _botService.Play(game, player);
+    }
+
+    public int CreateGame(HashSet<int> usersIds)
     {
         _logger.LogInformation("CreateGame");
         InitializeEmptyGame();
@@ -32,7 +47,7 @@ public class CoreService
         PutTilesOnBag();
         DealTilesToPlayers();
         SortPlayers();
-        return _game;
+        return _game.Id;
     }
 
     public void ResetGame(int gameId) => _game = _repository.GetGame(gameId);
