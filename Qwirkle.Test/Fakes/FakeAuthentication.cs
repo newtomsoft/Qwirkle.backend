@@ -1,4 +1,4 @@
-﻿namespace Qwirkle.Domain.Ports;
+﻿namespace Qwirkle.Test.Fakes;
 
 public class FakeAuthentication : IAuthentication
 {
