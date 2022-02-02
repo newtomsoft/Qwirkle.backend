@@ -1,4 +1,4 @@
-﻿namespace Qwirkle.Test;
+﻿namespace Qwirkle.Test.Factories;
 
 public sealed class ConnectionFactory : IDisposable
 {
@@ -39,9 +39,7 @@ public sealed class ConnectionFactory : IDisposable
         _disposedValue = true;
     }
 
-    public void Dispose()
-    {
-        Dispose(true);
-    }
+    public void Dispose() => Dispose(true);
+
     #endregion
 }
