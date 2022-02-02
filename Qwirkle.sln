@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{2094B01D-ED38-4071-9B68-636AE81C694B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1B8ED7D0-5EC2-4184-A60E-ED93DE572802}"
-	ProjectSection(SolutionItems) = preProject
-		Qwirkle.Domain\Ports\FakeAuthentication.cs = Qwirkle.Domain\Ports\FakeAuthentication.cs
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infra", "Infra", "{1644DA54-649D-4969-8E41-F94DAD3897BF}"
 EndProject
