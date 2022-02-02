@@ -35,9 +35,8 @@ public static class TilesExtensionsMethods
     {
         var stringBuilder = new StringBuilder();
         foreach (var tile in tiles)
-        {
             stringBuilder.Append($"{tile.Shape}-{tile.Color} ({tile.Coordinates.X},{tile.Coordinates.Y}) ");
-        }
+
         return stringBuilder.ToString();
     }
 }
