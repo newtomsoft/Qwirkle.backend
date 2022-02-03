@@ -30,7 +30,7 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayerWithOrder0()
+    public void CreateGoodPlayerWithPosition0()
     {
         var userIds = new HashSet<int> { User3Id };
         var gameId = _coreService.CreateGame(userIds);
@@ -43,7 +43,7 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayersWithOrder01()
+    public void CreateGoodPlayersWithPositions01()
     {
         var userIds = new HashSet<int> { User3Id, User4Id };
         var gameId = _coreService.CreateGame(userIds);
@@ -57,7 +57,7 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayersWithOrder012()
+    public void CreateGoodPlayersWithPositions012()
     {
         var userIds = new HashSet<int> { User1Id, User3Id, User4Id };
         var gameId = _coreService.CreateGame(userIds);
@@ -72,7 +72,7 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayersWithOrder0123()
+    public void CreateGoodPlayersWithPositions0123()
     {
         var userIds = new HashSet<int> { User1Id, User2Id, User3Id, User4Id };
         var gameId = _coreService.CreateGame(userIds);

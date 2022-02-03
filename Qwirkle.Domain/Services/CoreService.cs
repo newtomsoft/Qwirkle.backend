@@ -42,12 +42,12 @@ public class CoreService
     public int CreateGame(HashSet<int> usersIds)
     {
         _logger.LogInformation("CreateGame");
-        InitializeEmptyGame();
-        CreatePlayers(usersIds);
-        PutTilesOnBag();
-        DealTilesToPlayers();
-        SortPlayers();
-        return _game.Id;
+        var game = InitializeEmptyGame();
+        CreatePlayers(game, usersIds);
+        PutTilesOnBag(game);
+        DealTilesToPlayers(game);
+        game = SortPlayers(game);
+        return game.Id;
     }
 
     public void ResetGame(int gameId) => _game = _repository.GetGame(gameId);
@@ -144,40 +144,45 @@ public class CoreService
         _repository.SetGameOver(_game.Id);
     }
 
-    private void InitializeEmptyGame() => _game = _repository.CreateGame(DateTime.UtcNow);
+    private Game InitializeEmptyGame()
+    {
+        _game = _repository.CreateGame(DateTime.UtcNow);
+        return _game;
+    }
 
-    private void DealTilesToPlayers()
+    private void DealTilesToPlayers(Game game)
     {
         var rackPositions = new List<byte>();
         for (byte i = 0; i < TilesNumberPerPlayer; i++) rackPositions.Add(i);
-        foreach (var player in _game.Players) _repository.TilesFromBagToPlayer(player, rackPositions);
+        foreach (var player in game.Players) _repository.TilesFromBagToPlayer(player, rackPositions);
     }
 
-    private void PutTilesOnBag() => _repository.PutTilesOnBag(_game.Id);
+    private void PutTilesOnBag(Game game) => _repository.PutTilesOnBag(game.Id);
 
-    private void CreatePlayers(HashSet<int> usersIds)
+    private void CreatePlayers(Game game, HashSet<int> usersIds)
     {
-        foreach (var userId in usersIds) _game.Players.Add(_repository.CreatePlayer(userId, _game.Id));
+        foreach (var userId in usersIds) game.Players.Add(_repository.CreatePlayer(userId, game.Id));
     }
 
     private void ArrangeRack(Player player, IEnumerable<Tile> tiles) => _repository.ArrangeRack(player, tiles);
 
-    private void SortPlayers()
+    private Game SortPlayers(Game game)
     {
         var playersWithCanBePlayedTilesNumber = new Dictionary<int, int>();
-        _game.Players.ForEach(p => playersWithCanBePlayedTilesNumber[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
+        game.Players.ForEach(p => playersWithCanBePlayedTilesNumber[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
 
         var playerIdToStart = playersWithCanBePlayedTilesNumber.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
-        var playerToStart = _game.Players.First(p => p.Id == playerIdToStart);
-        var otherPlayers = _game.Players.Where(p => p.Id != playerIdToStart).OrderBy(_ => Guid.NewGuid()).ToList();
+        var playerToStart = game.Players.First(p => p.Id == playerIdToStart);
+        var otherPlayers = game.Players.Where(p => p.Id != playerIdToStart).OrderBy(_ => Guid.NewGuid()).ToList();
 
         var playersOrdered = new List<Player> { playerToStart };
         playersOrdered.AddRange(otherPlayers);
-        _game = _game with { Players = playersOrdered };
-        for (byte i = 0; i < _game.Players.Count; i++) _game.Players[i].GamePosition = i;
-        _game.Players.ForEach(player => _repository.UpdatePlayer(player));
+        game = game with { Players = playersOrdered };
+        for (byte i = 0; i < game.Players.Count; i++) game.Players[i].GamePosition = i;
+        game.Players.ForEach(player => _repository.UpdatePlayer(player));
 
         SetPlayerTurn(playerToStart);
+        return game;
     }
 
     private SkipTurnReturn SkipTurn(Player player)
