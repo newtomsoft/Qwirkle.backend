@@ -37,7 +37,7 @@ public class GameController : ControllerBase
     public ActionResult GetGame(int gameId)
     {
         var game = _infoService.GetGameWithTilesOnlyForAuthenticatedUser(gameId, UserId);
-        return new ObjectResult(game);
+        return game is null ? StatusCode(StatusCodes.Status404NotFound) : new ObjectResult(game);
     }
 
 
