@@ -12,7 +12,7 @@ public class CoreService
     private readonly UserService _userService;
     private readonly ILogger<CoreService> _logger;
     private readonly BotService _botService;
-    
+
     public CoreService(IRepository repository, INotification notification, InfoService infoService, UserService userService, ILogger<CoreService> logger)
     {
         _repository = repository;
@@ -20,21 +20,37 @@ public class CoreService
         _infoService = infoService;
         _userService = userService;
         _logger = logger;
-        _botService = new BotService(infoService, this, _logger); //todo dette technique
+        _botService = new BotService(infoService, this, userService, _logger); //todo dette technique
     }
 
     public int CreateGameWithUsersIds(HashSet<int> usersIds)
     {
         _logger?.LogInformation("CreateGame with users {usersIds}", usersIds);
         var gameId = CreateGame(usersIds);
-        PlayIfBot(_infoService.GetGame(gameId));
+        Task.Run(() => PlayBotsAsync(gameId));
+        //PlayIfBot(gameId);
         return gameId;
     }
 
-    private void PlayIfBot(Game game)
+    public async Task<int> CreateGameWithUsersIdsAsync(HashSet<int> usersIds)
     {
-        var player = game.Players.First(p => p.IsTurn);
-        if (_userService.IsBot(player.UserId)) _botService.Play(game, player);
+        _logger?.LogInformation("CreateGame with users {usersIds}", usersIds);
+        var gameId = CreateGame(usersIds);
+        await PlayBotsAsync(gameId);
+        //Task.Run(() => PlayIfBotAsync(gameId));
+        return gameId;
+    }
+
+    private async Task PlayBotsAsync(int gameId)
+    {
+        var game = await _infoService.GetGameAsync(gameId);
+        var isBot = true;
+        while (isBot && !game.GameOver) 
+        {
+            game = await _infoService.GetGameAsync(gameId);
+            var player = game.Players.First(p => p.IsTurn);
+            isBot = _botService.Play(game, player);
+        } 
     }
 
     public int CreateGame(HashSet<int> usersIds)

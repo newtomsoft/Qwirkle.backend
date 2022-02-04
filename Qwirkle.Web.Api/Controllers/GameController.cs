@@ -19,18 +19,28 @@ public class GameController : ControllerBase
         _userManager = userManager;
     }
 
-
     [HttpPost("New")]
-    public ActionResult CreateGame(HashSet<string> usersNames)
+    public async Task<ActionResult> CreateGameAsync(HashSet<string> usersNames)
     {
         var usersIdsList = new List<int> { UserId };
         usersIdsList.AddRange(usersNames.Select(userName => _infoService.GetUserId(userName)));
         usersIdsList.RemoveAll(id => id == 0);
         var usersIds = new HashSet<int>(usersIdsList);
         if (!usersIds.Contains(UserId)) return new BadRequestObjectResult("user not in the game");
-        var gameId = _coreService.CreateGameWithUsersIds(usersIds);
+        var gameId = await _coreService.CreateGameWithUsersIdsAsync(usersIds);
         return new ObjectResult(gameId);
     }
+
+    //[HttpPost("New")]
+    //public async Task<ActionResult> CreateGameTempAsync(HashSet<string> usersNames)
+    //{
+    //    var usersIdsList = new List<int>();
+    //    usersIdsList.AddRange(usersNames.Select(userName => _infoService.GetUserId(userName)));
+    //    usersIdsList.RemoveAll(id => id == 0);
+    //    var usersIds = new HashSet<int>(usersIdsList);
+    //    var gameId = await _coreService.CreateGameWithUsersIdsAsync(usersIds);
+    //    return new ObjectResult(gameId);
+    //}
 
 
     [HttpGet("{gameId:int}")]

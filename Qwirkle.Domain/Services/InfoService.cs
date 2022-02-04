@@ -24,6 +24,7 @@ public class InfoService
     public List<int> GetUserGames(int userId) => _repository.GetUserGamesIds(userId);
     public Game GetGameForSuperUser(int gameId) => _repository.GetGame(gameId);
     public Game GetGame(int gameId) => _repository.GetGame(gameId);
+    public async Task<Game> GetGameAsync(int gameId) => await _repository.GetGameAsync(gameId);
     public List<int> GetWinnersPlayersId(int gameId)
     {
         if (!_repository.IsGameOver(gameId)) return new List<int>();

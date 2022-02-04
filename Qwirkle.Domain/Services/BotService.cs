@@ -4,28 +4,34 @@ public class BotService
 {
     private readonly InfoService _infoService;
     private readonly CoreService _coreService;
+    private readonly UserService _userService;
     private readonly ILogger<CoreService> _logger;
 
-    public BotService(InfoService infoService, CoreService coreService, ILogger<CoreService> logger)
+    public BotService(InfoService infoService, CoreService coreService, UserService userService, ILogger<CoreService> logger)
     {
         _infoService = infoService;
         _coreService = coreService;
+        _userService = userService;
         _logger = logger;
     }
 
-    public void Play(Game game, Player bot)
+    public bool Play(Game game, Player player)
     {
-        var tilesToPlay = GetBestMove(bot, game).Tiles.ToList();
+        if (_userService.IsBot(player.UserId) is false) return false;
+
+        var tilesToPlay = GetBestMove(player, game).Tiles.ToList();
         if (tilesToPlay.Count > 0)
         {
             _logger?.LogInformation($"Bot play {tilesToPlay.ToLog()}");
-            _coreService.TryPlayTiles(bot.Id, tilesToPlay);
+            _coreService.TryPlayTiles(player.Id, tilesToPlay);
         }
         else
         {
             _logger?.LogInformation("Bot swap or skip...");
-            SwapOrSkipTurn(bot, game.Bag.Tiles.Count);
+            SwapOrSkipTurn(player, game.Bag.Tiles.Count);
         }
+
+        return true;
     }
 
     public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)

@@ -7,6 +7,7 @@ public class NoRepository : IRepository
     public void PutTilesOnBag(int gameId) => throw new NotSupportedException();
     public List<int> GetAllUsersId() => throw new NotSupportedException();
     public Game GetGame(int gameId) => throw new NotSupportedException();
+    public Task<Game> GetGameAsync(int gameId) => throw new NotSupportedException();
     public int GetPlayerId(int gameId, int userId) => throw new NotSupportedException();
     public List<int> GetGamesIdsContainingPlayers() => throw new NotSupportedException();
     public List<int> GetLeadersPlayersId(int gameId) => throw new NotSupportedException();

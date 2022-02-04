@@ -1,4 +1,6 @@
-﻿namespace Qwirkle.Infra.Repository.Adapters;
+﻿using System.Threading.Tasks;
+
+namespace Qwirkle.Infra.Repository.Adapters;
 
 public class Repository : IRepository
 {
@@ -48,6 +50,19 @@ public class Repository : IRepository
         var playersDao = _dbContext.Players.Where(p => p.GameId == gameId).Include(p => p.User).ToList();
         var players = playersDao.Select(playerDao => playerDao.ToPlayer(_dbContext)).ToList();
         var tilesOnBagDao = _dbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToList();
+        var bag = new Bag(gameId);
+        foreach (var tileOnBagDao in tilesOnBagDao) bag.Tiles.Add(tileOnBagDao.ToTileOnBag());
+        return new Game(gameId, Board.From(tiles), players, bag, gameOver);
+    }
+
+    public async Task<Game> GetGameAsync(int gameId)
+    {
+        var gameOver = await _dbContext.Games.Where(g => g.Id == gameId).Select(g => g.GameOver).FirstOrDefaultAsync();
+        var tilesOnBoardDao = await _dbContext.TilesOnBoard.Where(tb => tb.GameId == gameId).ToListAsync();
+        var tiles = TilesOnBoardDaoToEntity(tilesOnBoardDao);
+        var playersDao = await _dbContext.Players.Where(p => p.GameId == gameId).Include(p => p.User).ToListAsync();
+        var players = playersDao.Select(playerDao => playerDao.ToPlayer(_dbContext)).ToList();
+        var tilesOnBagDao = await _dbContext.TilesOnBag.Where(g => g.GameId == gameId).Include(tb => tb.Tile).ToListAsync();
         var bag = new Bag(gameId);
         foreach (var tileOnBagDao in tilesOnBagDao) bag.Tiles.Add(tileOnBagDao.ToTileOnBag());
         return new Game(gameId, Board.From(tiles), players, bag, gameOver);
