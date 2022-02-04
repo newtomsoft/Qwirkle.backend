@@ -7,17 +7,22 @@ public class ActionController : ControllerBase
 {
     private readonly UserService _userService;
     private readonly BotService _botService;
+    private readonly ILogger<ActionController> _logger;
     private readonly INotification _notification;
     private readonly InfoService _infoService;
     private readonly CoreService _coreService;
     private readonly UserManager<UserDao> _userManager;
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    public ActionController(CoreService coreService, InfoService infoService, UserManager<UserDao> userManager, INotification notification, UserService userService, BotService botService)
+    public ActionController(CoreService coreService, InfoService infoService, UserManager<UserDao> userManager, INotification notification, UserService userService, BotService botService, ILogger<ActionController> logger)
     {
+        _coreService = coreService;
+        _infoService = infoService;
+        _userManager = userManager;
+        _notification = notification;
         _userService = userService;
         _botService = botService;
-        (_coreService, _infoService, _userManager, _notification) = (coreService, infoService, userManager, notification);
+        _logger = logger;
     }
 
 
@@ -31,7 +36,7 @@ public class ActionController : ControllerBase
         if (playReturn.Code == ReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(gameId));
         return new ObjectResult(playReturn);
     }
-
+    
 
     [HttpPost("PlayTilesSimulation/")]
     public ActionResult<int> PlayTilesSimulation(List<TileViewModel> tiles)
