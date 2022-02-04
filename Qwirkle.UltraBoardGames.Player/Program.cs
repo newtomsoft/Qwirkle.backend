@@ -15,9 +15,11 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddOptions();
         services.AddSingleton<UltraBoardGamesPlayerApplication>();
         services.AddSingleton<IWebDriverFactory, EdgeDriverFactory>();
+        services.AddSingleton<IAuthentication, NoAuthentication>();
         services.AddSingleton<GameScraper>();
         services.AddSingleton<BotService>();
         services.AddSingleton<CoreService>();
+        services.AddSingleton<UserService>();
         services.AddSingleton<InfoService>();
         services.AddSingleton<INotification, NoNotification>();
         services.AddSingleton<IRepository, NoRepository>();
