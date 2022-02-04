@@ -40,7 +40,7 @@ public class UserController : ControllerBase
     public ActionResult IsAdmin() => StatusCode(StatusCodes.Status200OK);
 
 
-    [HttpPost("AddBookmarkedOpponent/{friendName}")]
+    [HttpGet("AddBookmarkedOpponent/{friendName}")]
     public ActionResult AddBookmarkedOpponent(string friendName) => new ObjectResult(_userService.AddBookmarkedOpponent(UserId, friendName));
 
 
