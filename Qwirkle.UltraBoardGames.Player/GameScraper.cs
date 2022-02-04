@@ -1,4 +1,6 @@
-﻿namespace Qwirkle.UltraBoardGames.Player;
+﻿using Qwirkle.UltraBoardGames.Player.WebElementExtensions;
+
+namespace Qwirkle.UltraBoardGames.Player;
 
 public sealed class GameScraper
 {
@@ -6,6 +8,7 @@ public sealed class GameScraper
     private const string GamePageUrlPlayFirst = "https://www.ultraboardgames.com/qwirkle/game.php?startplayer";
     private static string QwirkleGamePageWithRandomFirstPlayer => new Random().Next(2) == 0 ? GamePageUrlPlayFirst : GamePageUrlPlaySecond;
     private readonly IWebDriver _webDriver;
+    private readonly IJavaScriptExecutor _javaScriptExecutor;
 
     private readonly ILogger<UltraBoardGamesPlayerApplication> _logger;
     private ScreenShotMaker? _screenShotMaker;
@@ -14,6 +17,7 @@ public sealed class GameScraper
     {
         _logger = logger;
         _webDriver = webDriverFactory.CreateDriver();
+        _javaScriptExecutor = (IJavaScriptExecutor) _webDriver;
         _ = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(2));
     }
 
@@ -60,34 +64,32 @@ public sealed class GameScraper
 
     public void CleanWindow()
     {
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('header').style.display = 'none';");
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('.breadcrumb').style.display = 'none';");
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('.post-title').style.display = 'none';");
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('.nextpage').style.display = 'none';");
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('.bg-danger').style.display = 'none';");
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.querySelector('footer').style.display = 'none';");
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.getElementById('main').style.marginTop = '-65px';");
+        _javaScriptExecutor.ExecuteScript("document.querySelector('header').style.display = 'none';");
+        _javaScriptExecutor.ExecuteScript("document.querySelector('.breadcrumb').style.display = 'none';");
+        _javaScriptExecutor.ExecuteScript("document.querySelector('.post-title').style.display = 'none';");
+        _javaScriptExecutor.ExecuteScript("document.querySelector('.nextpage').style.display = 'none';");
+        _javaScriptExecutor.ExecuteScript("document.querySelector('.bg-danger').style.display = 'none';");
+        _javaScriptExecutor.ExecuteScript("document.querySelector('footer').style.display = 'none';");
+        _javaScriptExecutor.ExecuteScript("document.getElementById('main').style.marginTop = '-65px';");
     }
 
-    public int GetTilesOnBag()
-    {
-        var brutTilesOnBag = _webDriver.FindElement(By.Id("bag_status")).Text;
-        return ConvertToInt(brutTilesOnBag);
-    }
+    public int GetTilesOnBag() => _webDriver.FindElement(By.Id("bag_status")).TextToInt();
 
     public void AdjustBoardView()
     {
+        _javaScriptExecutor.ExecuteScript("window.scrollTo(0, 0)");
         var scorePlayer = _webDriver.FindElement(By.Id("score_player"));
         var scoreComputer = _webDriver.FindElement(By.Id("score_player"));
         var scoreBoard = _webDriver.FindElement(By.Id("scoreboard1"));
-        while (!IsVisibleInViewport(scoreBoard) || !IsVisibleInViewport(scorePlayer) || !IsVisibleInViewport(scoreComputer))
-            ((IJavaScriptExecutor)_webDriver).ExecuteScript("Qwirkle.adjustMapSize(0,-1)");
+        var bagStatus = _webDriver.FindElement(By.Id("bag_status"));
+        while (!IsVisibleInViewport(scoreBoard) || !IsVisibleInViewport(scorePlayer) || !IsVisibleInViewport(scoreComputer) || !IsVisibleInViewport(bagStatus))
+            _javaScriptExecutor.ExecuteScript("Qwirkle.adjustMapSize(0,-1)");
     }
 
-    public int GetPlayerPoints() => ConvertToInt(_webDriver.FindElement(By.Id("score_player")).Text, '(');
+    public int GetPlayerPoints() => _webDriver.FindElement(By.Id("score_player")).TextToInt();
 
-    public int GetOpponentPoints() => ConvertToInt(_webDriver.FindElement(By.Id("score_computer")).Text, '(');
-
+    public int GetOpponentPoints() => _webDriver.FindElement(By.Id("score_computer")).TextToInt();
+    
     public List<TileOnPlayer> GetTilesOnPlayer() => TilesOnPlayerCodes().Select(positionTile => new TileOnPlayer(positionTile.Key, positionTile.Value.ToTile())).ToList();
 
     /// <returns>0 tiles if error</returns>
@@ -128,7 +130,7 @@ public sealed class GameScraper
     public void Skip()
     {
         ClickPlay();
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("Qwirkle.passConfirmation(1)");
+        _javaScriptExecutor.ExecuteScript("Qwirkle.passConfirmation(1)");
     }
 
     public void CloseEndWindow()
@@ -143,16 +145,16 @@ public sealed class GameScraper
             // ignored
         }
         _webDriver.FindElement(By.ClassName("messageboard_button")).Click();
-        ((IJavaScriptExecutor)_webDriver).ExecuteScript("Qwirkle.removeMessageBoard()");
+        _javaScriptExecutor.ExecuteScript("Qwirkle.removeMessageBoard()");
         TakeScreenShot();
     }
 
     public void TakeScreenShot()
     {
-        byte[] GetByteArrayScreenShot() => ((ITakesScreenshot)_webDriver).GetScreenshot().AsByteArray;
-
         var elements = new List<IWebElement> { _webDriver.FindElement(By.Id("board")), _webDriver.FindElement(By.Id("scoreboard1")), _webDriver.FindElement(By.Id("score_computer_div")) };
         _screenShotMaker!.SaveCroppedScreenShot(GetByteArrayScreenShot, elements);
+        
+        byte[] GetByteArrayScreenShot() => ((ITakesScreenshot)_webDriver).GetScreenshot().AsByteArray;
     }
 
     private Dictionary<RackPosition, UltraBoardGamesTileImageCode> TilesOnPlayerCodes()
@@ -186,7 +188,7 @@ public sealed class GameScraper
             catch (Exception exception)
             {
                 _logger?.LogError("Exception in {methodName} {message}", MethodBase.GetCurrentMethod()!.Name, exception.Message);
-                ((IJavaScriptExecutor)_webDriver).ExecuteScript("document.getElementById('ezmobfooter').style.display='none';");
+                _javaScriptExecutor.ExecuteScript("document.getElementById('ezmobfooter').style.display='none';");
             }
         }
     }
@@ -257,15 +259,6 @@ public sealed class GameScraper
     private IWebElement FindElementMoveTo(Coordinates coordinates) => _webDriver.FindElement(By.Id($"x{coordinates.X}y{coordinates.Y}"));
 
     private void DragAndDrop(IWebElement fromElement, IWebElement toElement) => new Actions(_webDriver).DragAndDrop(fromElement, toElement).Build().Perform();
-
-    private static int ConvertToInt(string brutPoints, char ignoreAfter = ' ')
-    {
-        var indexToRemoveAfter = brutPoints.IndexOf(ignoreAfter);
-        var pointsString = indexToRemoveAfter > 0 ? brutPoints.Remove(indexToRemoveAfter) : brutPoints;
-        return int.Parse(pointsString);
-        // brutPoints : "10 (4 last turn)" -> return 10
-    }
-
     private static UltraBoardGamesTileImageCode GetImageCode(string fullImageName) => new(GetStringImageCode(fullImageName));
     private static string GetStringImageCode(string fullImageName) => fullImageName[(fullImageName.LastIndexOf('/') + 1)..fullImageName.LastIndexOf('.')];
 
@@ -279,5 +272,5 @@ public sealed class GameScraper
 
     private void LogMoveTile(TileOnBoard tile) => _logger.LogInformation("Player move {tile}", tile);
     private void LogSwapElementMoveFrom(int tileIndex) => _logger.LogInformation("Move elements {tilePosition} to bag", tileIndex);
-    private bool IsVisibleInViewport(IWebElement element) => (bool)((IJavaScriptExecutor)_webDriver).ExecuteScript("var elem = arguments[0], box = elem.getBoundingClientRect(), cx = box.left + box.width / 2,  cy = box.top + box.height / 2,  e = document.elementFromPoint(cx, cy); for (; e; e = e.parentElement) { if (e === elem) return true;} return false;", element);
+    private bool IsVisibleInViewport(IWebElement element) => (bool)_javaScriptExecutor.ExecuteScript("var elem = arguments[0], box = elem.getBoundingClientRect(), cx = box.left + box.width / 2,  cy = box.top + box.height / 2,  e = document.elementFromPoint(cx, cy); for (; e; e = e.parentElement) { if (e === elem) return true;} return false;", element);
 }

@@ -16,17 +16,17 @@ public class UltraBoardGamesPlayerApplication
 
     public void Run()
     {
-        LogStartApplication();
+        _logger.LogInformation("Application started");
         for (var i = 0; i < 10; i++)
         {
             PlayGame();
         }
-        LogEndApplication();
+        _logger.LogInformation("Ended");
     }
 
     private void PlayGame()
     {
-        LogStartGame();
+        _logger.LogInformation("Game started");
         _scraper.GoToGame();
         _scraper.AcceptPolicies();
         _scraper.CleanWindow();
@@ -67,8 +67,7 @@ public class UltraBoardGamesPlayerApplication
             _scraper.TakeScreenShot();
         }
         _scraper.CloseEndWindow();
-        var gameInformation = new GameInformation(gameStatus, playerPoints, opponentPoints);
-        LogEndGame(gameInformation);
+        _logger.LogInformation("{wonOrLost} by {playerPoints} vs {opponentPoints}", gameStatus, playerPoints, opponentPoints);
     }
 
     private List<TileOnBoard> TilesToPlayOrdered(IEnumerable<TileOnBoard> tilesToPlay, Board board)
@@ -119,9 +118,5 @@ public class UltraBoardGamesPlayerApplication
     {
         foreach (var tile in tilesPlayedByOpponent) _logger?.LogInformation("Opponent move {tile}", tile);
     }
-    private void LogStartApplication() => _logger.LogInformation("Application started");
-    private void LogStartGame() => _logger.LogInformation("Game started");
-    private void LogEndGame(GameInformation gameInformation) => _logger.LogInformation("{wonOrLost} by {playerPoints} vs {opponentPoints}", gameInformation.Status, gameInformation.PlayerPoints, gameInformation.OpponentPoints);
-    private void LogEndApplication() => _logger.LogInformation("Ended");
     private static Domain.Entities.Player Player(int playerPoints, List<TileOnPlayer> tilesOnPlayer, bool isTurn) => new(0, 0, 0, "", 0, playerPoints, 0, Rack.From(tilesOnPlayer), isTurn, false);
 }
