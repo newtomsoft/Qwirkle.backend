@@ -2,6 +2,7 @@
 
 public class CoreService
 {
+    public const int TotalTilesNumber = 108;
     public const int TilesNumberPerPlayer = 6;
     public const int TilesNumberForAQwirkle = 6;
     public const int PointsForAQwirkle = 12;
@@ -9,7 +10,6 @@ public class CoreService
     private readonly IRepository _repository;
     private readonly INotification _notification;
     private readonly InfoService _infoService;
-    private readonly UserService _userService;
     private readonly ILogger<CoreService> _logger;
     private readonly BotService _botService;
 
@@ -18,53 +18,22 @@ public class CoreService
         _repository = repository;
         _notification = notification;
         _infoService = infoService;
-        _userService = userService;
         _logger = logger;
         _botService = new BotService(infoService, this, userService, _logger); //todo dette technique
     }
 
-    public int CreateGameWithUsersIds(HashSet<int> usersIds)
+    public async Task<int> CreateGameAsync(HashSet<int> usersIds)
     {
         _logger?.LogInformation("CreateGame with users {usersIds}", usersIds);
-        var gameId = CreateGame(usersIds);
-        Task.Run(() => PlayBotsAsync(gameId));
-        //PlayIfBot(gameId);
-        return gameId;
-    }
-
-    public async Task<int> CreateGameWithUsersIdsAsync(HashSet<int> usersIds)
-    {
-        _logger?.LogInformation("CreateGame with users {usersIds}", usersIds);
-        var gameId = CreateGame(usersIds);
-        await PlayBotsAsync(gameId);
-        //Task.Run(() => PlayIfBotAsync(gameId));
-        return gameId;
-    }
-
-    private async Task PlayBotsAsync(int gameId)
-    {
-        var game = await _infoService.GetGameAsync(gameId);
-        var isBot = true;
-        while (isBot && !game.GameOver) 
-        {
-            game = await _infoService.GetGameAsync(gameId);
-            var player = game.Players.First(p => p.IsTurn);
-            isBot = _botService.Play(game, player);
-        } 
-    }
-
-    public int CreateGame(HashSet<int> usersIds)
-    {
-        _logger.LogInformation("CreateGame");
         var game = InitializeEmptyGame();
         CreatePlayers(game, usersIds);
         PutTilesOnBag(game);
         DealTilesToPlayers(game);
         game = SortPlayers(game);
-        return game.Id;
+        var gameId = game.Id;
+        await _botService.PlayBotsAsync(gameId);
+        return gameId;
     }
-
-    public Game ResetGame(int gameId) => _repository.GetGame(gameId);
 
     public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<Tile> tiles)
     {
@@ -207,7 +176,6 @@ public class CoreService
     private SwapTilesReturn SwapTiles(Game game, Player player, IEnumerable<Tile> tiles)
     {
         var tilesList = tiles.ToList();
-        ResetGame(player.GameId);
         SetNextPlayerTurnToPlay(game, player);
         var positionsInRack = new List<byte>();
         for (byte i = 0; i < tilesList.Count; i++) positionsInRack.Add(i);

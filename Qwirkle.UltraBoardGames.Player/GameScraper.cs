@@ -1,4 +1,4 @@
-﻿using Qwirkle.UltraBoardGames.Player.WebElementExtensions;
+﻿using AutomationUtils.Utils;
 
 namespace Qwirkle.UltraBoardGames.Player;
 
@@ -7,25 +7,49 @@ public sealed class GameScraper
     private const string GamePageUrlPlaySecond = "https://www.ultraboardgames.com/qwirkle/game.php?startcomputer";
     private const string GamePageUrlPlayFirst = "https://www.ultraboardgames.com/qwirkle/game.php?startplayer";
     private static string QwirkleGamePageWithRandomFirstPlayer => new Random().Next(2) == 0 ? GamePageUrlPlayFirst : GamePageUrlPlaySecond;
-    private readonly IWebDriver _webDriver;
-    private readonly IJavaScriptExecutor _javaScriptExecutor;
-
     private readonly ILogger<UltraBoardGamesPlayerApplication> _logger;
+    private readonly IWebDriverFactory _webDriverFactory;
     private ScreenShotMaker? _screenShotMaker;
+    private IWebDriver _webDriver = null!;
+    private IJavaScriptExecutor _javaScriptExecutor = null!;
 
     public GameScraper(ILogger<UltraBoardGamesPlayerApplication> logger, IWebDriverFactory webDriverFactory)
     {
         _logger = logger;
-        _webDriver = webDriverFactory.CreateDriver();
-        _javaScriptExecutor = (IJavaScriptExecutor) _webDriver;
-        _ = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(2));
+        _webDriverFactory = webDriverFactory;
+    }
+
+    public void BeginScraping()
+    {
+        _webDriver = _webDriverFactory.CreateDriver();
+        _javaScriptExecutor = (IJavaScriptExecutor)_webDriver;
+        _ = new WebDriverWait(_webDriver, TimeSpan.FromSeconds(10));
     }
 
     public void GoToGame()
     {
         _screenShotMaker = new ScreenShotMaker();
+        _webDriver.Manage().Window.Size = new System.Drawing.Size(850, 800);
         _webDriver.Navigate().GoToUrl(QwirkleGamePageWithRandomFirstPlayer);
-        _webDriver.Manage().Window.Maximize();
+        var wait = FluentWait.Create(_webDriver);
+        wait.WithTimeout(TimeSpan.FromMilliseconds(30000));
+        wait.PollingInterval = TimeSpan.FromMilliseconds(250);
+        wait.Until(IsPageLoaded);
+        _logger.LogInformation("Game started");
+
+        bool IsPageLoaded(IWebDriver webDriver)
+        {
+            try
+            {
+                _ = _webDriver.FindElement(By.Id("board"));
+                _ = _webDriver.FindElement(By.Id("navheader"));
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 
     public GameStatus GetGameStatus()
@@ -64,6 +88,8 @@ public sealed class GameScraper
 
     public void CleanWindow()
     {
+        _javaScriptExecutor.ExecuteScript("document.querySelector('.rightside').style.display = 'none';");
+        _javaScriptExecutor.ExecuteScript("document.querySelector('#ezmobfooter').style.display = 'none';");
         _javaScriptExecutor.ExecuteScript("document.querySelector('header').style.display = 'none';");
         _javaScriptExecutor.ExecuteScript("document.querySelector('.breadcrumb').style.display = 'none';");
         _javaScriptExecutor.ExecuteScript("document.querySelector('.post-title').style.display = 'none';");
@@ -77,19 +103,24 @@ public sealed class GameScraper
 
     public void AdjustBoardView()
     {
+     
+        if (GetGameStatus() != GameStatus.InProgress) return;
         _javaScriptExecutor.ExecuteScript("window.scrollTo(0, 0)");
         var scorePlayer = _webDriver.FindElement(By.Id("score_player"));
         var scoreComputer = _webDriver.FindElement(By.Id("score_player"));
         var scoreBoard = _webDriver.FindElement(By.Id("scoreboard1"));
+        var scoreBoard2 = _webDriver.FindElement(By.Id("scoreboard2"));
         var bagStatus = _webDriver.FindElement(By.Id("bag_status"));
-        while (!IsVisibleInViewport(scoreBoard) || !IsVisibleInViewport(scorePlayer) || !IsVisibleInViewport(scoreComputer) || !IsVisibleInViewport(bagStatus))
+        var board = _webDriver.FindElement(By.Id("board"));
+        while (!IsVisibleInViewport(scoreBoard) || !IsVisibleInViewport(scoreBoard2) || !IsVisibleInViewport(scorePlayer) || !IsVisibleInViewport(scoreComputer) || !IsVisibleInViewport(bagStatus) || !IsVisibleInViewport(board))
             _javaScriptExecutor.ExecuteScript("Qwirkle.adjustMapSize(0,-1)");
     }
 
     public int GetPlayerPoints() => _webDriver.FindElement(By.Id("score_player")).TextToInt();
+    public int GetPlayerLastPoints() => _webDriver.FindElement(By.Id("score_player")).TextToInt(1);
 
     public int GetOpponentPoints() => _webDriver.FindElement(By.Id("score_computer")).TextToInt();
-    
+
     public List<TileOnPlayer> GetTilesOnPlayer() => TilesOnPlayerCodes().Select(positionTile => new TileOnPlayer(positionTile.Key, positionTile.Value.ToTile())).ToList();
 
     /// <returns>0 tiles if error</returns>
@@ -115,10 +146,46 @@ public sealed class GameScraper
         return tilesOnBoard;
     }
 
+    public List<TileOnBoard> GetTilesOnBoard()
+    {
+        var tilesOnBoard = new List<TileOnBoard>();
+        var domTiles = _webDriver.FindElements(By.ClassName("ui-droppable")).ToList();
+        foreach (var domTile in domTiles)
+        {
+            try
+            {
+                var fullImageName = domTile.FindElement(By.TagName("img")).GetAttribute("src");
+                var coordinates = Coordinates.From(int.Parse(domTile.GetAttribute("mapx")), int.Parse(domTile.GetAttribute("mapy")));
+                tilesOnBoard.Add(TileOnBoard.From(GetImageCode(fullImageName).ToTile(), coordinates));
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+        return tilesOnBoard;
+    }
+
     public void Play(List<TileOnBoard> tilesToPlay)
     {
         PlaceTilesOnBoard(tilesToPlay);
         ClickPlay();
+    }
+
+    public bool IsPlayingError()
+    {
+        try
+        {
+            var messageBoard = _webDriver.FindElement(By.Id("messageboard"));
+            var text = messageBoard.FindElement(By.CssSelector("h3")).Text;
+            if (text.Contains("You havn't played any tiles!") is not true) return false;
+            _webDriver.FindElement(By.ClassName("messageboard_button")).Click();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public void Swap(int number)
@@ -133,16 +200,20 @@ public sealed class GameScraper
         _javaScriptExecutor.ExecuteScript("Qwirkle.passConfirmation(1)");
     }
 
-    public void CloseEndWindow()
+    public void CloseEndGameNotificationWindow()
     {
-        try
+        while (true)
         {
-            var inputNameElement = _webDriver.FindElement(By.Id("nicknamepop"));
-            inputNameElement.SendKeys(RandomNickName());
-        }
-        catch
-        {
-            // ignored
+            try
+            {
+                var inputNameElement = _webDriver.FindElement(By.Id("nicknamepop"));
+                inputNameElement.SendKeys(RandomNickName());
+                break;
+            }
+            catch
+            {
+                // ignored
+            }
         }
         _webDriver.FindElement(By.ClassName("messageboard_button")).Click();
         _javaScriptExecutor.ExecuteScript("Qwirkle.removeMessageBoard()");
@@ -153,8 +224,15 @@ public sealed class GameScraper
     {
         var elements = new List<IWebElement> { _webDriver.FindElement(By.Id("board")), _webDriver.FindElement(By.Id("scoreboard1")), _webDriver.FindElement(By.Id("score_computer_div")) };
         _screenShotMaker!.SaveCroppedScreenShot(GetByteArrayScreenShot, elements);
-        
+
         byte[] GetByteArrayScreenShot() => ((ITakesScreenshot)_webDriver).GetScreenshot().AsByteArray;
+    }
+
+    public void CloseBrowser(TimeSpan delay)
+    {
+        Task.Delay(delay).Wait();
+        _webDriver.Close();
+        _webDriver.Dispose();
     }
 
     private Dictionary<RackPosition, UltraBoardGamesTileImageCode> TilesOnPlayerCodes()
@@ -273,4 +351,6 @@ public sealed class GameScraper
     private void LogMoveTile(TileOnBoard tile) => _logger.LogInformation("Player move {tile}", tile);
     private void LogSwapElementMoveFrom(int tileIndex) => _logger.LogInformation("Move elements {tilePosition} to bag", tileIndex);
     private bool IsVisibleInViewport(IWebElement element) => (bool)_javaScriptExecutor.ExecuteScript("var elem = arguments[0], box = elem.getBoundingClientRect(), cx = box.left + box.width / 2,  cy = box.top + box.height / 2,  e = document.elementFromPoint(cx, cy); for (; e; e = e.parentElement) { if (e === elem) return true;} return false;", element);
+
+
 }

@@ -9,7 +9,6 @@ public class PlayTilesShould
     private InfoService _infoService = null!;
     private CoreService _coreService = null!;
 
-    private const int TotalTiles = 108;
     private const int GameId = 7;
     private const int User71 = 71;
     private const int User21 = 21;
@@ -81,7 +80,7 @@ public class PlayTilesShould
         _dbContext.Players.Add(new PlayerDao { Id = Player3, UserId = User21, GameId = GameId, GamePosition = 1, GameTurn = false });
         _dbContext.SaveChanges();
     }
-    
+
     private void AddTilesOnPlayers()
     {
         _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 1, PlayerId = Player9, TileId = 1 });
@@ -117,7 +116,7 @@ public class PlayTilesShould
 
     private void AddTilesOnBag()
     {
-        for (var i = 1; i <= TotalTiles; i++)
+        for (var i = 1; i <= CoreService.TotalTilesNumber; i++)
             _dbContext.TilesOnBag.Add(new TileOnBagDao { Id = 100 + i, GameId = GameId, TileId = i });
         _dbContext.SaveChanges();
     }

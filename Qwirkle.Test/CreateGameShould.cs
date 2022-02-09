@@ -15,8 +15,10 @@ public class CreateGameShould
         var connectionFactory = new ConnectionFactory();
         _dbContext = connectionFactory.CreateContextForInMemory();
         IRepository repository = new Repository(_dbContext);
+        var fakeAuthentication = Mock.Of<IAuthentication>();
+        var userService = new UserService(repository, fakeAuthentication);
         _infoService = new InfoService(repository, null, new Logger<InfoService>(new LoggerFactory()));
-        _coreService = new CoreService(repository, null, null, null, new Logger<CoreService>(new LoggerFactory()));
+        _coreService = new CoreService(repository, null, _infoService, userService, new Logger<CoreService>(new LoggerFactory()));
         Add4DefaultTestUsers();
     }
 
@@ -30,10 +32,10 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayerWithPosition0()
+    public async Task CreateGoodPlayerWithPosition0()
     {
         var userIds = new HashSet<int> { User3Id };
-        var gameId = _coreService.CreateGame(userIds);
+        var gameId = await _coreService.CreateGameAsync(userIds);
         var players = _infoService.GetGame(gameId).Players;
         players.Count.ShouldBe(1);
         players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(1);
@@ -43,10 +45,10 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayersWithPositions01()
+    public async Task CreateGoodPlayersWithPositions01()
     {
         var userIds = new HashSet<int> { User3Id, User4Id };
-        var gameId = _coreService.CreateGame(userIds);
+        var gameId = await _coreService.CreateGameAsync(userIds);
         var players = _infoService.GetGame(gameId).Players;
         players.Count.ShouldBe(2);
         players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(2);
@@ -57,10 +59,10 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayersWithPositions012()
+    public async Task CreateGoodPlayersWithPositions012()
     {
         var userIds = new HashSet<int> { User1Id, User3Id, User4Id };
-        var gameId = _coreService.CreateGame(userIds);
+        var gameId = await _coreService.CreateGameAsync(userIds);
         var players = _infoService.GetGame(gameId).Players;
         players.Count.ShouldBe(3);
         players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(3);
@@ -72,10 +74,10 @@ public class CreateGameShould
     }
 
     [Fact]
-    public void CreateGoodPlayersWithPositions0123()
+    public async Task CreateGoodPlayersWithPositions0123()
     {
         var userIds = new HashSet<int> { User1Id, User2Id, User3Id, User4Id };
-        var gameId = _coreService.CreateGame(userIds);
+        var gameId = await _coreService.CreateGameAsync(userIds);
         var players = _infoService.GetGame(gameId).Players;
         players.Count.ShouldBe(4);
         players.Select(p => p.Rack.Tiles.Count == CoreService.TilesNumberPerPlayer).Count().ShouldBe(4);

@@ -1,0 +1,2 @@
+firefox.settings.services.mozilla.com:HSTS	0	19029	1675702266720,1,0,2
+contile.services.mozilla.com:HSTS	0	19029	1675702236791,1,0,2

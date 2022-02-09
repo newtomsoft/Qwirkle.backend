@@ -5,8 +5,9 @@ public class EdgeDriverFactory : IWebDriverFactory
     public IWebDriver CreateDriver()
     {
         var options = new EdgeOptions();
-        options.AddExtensions("WebPlugin/uBlock-Origin.edge.crx");
-        //options.AddArgument("--headless");
+        options.AddArgument("headless");
+        options.AddArguments("--no-sandbox");
+        new DriverManager().SetUpDriver(new EdgeConfig());
         var driver = new EdgeDriver(options);
         return driver;
     }

@@ -40,6 +40,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Domain", "Qwirkle.D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Evaluation Bot", "Evaluation Bot", "{C8E12175-113F-4AAC-B376-85B24F8E7FA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qwirkle.UltraBoardGames.Test", "Qwirkle.UltraBoardGames.Test\Qwirkle.UltraBoardGames.Test.csproj", "{B04E122F-3111-4C94-B0F1-6374FE8E6BC7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{33561E33-BA67-4A59-9490-BBD70C345220} = {33561E33-BA67-4A59-9490-BBD70C345220}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +83,10 @@ Global
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B04E122F-3111-4C94-B0F1-6374FE8E6BC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B04E122F-3111-4C94-B0F1-6374FE8E6BC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B04E122F-3111-4C94-B0F1-6374FE8E6BC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B04E122F-3111-4C94-B0F1-6374FE8E6BC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +100,7 @@ Global
 		{E5D79468-7F66-44CC-B148-2C452DE7119E} = {748E9369-9766-4FA6-9696-E381B5D67050}
 		{33561E33-BA67-4A59-9490-BBD70C345220} = {C8E12175-113F-4AAC-B376-85B24F8E7FA2}
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5} = {2094B01D-ED38-4071-9B68-636AE81C694B}
+		{B04E122F-3111-4C94-B0F1-6374FE8E6BC7} = {C8E12175-113F-4AAC-B376-85B24F8E7FA2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {326A9AD2-C15D-4772-8BB7-E6B195208FDB}

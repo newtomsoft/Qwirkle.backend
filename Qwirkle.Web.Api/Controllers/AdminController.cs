@@ -37,11 +37,11 @@ public class AdminController : ControllerBase
 
     [HttpGet("NewGameWithOnlyBots/{botsNumber:int}")]
     [Authorize(Roles = "Admin")]
-    public ActionResult CreateOnlyBotsGame(int botsNumber)
+    public async Task<ActionResult> CreateOnlyBotsGame(int botsNumber)
     {
         if (botsNumber is < 2 or > 4) return StatusCode(StatusCodes.Status400BadRequest);
         var usersIds = Enumerable.Range(1, botsNumber).ToHashSet();
-        var gameId = _coreService.CreateGameWithUsersIds(usersIds);
+        var gameId = await _coreService.CreateGameAsync(usersIds);
         return new ObjectResult(gameId);
     }
 }

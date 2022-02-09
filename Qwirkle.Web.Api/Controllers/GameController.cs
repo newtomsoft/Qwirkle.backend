@@ -27,7 +27,7 @@ public class GameController : ControllerBase
         usersIdsList.RemoveAll(id => id == 0);
         var usersIds = new HashSet<int>(usersIdsList);
         if (!usersIds.Contains(UserId)) return new BadRequestObjectResult("user not in the game");
-        var gameId = await _coreService.CreateGameWithUsersIdsAsync(usersIds);
+        var gameId = await _coreService.CreateGameAsync(usersIds);
         return new ObjectResult(gameId);
     }
 

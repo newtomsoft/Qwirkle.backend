@@ -23,7 +23,7 @@ public class InstantGameController : ControllerBase
     }
 
     [HttpGet("Join/{playersNumberForStartGame:int}")]
-    public ActionResult JoinInstantGame(int playersNumberForStartGame)
+    public async Task<ActionResult> JoinInstantGame(int playersNumberForStartGame)
     {
         _logger?.LogInformation("JoinInstantGame with {playersNumber}", playersNumberForStartGame);
         var usersIds = _instantGameService.JoinInstantGame(UserId, playersNumberForStartGame);
@@ -32,7 +32,7 @@ public class InstantGameController : ControllerBase
             _notification.SendInstantGameExpected(playersNumberForStartGame, UserName);
             return new ObjectResult($"waiting for {playersNumberForStartGame - usersIds.Count} player(s)");
         }
-        var gameId = _coreService.CreateGameWithUsersIds(usersIds);
+        var gameId = await _coreService.CreateGameAsync(usersIds);
         _notification.SendInstantGameStarted(playersNumberForStartGame, gameId);
         return new ObjectResult(gameId);
     }

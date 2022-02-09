@@ -15,11 +15,15 @@ public class GetDoableMovesShould
         connectionFactory.Add4DefaultTestUsers();
         var repository = new Repository(_dbContext);
         var infoService = new InfoService(repository, null, new Logger<InfoService>(new LoggerFactory()));
-        var coreService = new CoreService(repository, null, infoService, null, new Logger<CoreService>(new LoggerFactory()));
+        var fakeAuthentication = Mock.Of<IAuthentication>();
+        var userService = new UserService(repository, fakeAuthentication);
+        var coreService = new CoreService(repository, null, infoService, userService, new Logger<CoreService>(new LoggerFactory()));
         var usersIds = infoService.GetAllUsersId();
-        var gameId = coreService.CreateGame(usersIds.ToHashSet());
+        var gameId = coreService.CreateGameAsync(usersIds.ToHashSet()).Result;
         var players = infoService.GetGame(gameId).Players.OrderBy(p => p.Id).ToList();
-        _botService = new BotService(infoService, coreService, new Logger<CoreService>(new LoggerFactory()));
+
+
+        _botService = new BotService(infoService, coreService, null, new Logger<CoreService>(new LoggerFactory()));
         _player = players[0];
         _userId = usersIds[0];
     }

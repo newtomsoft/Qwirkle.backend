@@ -1,16 +1,14 @@
-﻿namespace Qwirkle.UltraBoardGames.Player.WebElementExtensions;
+﻿using System.Text.RegularExpressions;
+
+namespace Qwirkle.UltraBoardGames.Player.WebElementExtensions;
 
 public static class WebElementExtensions
 {
-    private const char DefaultIgnoreCharacter = ' ';
-    public static int TextToInt(this IWebElement element, char ignoreAfterCharacter = DefaultIgnoreCharacter)
+    public static int TextToInt(this IWebElement element, int index = 0)
     {
         var toConvert = element.Text;
-        var indexToRemoveAfter = toConvert.IndexOf(ignoreAfterCharacter);
-        var valueString = indexToRemoveAfter > 0 ? toConvert.Remove(indexToRemoveAfter) : toConvert;
-        return int.Parse(valueString);
-        // toConvert = "10 (4 last turn)" -> return 10
+        var numbers = Regex.Split(toConvert, @"\D+");
+        return int.Parse(numbers[index]);
+        // toConvert = "10 (4 last turn)" index = 0 return 10 ; index = 1 return 4
     }
-
-
 }

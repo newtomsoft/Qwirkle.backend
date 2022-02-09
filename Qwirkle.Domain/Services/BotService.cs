@@ -15,9 +15,20 @@ public class BotService
         _logger = logger;
     }
 
-    public bool Play(Game game, Player player)
+    public async Task PlayBotsAsync(int gameId)
     {
-        if (_userService.IsBot(player.UserId) is false) return false;
+        var isPlayed = true;
+        while (isPlayed)
+        {
+            var game = await _infoService.GetGameAsync(gameId);
+            var player = game.Players.First(p => p.IsTurn);
+            isPlayed = Play(game, player);
+        }
+    }
+
+    private bool Play(Game game, Player player)
+    {
+        if (_userService.IsBot(player.UserId) is false || game.GameOver) return false;
 
         var tilesToPlay = GetBestMove(player, game).Tiles.ToList();
         if (tilesToPlay.Count > 0)
@@ -36,14 +47,14 @@ public class BotService
 
     public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)
     {
-        var doableMoves = ComputeDoableMoves(player, game, originCoordinates, true);
+        var doableMoves = ComputeDoableMoves(player, game, originCoordinates);
         var playReturn = doableMoves.OrderByDescending(m => m.Move.Points).FirstOrDefault();
         return playReturn?.Move.Points ?? 0;
     }
 
     public Move GetBestMove(Player player, Game game, Coordinates originCoordinates = null)
     {
-        var moves = ComputeDoableMoves(player, game, originCoordinates, true).Select(r => r.Move).OrderByDescending(m => m.Points).ToList();
+        var moves = ComputeDoableMoves(player, game, originCoordinates).Select(r => r.Move).OrderByDescending(m => m.Points).ToList();
 
         if (moves.Count == 0) return Move.Empty;
 
@@ -69,10 +80,8 @@ public class BotService
         return ComputeDoableMoves(player, game);
     }
 
-    private HashSet<PlayReturn> ComputeDoableMoves(Player player, Game game, Coordinates originCoordinates = null, bool simulation = false)
+    private HashSet<PlayReturn> ComputeDoableMoves(Player player, Game game, Coordinates originCoordinates = null)
     {
-        if (!simulation) _coreService.ResetGame(player.GameId);
-
         var rack = player.Rack.WithoutDuplicatesTiles();
         var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles(originCoordinates);
         var with1TilePlayReturns = new HashSet<PlayReturn>();

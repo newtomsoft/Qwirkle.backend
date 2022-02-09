@@ -14,7 +14,9 @@ public class ArrangeRackTests
         connectionFactory.Add4DefaultTestUsers();
         var repository = new Repository(_dbContext);
         _infoService = new InfoService(repository, null, new Logger<InfoService>(new LoggerFactory()));
-        _service = new CoreService(repository, null, _infoService, null, new Logger<CoreService>(new LoggerFactory()));
+        var fakeAuthentication = Mock.Of<IAuthentication>();
+        var userService = new UserService(repository, fakeAuthentication);
+        _service = new CoreService(repository, null, _infoService, userService, new Logger<CoreService>(new LoggerFactory()));
     }
 
 
@@ -28,10 +30,10 @@ public class ArrangeRackTests
 
 
     [Fact]
-    public void TryArrangeRackShouldArrangeRackWhenItsPossible()
+    public async Task TryArrangeRackShouldArrangeRackWhenItsPossible()
     {
         var usersIds = _infoService.GetAllUsersId();
-        var gameId = _service.CreateGame(usersIds.ToHashSet());
+        var gameId = await _service.CreateGameAsync(usersIds.ToHashSet());
         var players = _infoService.GetGame(gameId).Players;
         players = players.OrderBy(p => p.Id).ToList();
         var constTile0 = _dbContext.Tiles.FirstOrDefault(t => t.Shape == TileShape.Circle && t.Color == TileColor.Green);

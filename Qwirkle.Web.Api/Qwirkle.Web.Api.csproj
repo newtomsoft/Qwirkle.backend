@@ -45,6 +45,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="Logs\log.db">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="qwirkle.sqlite">
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>

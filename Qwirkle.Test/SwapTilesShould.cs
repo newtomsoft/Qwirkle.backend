@@ -17,8 +17,10 @@ public class SwapTilesShould
         InitDbContext();
         InitData();
         _repository = new Repository(_dbContext);
+        var fakeAuthentication = Mock.Of<IAuthentication>();
+        var userService = new UserService(_repository, fakeAuthentication);
         _infoService = new InfoService(_repository, null, new Logger<InfoService>(new LoggerFactory()));
-        _coreService = new CoreService(_repository, new NoNotification(), _infoService, null, new Logger<CoreService>(new LoggerFactory()));
+        _coreService = new CoreService(_repository, new NoNotification(), _infoService, userService, new Logger<CoreService>(new LoggerFactory()));
     }
 
     private void InitDbContext()
@@ -56,10 +58,10 @@ public class SwapTilesShould
     #endregion
 
     [Fact]
-    public void ReturnNotPlayerTurnWhenItsNotTurnPlayer()
+    public async Task ReturnNotPlayerTurnWhenItsNotTurnPlayer()
     {
         InitTest();
-        var gameId = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+        var gameId = await _coreService.CreateGameAsync(new HashSet<int> { User0Id, User1Id });
         var players = _infoService.GetGame(gameId).Players;
         var player = players.First(p => p.IsTurn is false);
         var swapReturn = _coreService.TrySwapTiles(player.Id, new List<Tile> { player.Rack.Tiles[0] });
@@ -67,10 +69,10 @@ public class SwapTilesShould
     }
 
     [Fact]
-    public void ReturnPlayerDoesntHaveThisTileAfter1PlayerHaveSwapTiles()
+    public async Task ReturnPlayerDoesntHaveThisTileAfter1PlayerHaveSwapTiles()
     {
         InitTest();
-        var gameId = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+        var gameId = await _coreService.CreateGameAsync(new HashSet<int> { User0Id, User1Id });
         var players = _infoService.GetGame(gameId).Players;
         var player = players.Single(p => p.IsTurn);
         Tile? tileToSwap;
@@ -86,12 +88,12 @@ public class SwapTilesShould
     }
 
     [Fact]
-    public void ReturnOkAfter1PlayerHaveSwap1Tile()
+    public async Task ReturnOkAfter1PlayerHaveSwap1Tile()
     {
         for (var i = 0; i < CoreService.TilesNumberPerPlayer; i++)
         {
             InitTest();
-            var gameId = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+            var gameId = await _coreService.CreateGameAsync(new HashSet<int> { User0Id, User1Id });
             var players = _infoService.GetGame(gameId).Players;
             var player = players.Single(p => p.IsTurn);
 
@@ -115,14 +117,14 @@ public class SwapTilesShould
     }
 
     [Fact]
-    public void ReturnOkAfter1PlayerHaveSwap2Tiles()
+    public async Task ReturnOkAfter1PlayerHaveSwap2Tiles()
     {
         for (var firstTileIndex = 0; firstTileIndex < CoreService.TilesNumberPerPlayer; firstTileIndex++)
         {
             for (var secondTileIndex = firstTileIndex + 1; secondTileIndex < CoreService.TilesNumberPerPlayer; secondTileIndex++)
             {
                 InitTest();
-                var gameId = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+                var gameId = await _coreService.CreateGameAsync(new HashSet<int> { User0Id, User1Id });
                 var players = _infoService.GetGame(gameId).Players;
                 var player = players.Single(p => p.IsTurn);
 
@@ -150,7 +152,7 @@ public class SwapTilesShould
     }
 
     [Fact]
-    public void ReturnOkAfter1PlayerHaveSwap3Tiles()
+    public async Task ReturnOkAfter1PlayerHaveSwap3Tiles()
     {
         for (var firstTileIndex = 0; firstTileIndex < CoreService.TilesNumberPerPlayer; firstTileIndex++)
         {
@@ -159,7 +161,7 @@ public class SwapTilesShould
                 for (var thirdTileIndex = secondTileIndex + 1; thirdTileIndex < CoreService.TilesNumberPerPlayer; thirdTileIndex++)
                 {
                     InitTest();
-                    var gameId = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+                    var gameId = await _coreService.CreateGameAsync(new HashSet<int> { User0Id, User1Id });
                     var players = _infoService.GetGame(gameId).Players;
                     var player = players.Single(p => p.IsTurn);
 
@@ -190,7 +192,7 @@ public class SwapTilesShould
     }
 
     [Fact]
-    public void ReturnOkAfter1PlayerHaveSwap4Tiles()
+    public async Task ReturnOkAfter1PlayerHaveSwap4Tiles()
     {
         for (var firstTileIndex = 0; firstTileIndex < CoreService.TilesNumberPerPlayer; firstTileIndex++)
         {
@@ -201,7 +203,7 @@ public class SwapTilesShould
                     for (var fourthTileIndex = thirdTileIndex + 1; fourthTileIndex < CoreService.TilesNumberPerPlayer; fourthTileIndex++)
                     {
                         InitTest();
-                        var gameId = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+                        var gameId = await _coreService.CreateGameAsync(new HashSet<int> { User0Id, User1Id });
                         var players = _infoService.GetGame(gameId).Players;
                         var player = players.Single(p => p.IsTurn);
 
@@ -235,7 +237,7 @@ public class SwapTilesShould
     }
 
     [Fact]
-    public void ReturnOkAfter1PlayerHaveSwap5Tiles()
+    public async Task ReturnOkAfter1PlayerHaveSwap5Tiles()
     {
         for (var firstTileIndex = 0; firstTileIndex < CoreService.TilesNumberPerPlayer; firstTileIndex++)
         {
@@ -248,7 +250,7 @@ public class SwapTilesShould
                         for (var fifthTileIndex = fourthTileIndex + 1; fifthTileIndex < CoreService.TilesNumberPerPlayer; fifthTileIndex++)
                         {
                             InitTest();
-                            var gameId = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+                            var gameId = await _coreService.CreateGameAsync(new HashSet<int> { User0Id, User1Id });
                             var players = _infoService.GetGame(gameId).Players;
                             var player = players.Single(p => p.IsTurn);
 
@@ -285,10 +287,10 @@ public class SwapTilesShould
     }
 
     [Fact]
-    public void ReturnOkAfter1PlayerHaveSwap6Tiles()
+    public async Task ReturnOkAfter1PlayerHaveSwap6Tiles()
     {
         InitTest();
-        var gameId = _coreService.CreateGame(new HashSet<int> { User0Id, User1Id });
+        var gameId = await _coreService.CreateGameAsync(new HashSet<int> { User0Id, User1Id });
         var players = _infoService.GetGame(gameId).Players;
         var player = players.Single(p => p.IsTurn);
 
