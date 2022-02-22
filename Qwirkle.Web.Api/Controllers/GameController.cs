@@ -27,9 +27,9 @@ public class GameController : ControllerBase
         usersIdsList.AddRange(usersNames.Select(userName => _infoService.GetUserId(userName)));
         usersIdsList.RemoveAll(id => id == 0);
         var usersIds = new HashSet<int>(usersIdsList);
-        if (!usersIds.Contains(UserId)) return new BadRequestObjectResult("user not in the game");
+        if (!usersIds.Contains(UserId)) return BadRequest("user not in the game");
         var gameId = _coreService.CreateGameWithUsersIds(usersIds);
-        return new ObjectResult(gameId);
+        return Ok(gameId);
     }
 
 
@@ -37,10 +37,10 @@ public class GameController : ControllerBase
     public ActionResult GetGame(int gameId)
     {
         var game = _infoService.GetGameWithTilesOnlyForAuthenticatedUser(gameId, UserId);
-        return game is null ? StatusCode(StatusCodes.Status404NotFound) : new ObjectResult(game);
+        return game is null ? BadRequest() : Ok(game);
     }
 
 
     [HttpGet("UserGamesIds")]
-    public ActionResult GetUserGamesIds() => new ObjectResult(_infoService.GetUserGames(UserId));
+    public ActionResult GetUserGamesIds() => Ok(_infoService.GetUserGames(UserId));
 }
