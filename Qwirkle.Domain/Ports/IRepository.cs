@@ -14,9 +14,7 @@ public interface IRepository
     Player GetPlayer(int gameId, int userId);
     string GetPlayerNameTurn(int gameId);
     int GetPlayerIdToPlay(int gameId);
-    int GetUserId(int playerId);
     int GetUserId(string userName);
-    Tile GetTile(TileColor color, TileShape shape);
     List<int> GetGamesIdsContainingPlayers();
     Player CreatePlayer(int userId, int gameId);
     void PutTilesOnBag(int gameId);

@@ -2,7 +2,7 @@
 
 public record Coordinates(Abscissa X, Ordinate Y) : IComparable
 {
-    public static Coordinates From(int x, int y) => new((sbyte)x, (sbyte)y);
+    public static Coordinates From(int x, int y) => new((Abscissa)x, (Ordinate)y);
     public Coordinates Right() => new((Abscissa)(X + 1), Y);
     public Coordinates Left() => new((Abscissa)(X - 1), Y);
     public Coordinates Top() => new(X, (Ordinate)(Y + 1));

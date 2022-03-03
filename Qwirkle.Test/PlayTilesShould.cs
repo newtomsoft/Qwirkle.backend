@@ -45,7 +45,7 @@ public class PlayTilesShould
         InitDbContext();
         _repository = new Repository(_dbContext);
         _infoService = new InfoService(_repository, null, new Logger<InfoService>(new LoggerFactory()));
-        _coreService = new CoreService(_repository, null, _infoService, new Logger<CoreService>(new LoggerFactory()));
+        _coreService = new CoreService(_repository, null, _infoService, null, new Logger<CoreService>(new LoggerFactory()));
     }
 
     private void AddAllTiles()
@@ -81,14 +81,7 @@ public class PlayTilesShould
         _dbContext.Players.Add(new PlayerDao { Id = Player3, UserId = User21, GameId = GameId, GamePosition = 1, GameTurn = false });
         _dbContext.SaveChanges();
     }
-
-    private void Add2MorePlayers()
-    {
-        _dbContext.Players.Add(new PlayerDao { Id = Player8, UserId = User3, GameId = GameId, GamePosition = 3, GameTurn = false });
-        _dbContext.Players.Add(new PlayerDao { Id = Player14, UserId = User14, GameId = GameId, GamePosition = 4, GameTurn = false });
-        _dbContext.SaveChanges();
-    }
-
+    
     private void AddTilesOnPlayers()
     {
         _dbContext.TilesOnPlayer.Add(new TileOnPlayerDao { Id = 1, PlayerId = Player9, TileId = 1 });

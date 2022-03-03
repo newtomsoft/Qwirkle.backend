@@ -2,7 +2,7 @@
 
 [ApiController]
 [Authorize]
-[Route("[controller]")]
+[Route("Player")]
 public class PlayerController : ControllerBase
 {
     private readonly InfoService _infoService;
@@ -17,24 +17,24 @@ public class PlayerController : ControllerBase
 
     [Obsolete("method soon to be discontinued")]
     [HttpGet("{playerId:int}")]
-    public ActionResult GetById(int playerId) => new ObjectResult(_infoService.GetPlayer(playerId));
+    public ActionResult GetById(int playerId) => Ok(_infoService.GetPlayer(playerId));
 
     [HttpGet("ByGameId/{gameId:int}")]
-    public ActionResult GetByGameId(int gameId) => new ObjectResult(_infoService.GetPlayer(gameId, UserId));
+    public ActionResult GetByGameId(int gameId) => Ok(_infoService.GetPlayer(gameId, UserId));
 
 
     [HttpGet("PlayerIdByGameId/{gameId:int}")]
-    public ActionResult GetIdByGameId(int gameId) => new ObjectResult(_infoService.GetPlayer(gameId, UserId).Id);
+    public ActionResult GetIdByGameId(int gameId) => Ok(_infoService.GetPlayer(gameId, UserId).Id);
 
 
     [HttpGet("NameTurn/{gameId:int}")]
-    public ActionResult GetNameTurn(int gameId) => new ObjectResult(_infoService.GetPlayerNameTurn(gameId));
+    public ActionResult GetNameTurn(int gameId) => Ok(_infoService.GetPlayerNameTurn(gameId));
 
 
     [HttpGet("IdTurn/{gameId:int}")]
-    public ActionResult GetIdTurn(int gameId) => new ObjectResult(_infoService.GetPlayerIdTurn(gameId));
+    public ActionResult GetIdTurn(int gameId) => Ok(_infoService.GetPlayerIdTurn(gameId));
 
 
     [HttpGet("Winners/{gameId:int}")]
-    public ActionResult Winners(int gameId) => new ObjectResult(_infoService.GetWinnersPlayersId(gameId));
+    public ActionResult Winners(int gameId) => Ok(_infoService.GetWinnersPlayersId(gameId));
 }

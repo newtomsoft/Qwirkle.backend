@@ -1,27 +1,22 @@
-﻿using System.Diagnostics;
-
-namespace Qwirkle.Web.Api.ExtensionMethods;
+﻿namespace Qwirkle.Web.Api.ExtensionMethods;
 
 public static class StartupExtensionMethods
 {
-    private const string CorsPolicy = "CorsPolicy";
+    private const string CorsPolicyName = "CorsPolicy";
 
-    public static void AddQwirkleCors(this IServiceCollection services, IConfigurationSection cors)
-    {
-        var origins = cors.GetSection("Origins").GetChildren().Select(e => e.Value).ToArray();
+    public static void AddQwirkleCors(this IServiceCollection services, Cors cors) =>
         services.AddCors(options =>
         {
-            options.AddPolicy(CorsPolicy, builder => builder
-                .WithOrigins(origins)
+            options.AddPolicy(CorsPolicyName, builder => builder
+                .WithOrigins(cors.Origins)
                 .AllowCredentials()
                 .AllowAnyHeader()
                 .AllowAnyMethod()
             );
         });
-    }
 
-    public static void UseQwirkleCors(this WebApplication application) => application.UseCors(CorsPolicy);
-    
+    public static void UseQwirkleCors(this WebApplication application) => application.UseCors(CorsPolicyName);
+
     public static void AddQwirkleIdentity(this IServiceCollection services) =>
         services.AddIdentity<UserDao, IdentityRole<int>>(options =>
         {

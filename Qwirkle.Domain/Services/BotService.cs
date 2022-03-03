@@ -66,10 +66,9 @@ public class BotService
     private HashSet<PlayReturn> ComputeDoableMoves(Player player, Game game, Coordinates originCoordinates = null, bool simulation = false)
     {
         if (!simulation) _coreService.ResetGame(player.GameId);
+
         var rack = player.Rack.WithoutDuplicatesTiles();
-
         var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles(originCoordinates);
-
         var with1TilePlayReturns = new HashSet<PlayReturn>();
         foreach (var coordinates in boardAdjoiningCoordinates)
         {

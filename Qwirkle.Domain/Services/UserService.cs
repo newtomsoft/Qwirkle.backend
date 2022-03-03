@@ -11,14 +11,11 @@ public class UserService
         _authentication = authentication;
     }
 
-    public bool IsBot(int nextPlayerId) => _authentication.IsBot(nextPlayerId);
+    public bool IsBot(int playerId) => _authentication.IsBot(playerId);
 
     public async Task<bool> Register(User user, string password) => await _authentication.RegisterAsync(user, password);
 
     public async Task<bool> RegisterGuest() => await _authentication.RegisterGuestAsync();
-
-    [Obsolete]
-    public int GetUserId(object user) => _authentication.GetUserId(user);
 
     public async Task LogOutAsync() => await _authentication.LogoutOutAsync();
 

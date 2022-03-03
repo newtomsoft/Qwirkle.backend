@@ -6,7 +6,6 @@ public class Repository : IRepository
 
     public Repository(DefaultDbContext defaultDbContext) => _dbContext = defaultDbContext;
 
-    public int GetUserId(int playerId) => _dbContext.Players.First(p => p.Id == playerId).UserId;
     public int GetUserId(string userName) => _dbContext.Users.Where(u => u.UserName == userName).Select(u => u.Id).FirstOrDefault();
 
     public void PutTilesOnBag(int gameId)
@@ -40,10 +39,6 @@ public class Repository : IRepository
     public string GetPlayerNameTurn(int gameId) => _dbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Include(p => p.User).FirstOrDefault()?.User.UserName;
 
     public int GetPlayerIdToPlay(int gameId) => _dbContext.Players.Where(p => p.GameId == gameId && p.GameTurn).Select(p => p.Id).FirstOrDefault();
-
-    public Tile GetTile(TileColor color, TileShape shape) => _dbContext.Tiles.First(t => t.Color == color && t.Shape == shape).ToTile();
-
-    public TileOnPlayer GetTileOnPlayerById(int playerId, int tileId) => _dbContext.TilesOnPlayer.Single(t => t.PlayerId == playerId && t.TileId == tileId).ToTileOnPlayer();
 
     public Game GetGame(int gameId)
     {
@@ -83,7 +78,6 @@ public class Repository : IRepository
         }
         _dbContext.SaveChanges();
     }
-
 
     public void TilesFromBagToPlayer(Player player, List<byte> positionsInRack)
     {

@@ -1,8 +1,8 @@
-using Qwirkle.Web.Api.ExtensionMethods;
-
 var appBuilder = WebApplication.CreateBuilder(args);
+var cors = new Cors();
+appBuilder.Configuration.GetSection("Cors").Bind(cors);
 appBuilder.Host.UseSerilog((_, configuration) => configuration.ReadFrom.Configuration(appBuilder.Configuration));
-appBuilder.Services.AddQwirkleCors(appBuilder.Configuration.GetSection("Cors"));
+appBuilder.Services.AddQwirkleCors(cors);
 appBuilder.Services.AddSignalR();
 appBuilder.Services.AddSingleton<INotification, SignalRNotification>();
 appBuilder.Services.AddSingleton<InstantGameService>();

@@ -47,11 +47,11 @@ public static class ComputePoints
         allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
         var tilesRight = game.Board.Tiles.Where(t => t.Coordinates.Y == y && t.Coordinates.X >= max).OrderBy(t => t.Coordinates.X).ToList();
-        var tilesRightConsecutive = tilesRight.FirstConsecutives(Direction.Right, max);
+        var tilesRightConsecutive = tilesRight.FirstConsecutive(Direction.Right, max);
         allTilesAlongReferenceTiles.AddRange(tilesRightConsecutive);
 
         var tilesLeft = game.Board.Tiles.Where(t => t.Coordinates.Y == y && t.Coordinates.X <= min).OrderByDescending(t => t.Coordinates.X).ToList();
-        var tilesLeftConsecutive = tilesLeft.FirstConsecutives(Direction.Left, min);
+        var tilesLeftConsecutive = tilesLeft.FirstConsecutive(Direction.Left, min);
         allTilesAlongReferenceTiles.AddRange(tilesLeftConsecutive);
 
         if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.X).ToList()) || !allTilesAlongReferenceTiles.FormCompliantRow())
@@ -69,11 +69,11 @@ public static class ComputePoints
         allTilesAlongReferenceTiles.AddRange(tilesBetweenReference);
 
         var tilesUp = game.Board.Tiles.Where(t => t.Coordinates.X == x && t.Coordinates.Y >= max).OrderBy(t => t.Coordinates.Y).ToList();
-        var tilesUpConsecutive = tilesUp.FirstConsecutives(Direction.Top, max);
+        var tilesUpConsecutive = tilesUp.FirstConsecutive(Direction.Top, max);
         allTilesAlongReferenceTiles.AddRange(tilesUpConsecutive);
 
         var tilesBottom = game.Board.Tiles.Where(t => t.Coordinates.X == x && t.Coordinates.Y <= min).OrderByDescending(t => t.Coordinates.Y).ToList();
-        var tilesBottomConsecutive = tilesBottom.FirstConsecutives(Direction.Bottom, min);
+        var tilesBottomConsecutive = tilesBottom.FirstConsecutive(Direction.Bottom, min);
         allTilesAlongReferenceTiles.AddRange(tilesBottomConsecutive);
 
         if (!AreNumbersConsecutive(allTilesAlongReferenceTiles.Select(t => t.Coordinates.Y).ToList()) || !allTilesAlongReferenceTiles.FormCompliantRow())
