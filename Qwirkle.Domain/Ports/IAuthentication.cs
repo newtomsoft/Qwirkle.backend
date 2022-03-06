@@ -4,9 +4,7 @@ public interface IAuthentication
 {
     Task<bool> RegisterAsync(User user, string password);
     Task<bool> RegisterGuestAsync();
-    [Obsolete]
-    int GetUserId(object user);
     Task LogoutOutAsync();
     Task<bool> LoginAsync(string pseudo, string password, bool isRemember);
-    bool IsBot(string userName);
+    bool IsBot(int userId);
 }

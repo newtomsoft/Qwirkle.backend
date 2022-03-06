@@ -43,16 +43,13 @@ public class Authentication : IAuthentication
         return createGuestResult.Succeeded;
     }
 
-    [Obsolete]
-    public int GetUserId(object user) => int.Parse(_userManager.GetUserId(user as ClaimsPrincipal) ?? "0");
-
     public Task LogoutOutAsync() => _signInManager.SignOutAsync();
 
     public async Task<bool> LoginAsync(string pseudo, string password, bool isRemember) => (await _signInManager.PasswordSignInAsync(pseudo, password, isRemember, false)).Succeeded;
 
-    public bool IsBot(string userName)
+    public bool IsBot(int userId)
     {
-        var user = _userStore.FindByNameAsync(userName, CancellationToken.None).Result;
+        var user = _userStore.FindByIdAsync(userId.ToString(), CancellationToken.None).Result;
         return _userManager.IsInRoleAsync(user, "Bot").Result;
     }
 }

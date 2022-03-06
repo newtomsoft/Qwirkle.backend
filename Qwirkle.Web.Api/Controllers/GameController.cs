@@ -2,7 +2,7 @@
 
 [ApiController]
 [Authorize]
-[Route("[controller]")]
+[Route("Game")]
 public class GameController : ControllerBase
 {
     private readonly ILogger<GameController> _logger;
@@ -11,7 +11,7 @@ public class GameController : ControllerBase
     private readonly UserManager<UserDao> _userManager;
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    public GameController(ILogger<GameController> logger, CoreService coreService, InfoService infoService, UserManager<UserDao> userManager)
+    public GameController(CoreService coreService, InfoService infoService, UserManager<UserDao> userManager, ILogger<GameController> logger)
     {
         _logger = logger;
         _coreService = coreService;
@@ -27,24 +27,20 @@ public class GameController : ControllerBase
         usersIdsList.AddRange(usersNames.Select(userName => _infoService.GetUserId(userName)));
         usersIdsList.RemoveAll(id => id == 0);
         var usersIds = new HashSet<int>(usersIdsList);
-        _logger?.LogInformation("CreateGame with users {usersIds}", usersIds);
-        return new ObjectResult(_coreService.CreateGame(usersIds));
-    }
-
-    [HttpPost("NewRandom")]
-    public ActionResult CreateRandomGame()
-    {
-        var usersIds = new HashSet<int> { UserId };
-        //todo : add user waiting or wait...
-        _logger?.LogInformation("CreateGame with {usersIds}", usersIds);
-        return new ObjectResult(_coreService.CreateGame(usersIds));
+        if (!usersIds.Contains(UserId)) return BadRequest("user not in the game");
+        var gameId = _coreService.CreateGameWithUsersIds(usersIds);
+        return Ok(gameId);
     }
 
 
     [HttpGet("{gameId:int}")]
-    public ActionResult GetGame(int gameId) => new ObjectResult(_infoService.GetGameWithTilesOnlyForAuthenticatedUser(gameId, UserId));
+    public ActionResult GetGame(int gameId)
+    {
+        var game = _infoService.GetGameWithTilesOnlyForAuthenticatedUser(gameId, UserId);
+        return game is null ? BadRequest() : Ok(game);
+    }
 
 
     [HttpGet("UserGamesIds")]
-    public ActionResult GetUserGamesIds() => new ObjectResult(_infoService.GetUserGames(UserId));
+    public ActionResult GetUserGamesIds() => Ok(_infoService.GetUserGames(UserId));
 }

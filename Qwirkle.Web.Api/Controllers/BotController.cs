@@ -2,7 +2,7 @@
 
 [ApiController]
 [Authorize(Roles = "Bot")]
-[Route("[controller]")]
+[Route("Bot")]
 public class BotController : ControllerBase
 {
     private readonly BotService _botService;
@@ -23,6 +23,6 @@ public class BotController : ControllerBase
     public ActionResult ComputeDoableMoves(int gameId)
     {
         _logger?.LogInformation($"userId:{UserId} {MethodBase.GetCurrentMethod()!.Name} with {gameId}");
-        return new ObjectResult(_botService.ComputeDoableMoves(gameId, UserId));
+        return Ok(_botService.ComputeDoableMoves(gameId, UserId));
     }
 }

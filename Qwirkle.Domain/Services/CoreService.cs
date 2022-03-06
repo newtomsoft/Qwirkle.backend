@@ -2,132 +2,130 @@
 
 public class CoreService
 {
-    private const int TilesNumberPerPlayer = 6;
+    public const int TilesNumberPerPlayer = 6;
+    public const int TilesNumberForAQwirkle = 6;
+    public const int PointsForAQwirkle = 12;
 
     private readonly IRepository _repository;
     private readonly INotification _notification;
     private readonly InfoService _infoService;
-    private readonly UserService _service;
+    private readonly UserService _userService;
     private readonly ILogger<CoreService> _logger;
     private readonly BotService _botService;
-
-    private Game _game;
-
-    public CoreService(IRepository repository, INotification notification, InfoService infoService, UserService service, ILogger<CoreService> logger)
+    
+    public CoreService(IRepository repository, INotification notification, InfoService infoService, UserService userService, ILogger<CoreService> logger)
     {
         _repository = repository;
         _notification = notification;
         _infoService = infoService;
-        _service = service;
+        _userService = userService;
         _logger = logger;
-        _botService = new BotService(infoService, this, _logger);
-        //todo dette technique à rembourser
+        _botService = new BotService(infoService, this, _logger); //todo dette technique
     }
 
-    public List<Player> CreateGame(HashSet<int> usersIds)
+    public int CreateGameWithUsersIds(HashSet<int> usersIds)
     {
-        _logger.LogInformation("{applicationEvent} at {dateTime}", "CreateGame", DateTime.Now);
-        InitializeEmptyGame();
-        CreatePlayers(usersIds);
-        PutTilesOnBag();
-        DealTilesToPlayers();
-        SortPlayers();
-        return _game.Players;
+        _logger?.LogInformation("CreateGame with users {usersIds}", usersIds);
+        var gameId = CreateGame(usersIds);
+        PlayIfBot(_infoService.GetGame(gameId));
+        return gameId;
     }
 
-    public void ResetGame(int gameId) => _game = _repository.GetGame(gameId);
+    private void PlayIfBot(Game game)
+    {
+        var player = game.Players.First(p => p.IsTurn);
+        if (_userService.IsBot(player.UserId)) _botService.Play(game, player);
+    }
+
+    public int CreateGame(HashSet<int> usersIds)
+    {
+        _logger.LogInformation("CreateGame");
+        var game = InitializeEmptyGame();
+        CreatePlayers(game, usersIds);
+        PutTilesOnBag(game);
+        DealTilesToPlayers(game);
+        game = SortPlayers(game);
+        return game.Id;
+    }
+
+    public Game ResetGame(int gameId) => _repository.GetGame(gameId);
 
     public ArrangeRackReturn TryArrangeRack(int playerId, IEnumerable<Tile> tiles)
     {
         var tilesList = tiles.ToList();
         var player = _infoService.GetPlayer(playerId);
-        if (!player.HasTiles(tilesList)) return new ArrangeRackReturn { Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        if (!player.HasTiles(tilesList)) return new ArrangeRackReturn(ReturnCode.PlayerDoesntHaveThisTile);
         ArrangeRack(player, tilesList);
-        return new ArrangeRackReturn { Code = PlayReturnCode.Ok };
+        return new ArrangeRackReturn(ReturnCode.Ok);
     }
 
     public PlayReturn TryPlayTiles(int playerId, IEnumerable<TileOnBoard> tiles)
     {
         var player = _infoService.GetPlayer(playerId);
-        if (!player.IsTurn) return new PlayReturn(player.GameId, PlayReturnCode.NotPlayerTurn, null, null, 0);
+        if (!player.IsTurn) return new PlayReturn(player.GameId, ReturnCode.NotPlayerTurn, Move.Empty, null);
 
-        var tilesToPlay = tiles.ToList();
+        var tilesToPlay = tiles.ToHashSet();
 
-        if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, PlayReturnCode.PlayerDoesntHaveThisTile, null, null, 0);
+        if (!player.HasTiles(tilesToPlay)) return new PlayReturn(player.GameId, ReturnCode.PlayerDoesntHaveThisTile, Move.Empty, null);
 
         var game = _repository.GetGame(player.GameId);
-        _game = game;
         var playReturn = Play(tilesToPlay, player, game);
-        if (playReturn.Code != PlayReturnCode.Ok) return playReturn;
+        if (playReturn.Code != ReturnCode.Ok) return playReturn;
 
-        playReturn = playReturn with { NewRack = PlayTiles(player, tilesToPlay, playReturn.Points) };
-        _notification?.SendTilesPlayed(game.Id, playerId, playReturn.Points, playReturn.TilesPlayed);
+        playReturn = playReturn with { NewRack = PlayTiles(game, player, tilesToPlay, playReturn.Move.Points) };
+        _notification?.SendTilesPlayed(game.Id, playerId, playReturn.Move);
 
-        NotifyNextPlayerAndPlayIfBot(game);
         return playReturn;
-    }
-
-    private void NotifyNextPlayerAndPlayIfBot(Game game)
-    {
-        var nextPlayerId = _infoService.GetPlayerIdTurn(game.Id);
-        if (nextPlayerId == 0) return;
-
-        _notification?.SendPlayerIdTurn(game.Id, nextPlayerId);
-        var nextPlayer = game.Players.First(p => p.Id == nextPlayerId);
-        if (_service.IsBot(nextPlayer.Pseudo)) _botService.Play(game, nextPlayer);
     }
 
     public SwapTilesReturn TrySwapTiles(int playerId, IEnumerable<Tile> tiles)
     {
         var tilesList = tiles.ToList();
         var player = _infoService.GetPlayer(playerId);
-        if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.NotPlayerTurn };
-        if (!player.HasTiles(tilesList)) return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.PlayerDoesntHaveThisTile };
+        if (!player.IsTurn) return new SwapTilesReturn { GameId = player.GameId, Code = ReturnCode.NotPlayerTurn };
+        if (!player.HasTiles(tilesList)) return new SwapTilesReturn { GameId = player.GameId, Code = ReturnCode.PlayerDoesntHaveThisTile };
         var game = _repository.GetGame(player.GameId);
-
-        var swapTilesReturn = SwapTiles(player, tilesList);
+        var swapTilesReturn = SwapTiles(game, player, tilesList);
         _notification.SendTilesSwapped(game.Id, playerId);
 
-        NotifyNextPlayerAndPlayIfBot(game);
         return swapTilesReturn;
     }
 
     public SkipTurnReturn TrySkipTurn(int playerId)
     {
         var player = _infoService.GetPlayer(playerId);
-        var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = _game.Id, Code = PlayReturnCode.NotPlayerTurn };
-        if (skipTurnReturn.Code != PlayReturnCode.Ok) return skipTurnReturn;
+        var skipTurnReturn = player.IsTurn ? SkipTurn(player) : new SkipTurnReturn { GameId = player.GameId, Code = ReturnCode.NotPlayerTurn };
+        if (skipTurnReturn.Code != ReturnCode.Ok) return skipTurnReturn;
 
         var game = _repository.GetGame(player.GameId);
         _notification.SendTurnSkipped(game.Id, playerId);
 
-        NotifyNextPlayerAndPlayIfBot(game);
         return skipTurnReturn;
     }
 
     public PlayReturn TryPlayTilesSimulation(int playerId, IEnumerable<TileOnBoard> tiles)
     {
         var player = _infoService.GetPlayer(playerId);
-        var tilesToPlay = tiles.ToList();
+        var tilesToPlay = tiles.ToHashSet();
         var game = _repository.GetGame(player.GameId);
         return Play(tilesToPlay, player, game, true);
     }
 
-    public PlayReturn Play(List<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
+    public PlayReturn Play(HashSet<TileOnBoard> tilesPlayed, Player player, Game game, bool simulationMode = false)
     {
-        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, PlayReturnCode.NotFree, null, null, 0);
-        if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, PlayReturnCode.TileIsolated, null, null, 0);
+        var orderedTilesPlayed = tilesPlayed.OrderBy(t => t.Coordinates).ToList();
+        if (IsCoordinatesNotFree()) return new PlayReturn(game.Id, ReturnCode.NotFree, Move.Empty, Rack.Empty);
+        if (!game.IsBoardEmpty() && IsAnyTileIsolated()) return new PlayReturn(game.Id, ReturnCode.TileIsolated, Move.Empty, Rack.Empty);
 
-        var computePointsService = new ComputePointsService();
-        var wonPoints = computePointsService.ComputePoints(game, tilesPlayed);
-        if (wonPoints == 0) return new PlayReturn(game.Id, PlayReturnCode.TilesDoesntMakedValidRow, null, null, 0);
-        if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveNotCompliant()) return new PlayReturn(game.Id, PlayReturnCode.NotMostPointsMove, null, null, 0);
-        if (!IsGameFinished()) return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
+        var wonPoints = ComputePoints.Compute(game, tilesPlayed);
+        if (wonPoints == 0) return new PlayReturn(game.Id, ReturnCode.TilesDoesntMakedValidRow, Move.Empty, Rack.Empty);
+        if (game.IsBoardEmpty() && !simulationMode && IsFirstMoveNotCompliant()) return new PlayReturn(game.Id, ReturnCode.NotMostPointsMove, Move.Empty, Rack.Empty);
+        if (!IsGameFinished()) return new PlayReturn(game.Id, ReturnCode.Ok, new Move(orderedTilesPlayed, wonPoints), Rack.Empty);
 
         const int endGameBonusPoints = 6;
         wonPoints += endGameBonusPoints;
-        if (!simulationMode) GameOver();
-        return new PlayReturn(game.Id, PlayReturnCode.Ok, tilesPlayed, null, wonPoints);
+        if (!simulationMode) GameOver(game);
+        return new PlayReturn(game.Id, ReturnCode.Ok, new Move(orderedTilesPlayed, wonPoints), Rack.Empty);
 
         bool IsGameFinished() => game.IsBagEmpty() && AreAllTilesInRackPlayed();
         bool AreAllTilesInRackPlayed() => tilesPlayed.Count == player.Rack.Tiles.Count;
@@ -136,123 +134,114 @@ public class CoreService
         bool IsFirstMoveNotCompliant() => wonPoints != _botService.GetMostPointsToPlay(player, game);
     }
 
-    private void GameOver()
-    {
-        _game = _game with { GameOver = true };
-        _repository.SetGameOver(_game.Id);
-    }
+    private void GameOver(Game game) => _repository.SetGameOver(game.Id);
 
-    private void InitializeEmptyGame() => _game = _repository.CreateGame(DateTime.UtcNow);
+    private Game InitializeEmptyGame() => _repository.CreateGame(DateTime.UtcNow);
 
-    private void DealTilesToPlayers()
+    private void DealTilesToPlayers(Game game)
     {
         var rackPositions = new List<byte>();
-        for (byte i = 0; i < TilesNumberPerPlayer; i++)
-            rackPositions.Add(i);
-
-        foreach (var player in _game.Players)
-            _repository.TilesFromBagToPlayer(player, rackPositions);
+        for (byte i = 0; i < TilesNumberPerPlayer; i++) rackPositions.Add(i);
+        foreach (var player in game.Players) _repository.TilesFromBagToPlayer(player, rackPositions);
     }
 
-    private void PutTilesOnBag() => _repository.PutTilesOnBag(_game.Id);
+    private void PutTilesOnBag(Game game) => _repository.PutTilesOnBag(game.Id);
 
-    private void CreatePlayers(HashSet<int> usersIds)
+    private void CreatePlayers(Game game, HashSet<int> usersIds)
     {
-        foreach (var userId in usersIds) _game.Players.Add(_repository.CreatePlayer(userId, _game.Id));
+        foreach (var userId in usersIds) game.Players.Add(_repository.CreatePlayer(userId, game.Id));
     }
 
     private void ArrangeRack(Player player, IEnumerable<Tile> tiles) => _repository.ArrangeRack(player, tiles);
 
-    private void SortPlayers()
+    private Game SortPlayers(Game game)
     {
         var playersWithCanBePlayedTilesNumber = new Dictionary<int, int>();
-        _game.Players.ForEach(p => playersWithCanBePlayedTilesNumber[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
+        game.Players.ForEach(p => playersWithCanBePlayedTilesNumber[p.Id] = p.TilesNumberCanBePlayedAtGameBeginning());
 
         var playerIdToStart = playersWithCanBePlayedTilesNumber.OrderByDescending(p => p.Value).ThenBy(_ => Guid.NewGuid()).Select(p => p.Key).First();
-        var playerToStart = _game.Players.First(p => p.Id == playerIdToStart);
-        var otherPlayers = _game.Players.Where(p => p.Id != playerIdToStart).OrderBy(_ => Guid.NewGuid()).ToList();
+        var playerToStart = game.Players.First(p => p.Id == playerIdToStart);
+        var otherPlayers = game.Players.Where(p => p.Id != playerIdToStart).OrderBy(_ => Guid.NewGuid()).ToList();
 
-        var playersOrdered = new List<Player>();
-        playersOrdered.Add(playerToStart);
+        var playersOrdered = new List<Player> { playerToStart };
         playersOrdered.AddRange(otherPlayers);
-        _game = _game with { Players = playersOrdered };
-        for (byte i = 0; i < _game.Players.Count; i++) _game.Players[i].GamePosition = i;
-        _game.Players.ForEach(player => _repository.UpdatePlayer(player));
+        game = game with { Players = playersOrdered };
+        for (byte i = 0; i < game.Players.Count; i++) game.Players[i].GamePosition = i;
+        game.Players.ForEach(player => _repository.UpdatePlayer(player));
 
-        SetPlayerTurn(playerIdToStart);
+        SetPlayerTurn(playerToStart);
+        return game;
     }
 
     private SkipTurnReturn SkipTurn(Player player)
     {
-        ResetGame(player.GameId);
+        var game = _repository.GetGame(player.GameId);
         player.LastTurnSkipped = true;
-        if (_game.Bag.Tiles.Count == 0 && _game.Players.Count(p => p.LastTurnSkipped) == _game.Players.Count)
+        if (game.Bag.TilesNumber == 0 && game.Players.Count(p => p.LastTurnSkipped) == game.Players.Count)
         {
             _repository.UpdatePlayer(player);
             _repository.SetGameOver(player.GameId);
         }
         else
-            SetNextPlayerTurnToPlay(player);
+            SetNextPlayerTurnToPlay(game, player);
 
-        return new SkipTurnReturn { GameId = player.GameId, Code = PlayReturnCode.Ok };
+        return new SkipTurnReturn { GameId = player.GameId, Code = ReturnCode.Ok };
     }
 
-    private SwapTilesReturn SwapTiles(Player player, IEnumerable<Tile> tiles)
+    private SwapTilesReturn SwapTiles(Game game, Player player, IEnumerable<Tile> tiles)
     {
         var tilesList = tiles.ToList();
         ResetGame(player.GameId);
-        SetNextPlayerTurnToPlay(player);
+        SetNextPlayerTurnToPlay(game, player);
         var positionsInRack = new List<byte>();
         for (byte i = 0; i < tilesList.Count; i++) positionsInRack.Add(i);
         _repository.TilesFromBagToPlayer(player, positionsInRack);
         _repository.TilesFromPlayerToBag(player, tilesList);
         _repository.UpdatePlayer(player);
-        return new SwapTilesReturn { GameId = player.GameId, Code = PlayReturnCode.Ok, NewRack = _infoService.GetPlayer(player.Id).Rack };
+        return new SwapTilesReturn { GameId = player.GameId, Code = ReturnCode.Ok, NewRack = _infoService.GetPlayer(player.Id).Rack };
     }
 
-    private Rack PlayTiles(Player player, IEnumerable<TileOnBoard> tilesToPlay, int points)
+    private Rack PlayTiles(Game game, Player player, IEnumerable<TileOnBoard> tilesToPlay, int points)
     {
         var tilesToPlayList = tilesToPlay.ToList();
         player.LastTurnPoints = points;
         player.Points += points;
         _repository.UpdatePlayer(player);
-        _logger.LogInformation($"player {player.Id} play {tilesToPlayList.ToLog()} and get {points} points");
-        _game.Board.AddTiles(tilesToPlayList);
-        SetNextPlayerTurnToPlay(player);
+        _logger.LogInformation("player {playerId} play {tiles} and get {pointsNumber} points", player.Id, tilesToPlayList.ToLog(), points);
+        game.Board.AddTiles(tilesToPlayList);
+        SetNextPlayerTurnToPlay(game, player);
         var positionsInRack = new List<byte>();
         for (byte i = 0; i < tilesToPlayList.Count; i++) positionsInRack.Add(i);
         _repository.TilesFromBagToPlayer(player, positionsInRack);
-        _repository.TilesFromPlayerToBoard(_game.Id, player.Id, tilesToPlayList);
+        _repository.TilesFromPlayerToBoard(game.Id, player.Id, tilesToPlayList);
         return _repository.GetPlayer(player.Id).Rack;
     }
 
-    private void SetNextPlayerTurnToPlay(Player player)
+    private void SetNextPlayerTurnToPlay(Game game, Player player)
     {
-        if (_game.GameOver) return;
+        if (game.GameOver) return;
 
-        if (_game.Players.Count == 1)
+        if (game.Players.Count == 1)
         {
             player.SetTurn(true);
             _repository.UpdatePlayer(player);
         }
         else
         {
-            var position = _game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
-            var playersNumber = _game.Players.Count;
+            var position = game.Players.FirstOrDefault(p => p.Id == player.Id)!.GamePosition;
+            var playersNumber = game.Players.Count;
             var nextPlayerPosition = position < playersNumber - 1 ? position + 1 : 0;
-            var nextPlayer = _game.Players.First(p => p.GamePosition == nextPlayerPosition);
+            var nextPlayer = game.Players.First(p => p.GamePosition == nextPlayerPosition);
             player.SetTurn(false);
-            nextPlayer.SetTurn(true);
             _repository.UpdatePlayer(player);
+            nextPlayer.SetTurn(true);
             _repository.UpdatePlayer(nextPlayer);
         }
     }
 
-    private void SetPlayerTurn(int playerId)
+    private void SetPlayerTurn(Player player)
     {
-        _repository.SetPlayerTurn(playerId);
-        var player = _game.Players.First(p => p.Id == playerId);
         player.SetTurn(true);
-        if (_service.IsBot(player.Pseudo)) _botService.Play(_game, player);
+        _repository.SetPlayerTurn(player.Id);
     }
 }

@@ -1,6 +1,3 @@
 ﻿namespace Qwirkle.Domain.ValueObjects;
 
-public struct ArrangeRackReturn
-{
-    public PlayReturnCode Code { get; set; }
-}
+public record PlayReturn(int GameId, ReturnCode Code, Move Move, Rack NewRack);

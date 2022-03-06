@@ -3,6 +3,6 @@
 public struct SwapTilesReturn
 {
     public int GameId { get; set; }
-    public PlayReturnCode Code { get; set; }
+    public ReturnCode Code { get; set; }
     public Rack NewRack { get; set; }
 }

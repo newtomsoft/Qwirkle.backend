@@ -16,8 +16,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Web.Api", "Qwirkle.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Infra.Repository", "Qwirkle.Infra.Repository\Qwirkle.Infra.Repository.csproj", "{8419EFC2-8FF7-4E23-92DE-15CA3A6C6531}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Settings", "Settings", "{991FDE2D-D8CE-4BF0-819C-8DA20DB1B267}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.SignalR", "Qwirkle.SignalR\Qwirkle.SignalR.csproj", "{9C7C489A-C73B-426E-83A5-E9CEA165DA22}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Authentication", "Qwirkle.Authentication\Qwirkle.Authentication.csproj", "{754EEC74-46CB-4382-8572-5F92238A9860}"
@@ -39,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.UltraBoardGames.Pla
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Qwirkle.Domain", "Qwirkle.Domain\Qwirkle.Domain.csproj", "{3FC43582-6D07-42A0-805F-9036DA5E28C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Evaluation Bot", "Evaluation Bot", "{C8E12175-113F-4AAC-B376-85B24F8E7FA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,7 +89,7 @@ Global
 		{754EEC74-46CB-4382-8572-5F92238A9860} = {1644DA54-649D-4969-8E41-F94DAD3897BF}
 		{98847D8C-EB3A-49A1-8BD9-6E37E5B918AD} = {1B8ED7D0-5EC2-4184-A60E-ED93DE572802}
 		{E5D79468-7F66-44CC-B148-2C452DE7119E} = {748E9369-9766-4FA6-9696-E381B5D67050}
-		{33561E33-BA67-4A59-9490-BBD70C345220} = {748E9369-9766-4FA6-9696-E381B5D67050}
+		{33561E33-BA67-4A59-9490-BBD70C345220} = {C8E12175-113F-4AAC-B376-85B24F8E7FA2}
 		{3FC43582-6D07-42A0-805F-9036DA5E28C5} = {2094B01D-ED38-4071-9B68-636AE81C694B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
