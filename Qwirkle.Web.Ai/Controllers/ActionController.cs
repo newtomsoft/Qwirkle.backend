@@ -7,68 +7,73 @@ public class ActionController : ControllerBase
 {
     private readonly UserService _userService;
     private readonly BotService _botService;
+    private readonly ILogger<ActionController> _logger;
     private readonly INotification _notification;
     private readonly InfoService _infoService;
     private readonly CoreService _coreService;
     private readonly UserManager<UserDao> _userManager;
     private int UserId => int.Parse(_userManager.GetUserId(User) ?? "0");
 
-    public ActionController(CoreService coreService, InfoService infoService, UserManager<UserDao> userManager, INotification notification, UserService userService, BotService botService)
+    public ActionController(CoreService coreService, InfoService infoService, UserManager<UserDao> userManager, INotification notification, UserService userService, BotService botService, ILogger<ActionController> logger)
     {
+        _coreService = coreService;
+        _infoService = infoService;
+        _userManager = userManager;
+        _notification = notification;
         _userService = userService;
         _botService = botService;
-        (_coreService, _infoService, _userManager, _notification) = (coreService, infoService, userManager, notification);
+        _logger = logger;
     }
 
 
     [HttpPost("PlayTiles/")]
-    public ActionResult<int> PlayTiles(List<TileViewModel> tiles)
+    public ActionResult PlayTiles(List<TileViewModel> tiles)
     {
-        if (tiles.Count == 0) return StatusCode(StatusCodes.Status400BadRequest);
+        if (tiles.Count == 0) return BadRequest();
         var gameId = tiles.First().GameId;
         var playerId = _infoService.GetPlayerId(gameId, UserId);
         var playReturn = _coreService.TryPlayTiles(playerId, tiles.Select(t => t.ToTileOnBoard()));
-        if (playReturn.Code == ReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(gameId));
-        return new ObjectResult(playReturn);
+        if (playReturn is { Code: ReturnCode.Ok }) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(gameId));
+        return Ok(playReturn);
     }
 
 
     [HttpPost("PlayTilesSimulation/")]
-    public ActionResult<int> PlayTilesSimulation(List<TileViewModel> tiles)
+    public ActionResult PlayTilesSimulation(List<TileViewModel> tiles)
     {
-        if (tiles.Count == 0) return StatusCode(StatusCodes.Status400BadRequest);
+        if (tiles.Count == 0) return BadRequest();
         var gameId = tiles.First().GameId;
         var playerId = _infoService.GetPlayerId(gameId, UserId);
-        return new ObjectResult(_coreService.TryPlayTilesSimulation(playerId, tiles.Select(t => t.ToTileOnBoard())));
+        return Ok(_coreService.TryPlayTilesSimulation(playerId, tiles.Select(t => t.ToTileOnBoard())));
     }
 
     [HttpPost("SwapTiles/")]
-    public ActionResult<int> SwapTiles(List<TileViewModel> tiles)
+    public ActionResult SwapTiles(List<TileViewModel> tiles)
     {
-        if (tiles.Count == 0) return StatusCode(StatusCodes.Status400BadRequest);
+        if (tiles.Count == 0) return BadRequest();
         var gameId = tiles.First().GameId;
         var playerId = _infoService.GetPlayerId(gameId, UserId);
         var swapTilesReturn = _coreService.TrySwapTiles(playerId, tiles.Select(t => t.ToTile()));
-        if (swapTilesReturn.Code == ReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(gameId));
-        return new ObjectResult(swapTilesReturn);
+        if (swapTilesReturn is { Code: ReturnCode.Ok }) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(gameId));
+        return Ok(swapTilesReturn);
     }
 
     [HttpPost("SkipTurn/")]
-    public ActionResult<int> SkipTurn(SkipTurnViewModel skipTurnViewModel)
+    public ActionResult SkipTurn(SkipTurnViewModel skipTurnViewModel)
     {
         var playerId = _infoService.GetPlayerId(skipTurnViewModel.GameId, UserId);
         var skipTurnReturn = _coreService.TrySkipTurn(playerId);
-        if (skipTurnReturn.Code == ReturnCode.Ok) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(skipTurnViewModel.GameId));
-        return new ObjectResult(skipTurnReturn);
+        if (skipTurnReturn is { Code: ReturnCode.Ok }) NotifyNextPlayerAndPlayIfBot(_infoService.GetGame(skipTurnViewModel.GameId));
+        return Ok(skipTurnReturn);
     }
 
     [HttpPost("ArrangeRack/")]
     public ActionResult ArrangeRack(List<TileViewModel> tiles)
     {
-        if (tiles.Count == 0) return StatusCode(StatusCodes.Status400BadRequest);
+        if (tiles.Count == 0) return BadRequest();
         var gameId = tiles.First().GameId;
         var playerId = _infoService.GetPlayerId(gameId, UserId);
-        return new ObjectResult(_coreService.TryArrangeRack(playerId, tiles.Select(t => t.ToTile())));
+        return Ok(_coreService.TryArrangeRack(playerId, tiles.Select(t => t.ToTile())));
     }
 
     private void NotifyNextPlayerAndPlayIfBot(Game game)

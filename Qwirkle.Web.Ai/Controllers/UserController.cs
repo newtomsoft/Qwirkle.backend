@@ -18,17 +18,17 @@ public class UserController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("Register")]
-    public async Task<ActionResult> RegisterAsync(UserViewModel userViewModel) => IsAuthenticated() ? AlreadyAuthenticated() : new ObjectResult(await _userService.Register(userViewModel.ToUser(), userViewModel.Password));
+    public async Task<ActionResult> RegisterAsync(UserViewModel userViewModel) => IsAuthenticated() ? BadRequest("user already authenticated") : Ok(await _userService.Register(userViewModel.ToUser(), userViewModel.Password));
 
 
     [AllowAnonymous]
     [HttpGet("RegisterGuest")]
-    public async Task<ActionResult> RegisterGuestAsync() => new ObjectResult(await _userService.RegisterGuest());
+    public async Task<ActionResult> RegisterGuestAsync() => Ok(await _userService.RegisterGuest());
 
 
     [AllowAnonymous]
     [HttpPost("Login")]
-    public async Task<ActionResult> LoginAsync(LoginViewModel login) => IsAuthenticated() ? AlreadyAuthenticated() : new ObjectResult(await _userService.LoginAsync(login.Pseudo, login.Password, login.IsRemember));
+    public async Task<ActionResult> LoginAsync(LoginViewModel login) => IsAuthenticated() ? BadRequest("user already authenticated") : Ok(await _userService.LoginAsync(login.Pseudo, login.Password, login.IsRemember));
 
 
     [HttpGet("Logout")]
@@ -37,20 +37,20 @@ public class UserController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpGet("IsAdmin")]
-    public ActionResult IsAdmin() => StatusCode(StatusCodes.Status200OK);
+    public ActionResult IsAdmin() => Ok();
 
 
-    [HttpPost("AddBookmarkedOpponent/{friendName}")]
-    public ActionResult AddBookmarkedOpponent(string friendName) => new ObjectResult(_userService.AddBookmarkedOpponent(UserId, friendName));
+    [HttpGet("AddBookmarkedOpponent/{friendName}")]
+    public ActionResult AddBookmarkedOpponent(string friendName) => Ok(_userService.AddBookmarkedOpponent(UserId, friendName));
 
 
     [HttpDelete("RemoveBookmarkedOpponent/{friendName}")]
-    public ActionResult RemoveBookmarkedOpponent(string friendName) => new ObjectResult(_userService.RemoveBookmarkedOpponent(UserId, friendName));
+    public ActionResult RemoveBookmarkedOpponent(string friendName) => Ok(_userService.RemoveBookmarkedOpponent(UserId, friendName));
 
 
     [HttpGet("BookmarkedOpponents")]
-    public ActionResult GetBookmarkedOpponentsNames() => new ObjectResult(_userService.GetBookmarkedOpponentsNames(UserId));
+    public ActionResult GetBookmarkedOpponentsNames() => Ok(_userService.GetBookmarkedOpponentsNames(UserId));
+
 
     private bool IsAuthenticated() => User.Identity is { IsAuthenticated: true };
-    private static BadRequestObjectResult AlreadyAuthenticated() => new("user already authenticated");
 }
