@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": ".NET ai(web)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}//Qwirkle.Web.Ai/bin/Debug/net6.0/Qwirkle.Web.Ai.dll",
+            "program": "/home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Ai/bin/Debug/net6.0/Qwirkle.Web.Ai.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Qwirkle.Web.Api",
+            "cwd": "/home/jcgouleau/qwirkle/Qwirkle.backend/Qwirkle.Web.Ai",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
