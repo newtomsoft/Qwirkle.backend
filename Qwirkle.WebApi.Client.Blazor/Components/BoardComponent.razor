@@ -1,0 +1,10 @@
+﻿@for (var y = AreaManager.BoardLimit.MinY; y <= AreaManager.BoardLimit.MaxY; y++)
+{
+    <div class="d-flex">
+
+        @for (var x = AreaManager.BoardLimit.MinX; x <= AreaManager.BoardLimit.MaxX; x++)
+        {
+            <MudDropZone T="DropItem" Identifier="@DragNDropManager.ToBoardIdentifier(Coordinate.From(x, y))" DraggingClass="mud-theme-success" Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" Style="@AreaManager.BoardSquareSize" />
+        }
+    </div>
+}

@@ -7,14 +7,14 @@ public static class TilesExtensionsMethods
         var diff = direction is Direction.Right or Direction.Top ? -1 : 1;
         var result = new List<TileOnBoard>();
         if (tiles.Count == 0) return result;
-        if (direction is Direction.Left or Direction.Right && reference != tiles[0].Coordinates.X + diff) return result;
-        if (direction is Direction.Top or Direction.Bottom && reference != tiles[0].Coordinates.Y + diff) return result;
+        if (direction is Direction.Left or Direction.Right && reference != tiles[0].Coordinate.X + diff) return result;
+        if (direction is Direction.Top or Direction.Bottom && reference != tiles[0].Coordinate.Y + diff) return result;
 
         result.Add(tiles[0]);
         for (var i = 1; i < tiles.Count; i++)
         {
-            if (direction is Direction.Left or Direction.Right && tiles[i - 1].Coordinates.X == tiles[i].Coordinates.X + diff && tiles[i - 1].Coordinates.Y == tiles[i].Coordinates.Y
-                || direction is Direction.Top or Direction.Bottom && tiles[i - 1].Coordinates.Y == tiles[i].Coordinates.Y + diff && tiles[i - 1].Coordinates.X == tiles[i].Coordinates.X)
+            if (direction is Direction.Left or Direction.Right && tiles[i - 1].Coordinate.X == tiles[i].Coordinate.X + diff && tiles[i - 1].Coordinate.Y == tiles[i].Coordinate.Y
+                || direction is Direction.Top or Direction.Bottom && tiles[i - 1].Coordinate.Y == tiles[i].Coordinate.Y + diff && tiles[i - 1].Coordinate.X == tiles[i].Coordinate.X)
                 result.Add(tiles[i]);
             else
                 break;
@@ -35,7 +35,7 @@ public static class TilesExtensionsMethods
     {
         var stringBuilder = new StringBuilder();
         foreach (var tile in tiles)
-            stringBuilder.Append($"{tile.Shape}-{tile.Color} ({tile.Coordinates.X},{tile.Coordinates.Y}) ");
+            stringBuilder.Append($"{tile.Shape}-{tile.Color} ({tile.Coordinate.X},{tile.Coordinate.Y}) ");
 
         return stringBuilder.ToString();
     }

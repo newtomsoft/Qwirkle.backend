@@ -14,5 +14,5 @@ public class PlayerDao
 
     public virtual GameDao Game { get; set; }
     public virtual UserDao User { get; set; }
-    public virtual List<TileOnPlayerDao> Tiles { get; set; }
+    public virtual List<TileOnRackDao> Tiles { get; set; }
 }

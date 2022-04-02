@@ -2,11 +2,12 @@
 
 public class NoNotification : INotification
 {
-    public void SendGameOver(int gameId, List<int> winnersPlayersIds) { /* Method intentionally left empty. */ }
-    public void SendPlayerIdTurn(int gameId, int playerId) { /* Method intentionally left empty. */ }
-    public void SendTilesPlayed(int gameId, int playerId, Move move) { /* Method intentionally left empty. */ }
-    public void SendTilesSwapped(int gameId, int playerId) { /* Method intentionally left empty. */ }
-    public void SendTurnSkipped(int gameId, int playerId) { /* Method intentionally left empty. */ }
-    public void SendInstantGameStarted(int playersNumberForStartGame, int gameId) { /* Method intentionally left empty. */ }
-    public void SendInstantGameExpected(int playersNumberForStartGame, string userName) { /* Method intentionally left empty. */ }
+    public void SendGameOver(int gameId, List<int> winnersPlayersIds) { }
+    public void SendPlayerIdTurn(int gameId, int playerId) { }
+    public void SendTilesPlayedOld(int gameId, int playerId, Move move) { }//TODO remove
+    public void SendTilesPlayed(int gameId, int playerId, Move move) { }
+    public void SendTilesSwapped(int gameId, int playerId) { }
+    public void SendTurnSkipped(int gameId, int playerId) { }
+    public void SendInstantGameStarted(int playersNumberForStartGame, int gameId) { }
+    public void SendInstantGameJoined(int playersNumberForStartGame, string userName) { }
 }

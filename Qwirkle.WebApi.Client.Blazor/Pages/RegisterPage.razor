@@ -1,0 +1,49 @@
+﻿@page "/register"
+@layout LoginLayout
+
+<PageTitle>Register</PageTitle>
+
+<h1 class="h2 font-weight-normal login-title">Qwirkle register</h1>
+
+<EditForm class="form-signin" OnValidSubmit="RegisterUser" Model="RegisterModel">
+    <DataAnnotationsValidator />
+    <h4 class="font-weight-normal text-center">Create Account</h4>
+
+    <label for="inputUsername" class="sr-only">User Name</label>
+    <InputText id="inputUsername" class="form-control" placeholder="Username" autofocus @bind-Value="@RegisterModel.UserName" />
+    <ValidationMessage id="validationUserName"  For="@(() => RegisterModel.UserName)" />
+
+    <label for="inputEmail" class="sr-only">Email</label>
+    <InputText id="inputEmail" class="form-control" placeholder="Email" autofocus @bind-Value="@RegisterModel.Email" />
+    <ValidationMessage id="validationEmail" For="@(() => RegisterModel.Email)" />
+
+    <label for="inputPassword" class="sr-only">Password</label>
+    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="@RegisterModel.Password" />
+    <ValidationMessage id="validationPassword" For="@(() => RegisterModel.Password)" />
+
+    <label for="inputPasswordConfirm" class="sr-only">Password Confirmation</label>
+    <InputText type="password" id="inputPasswordConfirm" class="form-control" placeholder="Password Confirmation" @bind-Value="@RegisterModel.PasswordConfirm" />
+    <ValidationMessage id="validationPasswordConfirm" For="@(() => RegisterModel.PasswordConfirm)" />
+      
+    <label for="inputFirstName" class="sr-only">First Name</label>
+    <InputText id="inputFirstName" class="form-control" placeholder="First name" autofocus @bind-Value="@RegisterModel.Firstname" />
+    <ValidationMessage For="@(() => RegisterModel.Firstname)" />
+
+    <label for="inputLastName" class="sr-only">Last Name</label>
+    <InputText id="inputLastName" class="form-control" placeholder="Last name" autofocus @bind-Value="@RegisterModel.Lastname" />
+    <ValidationMessage For="@(() => RegisterModel.Lastname)" />
+        
+    <div class="form-check m-3">
+        <InputCheckbox id="inputRememberMe" class="form-check-input" @bind-Value="@RegisterModel.SignInPersistent" />
+        <label class="form-check-label" for="inputRememberMe">Remember Me</label>
+    </div>
+
+    <button id="btnRegister" class="btn btn-lg btn-primary btn-block" type="submit">Create account</button>
+
+    <label class="text-danger">@Error</label>
+    <NavLink href="login">
+        <h6 class="font-weight-normal text-center">Already have an account? Click here to login</h6>
+    </NavLink>
+</EditForm>
+
+<LoginGuest/>

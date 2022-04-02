@@ -1,0 +1,28 @@
+﻿@page "/InstantGame/"
+@page "/InstantGame/{PlayersNumber:int}"
+@attribute [Authorize]
+
+<h1>InstantGame</h1>
+
+@if (_playersNamesWaiting.Any())
+{
+    <h3>player waiting ... </h3>
+    <ul>
+    @foreach (var playerName in _playersNamesWaiting)
+    {
+        <li class="waitingPlayer">@playerName</li>
+    }
+    </ul>
+}
+else
+{
+    <div class="form-signin">
+        <button id="btn2Players" class="btn btn-lg btn-primary btn-block" @onclick="@(() => JoinInstantGame(2))">Join with 2 players</button>
+    </div>
+    <div class="form-signin">
+        <button id="btn3Players" class="btn btn-lg btn-primary btn-block" @onclick="@(() => JoinInstantGame(3))">Join with 3 players</button>
+    </div>
+    <div class="form-signin">
+        <button id="btn4Players" class="btn btn-lg btn-primary btn-block" @onclick="@(() => JoinInstantGame(4))">Join with 4 players</button>
+    </div>
+}

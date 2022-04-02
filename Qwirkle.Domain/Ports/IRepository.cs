@@ -6,9 +6,11 @@ public interface IRepository
     void SetPlayerTurn(int playerId);
     void UpdatePlayer(Player player);
     void TilesFromPlayerToBoard(int gameId, int playerId, IEnumerable<TileOnBoard> tilesOnBoard);
-    void TilesFromBagToPlayer(Player player, List<byte> positionsInRack);
+    void TilesFromBagToPlayer(Player player, IEnumerable<Tile> tilesToSwap);
+    void TilesFromBagToPlayer(Player player);
     void TilesFromPlayerToBag(Player player, IEnumerable<Tile> tiles);
     Game GetGame(int gameId);
+    Task<Game> GetGameAsync(int gameId);
     int GetPlayerId(int gameId, int userId);
     Player GetPlayer(int playerId);
     Player GetPlayer(int gameId, int userId);
@@ -21,7 +23,7 @@ public interface IRepository
     void SetGameOver(int gameId);
     List<int> GetLeadersPlayersId(int gameId);
     bool IsGameOver(int gameId);
-    void ArrangeRack(Player player, IEnumerable<Tile> tiles);
+    void ArrangeRack(Player player, IEnumerable<TileOnRack> tiles);
     List<int> GetAllUsersId();
     bool AddBookmarkedOpponent(int userId, string opponentName);
     bool RemoveBookmarkedOpponent(int userId, string opponentName);

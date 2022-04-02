@@ -17,7 +17,7 @@ namespace Qwirkle.Infra.Repository.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -55,28 +55,28 @@ namespace Qwirkle.Infra.Repository.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "901cc0e1-cb99-49e5-900a-9641cced5627",
+                            ConcurrencyStamp = "c306a26d-79d4-4ca9-a80a-346ef2477114",
                             Name = "Bot",
                             NormalizedName = "BOT"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "fbbbdaec-afb3-49fb-b2cf-159d829c1c94",
+                            ConcurrencyStamp = "db3769b0-2153-495b-8ad6-dcda22c875a0",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "c32e0c39-8097-4654-907c-2917fe3b201e",
+                            ConcurrencyStamp = "cf2becdc-1674-4a7a-8fa9-1086d8ab8be6",
                             Name = "Guest",
                             NormalizedName = "GUEST"
                         },
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "cc51e338-3be0-4879-a7c1-91b23370843b",
+                            ConcurrencyStamp = "92b50e60-7493-4f5b-92cc-6ef50f03ce02",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -998,7 +998,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.ToTable("TileOnBoard");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnPlayerDao", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnRackDao", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1021,7 +1021,7 @@ namespace Qwirkle.Infra.Repository.Migrations
 
                     b.HasIndex("TileId");
 
-                    b.ToTable("TileOnPlayer");
+                    b.ToTable("TileOnRack");
                 });
 
             modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.UserDao", b =>
@@ -1123,7 +1123,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "35c7b56a-8421-4b24-a643-2a7102b6b4f7",
+                            ConcurrencyStamp = "fd09d246-ca43-421e-83d3-d2b1ac47b612",
                             Email = "bot1@bot",
                             EmailConfirmed = false,
                             GamesPlayed = 0,
@@ -1140,7 +1140,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bd1c7b7c-dd06-4a1b-b81d-5ac43806e664",
+                            ConcurrencyStamp = "3b41685c-0daa-4fbb-8367-2bb87de9b565",
                             Email = "bot2@bot",
                             EmailConfirmed = false,
                             GamesPlayed = 0,
@@ -1157,7 +1157,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e033c747-415b-4876-8f18-bc4ce5bef251",
+                            ConcurrencyStamp = "31a66166-636d-4b4b-af37-661b61a6b57c",
                             Email = "bot3@bot",
                             EmailConfirmed = false,
                             GamesPlayed = 0,
@@ -1174,7 +1174,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 4,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "15e63213-9731-4d0d-9a45-aacf66e1e594",
+                            ConcurrencyStamp = "39e95c89-708d-4fd2-8d41-16540dc743fd",
                             Email = "bot4@bot",
                             EmailConfirmed = false,
                             GamesPlayed = 0,
@@ -1191,7 +1191,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 5,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "052289b0-655b-46c2-b0c9-320968937ccd",
+                            ConcurrencyStamp = "1d5cd71b-808f-4cbf-9455-d3450d7ca0c8",
                             Email = "thomas@newtomsoft.fr",
                             EmailConfirmed = false,
                             FirstName = "Thomas",
@@ -1205,7 +1205,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                             PasswordHash = "AQAAAAEAACcQAAAAED29kKSVgjTdA6s6pXQ0a+7iy9MJ5Y1byxFl2MWZnX4WE6lw1SsR9FGeGypraM3G+g==",
                             PhoneNumberConfirmed = false,
                             Points = 0,
-                            SecurityStamp = "67F10AA8D20A4E3FBEF5A7CF76F1EBC7",
+                            SecurityStamp = "1121E638D8EA4D9682289069B38C23E1",
                             TwoFactorEnabled = false,
                             UserName = "Tom"
                         },
@@ -1213,7 +1213,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                         {
                             Id = 6,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "766e8c52-c884-4e4e-9c52-d7249be2efb1",
+                            ConcurrencyStamp = "b8526d6e-133c-4c48-a716-e6b7aea1500c",
                             Email = "jc@jc.fr",
                             EmailConfirmed = false,
                             FirstName = "Jean Charles",
@@ -1227,7 +1227,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                             PasswordHash = "AQAAAAEAACcQAAAAEJOr0iSf9bL59UJqwWyCpcjdampHsvulqOZ/NTApuuwLJsc1Sf9xRquQWPIz2S8rUQ==",
                             PhoneNumberConfirmed = false,
                             Points = 0,
-                            SecurityStamp = "09DDB5FB2D0C4416A7887F6301CEBF17",
+                            SecurityStamp = "1CCCC7143D8942F38039F8DD9793921F",
                             TwoFactorEnabled = false,
                             UserName = "JC"
                         });
@@ -1356,7 +1356,7 @@ namespace Qwirkle.Infra.Repository.Migrations
                     b.Navigation("Tile");
                 });
 
-            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnPlayerDao", b =>
+            modelBuilder.Entity("Qwirkle.Infra.Repository.Dao.TileOnRackDao", b =>
                 {
                     b.HasOne("Qwirkle.Infra.Repository.Dao.PlayerDao", "Player")
                         .WithMany("Tiles")

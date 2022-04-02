@@ -15,18 +15,19 @@ public class Authentication : IAuthentication
         _roleManager = roleManager;
     }
 
-    public async Task<bool> RegisterAsync(User user, string password)
+    public async Task<bool> RegisterAsync(User user, string password, bool isSignInPersistent)
     {
         var userDao = user.ToUserDao();
         await _userStore.SetUserNameAsync(userDao, user.Pseudo, CancellationToken.None);
         var result = await _userManager.CreateAsync(userDao, password);
+        await _signInManager.SignInAsync(userDao, isSignInPersistent);
         return result.Succeeded;
     }
 
     public async Task<bool> RegisterGuestAsync()
     {
         const string guestNamePrefix = "guest";
-        const string guestRole = "Guest"; //todo defined in other class
+        const string guestRole = UserService.RoleGuestName;
 
         string guestPseudo;
         do guestPseudo = guestNamePrefix + Guid.NewGuid().ToString("N")[..6];

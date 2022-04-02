@@ -5,15 +5,21 @@ public class UserService
     private readonly IRepository _repository;
     private readonly IAuthentication _authentication;
 
+    public const string RoleAdminName = "Admin";
+    public const string RoleGuestName = "Guest";
+    public const string RoleUserName = "User";
+    public const string RoleBotName = "Bot";
+    public const int PassWordMinLength = 6;
+
     public UserService(IRepository repository, IAuthentication authentication)
     {
         _repository = repository;
         _authentication = authentication;
     }
 
-    public bool IsBot(int playerId) => _authentication.IsBot(playerId);
+    public bool IsBot(int userId) => _authentication.IsBot(userId);
 
-    public async Task<bool> Register(User user, string password) => await _authentication.RegisterAsync(user, password);
+    public async Task<bool> Register(User user, string password, bool isSignInPersistent) => await _authentication.RegisterAsync(user, password, isSignInPersistent);
 
     public async Task<bool> RegisterGuest() => await _authentication.RegisterGuestAsync();
 

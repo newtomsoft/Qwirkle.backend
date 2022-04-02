@@ -11,7 +11,7 @@ public record Game(int Id, Board Board, List<Player> Players, Bag Bag, bool Game
     public Game(Board board, List<Player> players, int tilesNumberInBag) : this(0, board, players, Bag.WithFakeTiles(tilesNumberInBag), false)
     { }
 
-    public Game() : this(0, Board.Empty(), new List<Player>(), Bag.Empty, false)
+    public Game() : this(0, Board.Empty, new List<Player>(), Bag.Empty, false)
     { }
 
     public Game(Game game)
@@ -26,6 +26,4 @@ public record Game(int Id, Board Board, List<Player> Players, Bag Bag, bool Game
     public bool IsBoardEmpty() => Board.Tiles.Count == 0;
 
     public bool IsBagEmpty() => Bag.Tiles.Count == 0;
-
-    public List<Player> GetPlayersWithoutTiles() => Players.Select(player => player.GetWithoutTiles()).ToList();
 }

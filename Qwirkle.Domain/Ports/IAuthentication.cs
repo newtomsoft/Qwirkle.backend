@@ -2,7 +2,7 @@
 
 public interface IAuthentication
 {
-    Task<bool> RegisterAsync(User user, string password);
+    Task<bool> RegisterAsync(User user, string password, bool isSignInPersistent);
     Task<bool> RegisterGuestAsync();
     Task LogoutOutAsync();
     Task<bool> LoginAsync(string pseudo, string password, bool isRemember);

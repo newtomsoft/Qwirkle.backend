@@ -1,18 +1,21 @@
 ﻿namespace Qwirkle.Domain.Entities;
 
+[Serializable]
 public record Player
 {
-    public int Id { get; }
-    public int UserId { get; }
-    public int GameId { get; }
-    public string Pseudo { get; }
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public int GameId { get; set; }
+    public string Pseudo { get; set; }
     public int GamePosition { get; set; }
     public int Points { get; set; }
     public int LastTurnPoints { get; set; }
     public Rack Rack { get; set; }
-    public bool IsTurn { get; private set; }
+    public bool IsTurn { get; set; }
     public bool LastTurnSkipped { get; set; }
     public User User { get; }
+
+    public Player() { }
 
     public Player(int id, int userId, int gameId, string pseudo, int gamePosition, int points, int lastTurnPoints, Rack rack, bool isTurn, bool lastTurnSkipped, User user = default)
     {
@@ -66,6 +69,4 @@ public record Player
         }
         return Math.Max(maxSameColor, maxSameShape) + 1;
     }
-
-    public Player GetWithoutTiles() => this with { Rack = new Rack(new List<TileOnPlayer>()) };
 }

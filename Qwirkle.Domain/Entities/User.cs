@@ -13,6 +13,8 @@ public class User
     public List<Player> Players { get; }
     public HashSet<User> Friends { get; }
 
+    public User() { } //TODO
+
     public User(string pseudo, string email, string firstName = default, string lastName = default, int help = 0, int points = 0, int gamesPlayed = 0, int gamesWon = 0, Player player = default, HashSet<User> friends = default)
     {
         Pseudo = pseudo;

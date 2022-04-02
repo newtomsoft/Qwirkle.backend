@@ -1,0 +1,6 @@
+﻿<div id="rack" class="d-flex">
+    @for (var rackIndex = 0; rackIndex < CoreService.TilesNumberPerPlayer; rackIndex++)
+    {
+        <MudDropZone T="DropItem" Identifier="@DragNDropManager.ToRackIdentifier(rackIndex)" DraggingClass="mud-theme-success" Class="d-flex justify-center align-center border-2 border-solid docs-gray-bg mud-border-lines-default" Style="height: 80px; width: 80px;" />
+    }
+</div>

@@ -1,0 +1,34 @@
+﻿@page "/Game/{GameId:int}"
+@attribute [Authorize]
+
+@if (_isInitialized)
+{
+    <div class="d-flex">
+        @foreach (var playerDetail in PlayersDetail.All)
+        {
+            <PlayerDetailComponent PlayerDetail="playerDetail" />
+        }
+    </div>
+
+    <MudDropContainer T="DropItem" ItemIsDisabled="@(item => DragNDropManager.IsDisabled(item))" Items="DragNDropManager.AllTilesInGame" CanDropClass="mud-border-info" NoDropClass="mud-border-error" CanDrop="@((_, identifier) => DragNDropManager.IsDroppable(identifier))" ItemsSelector="@((item, identifier) => item.Identifier == identifier)" ItemDropped="mudItemDropInfo => DragNDropManager.ItemDropped(mudItemDropInfo)" Class="border-2 border-solid mud-border-lines-default">
+        <ChildContent>
+            <BoardComponent DragNDropManager="DragNDropManager" AreaManager="AreaManager"/>
+            <div class="d-flex">
+                <RackComponent DragNDropManager="DragNDropManager"/>
+                <BagComponent DragNDropManager="DragNDropManager"/>
+            </div>
+        </ChildContent>
+        <ItemRenderer>
+            <div class="d-flex justify-center align-center flex-grow-1">
+                <MudImage Fluid="true" ObjectFit="ObjectFit.ScaleDown" Src="@ImagePath(context.Tile)" Elevation="20" />
+            </div>
+        </ItemRenderer>
+    </MudDropContainer>
+}
+
+<MudButton id="btnPlayTiles" Variant="Variant.Filled" Color="Color.Primary" OnClick="PlayTiles">Play tiles</MudButton>
+<MudButton id="btnSwapTiles" Variant="Variant.Filled" Color="Color.Primary" OnClick="SwapTiles">Swap tiles</MudButton>
+<MudButton id="btnSkipTurn" Variant="Variant.Filled" Color="Color.Primary" OnClick="SkipTurn">Skip turn</MudButton>
+<MudButton id="btnArrangeRack" Variant="Variant.Filled" Color="Color.Primary" OnClick="ArrangeRack">ArrangeRack</MudButton>
+
+<div id="actionResult" hidden>@_actionResult</div>

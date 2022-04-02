@@ -1,0 +1,21 @@
+﻿html, body {
+    height: 100%;
+}
+
+#rack {
+    table-layout: fixed;
+    width: 60%;
+    height: 30%;
+    padding: 0;
+    border-spacing: 0;
+}
+
+tr, td {
+    border: 1px solid blueviolet;
+}
+
+img {
+    display: block;
+    width: 100%;
+    height: auto;
+}

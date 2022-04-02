@@ -1,0 +1,13 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Logging;
+global using Qwirkle.Domain.Ports;
+global using Qwirkle.Domain.Services;
+global using Qwirkle.Infra.Repository;
+global using Qwirkle.Infra.Repository.Adapters;
+global using Qwirkle.Infra.Repository.Dao;
+global using Qwirkle.Tests.Integration.Factories;
+global using Shouldly;
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using Xunit;

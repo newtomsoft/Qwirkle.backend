@@ -1,0 +1,29 @@
+﻿@page "/NewGame"
+@attribute [Authorize]
+
+<h3>Game with bots only</h3>
+<MudButton id="btnCreateGameWith1Bot" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => CreateGameWithBot(1)">Game with 1 bot</MudButton>
+<MudButton id="btnCreateGameWith2Bots" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => CreateGameWithBot(2)">Game with 2 bots</MudButton>
+<MudButton id="btnCreateGameWith3Bots" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => CreateGameWithBot(3)">Game with 3 bots</MudButton>
+
+<h3>Game with humans</h3>
+
+<EditForm class="form" OnValidSubmit="CreateGameWithPlayers" Model="OpponentsModel">
+    <DataAnnotationsValidator />
+    <label for="inputUsername1" class="sr-only">Opponent 1</label>
+    <InputText id="inputUsername1" class="form-control" placeholder="name" autofocus @bind-Value="@OpponentsModel.Opponent1" />
+    <ValidationMessage id="validationUserName1"  For="@(() => OpponentsModel.Opponent1)" />
+
+    <label for="inputUsername2" class="sr-only">Opponent 1 (option)</label>
+    <InputText id="inputUsername2" class="form-control" placeholder="name" autofocus @bind-Value="@OpponentsModel.Opponent2" />
+    <ValidationMessage id="validationUserName2" For="@(() => OpponentsModel.Opponent2)" />
+
+    <label for="inputUsername3" class="sr-only">Opponent 2 (option)</label>
+    <InputText id="inputUsername3" class="form-control" placeholder="name" autofocus @bind-Value="@OpponentsModel.Opponent3" />
+    <ValidationMessage id="validationUserName3" For="@(() => OpponentsModel.Opponent3)" />
+    
+    <button id="btnRegister" class="btn btn-lg btn-primary btn-block" type="submit">Create game</button>
+
+    <label class="text-danger">@Error</label>
+
+</EditForm>

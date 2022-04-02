@@ -1,22 +1,14 @@
-﻿using System.Runtime.InteropServices;
+﻿var hostBuilder = Host.CreateDefaultBuilder(args);
+var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
 
-if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-{
-    Console.WriteLine("Windows");
-}
-else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-{
-    Console.WriteLine("Linux");
-}
-
-var host = Host.CreateDefaultBuilder(args)
+hostBuilder.UseSerilog((_, config) => config.ReadFrom.Configuration(configuration));
+var host = hostBuilder
     .ConfigureServices((_, services) =>
     {
         services.AddOptions();
         services.AddSingleton<UltraBoardGamesPlayerApplication>();
-        services.AddSingleton<IWebDriverFactory, EdgeDriverFactory>();
+        services.AddSingleton<IWebDriverFactory, ChromeDriverFactory>();
         services.AddSingleton<IAuthentication, NoAuthentication>();
-        services.AddSingleton<GameScraper>();
         services.AddSingleton<BotService>();
         services.AddSingleton<CoreService>();
         services.AddSingleton<UserService>();
@@ -25,10 +17,6 @@ var host = Host.CreateDefaultBuilder(args)
         services.AddSingleton<IRepository, NoRepository>();
         services.AddDbContext<NoDbContext>();
     })
-    .ConfigureLogging((_, builder) =>
-    {
-        builder.AddFile("Logs/QwirkleUltraBoardGames-{Date}.txt");
-    })
     .UseConsoleLifetime()
     .Build();
 
@@ -36,4 +24,17 @@ using var serviceScope = host.Services.CreateScope();
 var services = serviceScope.ServiceProvider;
 var application = services.GetRequiredService<UltraBoardGamesPlayerApplication>();
 
-application.Run();
+application.Run(RequestGamesNumber());
+
+static int RequestGamesNumber()
+{
+    int gamesNumber;
+    while (true)
+    {
+        Console.WriteLine("Number of games to play (1 - 20) ?");
+        var userInput = Console.ReadLine();
+        var isNumber = int.TryParse(userInput, out gamesNumber);
+        if (isNumber && gamesNumber is >= 1 and <= 20) break;
+    }
+    return gamesNumber;
+}

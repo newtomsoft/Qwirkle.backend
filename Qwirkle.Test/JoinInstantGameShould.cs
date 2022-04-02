@@ -20,7 +20,7 @@ public class JoinInstantGameShould
     {
         InitTest();
         const string userName = "UserName";
-        var usersNames = _instantGameService.JoinInstantGame(userName, playersNumber);
+        var usersNames = _instantGameService.JoinInstantGame(userName, playersNumber).UsersNames;
         usersNames.Count.ShouldBe(1);
         usersNames.First().ShouldBe(userName);
     }
@@ -38,7 +38,7 @@ public class JoinInstantGameShould
         for (var iTest = 0; iTest < testRepeat; iTest++)
         {
             var manyTime = new Random().Next(50, 100); // no matter how many
-            for (var i = 0; i < manyTime; i++) usersNames = _instantGameService.JoinInstantGame(userName, playersNumber);
+            for (var i = 0; i < manyTime; i++) usersNames = _instantGameService.JoinInstantGame(userName, playersNumber).UsersNames;
             usersNames.Count.ShouldBe(1);
             usersNames.First().ShouldBe(userName);
         }
@@ -54,9 +54,9 @@ public class JoinInstantGameShould
         const string user0 = "userName0";
         const string user1 = "userName1";
         var expectedUsersNames = new HashSet<string> { user0, user1 };
-        var resultUsersIds = _instantGameService.JoinInstantGame(user0, playersNumber);
+        var resultUsersIds = _instantGameService.JoinInstantGame(user0, playersNumber).UsersNames;
         resultUsersIds.Count.ShouldBe(1);
-        resultUsersIds = _instantGameService.JoinInstantGame(user1, playersNumber);
+        resultUsersIds = _instantGameService.JoinInstantGame(user1, playersNumber).UsersNames;
         resultUsersIds.Count.ShouldBe(2);
         resultUsersIds.OrderBy(id => id).ShouldBe(expectedUsersNames.OrderBy(id => id));
     }
@@ -73,10 +73,10 @@ public class JoinInstantGameShould
         const string user2 = "userName2";
         var expectedUsersNames = new HashSet<string> { user0, user1, user2 };
         _instantGameService.JoinInstantGame(user0, playersNumber);
-        var result0UsersIds = _instantGameService.JoinInstantGame(user1, playersNumber);
-        var result1UsersIds = _instantGameService.JoinInstantGame(user2, playersNumber);
-        result1UsersIds.Count.ShouldBe(playersNumber < 3 ? 1 : 3);
-        var resultUsersIds = result0UsersIds.Union(result1UsersIds);
+        var result0UsersName = _instantGameService.JoinInstantGame(user1, playersNumber).UsersNames;
+        var result1UsersName = _instantGameService.JoinInstantGame(user2, playersNumber).UsersNames;
+        result1UsersName.Count.ShouldBe(playersNumber < 3 ? 1 : 3);
+        var resultUsersIds = result0UsersName.Union(result1UsersName);
         resultUsersIds.OrderBy(id => id).ShouldBe(expectedUsersNames.OrderBy(id => id));
     }
 
@@ -93,9 +93,9 @@ public class JoinInstantGameShould
         _instantGameService.JoinInstantGame(user0, playersNumber);
         _instantGameService.JoinInstantGame(user1, playersNumber);
         _instantGameService.JoinInstantGame(user2, playersNumber);
-        var resultUsersIds = _instantGameService.JoinInstantGame(user3, playersNumber);
-        resultUsersIds.Count.ShouldBe(playersNumber);
-        resultUsersIds.OrderBy(id => id).ShouldBe(expectedUsersNames.OrderBy(id => id));
+        var resultUsersNames = _instantGameService.JoinInstantGame(user3, playersNumber).UsersNames;
+        resultUsersNames.Count.ShouldBe(playersNumber);
+        resultUsersNames.OrderBy(id => id).ShouldBe(expectedUsersNames.OrderBy(id => id));
     }
 
     [Theory]
@@ -113,7 +113,7 @@ public class JoinInstantGameShould
             for (var id = 1; id <= userNumber; id++)
             {
                 var userName = "user" + id;
-                resultUsersNames = _instantGameService.JoinInstantGame(userName, playersNumberInGame);
+                resultUsersNames = _instantGameService.JoinInstantGame(userName, playersNumberInGame).UsersNames;
                 if (resultUsersNames.Count == playersNumberInGame) gamesNumberToCreate++;
             }
             resultUsersNames.Count.ShouldBe(userNumber % playersNumberInGame == 0 ? playersNumberInGame : userNumber % playersNumberInGame);
@@ -131,15 +131,13 @@ public class JoinInstantGameShould
         const int userNumber = 234567;
         var usersIds = Enumerable.Range(1, userNumber).ToArray();
         var resultUsersIds = new HashSet<string>[userNumber + 1];
-        var badGamesNumber = 0;
         Parallel.ForEach(usersIds, id =>
         {
             var userName = "user" + id;
-            resultUsersIds[id] = _instantGameService.JoinInstantGame(userName, playersNumberInGame);
-            if (resultUsersIds[id].Count > playersNumberInGame) badGamesNumber++;
+            resultUsersIds[id] = _instantGameService.JoinInstantGame(userName, playersNumberInGame).UsersNames;
+            (resultUsersIds[id].Count > playersNumberInGame).ShouldBeFalse();
         });
         resultUsersIds[0] = new HashSet<string>();
         resultUsersIds.Count(e => e.Count == playersNumberInGame).ShouldBe(userNumber / playersNumberInGame);
-        badGamesNumber.ShouldBe(0);
     }
 }

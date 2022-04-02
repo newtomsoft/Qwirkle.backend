@@ -6,7 +6,8 @@ public class ScreenShotMaker
 
     public ScreenShotMaker()
     {
-        _pathToGameImages = DateTime.Now.ToString("yyyy-MM-dd-HH_mm_ss");
+        var guid = Guid.NewGuid().ToString();
+        _pathToGameImages = Path.Combine("Screenshots", DateTime.Now.ToString("yyyy-MM-dd-HH_mm_ss") + guid);
         Directory.CreateDirectory(_pathToGameImages);
     }
 

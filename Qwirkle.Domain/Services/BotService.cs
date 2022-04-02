@@ -28,16 +28,16 @@ public class BotService
         }
     }
 
-    public int GetMostPointsToPlay(Player player, Game game, Coordinates originCoordinates = null)
+    public int GetMostPointsToPlay(Player player, Game game, Coordinate originCoordinate = null)
     {
-        var doableMoves = ComputeDoableMoves(player, game, originCoordinates, true);
+        var doableMoves = ComputeDoableMoves(player, game, originCoordinate, true);
         var playReturn = doableMoves.OrderByDescending(m => m.Move.Points).FirstOrDefault();
         return playReturn?.Move.Points ?? 0;
     }
 
-    public Move GetBestMove(Player player, Game game, Coordinates originCoordinates = null)
+    public Move GetBestMove(Player player, Game game, Coordinate originCoordinate = null)
     {
-        var moves = ComputeDoableMoves(player, game, originCoordinates, true).Select(r => r.Move).OrderByDescending(m => m.Points).ToList();
+        var moves = ComputeDoableMoves(player, game, originCoordinate, true).Select(r => r.Move).OrderByDescending(m => m.Points).ToList();
 
         if (moves.Count == 0) return Move.Empty;
 
@@ -63,12 +63,12 @@ public class BotService
         return ComputeDoableMoves(player, game);
     }
 
-    private HashSet<PlayReturn> ComputeDoableMoves(Player player, Game game, Coordinates originCoordinates = null, bool simulation = false)
+    private HashSet<PlayReturn> ComputeDoableMoves(Player player, Game game, Coordinate originCoordinate = null, bool simulation = false)
     {
         if (!simulation) _coreService.ResetGame(player.GameId);
 
         var rack = player.Rack.WithoutDuplicatesTiles();
-        var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles(originCoordinates);
+        var boardAdjoiningCoordinates = game.Board.GetFreeAdjoiningCoordinatesToTiles(originCoordinate);
         var with1TilePlayReturns = new HashSet<PlayReturn>();
         foreach (var coordinates in boardAdjoiningCoordinates)
         {
@@ -89,7 +89,7 @@ public class BotService
                 var currentPlayReturns = new HashSet<PlayReturn>();
                 foreach (var tilesPlayed in lastPlayReturn.Select(p => p.Move.Tiles))
                 {
-                    var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnPlayer((RackPosition)index)).ToList();
+                    var currentTilesToTest = rack.Tiles.Select(t => t.ToTile()).Except(tilesPlayed.Select(tP => tP.ToTile())).Select((t, index) => t.ToTileOnRack((RackPosition)index)).ToList();
                     currentPlayReturns.UnionWith(ComputePlayReturnInRow(rowType, player, boardAdjoiningCoordinates, currentTilesToTest, tilesPlayed.ToHashSet(), game));
                 }
                 allPlayReturns.UnionWith(currentPlayReturns);
@@ -99,10 +99,10 @@ public class BotService
         return allPlayReturns;
     }
 
-    private IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinates> boardAdjoiningCoordinates, List<TileOnPlayer> tilesToTest, HashSet<TileOnBoard> tilesAlreadyPlayed, Game game)
+    private IEnumerable<PlayReturn> ComputePlayReturnInRow(RowType rowType, Player player, IEnumerable<Coordinate> boardAdjoiningCoordinates, List<TileOnRack> tilesToTest, HashSet<TileOnBoard> tilesAlreadyPlayed, Game game)
     {
         var tilesPlayedNumber = tilesAlreadyPlayed.Count;
-        var coordinatesPlayed = tilesAlreadyPlayed.Select(tilePlayed => tilePlayed.Coordinates).ToList();
+        var coordinatesPlayed = tilesAlreadyPlayed.Select(tilePlayed => tilePlayed.Coordinate).ToList();
 
         sbyte coordinateChangingMin, coordinateChangingMax;
         var firstTilePlayedX = coordinatesPlayed[0].X;
@@ -144,7 +144,7 @@ public class BotService
         {
             foreach (var tile in tilesToTest)
             {
-                var testedCoordinates = rowType is RowType.Line ? Coordinates.From(currentCoordinate, coordinateFixed) : Coordinates.From(coordinateFixed, currentCoordinate);
+                var testedCoordinates = rowType is RowType.Line ? Coordinate.From(currentCoordinate, coordinateFixed) : Coordinate.From(coordinateFixed, currentCoordinate);
                 var testedTile = TileOnBoard.From(tile, testedCoordinates);
                 var currentTilesToTest = new HashSet<TileOnBoard>();
                 currentTilesToTest.UnionWith(tilesAlreadyPlayed);

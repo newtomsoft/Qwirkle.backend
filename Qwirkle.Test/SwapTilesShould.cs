@@ -96,7 +96,7 @@ public class SwapTilesShould
             var player = players.Single(p => p.IsTurn);
 
             var tileToSwap = player.Rack.Tiles[i];
-            var oldRackWithoutSwappedTile = new List<TileOnPlayer>(player.Rack.Tiles);
+            var oldRackWithoutSwappedTile = new List<TileOnRack>(player.Rack.Tiles);
             oldRackWithoutSwappedTile.Remove(tileToSwap);
             var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t).ToList();
 
@@ -129,7 +129,7 @@ public class SwapTilesShould
                 var tileToSwap0 = player.Rack.Tiles[firstTileIndex];
                 var tileToSwap1 = player.Rack.Tiles[secondTileIndex];
 
-                var oldRackWithoutSwappedTile = new List<TileOnPlayer>(player.Rack.Tiles);
+                var oldRackWithoutSwappedTile = new List<TileOnRack>(player.Rack.Tiles);
                 oldRackWithoutSwappedTile.Remove(tileToSwap0);
                 oldRackWithoutSwappedTile.Remove(tileToSwap1);
                 var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t).ToList();
@@ -167,7 +167,7 @@ public class SwapTilesShould
                     var tileToSwap1 = player.Rack.Tiles[secondTileIndex];
                     var tileToSwap2 = player.Rack.Tiles[thirdTileIndex];
 
-                    var oldRackWithoutSwappedTile = new List<TileOnPlayer>(player.Rack.Tiles);
+                    var oldRackWithoutSwappedTile = new List<TileOnRack>(player.Rack.Tiles);
                     oldRackWithoutSwappedTile.Remove(tileToSwap0);
                     oldRackWithoutSwappedTile.Remove(tileToSwap1);
                     oldRackWithoutSwappedTile.Remove(tileToSwap2);
@@ -210,7 +210,7 @@ public class SwapTilesShould
                         var tileToSwap2 = player.Rack.Tiles[thirdTileIndex];
                         var tileToSwap3 = player.Rack.Tiles[fourthTileIndex];
 
-                        var oldRackWithoutSwappedTile = new List<TileOnPlayer>(player.Rack.Tiles);
+                        var oldRackWithoutSwappedTile = new List<TileOnRack>(player.Rack.Tiles);
                         oldRackWithoutSwappedTile.Remove(tileToSwap0);
                         oldRackWithoutSwappedTile.Remove(tileToSwap1);
                         oldRackWithoutSwappedTile.Remove(tileToSwap2);
@@ -258,7 +258,7 @@ public class SwapTilesShould
                             var tileToSwap3 = player.Rack.Tiles[fourthTileIndex];
                             var tileToSwap4 = player.Rack.Tiles[fifthTileIndex];
 
-                            var oldRackWithoutSwappedTile = new List<TileOnPlayer>(player.Rack.Tiles);
+                            var oldRackWithoutSwappedTile = new List<TileOnRack>(player.Rack.Tiles);
                             oldRackWithoutSwappedTile.Remove(tileToSwap0);
                             oldRackWithoutSwappedTile.Remove(tileToSwap1);
                             oldRackWithoutSwappedTile.Remove(tileToSwap2);
@@ -300,22 +300,11 @@ public class SwapTilesShould
         var tileToSwap5 = player.Rack.Tiles[5];
         var tilesToSwap = new List<Tile> { tileToSwap0, tileToSwap1, tileToSwap2, tileToSwap3, tileToSwap4, tileToSwap5 };
 
-        var oldRackWithoutSwappedTile = new List<TileOnPlayer>(player.Rack.Tiles);
-        oldRackWithoutSwappedTile.Remove(tileToSwap0);
-        oldRackWithoutSwappedTile.Remove(tileToSwap1);
-        oldRackWithoutSwappedTile.Remove(tileToSwap2);
-        oldRackWithoutSwappedTile.Remove(tileToSwap3);
-        oldRackWithoutSwappedTile.Remove(tileToSwap4);
-        oldRackWithoutSwappedTile.Remove(tileToSwap5);
-
-        var oldTilesWithoutSwappedTile = oldRackWithoutSwappedTile.Select(t => t.ToTile()).OrderBy(t => t).ToList();
-
         var swapReturn = _coreService.TrySwapTiles(player.Id, tilesToSwap);
         swapReturn.Code.ShouldBe(ReturnCode.Ok);
 
         var tilesInRack = swapReturn.NewRack.Tiles.Select(t => t.ToTile()).ToList();
         var newTiles = new List<Tile>(tilesInRack);
-        foreach (var tile in oldTilesWithoutSwappedTile) newTiles.Remove(tile);
 
         newTiles.Count.ShouldBe(tilesToSwap.Count);
     }
